@@ -67,6 +67,18 @@ void WorldPvPMgr::InitWorldPvP()
         ++uiPvPZonesInitialized;
     }
 
+    pWorldPvP = new WorldPvPGH;
+    if(!pWorldPvP->InitWorldPvPArea())
+    {
+        sLog.outDebug("WorldPvP : GRIZZLY HILLS init failed.");
+        delete pWorldPvP;
+    }
+    else
+    {
+        m_WorldPvPSet.push_back(pWorldPvP);
+        ++uiPvPZonesInitialized;
+    }
+
     pWorldPvP = new WorldPvPSI;
     if(!pWorldPvP->InitWorldPvPArea())
     {

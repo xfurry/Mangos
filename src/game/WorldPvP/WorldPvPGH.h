@@ -15,3 +15,77 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
+
+#ifndef WORLD_PVP_GH
+#define WORLD_PVP_GH
+
+enum
+{
+    TYPE_VENTURE_CONTROLLER                = 1,
+    TYPE_VENTURE_STATE                     = 2,
+
+    // zone ids
+    ZONE_ID_GRIZZLY_HILLS                   = 394,
+
+    // npcs
+    // alliance
+    NPC_WESTFALL_BRIGADE_DEFENDER           = 27758,
+    NPC_COMMANDER_HOWSER                    = 27759,
+    NPC_BLACKSMITH_JASON_RIGGINS            = 29252,
+    NPC_VENDOR_ADAMS                        = 27760,
+    NPC_STABLE_MASTER_TIM                   = 29250,
+    NPC_HORSE                               = 385,
+
+    // horde
+    NPC_CONQUEST_HOLD_DEFENDER              = 27748,
+    NPC_GENERAL_GORLOK                      = 27708,
+    NPC_BLACKSMITH_KOLOTH                   = 29253,
+    NPC_VENDOR_PURKOM                       = 27730,
+    NPC_STABLE_MASTER_KOR                   = 29251,
+    NPC_RIDING_WOLF                         = 5774,
+
+    // gameobjects
+    GO_VENTURE_BAY_LIGHTHOUSE               = 189310,
+
+    // events
+    EVENT_LIGHTHOUSE_WIN_ALLIANCE           = 18035,
+    EVENT_LIGHTHOUSE_WIN_HORDE              = 18036,
+    //EVENT_LIGHTHOUSE_CONTEST_ALLIANCE     = 18037,
+    //EVENT_LIGHTHOUSE_CONTEST_HORDE        = 18038,
+    EVENT_LIGHTHOUSE_PROGRESS_ALLIANCE      = 18039,
+    EVENT_LIGHTHOUSE_PROGRESS_HORDE         = 18040,
+    EVENT_LIGHTHOUSE_NEUTRAL_ALLIANCE       = 18041,
+    EVENT_LIGHTHOUSE_NEUTRAL_HORDE          = 18042,
+};
+
+class WorldPvPGH : public WorldPvP
+{
+    public:
+        WorldPvPGH();
+
+        bool InitWorldPvPArea();
+
+        void OnCreatureCreate(Creature* pCreature);
+        void OnGameObjectCreate(GameObject* pGo);
+        void ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId);
+
+        void SetData(uint32 uiType, uint32 uiData);
+        uint32 GetData(uint32 uiType);
+
+    private:
+        void DoRespawnSoldiers(uint8 uiFaction);
+        // set banner artkit
+        void SetBannerArtKit(uint32 uiArtKit);
+
+        uint32 m_uiVentureBayController;
+        uint32 m_uiVentureBayState;
+
+        ObjectGuid m_TowerBannerLighthouseGuid;
+
+        std::list<ObjectGuid> lAllianceSoldiers;
+        std::list<ObjectGuid> lHordeSoldiers;
+        std::list<ObjectGuid> lAllianceVendors;
+        std::list<ObjectGuid> lHordeVendors;
+};
+
+#endif

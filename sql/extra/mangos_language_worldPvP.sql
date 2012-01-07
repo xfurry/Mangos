@@ -61,10 +61,4 @@ INSERT INTO `mangos_string` (`entry`, `content_default`) VALUES
 (10047,'The Horde has taken a Spirit Tower!'),
 (10048,'The Alliance has taken a Spirit Tower!'),
 (10049,'The Horde lost a Spirit Tower!'),
-(10050,'The Alliance lost a Spirit Tower!'),
-
--- grizzly
-(10051, 'The Horde has taken the Venture Bay Lighthouse!'),
-(10052, 'The Alliance has taken the Venture Bay Lighthouse!'),
-(10053, 'The Horde lost the Venture Bay Lighthouse!'),
-(10054, 'The Alliance lost the Venture Bay Lighthouse!');
+(10050,'The Alliance lost a Spirit Tower!');

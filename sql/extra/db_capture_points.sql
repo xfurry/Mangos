@@ -11,6 +11,15 @@ INSERT INTO `gameobject` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`position_x`
 (500006, 182173, 530, 1, 1, -290.016, 3702.42, 56.6729, 0.034907, 0, 0, 0.0174526, 0.999848, 180, 100, 1),
 (500007, 182175, 530, 1, 1, -471.462, 3451.09, 34.6432, 0.174533, 0, 0, 0.0871558, 0.996195, 180, 100, 1);
 
+
+-- creatures for world pvp - use guid from 300xxx
+DELETE FROM `creature` WHERE `id` IN (27730,27760);
+INSERT INTO `creature` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`modelid`,`equipment_id`,`position_x`,`position_y`,`position_z`,`orientation`,`spawntimesecs`,`spawndist`,`currentwaypoint`,`curhealth`,`curmana`,`DeathState`,`MovementType`) VALUES
+(300001, 27730, 571, 1, 1, 0, 0, 2489.92, -1821.4, 11.7098, 5.51804, 604800, 0, 0, 10282, 0, 0, 0),
+(300002, 27760, 571, 1, 1, 0, 0, 2483.68, -1836.49, 11.8173, 0.734973, 604800, 0, 0, 20564, 0, 0, 0);
+UPDATE `creature` SET `spawntimesecs` = 604800 WHERE `id` IN (27758, 27759, 29252, 29250, 27748, 27708, 29253, 29251);
+
+
 -- set flightmaster movement to idle
 UPDATE `creature_template` SET `MovementType` = 0 WHERE `entry` = 17209;
 

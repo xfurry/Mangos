@@ -1029,12 +1029,6 @@ enum MangosStrings
     LANG_OPVP_NA_LOOSE_H                = 10045,
     LANG_OPVP_NA_LOOSE_A                = 10046,
 
-    //// opvp gh
-    //LANG_OPVP_GH_CAPTURE_H              = 10051,
-    //LANG_OPVP_GH_CAPTURE_A              = 10052,
-    //LANG_OPVP_GH_LOOSE_H                = 10053,
-    //LANG_OPVP_GH_LOOSE_A                = 10054,
-
     // Use for custom patches             11000-11999
 
     // NOT RESERVED IDS                   12000-1999999999
