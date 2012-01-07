@@ -1075,6 +1075,14 @@
 				>
 			</File>
 			<File
+                RelativePath="..\..\src\game\WorldStateMgr.cpp"
+                >
+            </File>
+            <File
+                RelativePath="..\..\src\game\WorldStateMgr.h"
+                >
+            </File>
+			<File
 				RelativePath="..\..\src\game\ZoneScript.h"
 				>
 			</File>
