@@ -41,6 +41,7 @@
 #include "GridNotifiersImpl.h"
 #include "ObjectPosSelector.h"
 #include "TemporarySummon.h"
+#include "WorldPvPMgr.h"
 #include "movement/packet_builder.h"
 
 Object::Object( )
@@ -928,7 +929,7 @@ void Object::MarkForClientUpdate()
 }
 
 WorldObject::WorldObject()
-    : m_isActiveObject(false), m_currMap(NULL), m_mapId(0), m_InstanceId(0), m_phaseMask(PHASEMASK_NORMAL)
+    : m_isActiveObject(false), m_currMap(NULL), m_mapId(0), m_InstanceId(0), m_phaseMask(PHASEMASK_NORMAL), m_zoneScript(NULL)
 {
 }
 
@@ -1533,6 +1534,15 @@ TerrainInfo const* WorldObject::GetTerrain() const
 void WorldObject::AddObjectToRemoveList()
 {
     GetMap()->AddObjectToRemoveList(this);
+}
+
+void WorldObject::SetZoneScript()
+{
+    if(Map *map = GetMap())
+    {
+        if(!map->IsBattleGroundOrArena() && !map->IsDungeon())
+            m_zoneScript = sWorldPvPMgr.GetZoneScript(GetZoneId());
+    }
 }
 
 Creature* WorldObject::SummonCreature(uint32 id, float x, float y, float z, float ang,TempSummonType spwtype,uint32 despwtime, bool asActiveObject)
