@@ -28,6 +28,7 @@ WorldPvPSI::WorldPvPSI() : WorldPvP(), m_uiResourcesAly(0), m_uiResourcesHorde(0
 bool WorldPvPSI::InitOutdoorPvPArea()
 {
     RegisterZone(ZONE_ID_SILITHUS);
+    RegisterZone(ZONE_ID_GATES_OF_AQ);
     RegisterZone(ZONE_ID_TEMPLE_OF_AQ);
     RegisterZone(ZONE_ID_RUINS_OF_AQ);
 

@@ -227,7 +227,6 @@ class WorldPvPEP : public WorldPvP
 
         bool InitOutdoorPvPArea();
 
-        //void OnCreatureCreate(Creature* pCreature);
         void OnGameObjectCreate(GameObject* pGo);
         void ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId);
 

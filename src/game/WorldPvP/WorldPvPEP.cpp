@@ -40,10 +40,6 @@ WorldPvPEP::WorldPvPEP() : WorldPvP(),
     m_uiTowersHorde(0)
 {
     m_uiTypeId = WORLD_PVP_TYPE_EP;
-
-    m_uiFlightMasterGUID.Clear();
-    m_uiLordaeronShrineAlyGUID.Clear();
-    m_uiLordaeronShrineHordeGUID.Clear();
 }
 
 bool WorldPvPEP::InitOutdoorPvPArea()

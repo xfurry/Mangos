@@ -61,7 +61,7 @@ enum
     WORLD_STATE_SI_SILITHYST_MAX    = 2317,
 };
 
-// Atrea trigger location
+// Area trigger location - workaround to check the flag drop handling
 static sSpawnLocations m_aSilithusLocs[2] =
 {
     {-7142.04f, 1397.92f, 4.327f},      // aly

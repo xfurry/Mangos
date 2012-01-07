@@ -17,11 +17,11 @@
  */
 
 #include "WorldPvPMgr.h"
-#include "WorldPvPSI.h"
 #include "WorldPvPEP.h"
 #include "WorldPvPGH.h"
 #include "WorldPvPHP.h"
 #include "WorldPvPNA.h"
+#include "WorldPvPSI.h"
 #include "WorldPvPTF.h"
 #include "WorldPvPZM.h"
 #include "Policies/SingletonImp.h"
@@ -43,19 +43,7 @@ void WorldPvPMgr::InitWorldPvP()
 {
     uint8 uiPvPZonesInitialized = 0;
 
-    WorldPvP* pWorldPvP = new WorldPvPSI;
-    if(!pWorldPvP->InitWorldPvPArea())
-    {
-        sLog.outDebug("WorldPvP : SILITHUS init failed.");
-        delete pWorldPvP;
-    }
-    else
-    {
-        m_WorldPvPSet.push_back(pWorldPvP);
-        ++uiPvPZonesInitialized;
-    }
-
-    pWorldPvP = new WorldPvPEP;
+    WorldPvP* pWorldPvP = new WorldPvPEP;
     if(!pWorldPvP->InitWorldPvPArea())
     {
         sLog.outDebug("WorldPvP : EASTER PLAGUELANDS init failed.");
@@ -67,8 +55,32 @@ void WorldPvPMgr::InitWorldPvP()
         ++uiPvPZonesInitialized;
     }
 
+    pWorldPvP = new WorldPvPHP;
+    if(!pWorldPvP->InitWorldPvPArea())
+    {
+        sLog.outDebug("WorldPvP : HELLFIRE PENINSULA init failed.");
+        delete pWorldPvP;
+    }
+    else
+    {
+        m_WorldPvPSet.push_back(pWorldPvP);
+        ++uiPvPZonesInitialized;
+    }
+
+    pWorldPvP = new WorldPvPSI;
+    if(!pWorldPvP->InitWorldPvPArea())
+    {
+        sLog.outDebug("WorldPvP : SILITHUS init failed.");
+        delete pWorldPvP;
+    }
+    else
+    {
+        m_WorldPvPSet.push_back(pWorldPvP);
+        ++uiPvPZonesInitialized;
+    }
+
     sLog.outString();
-    sLog.outString(">> Loaded %u worldPvP zones", uiPvPZonesInitialized);
+    sLog.outString(">> Loaded %u World PvP zones", uiPvPZonesInitialized);
 }
 
 /**
