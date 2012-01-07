@@ -225,7 +225,7 @@ class WorldPvPEP : public WorldPvP
     public:
         WorldPvPEP();
 
-        bool InitOutdoorPvPArea();
+        bool InitWorldPvPArea();
 
         void OnGameObjectCreate(GameObject* pGo);
         void ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId);

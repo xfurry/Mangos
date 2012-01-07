@@ -1538,9 +1538,9 @@ void WorldObject::AddObjectToRemoveList()
 
 void WorldObject::SetZoneScript()
 {
-    if(Map *map = GetMap())
+    if (Map *map = GetMap())
     {
-        if(!map->IsBattleGroundOrArena() && !map->IsDungeon())
+        if (!map->IsBattleGroundOrArena() && !map->IsDungeon())
             m_zoneScript = sWorldPvPMgr.GetZoneScript(GetZoneId());
     }
 }

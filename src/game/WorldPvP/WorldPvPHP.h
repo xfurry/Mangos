@@ -109,6 +109,8 @@ enum
     GO_ARTKIT_STADIUM_NEUTRAL               = 69,
 
     // world states
+    WORLD_STATE_TOWER_DISPLAY_HP_A          = 2490,
+    WORLD_STATE_TOWER_DISPLAY_HP_H          = 2489,
     WORLD_STATE_TOWER_COUNT_HP_ALY          = 2476,
     WORLD_STATE_TOWER_COUNT_HP_HORDE        = 2478,
 
@@ -130,7 +132,7 @@ class WorldPvPHP : public WorldPvP
     public:
         WorldPvPHP();
 
-        bool InitOutdoorPvPArea();
+        bool InitWorldPvPArea();
 
         void OnGameObjectCreate(GameObject* pGo);
         void ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId);

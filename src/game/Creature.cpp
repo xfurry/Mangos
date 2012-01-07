@@ -757,11 +757,10 @@ bool Creature::Create(uint32 guidlow, CreatureCreatePos& cPos, CreatureInfo cons
     if (InstanceData* iData = GetMap()->GetInstanceData())
         iData->OnCreatureCreate(this);
 
-    // Notify outdoor pvp script
+    // Init and notify outdoor pvp script
+    SetZoneScript();
     if (m_zoneScript)
         m_zoneScript->OnCreatureCreate(this);
-
-    SetZoneScript();
 
     switch (GetCreatureInfo()->rank)
     {

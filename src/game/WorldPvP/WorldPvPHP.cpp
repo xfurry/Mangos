@@ -39,7 +39,7 @@ WorldPvPHP::WorldPvPHP() : WorldPvP(),
     m_uiTypeId = WORLD_PVP_TYPE_HP;
 }
 
-bool WorldPvPHP::InitOutdoorPvPArea()
+bool WorldPvPHP::InitWorldPvPArea()
 {
     RegisterZone(ZONE_ID_HELLFIRE_PENINSULA);
     RegisterZone(ZONE_ID_HELLFIRE_CITADEL);
@@ -55,6 +55,8 @@ void WorldPvPHP::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
     FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_HP_ALY,   m_uiTowersAlly);
     FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_HP_HORDE, m_uiTowersHorde);
+    FillInitialWorldState(data, count, WORLD_STATE_TOWER_DISPLAY_HP_A, 1);
+    FillInitialWorldState(data, count, WORLD_STATE_TOWER_DISPLAY_HP_H, 1);
 
     FillInitialWorldState(data, count, m_uiBrokenHillWorldState,    1);
     FillInitialWorldState(data, count, m_uiStadiumWorldState,       1);
@@ -63,8 +65,8 @@ void WorldPvPHP::FillInitialWorldStates(WorldPacket& data, uint32& count)
 
 void WorldPvPHP::SendRemoveWorldStates(Player* pPlayer)
 {
-    pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HP_ALY,      0);
-    pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HP_HORDE,    0);
+    pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_DISPLAY_HP_A,    0);
+    pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_DISPLAY_HP_H,    0);
 
     pPlayer->SendUpdateWorldState(m_uiBrokenHillWorldState,         0);
     pPlayer->SendUpdateWorldState(m_uiStadiumWorldState,            0);
@@ -80,6 +82,9 @@ void WorldPvPHP::UpdateWorldState()
 
 void WorldPvPHP::HandlePlayerEnterZone(Player* pPlayer)
 {
+    // remove the buff from the player first; Sometimes on relog players still have the aura
+    pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? SPELL_HELLFIRE_SUPERIORITY_ALY : SPELL_HELLFIRE_SUPERIORITY_HORDE);
+
     // cast buff the the player which enters the zone
     if ((pPlayer->GetTeam() == ALLIANCE ? m_uiTowersAlly : m_uiTowersHorde) == MAX_HP_TOWERS)
         pPlayer->CastSpell(pPlayer, pPlayer->GetTeam() == ALLIANCE ? SPELL_HELLFIRE_SUPERIORITY_ALY : SPELL_HELLFIRE_SUPERIORITY_HORDE, true);
@@ -101,21 +106,27 @@ void WorldPvPHP::OnGameObjectCreate(GameObject* pGo)
     {
         case GO_TOWER_BANNER_OVERLOOK:
             m_TowerBannerOverlookGUID = pGo->GetObjectGuid();
+            pGo->SetGoArtKit(GO_ARTKIT_OVERLOOK_NEUTRAL);
             break;
         case GO_TOWER_BANNER_STADIUM:
             m_TowerBannerStadiumGUID = pGo->GetObjectGuid();
+            pGo->SetGoArtKit(GO_ARTKIT_STADIUM_NEUTRAL);
             break;
         case GO_TOWER_BANNER_BROKEN_HILL:
             m_TowerBannerBrokenHillGUID = pGo->GetObjectGuid();
+            pGo->SetGoArtKit(GO_ARTKIT_BROKEN_HILL_NEUTRAL);
             break;
         case GO_HELLFIRE_BANNER_OVERLOOK:
             m_TowerPointOverlookGUID = pGo->GetObjectGuid();
+            pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
             break;
         case GO_HELLFIRE_BANNER_STADIUM:
             m_TowerPointStadiumGUID = pGo->GetObjectGuid();
+            pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
             break;
         case GO_HELLFIRE_BANNER_BROKEN_HILL:
             m_TowerPointBrokenHillGUID = pGo->GetObjectGuid();
+            pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
             break;
 
     }
@@ -159,7 +170,7 @@ void WorldPvPHP::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId
 {
     switch(pGo->GetEntry())
     {
-        case GO_TOWER_BANNER_OVERLOOK:
+        case GO_HELLFIRE_BANNER_OVERLOOK:
             switch(uiEventId)
             {
                 case EVENT_OVERLOOK_PROGRESS_ALLIANCE:
@@ -182,7 +193,7 @@ void WorldPvPHP::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId
                     break;
             }
             break;
-        case GO_TOWER_BANNER_STADIUM:
+        case GO_HELLFIRE_BANNER_STADIUM:
             switch(uiEventId)
             {
                 case EVENT_STADIUM_PROGRESS_ALLIANCE:
@@ -205,7 +216,7 @@ void WorldPvPHP::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId
                     break;
             }
             break;
-        case GO_TOWER_BANNER_BROKEN_HILL:
+        case GO_HELLFIRE_BANNER_BROKEN_HILL:
             switch(uiEventId)
             {
                 case EVENT_BROKEN_HILL_PROGRESS_ALLIANCE:
@@ -245,8 +256,8 @@ void WorldPvPHP::SetData(uint32 uiType, uint32 uiData)
                     --m_uiTowersHorde;
                     m_uiOverlookWorldState = WORLD_STATE_OVERLOOK_NEUTRAL;
                     // set artkit
-                    SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_BANNER_NEUTRAL);
-                    SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_OVERLOOK_NEUTRAL);
+                    SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_OVERLOOK_NEUTRAL);
+                    SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_BANNER_NEUTRAL);
                 }
                 else if (GetData(TYPE_OVERLOOK_STATE) == PROGRESS)
                 {
@@ -256,8 +267,8 @@ void WorldPvPHP::SetData(uint32 uiType, uint32 uiData)
                     {
                         ++m_uiTowersAlly;
                         // set artkit
-                        SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_BANNER_ALLIANCE);
-                        SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_OVERLOOK_ALY);
+                        SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_OVERLOOK_ALY);
+                        SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_BANNER_ALLIANCE);
                     }
                 }
             }
@@ -270,8 +281,8 @@ void WorldPvPHP::SetData(uint32 uiType, uint32 uiData)
                     --m_uiTowersAlly;
                     m_uiOverlookWorldState = WORLD_STATE_OVERLOOK_NEUTRAL;
                     // set artkit
-                    SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_BANNER_NEUTRAL);
-                    SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_OVERLOOK_NEUTRAL);
+                    SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_OVERLOOK_NEUTRAL);
+                    SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_BANNER_NEUTRAL);
                 }
                 if (GetData(TYPE_OVERLOOK_STATE) == PROGRESS)
                 {
@@ -282,8 +293,8 @@ void WorldPvPHP::SetData(uint32 uiType, uint32 uiData)
                         ++m_uiTowersHorde;
 
                         // set artkit
-                        SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_BANNER_HORDE);
-                        SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_OVERLOOK_HORDE);
+                        SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_OVERLOOK_HORDE);
+                        SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_BANNER_HORDE);
                     }
                 }
             }
@@ -303,8 +314,8 @@ void WorldPvPHP::SetData(uint32 uiType, uint32 uiData)
                     --m_uiTowersHorde;
                     m_uiStadiumWorldState = WORLD_STATE_STADIUM_NEUTRAL;
                     // set artkit
-                    SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_BANNER_NEUTRAL);
-                    SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_STADIUM_NEUTRAL);
+                    SetBannerArtKit(m_TowerBannerStadiumGUID, GO_ARTKIT_STADIUM_NEUTRAL);
+                    SetBannerArtKit(m_TowerPointStadiumGUID, GO_ARTKIT_BANNER_NEUTRAL);
                 }
                 else if (GetData(TYPE_STADIUM_STATE) == PROGRESS)
                 {
@@ -315,8 +326,8 @@ void WorldPvPHP::SetData(uint32 uiType, uint32 uiData)
                         ++m_uiTowersAlly;
 
                         // set artkit
-                        SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_BANNER_ALLIANCE);
-                        SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_STADIUM_ALY);
+                        SetBannerArtKit(m_TowerBannerStadiumGUID, GO_ARTKIT_STADIUM_ALY);
+                        SetBannerArtKit(m_TowerPointStadiumGUID, GO_ARTKIT_BANNER_ALLIANCE);
                     }
                 }
             }
@@ -329,8 +340,8 @@ void WorldPvPHP::SetData(uint32 uiType, uint32 uiData)
                     --m_uiTowersAlly;
                     m_uiStadiumWorldState = WORLD_STATE_STADIUM_NEUTRAL;
                     // set artkit
-                    SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_BANNER_NEUTRAL);
-                    SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_STADIUM_NEUTRAL);
+                    SetBannerArtKit(m_TowerBannerStadiumGUID, GO_ARTKIT_STADIUM_NEUTRAL);
+                    SetBannerArtKit(m_TowerPointStadiumGUID, GO_ARTKIT_BANNER_NEUTRAL);
                 }
                 if (GetData(TYPE_STADIUM_STATE) == PROGRESS)
                 {
@@ -341,8 +352,8 @@ void WorldPvPHP::SetData(uint32 uiType, uint32 uiData)
                         ++m_uiTowersHorde;
 
                         // set artkit
-                        SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_BANNER_HORDE);
-                        SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_STADIUM_HORDE);
+                        SetBannerArtKit(m_TowerBannerStadiumGUID, GO_ARTKIT_STADIUM_HORDE);
+                        SetBannerArtKit(m_TowerPointStadiumGUID, GO_ARTKIT_BANNER_HORDE);
                     }
                 }
             }
@@ -362,8 +373,8 @@ void WorldPvPHP::SetData(uint32 uiType, uint32 uiData)
                     --m_uiTowersHorde;
                     m_uiBrokenHillWorldState = WORLD_STATE_BROKEN_HILL_NEUTRAL;
                     // set artkit
-                    SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_BANNER_NEUTRAL);
-                    SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_BROKEN_HILL_NEUTRAL);
+                    SetBannerArtKit(m_TowerBannerBrokenHillGUID, GO_ARTKIT_BROKEN_HILL_NEUTRAL);
+                    SetBannerArtKit(m_TowerPointBrokenHillGUID, GO_ARTKIT_BANNER_NEUTRAL);
                 }
                 else if (GetData(TYPE_BROKEN_HILL_STATE) == PROGRESS)
                 {
@@ -374,8 +385,8 @@ void WorldPvPHP::SetData(uint32 uiType, uint32 uiData)
                         ++m_uiTowersAlly;
 
                         // set artkit
-                        SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_BANNER_ALLIANCE);
-                        SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_BROKEN_HILL_ALY);
+                        SetBannerArtKit(m_TowerBannerBrokenHillGUID, GO_ARTKIT_BROKEN_HILL_ALY);
+                        SetBannerArtKit(m_TowerPointBrokenHillGUID, GO_ARTKIT_BANNER_ALLIANCE);
                     }
                 }
             }
@@ -388,8 +399,8 @@ void WorldPvPHP::SetData(uint32 uiType, uint32 uiData)
                     --m_uiTowersAlly;
                     m_uiBrokenHillWorldState = WORLD_STATE_BROKEN_HILL_NEUTRAL;
                     // set artkit
-                    SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_BANNER_NEUTRAL);
-                    SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_BROKEN_HILL_NEUTRAL);
+                    SetBannerArtKit(m_TowerBannerBrokenHillGUID, GO_ARTKIT_BROKEN_HILL_NEUTRAL);
+                    SetBannerArtKit(m_TowerPointBrokenHillGUID, GO_ARTKIT_BANNER_NEUTRAL);
                 }
                 if (GetData(TYPE_BROKEN_HILL_STATE) == PROGRESS)
                 {
@@ -400,8 +411,8 @@ void WorldPvPHP::SetData(uint32 uiType, uint32 uiData)
                         ++m_uiTowersHorde;
 
                         // set artkit
-                        SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_BANNER_HORDE);
-                        SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_BROKEN_HILL_HORDE);
+                        SetBannerArtKit(m_TowerBannerBrokenHillGUID, GO_ARTKIT_BROKEN_HILL_HORDE);
+                        SetBannerArtKit(m_TowerPointBrokenHillGUID, GO_ARTKIT_BANNER_HORDE);
                     }
                 }
             }
@@ -502,5 +513,8 @@ void WorldPvPHP::SetBannerArtKit(ObjectGuid BannerGuid, uint32 uiArtkit)
         return;
 
     if (GameObject* pBanner = pPlayer->GetMap()->GetGameObject(BannerGuid))
+    {
         pBanner->SetGoArtKit(uiArtkit);
+        pBanner->Refresh();
+    }
 }

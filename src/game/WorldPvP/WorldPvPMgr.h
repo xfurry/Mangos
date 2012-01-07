@@ -69,11 +69,11 @@ class WorldPvPMgr
     private:
         // contains all initiated world pvp events
         // used when initing / cleaning up
-        WorldPvPSet  m_WorldPvPSet;
+        WorldPvPSet m_WorldPvPSet;
 
         // maps the zone ids to an world pvp event
         // used in player event handling
-        WorldPvPMap   m_WorldPvPMap;
+        WorldPvPMap m_WorldPvPMap;
 
         // update interval
         uint32 m_UpdateTimer;

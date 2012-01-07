@@ -163,11 +163,10 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, uint32 phaseMa
     if (InstanceData* iData = map->GetInstanceData())
         iData->OnObjectCreate(this);
 
-    // Notify the outdoor pvp script
-    if(m_zoneScript)
-        m_zoneScript->OnGameObjectCreate(this);
-
+    // Init and notify the outdoor pvp script
     SetZoneScript();
+    if (m_zoneScript)
+        m_zoneScript->OnGameObjectCreate(this);
 
     return true;
 }
@@ -1604,17 +1603,12 @@ void GameObject::Use(Unit* user)
                 return;
 
             // calculate the number of players which are actually capturing the point
-            uint32 rangePlayers = m_AlliancePlayersSet.size() - m_HordePlayersSet.size();
-            if (rangePlayers >= info->capturePoint.minSuperiority)
-                m_progressFaction = ALLIANCE;
-            else if (rangePlayers <= -info->capturePoint.minSuperiority)
-            {
-                m_progressFaction = HORDE;
-                rangePlayers *= -1;                 // positive amount of players
-            }
-            else
+            uint32 rangePlayers = m_AlliancePlayersSet.size() > m_HordePlayersSet.size() ? m_AlliancePlayersSet.size() - m_HordePlayersSet.size() : m_HordePlayersSet.size() - m_AlliancePlayersSet.size();
+            if (rangePlayers == 0)
                 // don't update if there are not enough players capturing the point
                 return;
+            else
+                m_progressFaction = m_AlliancePlayersSet.size() > m_HordePlayersSet.size() ? ALLIANCE : HORDE;
 
             // cap speed
             if (rangePlayers > info->capturePoint.maxSuperiority)
@@ -1634,7 +1628,7 @@ void GameObject::Use(Unit* user)
             // default value to increase the slider is 1/max players
             // we multiply this value with the number of players in range
 
-            float sliderTick = rangePlayers * (1.0f / (float)info->capturePoint.maxSuperiority);
+            float sliderTick = (float)rangePlayers * (1.0f / (float)info->capturePoint.maxSuperiority);
 
             // calculate the slider movement only for the major faction
             if (player->GetTeam() == m_progressFaction)

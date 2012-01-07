@@ -42,7 +42,7 @@ WorldPvPEP::WorldPvPEP() : WorldPvP(),
     m_uiTypeId = WORLD_PVP_TYPE_EP;
 }
 
-bool WorldPvPEP::InitOutdoorPvPArea()
+bool WorldPvPEP::InitWorldPvPArea()
 {
     RegisterZone(ZONE_ID_EASTERN_PLAGUELANDS);
     RegisterZone(ZONE_ID_STRATHOLME);
@@ -82,6 +82,13 @@ void WorldPvPEP::UpdateWorldState()
 
 void WorldPvPEP::HandlePlayerEnterZone(Player* pPlayer)
 {
+    // remove the buff from the player first; Sometimes on relog players still have the aura
+    for (uint8 i = 0; i < MAX_TOWERS; i++)
+    {
+        if (pPlayer->HasAura(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlly : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde))
+            pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlly : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde);
+    }
+
     // cast buff the the player which enters the zone
     switch(pPlayer->GetTeam())
     {
@@ -766,7 +773,7 @@ void WorldPvPEP::DoSummonSoldiersIfCan(uint32 uiFaction)
 
     if (uiFaction == ALLIANCE)
     {
-        for (uint8 i = 0; i < MAX_TOWERS + 1; i++)
+        for (uint8 i = 0; i < 5; i++)
         {
             if (i == 0)
                 uiEntry = NPC_LORDAERON_COMMANDER;
@@ -774,15 +781,12 @@ void WorldPvPEP::DoSummonSoldiersIfCan(uint32 uiFaction)
                 uiEntry = NPC_LORDAERON_SOLDIER;
 
             if (Creature* pSoldier = pPlayer->SummonCreature(uiEntry, m_aPlaguelandSoldiersSpawnLocs[i].m_fX, m_aPlaguelandSoldiersSpawnLocs[i].m_fY, m_aPlaguelandSoldiersSpawnLocs[i].m_fZ, m_aPlaguelandSoldiersSpawnLocs[i].m_fO, TEMPSUMMON_DEAD_DESPAWN, 0))
-            {
-                pSoldier->SetRespawnDelay(7*DAY);
                 m_lSoldiersGuids.push_back(pSoldier->GetObjectGuid());
-            }
         }
     }
     else
     {
-        for (uint8 i = 0; i < MAX_TOWERS + 1; i++)
+        for (uint8 i = 0; i < 5; i++)
         {
             if (i == 0)
                 uiEntry = NPC_LORDAERON_VETERAN;
@@ -790,10 +794,7 @@ void WorldPvPEP::DoSummonSoldiersIfCan(uint32 uiFaction)
                 uiEntry = NPC_LORDAERON_FIGHTER;
 
             if (Creature* pSoldier = pPlayer->SummonCreature(uiEntry, m_aPlaguelandSoldiersSpawnLocs[i].m_fX, m_aPlaguelandSoldiersSpawnLocs[i].m_fY, m_aPlaguelandSoldiersSpawnLocs[i].m_fZ, m_aPlaguelandSoldiersSpawnLocs[i].m_fO, TEMPSUMMON_DEAD_DESPAWN, 0))
-            {
-                pSoldier->SetRespawnDelay(7*DAY);
                 m_lSoldiersGuids.push_back(pSoldier->GetObjectGuid());
-            }
         }
     }
 }
@@ -824,10 +825,10 @@ void WorldPvPEP::DoUpdateShrine(ObjectGuid uiShrineGuid, bool bRemove)
     {
         if (!bRemove)
         {
-            pShrine->SetRespawnTime(DAY);
-            pShrine->Respawn();
+            pShrine->SetRespawnTime(7*DAY);
+            pShrine->Refresh();
         }
-        else
+        else if (pShrine->isSpawned())
             pShrine->Delete();
     }
 }
@@ -842,6 +843,9 @@ void WorldPvPEP::SetBannersArtKit(std::list<ObjectGuid> lBannersGuids, uint32 ui
     for (std::list<ObjectGuid>::iterator itr = lBannersGuids.begin(); itr != lBannersGuids.end(); ++itr)
     {
         if (GameObject* pBanner = pPlayer->GetMap()->GetGameObject(*itr))
+        {
             pBanner->SetGoArtKit(uiArtkit);
+            pBanner->Refresh();
+        }
     }
 }

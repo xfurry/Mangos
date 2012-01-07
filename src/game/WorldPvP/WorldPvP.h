@@ -23,6 +23,7 @@
 #include "../Language.h"
 #include "../World.h"
 #include "../ZoneScript.h"
+#include "Common.h"
 
 enum WorldPvPTypes
 {
@@ -85,7 +86,7 @@ class WorldPvP : public ZoneScript
         virtual void HandleObjectiveComplete(PlayerSet /*m_sObjectivePlayers*/, uint32 /*uiEventId*/) {}
 
         // init all the outdoor pvp area relates stuff
-        virtual bool InitWorldPvPArea() { return true; }
+        virtual bool InitWorldPvPArea() { return false; }
 
         // send world state update to all players present
         void SendUpdateWorldState(uint32 field, uint32 value);

@@ -25,7 +25,7 @@ WorldPvPSI::WorldPvPSI() : WorldPvP(), m_uiResourcesAly(0), m_uiResourcesHorde(0
 }
 
 // Init outdoor pvp zones
-bool WorldPvPSI::InitOutdoorPvPArea()
+bool WorldPvPSI::InitWorldPvPArea()
 {
     RegisterZone(ZONE_ID_SILITHUS);
     RegisterZone(ZONE_ID_GATES_OF_AQ);
@@ -61,6 +61,10 @@ void WorldPvPSI::UpdateWorldState()
 // Handle buffs when player enters the zone
 void WorldPvPSI::HandlePlayerEnterZone(Player* pPlayer)
 {
+    // remove the buff from the player first; Sometimes on relog players still have the aura
+    if (pPlayer->HasAura(SPELL_CENARION_FAVOR))
+        pPlayer->RemoveAurasDueToSpell(SPELL_CENARION_FAVOR);
+
     if(pPlayer->GetTeam() == m_uiLastControllerTeam)
         pPlayer->CastSpell(pPlayer, SPELL_CENARION_FAVOR, true);
 
