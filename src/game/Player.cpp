@@ -6715,11 +6715,13 @@ WorldPvP* Player::GetWorldPvP() const
     return sWorldPvPMgr.GetWorldPvPToZoneId(GetZoneId());
 }
 
-// Return if a players is capable of doing world pvp
 bool Player::IsWorldPvPActive()
 {
-    return isAlive() && !HasInvisibilityAura() && !HasStealthAura() && (IsPvP() || sWorld.IsPvPRealm()) &&
-        !HasMovementFlag(MOVEFLAG_FLYING) && !IsTaxiFlying() && !isGameMaster();
+    return CanCaptureTowerPoint() &&
+        (IsPvP() || sWorld.IsPvPRealm()) &&
+        !HasMovementFlag(MOVEFLAG_FLYING) &&
+        !IsTaxiFlying() &&
+        !isGameMaster();
 }
 
 void Player::UpdateZone(uint32 newZone, uint32 newArea)
@@ -8688,6 +8690,7 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
         case 38:
         case 40:
         case 51:
+            break;
         case 139:                                           // Eastern plaguelands
             if (outdoorBg && outdoorBg->GetTypeId() == WORLD_PVP_TYPE_EP)
                 outdoorBg->FillInitialWorldStates(data, count);

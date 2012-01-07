@@ -761,8 +761,8 @@ class MANGOS_DLL_SPEC GameObject : public WorldObject
 
     protected:
         uint32      m_captureTime;
-        double      m_captureTicks;
-        uint8       m_captureState;
+        float       m_captureTicks;
+        CapturePointState m_captureState;
         uint32      m_progressFaction;                      // faction which has the most players in range of a capture point
         uint32      m_ownerFaction;                         // faction which has conquered the capture point
         uint32      m_spellId;
