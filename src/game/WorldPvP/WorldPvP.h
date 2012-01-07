@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2011 MaNGOS <http://www.MaNGOScore.org/>
+ * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
 #ifndef OUTDOOR_PVP_H
 #define OUTDOOR_PVP_H
 
-#include "Language.h"
 #include "WorldPvPMgr.h"
-#include "World.h"
-#include "ZoneScript.h"
+#include "../Language.h"
+#include "../World.h"
+#include "../ZoneScript.h"
 
 enum WorldPvPTypes
 {

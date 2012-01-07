@@ -41,7 +41,7 @@
 #include "GridNotifiersImpl.h"
 #include "ObjectPosSelector.h"
 #include "TemporarySummon.h"
-#include "WorldPvPMgr.h"
+#include "WorldPvP/WorldPvPMgr.h"
 #include "movement/packet_builder.h"
 
 Object::Object( )
