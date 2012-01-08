@@ -53,7 +53,7 @@ class WorldPvPMgr
         // add zone id to world pvp handler
         void AddZone(uint32 uiZoneId, WorldPvP* pScriptHandler);
 
-        void Update(uint32 diff);
+        void Update(uint32);
 
         // Handle cases when a player drops a flag
         void HandleDropFlag(Player* pPlayer, uint32 uiSpellId);
@@ -76,7 +76,7 @@ class WorldPvPMgr
         WorldPvPMap m_WorldPvPMap;
 
         // update interval
-        uint32 m_UpdateTimer;
+        IntervalTimer m_UpdateTimer;
 };
 
 #define sWorldPvPMgr MaNGOS::Singleton<WorldPvPMgr>::Instance()

@@ -28,7 +28,10 @@
 
 INSTANTIATE_SINGLETON_1( WorldPvPMgr );
 
-WorldPvPMgr::WorldPvPMgr() : m_UpdateTimer(0) { }
+WorldPvPMgr::WorldPvPMgr()
+{
+    m_UpdateTimer.SetInterval(sWorld.getConfig(CONFIG_UINT32_INTERVAL_MAPUPDATE));
+}
 
 WorldPvPMgr::~WorldPvPMgr()
 {
@@ -83,6 +86,18 @@ void WorldPvPMgr::InitWorldPvP()
     if(!pWorldPvP->InitWorldPvPArea())
     {
         sLog.outDebug("WorldPvP : SILITHUS init failed.");
+        delete pWorldPvP;
+    }
+    else
+    {
+        m_WorldPvPSet.push_back(pWorldPvP);
+        ++uiPvPZonesInitialized;
+    }
+
+    pWorldPvP = new WorldPvPTF;
+    if(!pWorldPvP->InitWorldPvPArea())
+    {
+        sLog.outDebug("WorldPvP : TEROKKAR FOREST init failed.");
         delete pWorldPvP;
     }
     else
@@ -231,16 +246,14 @@ ZoneScript* WorldPvPMgr::GetZoneScript(uint32 uiZoneId)
         return NULL;
 }
 
-// ToDo: not sure if needed
 void WorldPvPMgr::Update(uint32 diff)
 {
-    m_UpdateTimer += diff;
+    m_UpdateTimer.Update(diff);
+    if( !m_UpdateTimer.Passed() )
+        return;
 
-    if(m_UpdateTimer > WORLD_PVP_OBJECTIVE_UPDATE_INTERVAL)
-    {
-        /*for (WorldPvPSet::iterator itr = m_WorldPvPSet.begin(); itr != m_WorldPvPSet.end(); ++itr)
-            (*itr)->Update(m_UpdateTimer);*/
+    for (WorldPvPSet::iterator itr = m_WorldPvPSet.begin(); itr != m_WorldPvPSet.end(); ++itr)
+        (*itr)->Update((uint32)m_UpdateTimer.GetCurrent());
 
-        m_UpdateTimer = 0;
-    }
+    m_UpdateTimer.SetCurrent(0);
 }

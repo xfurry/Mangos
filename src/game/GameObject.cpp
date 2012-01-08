@@ -1667,20 +1667,18 @@ void GameObject::Use(Unit* user)
             if ((uint32)m_captureTicks == CAPTURE_SLIDER_ALLIANCE && m_captureState == CAPTURE_STATE_PROGRESS)
             {
                 if (info->capturePoint.winEventID1)
-                {
                     eventId = info->capturePoint.winEventID1;
-                    m_captureState = CAPTURE_STATE_WIN;
-                }
+
+                m_captureState = CAPTURE_STATE_WIN;
             }
             // win event horde
             // horde wins a tower with max points
             else if ((uint32)m_captureTicks == CAPTURE_SLIDER_HORDE && m_captureState == CAPTURE_STATE_PROGRESS)
             {
                 if (info->capturePoint.winEventID2)
-                {
                     eventId = info->capturePoint.winEventID2;
-                    m_captureState = CAPTURE_STATE_WIN;
-                }
+
+                m_captureState = CAPTURE_STATE_WIN;
             }
 
             // contest event can happen when a player succeeds in attacking a tower which belongs to the opposite faction; owner doesn't change
@@ -1690,20 +1688,18 @@ void GameObject::Use(Unit* user)
             else if (m_ownerFaction == ALLIANCE && m_progressFaction == HORDE && m_captureState != CAPTURE_STATE_CONTEST && (m_captureState == CAPTURE_STATE_PROGRESS || m_captureState == CAPTURE_STATE_WIN))
             {
                 if (info->capturePoint.contestedEventID1)
-                {
                     eventId = info->capturePoint.contestedEventID1;
-                    m_captureState = CAPTURE_STATE_CONTEST;
-                }
+
+                m_captureState = CAPTURE_STATE_CONTEST;
             }
             // contest event horde
             // alliance attack tower which is in progress or is won by horde
             else if (m_ownerFaction == HORDE && m_progressFaction == ALLIANCE && m_captureState != CAPTURE_STATE_CONTEST && (m_captureState == CAPTURE_STATE_PROGRESS || m_captureState == CAPTURE_STATE_WIN))
             {
                 if (info->capturePoint.contestedEventID2)
-                {
                     eventId = info->capturePoint.contestedEventID2;
-                    m_captureState = CAPTURE_STATE_CONTEST;
-                }
+
+                m_captureState = CAPTURE_STATE_CONTEST;
             }
 
             // the progress event can be achieved when a faction passes on its color on the slider or retakes the tower from a contested state
@@ -1713,34 +1709,30 @@ void GameObject::Use(Unit* user)
             else if ((uint32)m_captureTicks == CAPTURE_SLIDER_NEUTRAL + neutralPercent * 0.5f + 1 && ((m_captureState == CAPTURE_STATE_NEUTRAL && m_progressFaction == ALLIANCE) || (m_captureState == CAPTURE_STATE_CONTEST && m_progressFaction == ALLIANCE)))
             {
                 if (info->capturePoint.progressEventID1)
-                {
                     eventId = info->capturePoint.progressEventID1;
 
-                    // handle objective complete
-                    if (m_captureState != CAPTURE_STATE_CONTEST)
-                        sWorldPvPMgr.HandleObjectiveComplete(m_AlliancePlayersSet, info->capturePoint.progressEventID1);
+                // handle objective complete
+                if (m_captureState != CAPTURE_STATE_CONTEST)
+                    sWorldPvPMgr.HandleObjectiveComplete(m_AlliancePlayersSet, info->capturePoint.progressEventID1);
 
-                    // set capture state to alliance
-                    m_captureState = CAPTURE_STATE_PROGRESS;
-                    m_ownerFaction = ALLIANCE;
-                }
+                // set capture state to alliance
+                m_captureState = CAPTURE_STATE_PROGRESS;
+                m_ownerFaction = ALLIANCE;
             }
             // progress event horde
             // horde takes the tower from neutral to horde OR horde takes the tower from contested to horde
             else if ((uint32)m_captureTicks == CAPTURE_SLIDER_NEUTRAL - neutralPercent * 0.5f - 1 && ((m_captureState == CAPTURE_STATE_NEUTRAL && m_progressFaction == HORDE) || (m_captureState == CAPTURE_STATE_CONTEST && player->GetTeam() == HORDE)))
             {
                 if (info->capturePoint.progressEventID2)
-                {
                     eventId = info->capturePoint.progressEventID2;
 
-                    // handle objective complete
-                    if (m_captureState != CAPTURE_STATE_CONTEST)
-                        sWorldPvPMgr.HandleObjectiveComplete(m_HordePlayersSet, info->capturePoint.progressEventID2);
+                // handle objective complete
+                if (m_captureState != CAPTURE_STATE_CONTEST)
+                    sWorldPvPMgr.HandleObjectiveComplete(m_HordePlayersSet, info->capturePoint.progressEventID2);
 
-                    // set capture state to horde
-                    m_captureState = CAPTURE_STATE_PROGRESS;
-                    m_ownerFaction = HORDE;
-                }
+                // set capture state to horde
+                m_captureState = CAPTURE_STATE_PROGRESS;
+                m_ownerFaction = HORDE;
             }
 
             // neutral event can happen when one faction takes the tower from the opposite faction and makes it neutral
@@ -1750,24 +1742,20 @@ void GameObject::Use(Unit* user)
             else if ((uint32)m_captureTicks == CAPTURE_SLIDER_NEUTRAL + neutralPercent * 0.5f && m_captureState == CAPTURE_STATE_CONTEST && m_progressFaction == HORDE)
             {
                 if (info->capturePoint.neutralEventID1)
-                {
                     eventId = info->capturePoint.neutralEventID1;
 
-                    m_captureState = CAPTURE_STATE_NEUTRAL;
-                    m_ownerFaction = TEAM_NONE;
-                }
+                m_captureState = CAPTURE_STATE_NEUTRAL;
+                m_ownerFaction = TEAM_NONE;
             }
             // neutral event horde
             // alliance takes the tower from horde to neutral
             else if ((uint32)m_captureTicks == CAPTURE_SLIDER_NEUTRAL - neutralPercent * 0.5f && m_captureState == CAPTURE_STATE_CONTEST && m_progressFaction == ALLIANCE)
             {
                 if (info->capturePoint.neutralEventID2)
-                {
                     eventId = info->capturePoint.neutralEventID2;
 
-                    m_captureState = CAPTURE_STATE_NEUTRAL;
-                    m_ownerFaction = TEAM_NONE;
-                }
+                m_captureState = CAPTURE_STATE_NEUTRAL;
+                m_ownerFaction = TEAM_NONE;
            }
 
            if (eventId)

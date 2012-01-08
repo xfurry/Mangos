@@ -99,10 +99,10 @@ void WorldPvPZM::OnCreatureCreate(Creature* pCreature)
     switch (pCreature->GetEntry())
     {
         case NPC_ALLIANCE_FIELD_SCOUT:
-            m_AllianceScountGUID = pCreature->GetObjectGuid();
+            m_AllianceScoutGUID = pCreature->GetObjectGuid();
             break;
         case NPC_HORDE_FIELD_SCOUT:
-            m_HorderScountGUID = pCreature->GetObjectGuid();
+            m_HorderScoutGUID = pCreature->GetObjectGuid();
             break;
         case NPC_PVP_BEAM_RED:
             if (pCreature->GetPositionY() < 7000.0f)
@@ -388,7 +388,7 @@ void WorldPvPZM::DoPrepareFactionScouts(uint32 uiFaction)
 
     if (uiFaction == ALLIANCE)
     {
-        if (Creature* pScout = pPlayer->GetMap()->GetCreature(m_AllianceScountGUID))
+        if (Creature* pScout = pPlayer->GetMap()->GetCreature(m_AllianceScoutGUID))
             pScout->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
         SendUpdateWorldState(m_uiAllianceScoutWorldState, 0);
@@ -397,7 +397,7 @@ void WorldPvPZM::DoPrepareFactionScouts(uint32 uiFaction)
     }
     else if (uiFaction == HORDE)
     {
-        if (Creature* pScout = pPlayer->GetMap()->GetCreature(m_HorderScountGUID))
+        if (Creature* pScout = pPlayer->GetMap()->GetCreature(m_HorderScoutGUID))
             pScout->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
         SendUpdateWorldState(m_uiHordeScoutWorldState, 0);
@@ -414,7 +414,7 @@ void WorldPvPZM::DoResetScouts(uint32 uiFaction, bool bIncludeWorldStates)
 
     if (uiFaction == ALLIANCE)
     {
-        if (Creature* pScout = pPlayer->GetMap()->GetCreature(m_AllianceScountGUID))
+        if (Creature* pScout = pPlayer->GetMap()->GetCreature(m_AllianceScoutGUID))
             pScout->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
         // reset world states only if requested
@@ -427,7 +427,7 @@ void WorldPvPZM::DoResetScouts(uint32 uiFaction, bool bIncludeWorldStates)
     }
     else if (uiFaction == HORDE)
     {
-        if (Creature* pScout = pPlayer->GetMap()->GetCreature(m_HorderScountGUID))
+        if (Creature* pScout = pPlayer->GetMap()->GetCreature(m_HorderScoutGUID))
             pScout->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
         // reset world states only if requested

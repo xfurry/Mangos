@@ -94,6 +94,9 @@ class WorldPvP : public ZoneScript
         // awards rewards for player kill
         virtual void AwardKillBonus(Player* /*pPlayer*/) {}
 
+        // update - called by the WorldPvPMgr
+        virtual void Update(uint32 diff) {}
+
         // applies buff to a team inside the specific zone
         void DoProcessTeamBuff(Team uiTeam, uint32 spellId, bool bRemove = false);
 

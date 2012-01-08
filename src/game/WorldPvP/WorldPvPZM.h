@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
- 
- 
+
+
 #ifndef WORLD_PVP_ZM
 #define WORLD_PVP_ZM
 
@@ -27,8 +27,8 @@ enum
     TYPE_EAST_BEACON_CONTROLLER             = 1,
     TYPE_WEST_BEACON_CONTROLLER             = 2,
 
-    TYPE_EAST_BEACON_STATE                  = 4,
-    TYPE_WEST_BEACON_STATE                  = 5,
+    TYPE_EAST_BEACON_STATE                  = 3,
+    TYPE_WEST_BEACON_STATE                  = 4,
 
     // tower ids
     // they are used in the process event functions
@@ -70,8 +70,6 @@ enum
     GRAVEYARD_ZONE_TWIN_SPIRE               = 3521,
 
     // events
-    //EVENT_EAST_BEACON_WIN_ALLIANCE        = 0,
-    //EVENT_EAST_BEACON_WIN_HORDE           = 0,
     //EVENT_EAST_BEACON_CONTEST_ALLIANCE    = 11816,
     //EVENT_EAST_BEACON_CONTEST_HORDE       = 11817,
     EVENT_EAST_BEACON_PROGRESS_ALLIANCE     = 11807,
@@ -79,8 +77,6 @@ enum
     EVENT_EAST_BEACON_NEUTRAL_ALLIANCE      = 11814,
     EVENT_EAST_BEACON_NEUTRAL_HORDE         = 11815,
 
-    //EVENT_WEST_BEACON_WIN_ALLIANCE        = 0,
-    //EVENT_WEST_BEACON_WIN_HORDE           = 0,
     //EVENT_WEST_BEACON_CONTEST_ALLIANCE    = 11813,
     //EVENT_WEST_BEACON_CONTEST_HORDE       = 11812,
     EVENT_WEST_BEACON_PROGRESS_ALLIANCE     = 11805,
@@ -175,8 +171,8 @@ class WorldPvPZM : public WorldPvP
         ObjectGuid m_TowerBannerCenterHordeGUID;
         ObjectGuid m_TowerBannerCenterNeutralGUID;
 
-        ObjectGuid m_AllianceScountGUID;
-        ObjectGuid m_HorderScountGUID;
+        ObjectGuid m_AllianceScoutGUID;
+        ObjectGuid m_HorderScoutGUID;
         ObjectGuid m_BeamWestRedGUID;
         ObjectGuid m_BeamWestBlueGUID;
         ObjectGuid m_BeamEastRedGUID;
