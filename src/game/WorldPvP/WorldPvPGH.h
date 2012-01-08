@@ -21,9 +21,6 @@
 
 enum
 {
-    TYPE_VENTURE_CONTROLLER                = 1,
-    TYPE_VENTURE_STATE                     = 2,
-
     // zone ids
     ZONE_ID_GRIZZLY_HILLS                   = 394,
 
@@ -69,16 +66,13 @@ class WorldPvPGH : public WorldPvP
         void OnGameObjectCreate(GameObject* pGo);
         void ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId);
 
-        void SetData(uint32 uiType, uint32 uiData);
-        uint32 GetData(uint32 uiType);
-
     private:
-        void DoRespawnSoldiers(uint8 uiFaction);
+        // process capture events
+        void ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam);
+        // respawn faction soldiers
+        void DoRespawnSoldiers(uint32 uiFaction);
         // set banner artkit
         void SetBannerArtKit(uint32 uiArtKit);
-
-        uint32 m_uiVentureBayController;
-        uint32 m_uiVentureBayState;
 
         ObjectGuid m_TowerBannerLighthouseGuid;
 

@@ -20,9 +20,7 @@
 #include "WorldPvPGH.h"
 
 
-WorldPvPGH::WorldPvPGH() : WorldPvP(),
-    m_uiVentureBayController(0),
-    m_uiVentureBayState(NEUTRAL)
+WorldPvPGH::WorldPvPGH() : WorldPvP()
 {
     m_uiTypeId = WORLD_PVP_TYPE_GH;
 }
@@ -92,64 +90,37 @@ void WorldPvPGH::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId
     {
         case EVENT_LIGHTHOUSE_PROGRESS_ALLIANCE:
         case EVENT_LIGHTHOUSE_PROGRESS_HORDE:
-            SetData(TYPE_VENTURE_STATE, PROGRESS);
+            ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam());
             break;
         case EVENT_LIGHTHOUSE_NEUTRAL_ALLIANCE:
         case EVENT_LIGHTHOUSE_NEUTRAL_HORDE:
-            SetData(TYPE_VENTURE_STATE, NEUTRAL);
+            ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam());
             break;
         case EVENT_LIGHTHOUSE_WIN_ALLIANCE:
         case EVENT_LIGHTHOUSE_WIN_HORDE:
-            SetData(TYPE_VENTURE_STATE, WIN);
+            ProcessCaptureEvent(WIN, pPlayer->GetTeam());
             break;
-
-        default:
-            return;
     }
-
-    SetData(TYPE_VENTURE_CONTROLLER, pPlayer->GetTeam());
 }
 
-void WorldPvPGH::SetData(uint32 uiType, uint32 uiData)
+void WorldPvPGH::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam)
 {
-    switch (uiType)
+    switch (uiCaptureType)
     {
-        case TYPE_VENTURE_CONTROLLER:
-            switch (GetData(TYPE_VENTURE_STATE))
-            {
-                case NEUTRAL:
-                    SetBannerArtKit(GO_ARTKIT_BANNER_NEUTRAL);
-                    break;
-                case WIN:
-                    // Spawn the npcs only when the tower is fully controlled
-                    DoRespawnSoldiers(uiData);
-                    break;
-                case PROGRESS:
-                    SetBannerArtKit(uiData == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
-                    break;
-            }
-            m_uiVentureBayController = GetData(TYPE_VENTURE_STATE) == PROGRESS ? uiData : 0;
+        case NEUTRAL:
+            SetBannerArtKit(GO_ARTKIT_BANNER_NEUTRAL);
             break;
-        case TYPE_VENTURE_STATE:
-            m_uiVentureBayState = uiData;
-            return;
+        case WIN:
+            // Spawn the npcs only when the tower is fully controlled
+            DoRespawnSoldiers(uiTeam);
+            break;
+        case PROGRESS:
+            SetBannerArtKit(uiTeam == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+            break;
     }
 }
 
-uint32 WorldPvPGH::GetData(uint32 uiType)
-{
-    switch (uiType)
-    {
-        case TYPE_VENTURE_CONTROLLER:
-            return m_uiVentureBayController;
-        case TYPE_VENTURE_STATE:
-            return m_uiVentureBayState;
-    }
-
-    return 0;
-}
-
-void WorldPvPGH::DoRespawnSoldiers(uint8 uiFaction)
+void WorldPvPGH::DoRespawnSoldiers(uint32 uiFaction)
 {
     // neet to use a player as anchor for the map
     Player* pPlayer = GetPlayerInZone();
