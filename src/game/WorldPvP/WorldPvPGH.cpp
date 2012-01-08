@@ -62,7 +62,14 @@ void WorldPvPGH::OnCreatureCreate(Creature* pCreature)
             if (pCreature->GetZoneId() == ZONE_ID_GRIZZLY_HILLS)
                 lHordeVendors.push_back(pCreature->GetObjectGuid());
             break;
+
+        default:
+            return;
     }
+
+    // Despawn creatures on create - will be spawned later in script
+    pCreature->SetRespawnDelay(7*DAY);
+    pCreature->ForcedDespawn();
 }
 
 void WorldPvPGH::OnGameObjectCreate(GameObject* pGo)

@@ -91,6 +91,18 @@ void WorldPvPMgr::InitWorldPvP()
         ++uiPvPZonesInitialized;
     }
 
+    pWorldPvP = new WorldPvPZM;
+    if(!pWorldPvP->InitWorldPvPArea())
+    {
+        sLog.outDebug("WorldPvP : ZANGAMARSH init failed.");
+        delete pWorldPvP;
+    }
+    else
+    {
+        m_WorldPvPSet.push_back(pWorldPvP);
+        ++uiPvPZonesInitialized;
+    }
+
     sLog.outString();
     sLog.outString(">> Loaded %u World PvP zones", uiPvPZonesInitialized);
 }
