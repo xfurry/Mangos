@@ -82,6 +82,18 @@ void WorldPvPMgr::InitWorldPvP()
         ++uiPvPZonesInitialized;
     }
 
+    pWorldPvP = new WorldPvPNA;
+    if(!pWorldPvP->InitWorldPvPArea())
+    {
+        sLog.outDebug("WorldPvP : NAGRAND init failed.");
+        delete pWorldPvP;
+    }
+    else
+    {
+        m_WorldPvPSet.push_back(pWorldPvP);
+        ++uiPvPZonesInitialized;
+    }
+
     pWorldPvP = new WorldPvPSI;
     if(!pWorldPvP->InitWorldPvPArea())
     {
