@@ -181,6 +181,8 @@ class WorldPvPZM : public WorldPvP
         ObjectGuid m_BeamWestBlueGUID;
         ObjectGuid m_BeamEastRedGUID;
         ObjectGuid m_BeamEastBlueGUID;
+        ObjectGuid m_BeamCenterBlueGUID;
+        ObjectGuid m_BeamCenterRedGUID;
 };
 
 #endif

@@ -107,6 +107,8 @@ void WorldPvPZM::OnCreatureCreate(Creature* pCreature)
         case NPC_PVP_BEAM_RED:
             if (pCreature->GetPositionY() < 7000.0f)
                 m_BeamEastRedGUID = pCreature->GetObjectGuid();
+            else if (pCreature ->GetPositionY() < 7300.0f)
+                m_BeamCenterRedGUID = pCreature->GetObjectGuid();
             else
                 m_BeamWestRedGUID = pCreature->GetObjectGuid();
             pCreature->SetRespawnDelay(7*DAY);
@@ -115,6 +117,8 @@ void WorldPvPZM::OnCreatureCreate(Creature* pCreature)
         case NPC_PVP_BEAM_BLUE:
             if (pCreature->GetPositionY() < 7000.0f)
                 m_BeamEastBlueGUID = pCreature->GetObjectGuid();
+            else if (pCreature ->GetPositionY() < 7300.0f)
+                m_BeamCenterBlueGUID = pCreature->GetObjectGuid();
             else
                 m_BeamWestBlueGUID = pCreature->GetObjectGuid();
             pCreature->SetRespawnDelay(7*DAY);
@@ -449,11 +453,13 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
                 return false;
 
             // change banners
+            SendUpdateWorldState(m_uiGraveyardWorldState, 0);
             DoHandleBanners(m_TowerBannerCenterAlyGUID, false);
             DoHandleBanners(m_TowerBannerCenterHordeGUID, true);
+            DoSetBeaconArtkit(m_BeamCenterBlueGUID, false);
+            sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOOSE_GY_A));
 
             // remove buff and graveyard from ally
-            SendUpdateWorldState(m_uiGraveyardWorldState, 0);
             DoProcessTeamBuff(ALLIANCE, SPELL_TWIN_SPIRE_BLESSING, true);
             DoSetGraveyard(ALLIANCE, true);
 
@@ -463,8 +469,11 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
             DoProcessTeamBuff(HORDE, SPELL_TWIN_SPIRE_BLESSING);
             DoSetGraveyard(HORDE);
 
-            // reset scout
+            // reset scout and remove player aura
             DoResetScouts(HORDE);
+            pPlayer->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_HORDE);
+            DoSetBeaconArtkit(m_BeamCenterRedGUID, true);
+            sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_H));
 
             return true;
         case GO_ZANGA_BANNER_CENTER_HORDE:
@@ -476,6 +485,8 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
             SendUpdateWorldState(m_uiGraveyardWorldState, 0);
             DoHandleBanners(m_TowerBannerCenterHordeGUID, false);
             DoHandleBanners(m_TowerBannerCenterAlyGUID, true);
+            DoSetBeaconArtkit(m_BeamCenterRedGUID, false);
+            sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOOSE_GY_H));
 
             // remove buff and graveyard from ally
             DoProcessTeamBuff(HORDE, SPELL_TWIN_SPIRE_BLESSING, true);
@@ -487,8 +498,11 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
             DoProcessTeamBuff(ALLIANCE, SPELL_TWIN_SPIRE_BLESSING);
             DoSetGraveyard(ALLIANCE);
 
-            // reset scout
+            // reset scout and remove player aura
             DoResetScouts(ALLIANCE);
+            pPlayer->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_ALY);
+            DoSetBeaconArtkit(m_BeamCenterBlueGUID, true);
+            sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_A));
 
             return true;
         case GO_ZANGA_BANNER_CENTER_NEUTRAL:
@@ -507,8 +521,11 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
                 DoProcessTeamBuff(ALLIANCE, SPELL_TWIN_SPIRE_BLESSING);
                 DoSetGraveyard(ALLIANCE);
 
-                // reset scout
+                // reset scout and remove player aura
                 DoResetScouts(ALLIANCE);
+                pPlayer->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_ALY);
+                DoSetBeaconArtkit(m_BeamCenterBlueGUID, true);
+                sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_H));
             }
             else if (pPlayer->GetTeam() == HORDE)
             {
@@ -521,8 +538,11 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
                 DoProcessTeamBuff(HORDE, SPELL_TWIN_SPIRE_BLESSING);
                 DoSetGraveyard(HORDE);
 
-                // reset scout
+                // reset scout and remove player aura
                 DoResetScouts(HORDE);
+                pPlayer->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_HORDE);
+                DoSetBeaconArtkit(m_BeamCenterRedGUID, true);
+                sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_H));
             }
 
             // add new world state
@@ -530,8 +550,6 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 
             return true;
     }
-
-    // ToDo: remove flag from player; add zone warning
 
     return false;
 }
