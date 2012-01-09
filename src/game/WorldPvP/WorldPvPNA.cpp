@@ -25,6 +25,7 @@ WorldPvPNA::WorldPvPNA() : WorldPvP(),
     m_uiControllerMapState(WORLD_STATE_NA_HALAA_NEUTRAL),
     m_uiControllerWorldState(0),
     m_uiZoneController(NEUTRAL),
+    m_bCanCaptureHalaa(true),
     m_uiGuardsLeft(0)
 {
     m_uiTypeId = WORLD_PVP_TYPE_NA;
@@ -107,24 +108,20 @@ void WorldPvPNA::OnCreatureCreate(Creature* pCreature)
     switch (pCreature->GetEntry())
     {
         case NPC_ALLIANCE_HANAANI_GUARD:
-            lAllianceSoldiers.push_back(pCreature->GetObjectGuid());
-            break;
         case NPC_RESEARCHER_KARTOS:
         case NPC_QUARTERMASTER_DAVIAN:
         case NPC_MERCHANT_ALDRAAN:
         case NPC_VENDOR_CENDRII:
         case NPC_AMMUNITIONER_BANRO:
-            lAllianceVendors.push_back(pCreature->GetObjectGuid());
+            lAllianceSoldiers.push_back(pCreature->GetObjectGuid());
             break;
         case NPC_HORDE_HALAANI_GUARD:
-            lHordeSoldiers.push_back(pCreature->GetObjectGuid());
-            break;
         case NPC_RESEARCHER_AMERELDINE:
         case NPC_QUARTERMASTER_NORELIQE:
         case NPC_MERCHANT_COREIEL:
         case NPC_VENDOR_EMBELAR:
         case NPC_AMMUNITIONER_TASALDAN:
-            lHordeVendors.push_back(pCreature->GetObjectGuid());
+            lHordeSoldiers.push_back(pCreature->GetObjectGuid());
             break;
 
         default:
@@ -138,7 +135,39 @@ void WorldPvPNA::OnCreatureCreate(Creature* pCreature)
 
 void WorldPvPNA::OnCreatureDeath(Creature* pCreature)
 {
-    // ToDo: handle guards death
+    if (pCreature->GetEntry() != NPC_HORDE_HALAANI_GUARD && pCreature->GetEntry() != NPC_ALLIANCE_HANAANI_GUARD)
+        return;
+
+    --m_uiGuardsLeft;
+    SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT,  m_uiGuardsLeft);
+
+    if (m_uiGuardsLeft == 0)
+    {
+        // make capturable
+        m_bCanCaptureHalaa = true;
+        SendUpdateWorldState(m_uiControllerMapState, 0);
+        m_uiControllerMapState = m_uiZoneController == ALLIANCE ? WORLD_STATE_NA_HALAA_NEU_A : WORLD_STATE_NA_HALAA_NEU_H;
+        SendUpdateWorldState(m_uiControllerMapState, 1);
+    }
+}
+
+void WorldPvPNA::OnCreatureRespawn(Creature* pCreature)
+{
+    if (pCreature->GetEntry() != NPC_HORDE_HALAANI_GUARD && pCreature->GetEntry() != NPC_ALLIANCE_HANAANI_GUARD)
+        return;
+
+    ++m_uiGuardsLeft;
+    SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT,  m_uiGuardsLeft);
+
+    if (m_uiGuardsLeft > 0)
+        m_bCanCaptureHalaa = false;
+
+    if (m_uiGuardsLeft == MAX_NA_GUARDS)
+    {
+        SendUpdateWorldState(m_uiControllerMapState, 0);
+        m_uiControllerMapState = m_uiZoneController == ALLIANCE ? WORLD_STATE_NA_HALAA_ALLIANCE : WORLD_STATE_NA_HALAA_HORDE;
+        SendUpdateWorldState(m_uiControllerMapState, 1);
+    }
 }
 
 void WorldPvPNA::OnGameObjectCreate(GameObject* pGo)
@@ -149,22 +178,123 @@ void WorldPvPNA::OnGameObjectCreate(GameObject* pGo)
             m_HalaaBanerGuid = pGo->GetObjectGuid();
             pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
             break;
+
+        case GO_WYVERN_ROOST_ALY_SOUTH:
+            m_AllianceRooster[0] = pGo->GetObjectGuid();
+            break;
+        case GO_WYVERN_ROOST_ALY_NORTH:
+            m_AllianceRooster[1] = pGo->GetObjectGuid();
+            break;
+        case GO_WYVERN_ROOST_ALY_EAST:
+            m_AllianceRooster[2] = pGo->GetObjectGuid();
+            break;
+        case GO_WYVERN_ROOST_ALY_WEST:
+            m_AllianceRooster[3] = pGo->GetObjectGuid();
+            break;
+
+        case GO_BOMB_WAGON_HORDE_SOUTH:
+            m_HordeWagons[0] = pGo->GetObjectGuid();
+            break;
+        case GO_BOMB_WAGON_HORDE_NORTH:
+            m_HordeWagons[1] = pGo->GetObjectGuid();
+            break;
+        case GO_BOMB_WAGON_HORDE_EAST:
+            m_HordeWagons[2] = pGo->GetObjectGuid();
+            break;
+        case GO_BOMB_WAGON_HORDE_WEST:
+            m_HordeWagons[3] = pGo->GetObjectGuid();
+            break;
+
+        case GO_DESTROYED_ROOST_ALY_SOUTH:
+            m_AllianceBrokenRooster[0] = pGo->GetObjectGuid();
+            break;
+        case GO_DESTROYED_ROOST_ALY_NORTH:
+            m_AllianceBrokenRooster[1] = pGo->GetObjectGuid();
+            break;
+        case GO_DESTROYED_ROOST_ALY_EAST:
+            m_AllianceBrokenRooster[2] = pGo->GetObjectGuid();
+            break;
+        case GO_DESTROYED_ROOST_ALY_WEST:
+            m_AllianceBrokenRooster[3] = pGo->GetObjectGuid();
+            break;
+
+        case GO_WYVERN_ROOST_HORDE_SOUTH:
+            m_HordeRooster[0] = pGo->GetObjectGuid();
+            break;
+        case GO_WYVERN_ROOST_HORDE_NORTH:
+            m_HordeRooster[1] = pGo->GetObjectGuid();
+            break;
+        case GO_WYVERN_ROOST_HORDE_EAST:
+            m_HordeRooster[2] = pGo->GetObjectGuid();
+            break;
+        case GO_WYVERN_ROOST_HORDE_WEST:
+            m_HordeRooster[3] = pGo->GetObjectGuid();
+            break;
+
+        case GO_BOMB_WAGON_ALY_SOUTH:
+            m_AllianceWagons[0] = pGo->GetObjectGuid();
+            break;
+        case GO_BOMB_WAGON_ALY_NORTH:
+            m_AllianceWagons[1] = pGo->GetObjectGuid();
+            break;
+        case GO_BOMB_WAGON_ALY_EAST:
+            m_AllianceWagons[2] = pGo->GetObjectGuid();
+            break;
+        case GO_BOMB_WAGON_ALY_WEST:
+            m_AllianceWagons[3] = pGo->GetObjectGuid();
+            break;
+
+        case GO_DESTROYED_ROOST_HORDE_SOUTH:
+            m_HordeBrokenRooster[0] = pGo->GetObjectGuid();
+            break;
+        case GO_DESTROYED_ROOST_HORDE_NORTH:
+            m_HordeBrokenRooster[1] = pGo->GetObjectGuid();
+            break;
+        case GO_DESTROYED_ROOST_HORDE_EAST:
+            m_HordeBrokenRooster[2] = pGo->GetObjectGuid();
+            break;
+        case GO_DESTROYED_ROOST_HORDE_WEST:
+            m_HordeBrokenRooster[3] = pGo->GetObjectGuid();
+            break;
     }
+}
+
+void WorldPvPNA::UpdateWorldState(uint8 uiValue)
+{
+    SendUpdateWorldState(m_uiControllerWorldState,  uiValue);
+    SendUpdateWorldState(m_uiControllerMapState,    uiValue);
+
+    // Update guards only for positive states
+    if (uiValue)
+    {
+        SendUpdateWorldState(WORLD_STATE_NA_GUARDS_MAX,   MAX_NA_GUARDS);
+        SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT,  m_uiGuardsLeft);
+    }
+
+    UpdateWyvernsWorldState(uiValue);
+}
+
+void WorldPvPNA::UpdateWyvernsWorldState(uint8 uiValue)
+{
+    SendUpdateWorldState(m_uiWyvernSouthWorldState,   uiValue);
+    SendUpdateWorldState(m_uiWyvernNorthWorldState,   uiValue);
+    SendUpdateWorldState(m_uiWyvernEastWorldState,    uiValue);
+    SendUpdateWorldState(m_uiWyvernWestWorldState,    uiValue);
 }
 
 // process the capture events
 void WorldPvPNA::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId)
 {
-    // If we are not using the lighthouse return
+    // don't process when Halaa is not available
+    if (!m_bCanCaptureHalaa)
+        return;
+
+    // If we are not using the Halaa banner return
     if (pGo->GetEntry() != GO_HALAA_BANNER)
         return;
 
     switch (uiEventId)
     {
-        case EVENT_HALAA_BANNER_PROGRESS_ALLIANCE:
-        case EVENT_HALAA_BANNER_PROGRESS_HORDE:
-            ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam());
-            break;
         case EVENT_HALAA_BANNER_WIN_ALLIANCE:
         case EVENT_HALAA_BANNER_WIN_HORDE:
             ProcessCaptureEvent(WIN, pPlayer->GetTeam());
@@ -174,16 +304,65 @@ void WorldPvPNA::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId
 
 void WorldPvPNA::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam)
 {
-    switch (uiCaptureType)
+    if (uiCaptureType == WIN)
     {
-        case WIN:
-            // Spawn the npcs only when the tower is fully controlled
-            DoRespawnSoldiers(uiTeam);
-            // ToDo: spawn gameobjects
-            break;
-        case PROGRESS:
-            SetBannerArtKit(uiTeam == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
-            break;
+        if (m_uiZoneController != NEUTRAL)
+        {
+            DoProcessTeamBuff((Team)m_uiZoneController, SPELL_STRENGTH_HALAANI, true);
+            sWorld.SendZoneText(ZONE_ID_NAGRAND, sObjectMgr.GetMangosStringForDBCLocale(uiTeam == ALLIANCE ? LANG_OPVP_NA_LOOSE_H: LANG_OPVP_NA_LOOSE_A));
+        }
+
+        UpdateWorldState(0);
+        m_uiZoneController = uiTeam;
+        m_bCanCaptureHalaa = false;
+        DoRespawnSoldiers(uiTeam);
+        m_uiControllerWorldState = uiTeam == ALLIANCE ? WORLD_STATE_NA_GUARDS_ALLIANCE : WORLD_STATE_NA_GUARDS_HORDE;
+        m_uiControllerMapState = uiTeam == ALLIANCE ? WORLD_STATE_NA_HALAA_ALLIANCE : WORLD_STATE_NA_HALAA_HORDE;
+
+        SetBannerArtKit(uiTeam == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+        DoHandleFactionObjects(uiTeam);
+        UpdateWorldState(1);
+
+        DoProcessTeamBuff((Team)m_uiZoneController, SPELL_STRENGTH_HALAANI);
+        sWorld.SendZoneText(ZONE_ID_NAGRAND, sObjectMgr.GetMangosStringForDBCLocale(uiTeam == ALLIANCE ? LANG_OPVP_NA_CAPTURE_A: LANG_OPVP_NA_CAPTURE_H));
+    }
+}
+
+void WorldPvPNA::DoHandleFactionObjects(uint32 uiFaction)
+{
+    if (uiFaction == ALLIANCE)
+    {
+        for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
+        {
+            DoRespawnObjects(m_HordeWagons[i], false);
+            DoRespawnObjects(m_AllianceBrokenRooster[i], false);
+            DoRespawnObjects(m_AllianceRooster[i], false);
+
+            DoRespawnObjects(m_AllianceWagons[i], true);
+            DoRespawnObjects(m_HordeBrokenRooster[i], true);
+        }
+
+        m_uiWyvernSouthWorldState = WORLD_STATE_NA_WYVERN_SOUTH_NEU_H;
+        m_uiWyvernNorthWorldState = WORLD_STATE_NA_WYVERN_NORTH_NEU_H;
+        m_uiWyvernEastWorldState = WORLD_STATE_NA_WYVERN_EAST_NEU_H;
+        m_uiWyvernWestWorldState = WORLD_STATE_NA_WYVERN_WEST_NEU_H;
+    }
+    else if (uiFaction == HORDE)
+    {
+        for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
+        {
+            DoRespawnObjects(m_AllianceWagons[i], false);
+            DoRespawnObjects(m_HordeBrokenRooster[i], false);
+            DoRespawnObjects(m_HordeRooster[i], false);
+
+            DoRespawnObjects(m_HordeWagons[i], true);
+            DoRespawnObjects(m_AllianceBrokenRooster[i], true);
+        }
+
+        m_uiWyvernSouthWorldState = WORLD_STATE_NA_WYVERN_SOUTH_NEU_A;
+        m_uiWyvernNorthWorldState = WORLD_STATE_NA_WYVERN_NORTH_NEU_A;
+        m_uiWyvernEastWorldState = WORLD_STATE_NA_WYVERN_EAST_NEU_A;
+        m_uiWyvernWestWorldState = WORLD_STATE_NA_WYVERN_WEST_NEU_A;
     }
 }
 
@@ -193,6 +372,61 @@ void WorldPvPNA::DoRespawnSoldiers(uint32 uiFaction)
     Player* pPlayer = GetPlayerInZone();
     if (!pPlayer)
         return;
+
+    if (uiFaction == ALLIANCE)
+    {
+        // despawn all horde vendors
+        for (std::list<ObjectGuid>::const_iterator itr = lHordeSoldiers.begin(); itr != lHordeSoldiers.end(); ++itr)
+        {
+            if (Creature* pSoldier = pPlayer->GetMap()->GetCreature(*itr))
+            {
+                // reset respawn time
+                pSoldier->SetRespawnDelay(7*DAY);
+                pSoldier->ForcedDespawn();
+            }
+        }
+
+        // spawn all alliance soldiers and vendors
+        for (std::list<ObjectGuid>::const_iterator itr = lAllianceSoldiers.begin(); itr != lAllianceSoldiers.end(); ++itr)
+        {
+            if (Creature* pSoldier = pPlayer->GetMap()->GetCreature(*itr))
+            {
+                // lower respawn time
+                pSoldier->SetRespawnDelay(HOUR);
+                pSoldier->Respawn();
+            }
+        }
+    }
+    else if (uiFaction == HORDE)
+    {
+        // despawn all alliance vendors
+        for (std::list<ObjectGuid>::const_iterator itr = lAllianceSoldiers.begin(); itr != lAllianceSoldiers.end(); ++itr)
+        {
+            if (Creature* pSoldier = pPlayer->GetMap()->GetCreature(*itr))
+            {
+                // reset respawn time
+                pSoldier->SetRespawnDelay(7*DAY);
+                pSoldier->ForcedDespawn();
+            }
+        }
+
+        // spawn all horde soldiers and vendors
+        for (std::list<ObjectGuid>::const_iterator itr = lHordeSoldiers.begin(); itr != lHordeSoldiers.end(); ++itr)
+        {
+            if (Creature* pSoldier = pPlayer->GetMap()->GetCreature(*itr))
+            {
+                // lower respawn time
+                pSoldier->SetRespawnDelay(HOUR);
+                pSoldier->Respawn();
+            }
+        }
+    }
+}
+
+bool WorldPvPNA::HandleObjectUse(Player* pPlayer, GameObject* pGo)
+{
+    // ToDo:
+    return false;
 }
 
 void WorldPvPNA::SetBannerArtKit(uint32 uiArtkit)

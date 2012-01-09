@@ -118,7 +118,7 @@ struct TerokkarTowersEvents
     uint32 uiEventEntry, uiEventType, uiZoneText, uiWorldState;
 };
 
-static TerokkarTowersEvents aTowerEvents[5][4] =
+static const TerokkarTowersEvents aTowerEvents[5][4] =
 {
     {
         {EVENT_TOWER_1_PROGRESS_ALLIANCE,   PROGRESS,   LANG_OPVP_TF_CAPTURE_A, WORLD_STATE_TOWER_1_ALY},
@@ -152,7 +152,7 @@ static TerokkarTowersEvents aTowerEvents[5][4] =
     },
 };
 
-static uint32 aTerokkarTowers[5] = {GO_TEROKKAR_BANNER_1, GO_TEROKKAR_BANNER_2, GO_TEROKKAR_BANNER_3, GO_TEROKKAR_BANNER_4, GO_TEROKKAR_BANNER_5};
+static const uint32 aTerokkarTowers[5] = {GO_TEROKKAR_BANNER_1, GO_TEROKKAR_BANNER_2, GO_TEROKKAR_BANNER_3, GO_TEROKKAR_BANNER_4, GO_TEROKKAR_BANNER_5};
 
 class WorldPvPTF : public WorldPvP
 {

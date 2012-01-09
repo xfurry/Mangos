@@ -581,9 +581,6 @@ uint32 Unit::DealDamage(Unit *pVictim, uint32 damage, CleanDamage const* cleanDa
         if (InstanceData* mapInstance = pVictim->GetInstanceData())
             mapInstance->OnCreatureDeath(((Creature*)pVictim));
 
-        if (m_zoneScript)
-            m_zoneScript->OnCreatureDeath(((Creature*)pVictim));
-
         DEBUG_FILTER_LOG(LOG_FILTER_DAMAGE, "DealDamage critter, critter dies");
 
         return damage;
@@ -850,6 +847,9 @@ uint32 Unit::DealDamage(Unit *pVictim, uint32 damage, CleanDamage const* cleanDa
 
             if (InstanceData* mapInstance = cVictim->GetInstanceData())
                 mapInstance->OnCreatureDeath(cVictim);
+
+            if (m_zoneScript = sWorldPvPMgr.GetZoneScript(GetZoneId()))
+                m_zoneScript->OnCreatureDeath(((Creature*)cVictim));
 
             if (cVictim->IsLinkingEventTrigger())
                 cVictim->GetMap()->GetCreatureLinkingHolder()->DoCreatureLinkingEvent(LINKING_EVENT_DIE, cVictim);

@@ -22,6 +22,7 @@
 enum
 {
     MAX_NA_GUARDS                           = 15,
+    MAX_NA_ROOSTS                           = 4,                // roosts for each type and faction
 
     // zone ids
     ZONE_ID_NAGRAND                         = 3518,
@@ -131,11 +132,16 @@ enum
     WORLD_STATE_NA_HALAA_HORDE              = 2672,
     WORLD_STATE_NA_HALAA_ALLIANCE           = 2673,
 
-//+const uint32 NA_RESPAWN_TIME = 3600000; // one hour to capture after defeating all guards
-//+const uint32 NA_GUARD_CHECK_TIME = 500; // every half second
 //+const uint32 FlightPathStartNodes[FLIGHT_NODES_NUM] = {103,105,107,109};
 //+const uint32 FlightPathEndNodes[FLIGHT_NODES_NUM] = {104,106,108,110};
 };
+
+static const uint32 aAllianceRoosters[MAX_NA_ROOSTS] = {GO_WYVERN_ROOST_ALY_SOUTH, GO_WYVERN_ROOST_ALY_NORTH, GO_WYVERN_ROOST_ALY_EAST, GO_WYVERN_ROOST_ALY_WEST};
+static const uint32 aHordeRoosters[MAX_NA_ROOSTS] = {GO_WYVERN_ROOST_HORDE_SOUTH, GO_WYVERN_ROOST_HORDE_NORTH, GO_WYVERN_ROOST_HORDE_EAST, GO_WYVERN_ROOST_HORDE_WEST};
+static const uint32 aAllianceBrokenRoosters[MAX_NA_ROOSTS] = {GO_DESTROYED_ROOST_ALY_SOUTH, GO_DESTROYED_ROOST_ALY_NORTH, GO_DESTROYED_ROOST_ALY_EAST, GO_DESTROYED_ROOST_ALY_WEST};
+static const uint32 aHordeBrokenRoosters[MAX_NA_ROOSTS] = {GO_DESTROYED_ROOST_HORDE_SOUTH, GO_DESTROYED_ROOST_HORDE_NORTH, GO_DESTROYED_ROOST_HORDE_EAST, GO_DESTROYED_ROOST_HORDE_WEST};
+static const uint32 aAllianceWagons[MAX_NA_ROOSTS] = {GO_BOMB_WAGON_ALY_SOUTH, GO_BOMB_WAGON_ALY_NORTH, GO_BOMB_WAGON_ALY_EAST, GO_BOMB_WAGON_ALY_WEST};
+static const uint32 aHordeWagons[MAX_NA_ROOSTS] = {GO_BOMB_WAGON_HORDE_SOUTH, GO_BOMB_WAGON_HORDE_NORTH, GO_BOMB_WAGON_HORDE_EAST, GO_BOMB_WAGON_HORDE_WEST};
 
 class WorldPvPNA : public WorldPvP
 {
@@ -153,18 +159,25 @@ class WorldPvPNA : public WorldPvP
 
         void OnCreatureCreate(Creature* pCreature);
         void OnCreatureDeath(Creature* pCreature);
+        void OnCreatureRespawn(Creature* pCreature);
         void OnGameObjectCreate(GameObject* pGo);
         void ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId);
 
+        bool HandleObjectUse(Player* pPlayer, GameObject* pGo);
+
     private:
+        void UpdateWorldState(uint8 uiValue);
+        void UpdateWyvernsWorldState(uint8 uiValue);
         // process capture events
         void ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam);
         // respawn faction soldiers
         void DoRespawnSoldiers(uint32 uiFaction);
         // set banner artkit
         void SetBannerArtKit(uint32 uiArtKit);
-        // handle game objects
+        // handle a specific game objects
         void DoRespawnObjects(ObjectGuid GameObjectGuid, bool bRespawn);
+        // handle game objects by faction
+        void DoHandleFactionObjects(uint32 uiFaction);
 
         uint32 m_uiZoneController;
         uint32 m_uiControllerWorldState;
@@ -175,12 +188,18 @@ class WorldPvPNA : public WorldPvP
         uint32 m_uiWyvernWestWorldState;
         uint32 m_uiGuardsLeft;
 
+        bool m_bCanCaptureHalaa;
+
         ObjectGuid m_HalaaBanerGuid;
+        ObjectGuid m_AllianceRooster[MAX_NA_ROOSTS];
+        ObjectGuid m_HordeRooster[MAX_NA_ROOSTS];
+        ObjectGuid m_AllianceBrokenRooster[MAX_NA_ROOSTS];
+        ObjectGuid m_HordeBrokenRooster[MAX_NA_ROOSTS];
+        ObjectGuid m_AllianceWagons[MAX_NA_ROOSTS];
+        ObjectGuid m_HordeWagons[MAX_NA_ROOSTS];
 
         std::list<ObjectGuid> lAllianceSoldiers;
         std::list<ObjectGuid> lHordeSoldiers;
-        std::list<ObjectGuid> lAllianceVendors;
-        std::list<ObjectGuid> lHordeVendors;
 };
 
 #endif
