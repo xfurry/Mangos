@@ -136,6 +136,11 @@ void WorldPvPNA::OnCreatureCreate(Creature* pCreature)
     pCreature->ForcedDespawn();
 }
 
+void WorldPvPNA::OnCreatureDeath(Creature* pCreature)
+{
+    // ToDo: handle guards death
+}
+
 void WorldPvPNA::OnGameObjectCreate(GameObject* pGo)
 {
     switch (pGo->GetEntry())

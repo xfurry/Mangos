@@ -33,6 +33,8 @@ class ZoneScript
         // Called when a creature or gameobject is created
         virtual void OnCreatureCreate(Creature *) {}
         virtual void OnGameObjectCreate(GameObject *) {}
+        //called on creature death
+        virtual void OnCreatureDeath(Creature * /*creature*/) {}
 
         // All-purpose data storage 64 bit
         //virtual uint64 GetData64(uint32 /*DataId*/) { return 0; }

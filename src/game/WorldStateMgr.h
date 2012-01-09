@@ -32,6 +32,12 @@
 #ifndef MANGOS_WORLD_STATE_MGR_H
 #define MANGOS_WORLD_STATE_MGR_H
 
+#include "World.h"
+#include "Common.h"
+#include "Policies/Singleton.h"
+#include "SharedDefines.h"
+#include "Database/DatabaseEnv.h"
+
 /// Structure representing the static data of a worldstate
 struct WorldStateData
 {

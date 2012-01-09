@@ -23,7 +23,13 @@
 #include "../Language.h"
 #include "../World.h"
 #include "../ZoneScript.h"
+#include "../Player.h"
 #include "Common.h"
+#include "Policies/Singleton.h"
+#include "../SharedDefines.h"
+#include "../GameObject.h"
+#include "../ObjectMgr.h"
+
 
 enum WorldPvPTypes
 {

@@ -133,6 +133,8 @@ enum
 
 //+const uint32 NA_RESPAWN_TIME = 3600000; // one hour to capture after defeating all guards
 //+const uint32 NA_GUARD_CHECK_TIME = 500; // every half second
+//+const uint32 FlightPathStartNodes[FLIGHT_NODES_NUM] = {103,105,107,109};
+//+const uint32 FlightPathEndNodes[FLIGHT_NODES_NUM] = {104,106,108,110};
 };
 
 class WorldPvPNA : public WorldPvP
@@ -150,6 +152,7 @@ class WorldPvPNA : public WorldPvP
         void HandleObjectiveComplete(PlayerSet m_sPlayersSet, uint32 uiEventId);
 
         void OnCreatureCreate(Creature* pCreature);
+        void OnCreatureDeath(Creature* pCreature);
         void OnGameObjectCreate(GameObject* pGo);
         void ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId);
 

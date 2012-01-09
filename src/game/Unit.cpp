@@ -581,6 +581,9 @@ uint32 Unit::DealDamage(Unit *pVictim, uint32 damage, CleanDamage const* cleanDa
         if (InstanceData* mapInstance = pVictim->GetInstanceData())
             mapInstance->OnCreatureDeath(((Creature*)pVictim));
 
+        if (m_zoneScript)
+            m_zoneScript->OnCreatureDeath(((Creature*)pVictim));
+
         DEBUG_FILTER_LOG(LOG_FILTER_DAMAGE, "DealDamage critter, critter dies");
 
         return damage;

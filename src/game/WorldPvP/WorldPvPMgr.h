@@ -19,15 +19,20 @@
 #ifndef WORLD_PVP_MGR_H
 #define WORLD_PVP_MGR_H
 
-// why this?
-#define WORLD_PVP_OBJECTIVE_UPDATE_INTERVAL 1000
 
 #include "WorldPvP.h"
+#include "Common.h"
+#include "Policies/Singleton.h"
+#include "../SharedDefines.h"
+#include "Platform/Define.h"
+#include "../Map.h"
+#include "../GridStates.h"
 
 class Player;
 class GameObject;
 class Creature;
 class ZoneScript;
+class WorldPvP;
 
 class WorldPvPMgr
 {
