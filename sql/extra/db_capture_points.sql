@@ -130,6 +130,12 @@ INSERT INTO `creature_movement_template` (`entry`, `point`, `position_x`, `posit
  
  -- Halaa fixes
 /* ################################# */
+-- fire bomb target
+UPDATE `creature_template` SET `AIName`='EventAI' WHERE `entry`=18225;
+DELETE FROM `creature_ai_scripts` WHERE `creature_id`=18225;
+INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES 
+('1822501','18225','11','0','100','0','0','0','0','0','11','31961','0','0','0','0','0','0','0','0','0','0','Fire Bomb Target - Cast Fire Bomb on Spawn');
+
 -- spawn npcs and gameobjects on the map
 DELETE FROM `creature` WHERE `id` IN (18817,18822,21485,21487,21488,18256);
 INSERT INTO `creature` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`modelid`,`equipment_id`,`position_x`,`position_y`,`position_z`,`orientation`,`spawntimesecs`,`spawndist`,`currentwaypoint`,`curhealth`,`curmana`,`DeathState`,`MovementType`) VALUES

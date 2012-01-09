@@ -23,6 +23,7 @@ enum
 {
     MAX_NA_GUARDS                           = 15,
     MAX_NA_ROOSTS                           = 4,                // roosts for each type and faction
+    MAX_FIRE_BOMBS                          = 10,
 
     // zone ids
     ZONE_ID_NAGRAND                         = 3518,
@@ -38,6 +39,8 @@ enum
 
     GRAVEYARD_ID_HALAA                      = 993,
     GRAVEYARD_ZONE_ID_HALAA                 = 3518,
+
+    ITEM_ID_FIRE_BOMB                       = 24538,
 
     // gameobjects
     GO_HALAA_BANNER                         = 182210,
@@ -131,17 +134,22 @@ enum
     WORLD_STATE_NA_HALAA_NEU_H              = 2677,
     WORLD_STATE_NA_HALAA_HORDE              = 2672,
     WORLD_STATE_NA_HALAA_ALLIANCE           = 2673,
-
-//+const uint32 FlightPathStartNodes[FLIGHT_NODES_NUM] = {103,105,107,109};
-//+const uint32 FlightPathEndNodes[FLIGHT_NODES_NUM] = {104,106,108,110};
 };
 
-static const uint32 aAllianceRoosters[MAX_NA_ROOSTS] = {GO_WYVERN_ROOST_ALY_SOUTH, GO_WYVERN_ROOST_ALY_NORTH, GO_WYVERN_ROOST_ALY_EAST, GO_WYVERN_ROOST_ALY_WEST};
-static const uint32 aHordeRoosters[MAX_NA_ROOSTS] = {GO_WYVERN_ROOST_HORDE_SOUTH, GO_WYVERN_ROOST_HORDE_NORTH, GO_WYVERN_ROOST_HORDE_EAST, GO_WYVERN_ROOST_HORDE_WEST};
-static const uint32 aAllianceBrokenRoosters[MAX_NA_ROOSTS] = {GO_DESTROYED_ROOST_ALY_SOUTH, GO_DESTROYED_ROOST_ALY_NORTH, GO_DESTROYED_ROOST_ALY_EAST, GO_DESTROYED_ROOST_ALY_WEST};
-static const uint32 aHordeBrokenRoosters[MAX_NA_ROOSTS] = {GO_DESTROYED_ROOST_HORDE_SOUTH, GO_DESTROYED_ROOST_HORDE_NORTH, GO_DESTROYED_ROOST_HORDE_EAST, GO_DESTROYED_ROOST_HORDE_WEST};
-static const uint32 aAllianceWagons[MAX_NA_ROOSTS] = {GO_BOMB_WAGON_ALY_SOUTH, GO_BOMB_WAGON_ALY_NORTH, GO_BOMB_WAGON_ALY_EAST, GO_BOMB_WAGON_ALY_WEST};
-static const uint32 aHordeWagons[MAX_NA_ROOSTS] = {GO_BOMB_WAGON_HORDE_SOUTH, GO_BOMB_WAGON_HORDE_NORTH, GO_BOMB_WAGON_HORDE_EAST, GO_BOMB_WAGON_HORDE_WEST};
+static const uint32 aFlightPathStartNodes[MAX_NA_ROOSTS]    = {103, 107, 109, 105};
+static const uint32 aFlightPathEndNodes[MAX_NA_ROOSTS]      = {104, 108, 110, 106};
+
+static const uint32 aAllianceRoosts[MAX_NA_ROOSTS]          = {GO_WYVERN_ROOST_ALY_SOUTH,       GO_WYVERN_ROOST_ALY_NORTH,      GO_WYVERN_ROOST_ALY_EAST,       GO_WYVERN_ROOST_ALY_WEST};
+static const uint32 aHordeRoosts[MAX_NA_ROOSTS]             = {GO_WYVERN_ROOST_HORDE_SOUTH,     GO_WYVERN_ROOST_HORDE_NORTH,    GO_WYVERN_ROOST_HORDE_EAST,     GO_WYVERN_ROOST_HORDE_WEST};
+static const uint32 aAllianceBrokenRoosts[MAX_NA_ROOSTS]    = {GO_DESTROYED_ROOST_ALY_SOUTH,    GO_DESTROYED_ROOST_ALY_NORTH,   GO_DESTROYED_ROOST_ALY_EAST,    GO_DESTROYED_ROOST_ALY_WEST};
+static const uint32 aHordeBrokenRoosts[MAX_NA_ROOSTS]       = {GO_DESTROYED_ROOST_HORDE_SOUTH,  GO_DESTROYED_ROOST_HORDE_NORTH, GO_DESTROYED_ROOST_HORDE_EAST,  GO_DESTROYED_ROOST_HORDE_WEST};
+static const uint32 aAllianceWagons[MAX_NA_ROOSTS]          = {GO_BOMB_WAGON_ALY_SOUTH,         GO_BOMB_WAGON_ALY_NORTH,        GO_BOMB_WAGON_ALY_EAST,         GO_BOMB_WAGON_ALY_WEST};
+static const uint32 aHordeWagons[MAX_NA_ROOSTS]             = {GO_BOMB_WAGON_HORDE_SOUTH,       GO_BOMB_WAGON_HORDE_NORTH,      GO_BOMB_WAGON_HORDE_EAST,       GO_BOMB_WAGON_HORDE_WEST};
+
+static const uint32 aAllianceRoostStates[MAX_NA_ROOSTS]     = {WORLD_STATE_NA_WYVERN_SOUTH_A,       WORLD_STATE_NA_WYVERN_NORTH_A,      WORLD_STATE_NA_WYVERN_EAST_A,       WORLD_STATE_NA_WYVERN_WEST_A};
+static const uint32 aHordeRoostStates[MAX_NA_ROOSTS]        = {WORLD_STATE_NA_WYVERN_SOUTH_H,       WORLD_STATE_NA_WYVERN_NORTH_H,      WORLD_STATE_NA_WYVERN_EAST_H,       WORLD_STATE_NA_WYVERN_WEST_H};
+static const uint32 aAllianceNeutralStates[MAX_NA_ROOSTS]   = {WORLD_STATE_NA_WYVERN_SOUTH_NEU_A,   WORLD_STATE_NA_WYVERN_NORTH_NEU_A,  WORLD_STATE_NA_WYVERN_EAST_NEU_A,   WORLD_STATE_NA_WYVERN_WEST_NEU_A};
+static const uint32 aHordeNeutralStates[MAX_NA_ROOSTS]      = {WORLD_STATE_NA_WYVERN_SOUTH_NEU_H,   WORLD_STATE_NA_WYVERN_NORTH_NEU_H,  WORLD_STATE_NA_WYVERN_EAST_NEU_H,   WORLD_STATE_NA_WYVERN_WEST_NEU_H};
 
 class WorldPvPNA : public WorldPvP
 {
@@ -166,8 +174,17 @@ class WorldPvPNA : public WorldPvP
         bool HandleObjectUse(Player* pPlayer, GameObject* pGo);
 
     private:
+        // world states handling
         void UpdateWorldState(uint8 uiValue);
         void UpdateWyvernsWorldState(uint8 uiValue);
+
+        // Functions to handle some missing spells
+        bool AddBombsToInventory(Player* pPlayer);
+        bool HandlePlayerTaxiDrive(Player* pPlayer, uint8 uiPos);
+
+        // Link graveyard on Halaa
+        void DoSetGraveyard(uint32 uiFaction, bool bRemove = false) { /* ToDo */ }
+
         // process capture events
         void ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam);
         // respawn faction soldiers
@@ -182,19 +199,16 @@ class WorldPvPNA : public WorldPvP
         uint32 m_uiZoneController;
         uint32 m_uiControllerWorldState;
         uint32 m_uiControllerMapState;
-        uint32 m_uiWyvernSouthWorldState;
-        uint32 m_uiWyvernNorthWorldState;
-        uint32 m_uiWyvernEastWorldState;
-        uint32 m_uiWyvernWestWorldState;
+        uint32 m_uiRoostWorldState[MAX_NA_ROOSTS];
         uint32 m_uiGuardsLeft;
 
         bool m_bCanCaptureHalaa;
 
         ObjectGuid m_HalaaBanerGuid;
-        ObjectGuid m_AllianceRooster[MAX_NA_ROOSTS];
-        ObjectGuid m_HordeRooster[MAX_NA_ROOSTS];
-        ObjectGuid m_AllianceBrokenRooster[MAX_NA_ROOSTS];
-        ObjectGuid m_HordeBrokenRooster[MAX_NA_ROOSTS];
+        ObjectGuid m_AllianceRoost[MAX_NA_ROOSTS];
+        ObjectGuid m_HordeRoost[MAX_NA_ROOSTS];
+        ObjectGuid m_AllianceBrokenRoost[MAX_NA_ROOSTS];
+        ObjectGuid m_HordeBrokenRoost[MAX_NA_ROOSTS];
         ObjectGuid m_AllianceWagons[MAX_NA_ROOSTS];
         ObjectGuid m_HordeWagons[MAX_NA_ROOSTS];
 

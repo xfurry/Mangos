@@ -47,10 +47,8 @@ void WorldPvPNA::FillInitialWorldStates(WorldPacket& data, uint32& count)
         FillInitialWorldState(data, count, WORLD_STATE_NA_GUARDS_MAX,   MAX_NA_GUARDS);
 
         // map states
-        FillInitialWorldState(data, count, m_uiWyvernSouthWorldState,   1);
-        FillInitialWorldState(data, count, m_uiWyvernNorthWorldState,   1);
-        FillInitialWorldState(data, count, m_uiWyvernEastWorldState,    1);
-        FillInitialWorldState(data, count, m_uiWyvernWestWorldState,    1);
+        for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
+            FillInitialWorldState(data, count, m_uiRoostWorldState[i],   1);
     }
 
     FillInitialWorldState(data, count, m_uiControllerMapState,      1);
@@ -61,10 +59,8 @@ void WorldPvPNA::SendRemoveWorldStates(Player* pPlayer)
     pPlayer->SendUpdateWorldState(m_uiControllerWorldState,     0);
     pPlayer->SendUpdateWorldState(m_uiControllerMapState,       0);
 
-    pPlayer->SendUpdateWorldState(m_uiWyvernSouthWorldState,    0);
-    pPlayer->SendUpdateWorldState(m_uiWyvernNorthWorldState,    0);
-    pPlayer->SendUpdateWorldState(m_uiWyvernEastWorldState,     0);
-    pPlayer->SendUpdateWorldState(m_uiWyvernWestWorldState,     0);
+    for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
+        pPlayer->SendUpdateWorldState(m_uiRoostWorldState[i],    0);
 }
 
 void WorldPvPNA::HandlePlayerEnterZone(Player* pPlayer)
@@ -180,16 +176,16 @@ void WorldPvPNA::OnGameObjectCreate(GameObject* pGo)
             break;
 
         case GO_WYVERN_ROOST_ALY_SOUTH:
-            m_AllianceRooster[0] = pGo->GetObjectGuid();
+            m_AllianceRoost[0] = pGo->GetObjectGuid();
             break;
         case GO_WYVERN_ROOST_ALY_NORTH:
-            m_AllianceRooster[1] = pGo->GetObjectGuid();
+            m_AllianceRoost[1] = pGo->GetObjectGuid();
             break;
         case GO_WYVERN_ROOST_ALY_EAST:
-            m_AllianceRooster[2] = pGo->GetObjectGuid();
+            m_AllianceRoost[2] = pGo->GetObjectGuid();
             break;
         case GO_WYVERN_ROOST_ALY_WEST:
-            m_AllianceRooster[3] = pGo->GetObjectGuid();
+            m_AllianceRoost[3] = pGo->GetObjectGuid();
             break;
 
         case GO_BOMB_WAGON_HORDE_SOUTH:
@@ -206,29 +202,29 @@ void WorldPvPNA::OnGameObjectCreate(GameObject* pGo)
             break;
 
         case GO_DESTROYED_ROOST_ALY_SOUTH:
-            m_AllianceBrokenRooster[0] = pGo->GetObjectGuid();
+            m_AllianceBrokenRoost[0] = pGo->GetObjectGuid();
             break;
         case GO_DESTROYED_ROOST_ALY_NORTH:
-            m_AllianceBrokenRooster[1] = pGo->GetObjectGuid();
+            m_AllianceBrokenRoost[1] = pGo->GetObjectGuid();
             break;
         case GO_DESTROYED_ROOST_ALY_EAST:
-            m_AllianceBrokenRooster[2] = pGo->GetObjectGuid();
+            m_AllianceBrokenRoost[2] = pGo->GetObjectGuid();
             break;
         case GO_DESTROYED_ROOST_ALY_WEST:
-            m_AllianceBrokenRooster[3] = pGo->GetObjectGuid();
+            m_AllianceBrokenRoost[3] = pGo->GetObjectGuid();
             break;
 
         case GO_WYVERN_ROOST_HORDE_SOUTH:
-            m_HordeRooster[0] = pGo->GetObjectGuid();
+            m_HordeRoost[0] = pGo->GetObjectGuid();
             break;
         case GO_WYVERN_ROOST_HORDE_NORTH:
-            m_HordeRooster[1] = pGo->GetObjectGuid();
+            m_HordeRoost[1] = pGo->GetObjectGuid();
             break;
         case GO_WYVERN_ROOST_HORDE_EAST:
-            m_HordeRooster[2] = pGo->GetObjectGuid();
+            m_HordeRoost[2] = pGo->GetObjectGuid();
             break;
         case GO_WYVERN_ROOST_HORDE_WEST:
-            m_HordeRooster[3] = pGo->GetObjectGuid();
+            m_HordeRoost[3] = pGo->GetObjectGuid();
             break;
 
         case GO_BOMB_WAGON_ALY_SOUTH:
@@ -245,16 +241,16 @@ void WorldPvPNA::OnGameObjectCreate(GameObject* pGo)
             break;
 
         case GO_DESTROYED_ROOST_HORDE_SOUTH:
-            m_HordeBrokenRooster[0] = pGo->GetObjectGuid();
+            m_HordeBrokenRoost[0] = pGo->GetObjectGuid();
             break;
         case GO_DESTROYED_ROOST_HORDE_NORTH:
-            m_HordeBrokenRooster[1] = pGo->GetObjectGuid();
+            m_HordeBrokenRoost[1] = pGo->GetObjectGuid();
             break;
         case GO_DESTROYED_ROOST_HORDE_EAST:
-            m_HordeBrokenRooster[2] = pGo->GetObjectGuid();
+            m_HordeBrokenRoost[2] = pGo->GetObjectGuid();
             break;
         case GO_DESTROYED_ROOST_HORDE_WEST:
-            m_HordeBrokenRooster[3] = pGo->GetObjectGuid();
+            m_HordeBrokenRoost[3] = pGo->GetObjectGuid();
             break;
     }
 }
@@ -276,10 +272,8 @@ void WorldPvPNA::UpdateWorldState(uint8 uiValue)
 
 void WorldPvPNA::UpdateWyvernsWorldState(uint8 uiValue)
 {
-    SendUpdateWorldState(m_uiWyvernSouthWorldState,   uiValue);
-    SendUpdateWorldState(m_uiWyvernNorthWorldState,   uiValue);
-    SendUpdateWorldState(m_uiWyvernEastWorldState,    uiValue);
-    SendUpdateWorldState(m_uiWyvernWestWorldState,    uiValue);
+    for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
+        SendUpdateWorldState(m_uiRoostWorldState[i],   uiValue);
 }
 
 // process the capture events
@@ -308,6 +302,7 @@ void WorldPvPNA::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam)
     {
         if (m_uiZoneController != NEUTRAL)
         {
+            DoSetGraveyard((Team)uiTeam, true);
             DoProcessTeamBuff((Team)m_uiZoneController, SPELL_STRENGTH_HALAANI, true);
             sWorld.SendZoneText(ZONE_ID_NAGRAND, sObjectMgr.GetMangosStringForDBCLocale(uiTeam == ALLIANCE ? LANG_OPVP_NA_LOOSE_H: LANG_OPVP_NA_LOOSE_A));
         }
@@ -316,6 +311,7 @@ void WorldPvPNA::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam)
         m_uiZoneController = uiTeam;
         m_bCanCaptureHalaa = false;
         DoRespawnSoldiers(uiTeam);
+        DoSetGraveyard((Team)uiTeam);
         m_uiControllerWorldState = uiTeam == ALLIANCE ? WORLD_STATE_NA_GUARDS_ALLIANCE : WORLD_STATE_NA_GUARDS_HORDE;
         m_uiControllerMapState = uiTeam == ALLIANCE ? WORLD_STATE_NA_HALAA_ALLIANCE : WORLD_STATE_NA_HALAA_HORDE;
 
@@ -335,34 +331,28 @@ void WorldPvPNA::DoHandleFactionObjects(uint32 uiFaction)
         for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
         {
             DoRespawnObjects(m_HordeWagons[i], false);
-            DoRespawnObjects(m_AllianceBrokenRooster[i], false);
-            DoRespawnObjects(m_AllianceRooster[i], false);
+            DoRespawnObjects(m_AllianceBrokenRoost[i], false);
+            DoRespawnObjects(m_AllianceRoost[i], false);
 
             DoRespawnObjects(m_AllianceWagons[i], true);
-            DoRespawnObjects(m_HordeBrokenRooster[i], true);
-        }
+            DoRespawnObjects(m_HordeBrokenRoost[i], true);
 
-        m_uiWyvernSouthWorldState = WORLD_STATE_NA_WYVERN_SOUTH_NEU_H;
-        m_uiWyvernNorthWorldState = WORLD_STATE_NA_WYVERN_NORTH_NEU_H;
-        m_uiWyvernEastWorldState = WORLD_STATE_NA_WYVERN_EAST_NEU_H;
-        m_uiWyvernWestWorldState = WORLD_STATE_NA_WYVERN_WEST_NEU_H;
+            m_uiRoostWorldState[i] = aHordeNeutralStates[i];
+        }
     }
     else if (uiFaction == HORDE)
     {
         for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
         {
             DoRespawnObjects(m_AllianceWagons[i], false);
-            DoRespawnObjects(m_HordeBrokenRooster[i], false);
-            DoRespawnObjects(m_HordeRooster[i], false);
+            DoRespawnObjects(m_HordeBrokenRoost[i], false);
+            DoRespawnObjects(m_HordeRoost[i], false);
 
             DoRespawnObjects(m_HordeWagons[i], true);
-            DoRespawnObjects(m_AllianceBrokenRooster[i], true);
-        }
+            DoRespawnObjects(m_AllianceBrokenRoost[i], true);
 
-        m_uiWyvernSouthWorldState = WORLD_STATE_NA_WYVERN_SOUTH_NEU_A;
-        m_uiWyvernNorthWorldState = WORLD_STATE_NA_WYVERN_NORTH_NEU_A;
-        m_uiWyvernEastWorldState = WORLD_STATE_NA_WYVERN_EAST_NEU_A;
-        m_uiWyvernWestWorldState = WORLD_STATE_NA_WYVERN_WEST_NEU_A;
+            m_uiRoostWorldState[i] = aAllianceNeutralStates[i];
+        }
     }
 }
 
@@ -425,8 +415,120 @@ void WorldPvPNA::DoRespawnSoldiers(uint32 uiFaction)
 
 bool WorldPvPNA::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 {
-    // ToDo:
+    bool bReturnStatus = false;
+    UpdateWyvernsWorldState(0);
+
+    if (pPlayer->GetTeam() == ALLIANCE)
+    {
+        for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
+        {
+            if (pGo->GetEntry() == aAllianceWagons[i])
+            {
+                m_uiRoostWorldState[i] = aHordeNeutralStates[i];
+                DoRespawnObjects(m_HordeRoost[i], false);
+                DoRespawnObjects(m_HordeBrokenRoost[i], true);
+                bReturnStatus = true;
+            }
+            else if (pGo->GetEntry() == aAllianceBrokenRoosts[i])
+            {
+                m_uiRoostWorldState[i] = aAllianceRoostStates[i];
+                DoRespawnObjects(m_AllianceBrokenRoost[i], false);
+                DoRespawnObjects(m_AllianceRoost[i], true);
+                bReturnStatus = true;
+            }
+            else if (pGo->GetEntry() == aAllianceRoosts[i])
+            {
+                // ###### This is hacked in Gameobject.cpp because of the missing custom spells support #####
+                // if we can't add any bombs don't do anything
+                if (!AddBombsToInventory(pPlayer))
+                    return false;
+
+                // makr player as pvp first
+                pPlayer->UpdatePvP(true, true);
+                pPlayer->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP);
+
+                // Send taxi
+                bReturnStatus = HandlePlayerTaxiDrive(pPlayer, i);
+            }
+        }
+    }
+    else if (pPlayer->GetTeam() == HORDE)
+    {
+        for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
+        {
+            if (pGo->GetEntry() == aHordeWagons[i])
+            {
+                m_uiRoostWorldState[i] = aAllianceNeutralStates[i];
+                DoRespawnObjects(m_AllianceRoost[i], false);
+                DoRespawnObjects(m_AllianceBrokenRoost[i], true);
+                bReturnStatus = true;
+            }
+            else if (pGo->GetEntry() == aHordeBrokenRoosts[i])
+            {
+                m_uiRoostWorldState[i] = aHordeRoostStates[i];
+                DoRespawnObjects(m_HordeBrokenRoost[i], false);
+                DoRespawnObjects(m_HordeRoost[i], true);
+                bReturnStatus = true;
+            }
+            else if (pGo->GetEntry() == aHordeRoosts[i])
+            {
+                // ###### This is hacked in Gameobject.cpp because of the missing custom spells support #####
+                // if we can't add any bombs don't do anything
+                if (!AddBombsToInventory(pPlayer))
+                    return false;
+
+                // makr player as pvp first
+                pPlayer->UpdatePvP(true, true);
+                pPlayer->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP);
+
+                // Send taxi
+                bReturnStatus = HandlePlayerTaxiDrive(pPlayer, i);
+            }
+        }
+    }
+
+    UpdateWyvernsWorldState(1);
+
+    return bReturnStatus;
+}
+
+// Handle Taxi for Halaa bombing run
+bool WorldPvPNA::HandlePlayerTaxiDrive(Player* pPlayer, uint8 uiPos)
+{
+    std::vector<uint32> vTaxiNodes;
+    vTaxiNodes.reserve(2);
+
+    vTaxiNodes[0] = aFlightPathStartNodes[uiPos];
+    vTaxiNodes[1] = aFlightPathEndNodes[uiPos];
+
+    // Send taxi
+    if (pPlayer->ActivateTaxiPathTo(vTaxiNodes))
+        return true;
+
     return false;
+}
+
+// Add fire bombs to player inventory
+bool WorldPvPNA::AddBombsToInventory(Player* pPlayer)
+{
+    uint32 uiSpaceForItems = 0;
+    ItemPosCountVec m_Destination;
+    uint32 uiBombCount = MAX_FIRE_BOMBS;
+
+    // get the free slots from inventory
+    uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, m_Destination, ITEM_ID_FIRE_BOMB, uiBombCount, &uiSpaceForItems);
+    if (msg != EQUIP_ERR_OK)
+        uiBombCount -= uiSpaceForItems;
+
+    if (uiBombCount == 0 || m_Destination.empty())
+        return false;
+
+    Item* item = pPlayer->StoreNewItem(m_Destination, ITEM_ID_FIRE_BOMB, true);
+
+    if(uiBombCount > 0 && item)
+        pPlayer->SendNewItem(item, uiBombCount, true, false);
+
+    return true;
 }
 
 void WorldPvPNA::SetBannerArtKit(uint32 uiArtkit)
