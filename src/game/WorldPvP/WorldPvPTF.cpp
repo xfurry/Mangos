@@ -134,7 +134,7 @@ void WorldPvPTF::HandleObjectiveComplete(PlayerSet m_sPlayersSet, uint32 uiEvent
     {
         for (uint8 j = 0; j < 4; ++j)
         {
-            if (uiEventId == aTowerEvents[i][j].uiEventEntry)
+            if (uiEventId == aTerokkarTowerEvents[i][j].uiEventEntry)
             {
                 for (PlayerSet::iterator itr = m_sPlayersSet.begin(); itr != m_sPlayersSet.end(); ++itr)
                 {
@@ -162,10 +162,10 @@ void WorldPvPTF::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId
         {
             for (uint8 j = 0; j < 4; ++j)
             {
-                if (uiEventId == aTowerEvents[i][j].uiEventEntry)
+                if (uiEventId == aTerokkarTowerEvents[i][j].uiEventEntry)
                 {
-                    ProcessCaptureEvent(aTowerEvents[i][j].uiEventType, pPlayer->GetTeam(), aTowerEvents[i][j].uiWorldState, i);
-                    sWorld.SendZoneText(ZONE_ID_TEROKKAR, sObjectMgr.GetMangosStringForDBCLocale(aTowerEvents[i][j].uiZoneText));
+                    ProcessCaptureEvent(aTerokkarTowerEvents[i][j].uiEventType, pPlayer->GetTeam(), aTerokkarTowerEvents[i][j].uiWorldState, i);
+                    sWorld.SendZoneText(ZONE_ID_TEROKKAR, sObjectMgr.GetMangosStringForDBCLocale(aTerokkarTowerEvents[i][j].uiZoneText));
                     break;
                 }
             }

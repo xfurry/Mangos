@@ -169,6 +169,7 @@ class WorldPvPNA : public WorldPvP
         void OnCreatureDeath(Creature* pCreature);
         void OnCreatureRespawn(Creature* pCreature);
         void OnGameObjectCreate(GameObject* pGo);
+
         void ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId);
 
         bool HandleObjectUse(Player* pPlayer, GameObject* pGo);
@@ -187,14 +188,15 @@ class WorldPvPNA : public WorldPvP
 
         // process capture events
         void ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam);
-        // respawn faction soldiers
+
+        // set specific faction soldiers and objects after capture
         void DoRespawnSoldiers(uint32 uiFaction);
+        void DoHandleFactionObjects(uint32 uiFaction);
+
         // set banner artkit
         void SetBannerArtKit(uint32 uiArtKit);
         // handle a specific game objects
         void DoRespawnObjects(ObjectGuid GameObjectGuid, bool bRespawn);
-        // handle game objects by faction
-        void DoHandleFactionObjects(uint32 uiFaction);
 
         uint32 m_uiZoneController;
         uint32 m_uiControllerWorldState;

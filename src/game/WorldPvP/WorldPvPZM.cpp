@@ -21,16 +21,6 @@
 
 
 WorldPvPZM::WorldPvPZM() : WorldPvP(),
-    m_uiEastBeaconController(0),
-    m_uiWestBeaconController(0),
-
-    m_uiEastBeaconState(NEUTRAL),
-    m_uiWestBeaconState(NEUTRAL),
-
-    m_uiEastBeaconWorldState(WORLD_STATE_TOWER_EAST_NEUTRAL),
-    m_uiWestBeaconWorldState(WORLD_STATE_TOWER_WEST_NEUTRAL),
-    m_uiEastBeaconMapState(WORLD_STATE_BEACON_EAST_NEUTRAL),
-    m_uiWestBeaconMapState(WORLD_STATE_BEACON_WEST_NEUTRAL),
     m_uiGraveyardWorldState(WORLD_STATE_GRAVEYARD_NEUTRAL),
     m_uiAllianceScoutWorldState(WORLD_STATE_ALY_FLAG_NOT_READY),
     m_uiHordeScoutWorldState(WORLD_STATE_HORDE_FLAG_NOT_READY),
@@ -39,6 +29,12 @@ WorldPvPZM::WorldPvPZM() : WorldPvP(),
     m_uiTowersHorde(0)
 {
     m_uiTypeId = WORLD_PVP_TYPE_ZM;
+
+    // init world states
+    m_uiBeaconWorldState[0] = WORLD_STATE_TOWER_EAST_NEUTRAL;
+    m_uiBeaconWorldState[1] = WORLD_STATE_TOWER_WEST_NEUTRAL;
+    m_uiBeaconMapState[0] = WORLD_STATE_BEACON_EAST_NEUTRAL;
+    m_uiBeaconMapState[1] = WORLD_STATE_BEACON_WEST_NEUTRAL;
 }
 
 bool WorldPvPZM::InitWorldPvPArea()
@@ -54,24 +50,28 @@ bool WorldPvPZM::InitWorldPvPArea()
 
 void WorldPvPZM::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
-    FillInitialWorldState(data, count, m_uiEastBeaconWorldState,    1);
-    FillInitialWorldState(data, count, m_uiWestBeaconWorldState,    1);
-    FillInitialWorldState(data, count, m_uiEastBeaconMapState,      1);
-    FillInitialWorldState(data, count, m_uiWestBeaconMapState,      1);
     FillInitialWorldState(data, count, m_uiAllianceScoutWorldState, 1);
     FillInitialWorldState(data, count, m_uiHordeScoutWorldState,    1);
     FillInitialWorldState(data, count, m_uiGraveyardWorldState,     1);
+
+    for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
+    {
+        FillInitialWorldState(data, count, m_uiBeaconWorldState[i], 1);
+        FillInitialWorldState(data, count, m_uiBeaconMapState[i],   1);
+    }
 }
 
 void WorldPvPZM::SendRemoveWorldStates(Player* pPlayer)
 {
-    pPlayer->SendUpdateWorldState(m_uiEastBeaconWorldState,         0);
-    pPlayer->SendUpdateWorldState(m_uiWestBeaconWorldState,         0);
-    pPlayer->SendUpdateWorldState(m_uiEastBeaconMapState,           0);
-    pPlayer->SendUpdateWorldState(m_uiWestBeaconMapState,           0);
     pPlayer->SendUpdateWorldState(m_uiAllianceScoutWorldState,      0);
     pPlayer->SendUpdateWorldState(m_uiHordeScoutWorldState,         0);
     pPlayer->SendUpdateWorldState(m_uiGraveyardWorldState,          0);
+
+    for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
+    {
+        pPlayer->SendUpdateWorldState(m_uiBeaconWorldState[i],  0);
+        pPlayer->SendUpdateWorldState(m_uiBeaconMapState[i],    0);
+    }
 }
 
 void WorldPvPZM::HandlePlayerEnterZone(Player* pPlayer)
@@ -105,22 +105,30 @@ void WorldPvPZM::OnCreatureCreate(Creature* pCreature)
             m_HorderScoutGUID = pCreature->GetObjectGuid();
             break;
         case NPC_PVP_BEAM_RED:
+            // East Beam
             if (pCreature->GetPositionY() < 7000.0f)
-                m_BeamEastRedGUID = pCreature->GetObjectGuid();
+                m_BeamRedGUID[0] = pCreature->GetObjectGuid();
+            // Center Beam
             else if (pCreature ->GetPositionY() < 7300.0f)
                 m_BeamCenterRedGUID = pCreature->GetObjectGuid();
+            // West Beam
             else
-                m_BeamWestRedGUID = pCreature->GetObjectGuid();
+                m_BeamRedGUID[1] = pCreature->GetObjectGuid();
+
             pCreature->SetRespawnDelay(7*DAY);
             pCreature->ForcedDespawn();
             break;
         case NPC_PVP_BEAM_BLUE:
+            // East Beam
             if (pCreature->GetPositionY() < 7000.0f)
-                m_BeamEastBlueGUID = pCreature->GetObjectGuid();
+                m_BeamBlueGUID[0] = pCreature->GetObjectGuid();
+            // Center Beam
             else if (pCreature ->GetPositionY() < 7300.0f)
                 m_BeamCenterBlueGUID = pCreature->GetObjectGuid();
+            // West Beam
             else
-                m_BeamWestBlueGUID = pCreature->GetObjectGuid();
+                m_BeamBlueGUID[1] = pCreature->GetObjectGuid();
+
             pCreature->SetRespawnDelay(7*DAY);
             pCreature->ForcedDespawn();
             break;
@@ -132,10 +140,10 @@ void WorldPvPZM::OnGameObjectCreate(GameObject* pGo)
     switch (pGo->GetEntry())
     {
         case GO_ZANGA_BANNER_WEST:
-            m_TowerBannerWestGUID = pGo->GetObjectGuid();
+            m_TowerBannerGUID[1] = pGo->GetObjectGuid();
             break;
         case GO_ZANGA_BANNER_EAST:
-            m_TowerBannerEastGUID = pGo->GetObjectGuid();
+            m_TowerBannerGUID[0] = pGo->GetObjectGuid();
             break;
         case GO_ZANGA_BANNER_CENTER_ALY:
             m_TowerBannerCenterAlyGUID = pGo->GetObjectGuid();
@@ -152,173 +160,66 @@ void WorldPvPZM::OnGameObjectCreate(GameObject* pGo)
 // process the capture events
 void WorldPvPZM::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId)
 {
-    switch(pGo->GetEntry())
+    for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
     {
-        case GO_ZANGA_BANNER_EAST:
-            switch(uiEventId)
+        if (pGo->GetEntry() == aZangaTowers[i])
+        {
+            for (uint8 j = 0; j < 4; ++j)
             {
-                case EVENT_EAST_BEACON_PROGRESS_ALLIANCE:
-                    ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam(), TOWER_ID_EAST_BEACON);
-                    sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_EAST_A));
+                if (uiEventId == aZangaTowerEvents[i][j].uiEventEntry)
+                {
+                    ProcessCaptureEvent(aZangaTowerEvents[i][j].uiEventType, pPlayer->GetTeam(), aZangaTowerEvents[i][j].uiWorldState, aZangaTowerEvents[i][j].uiMapState, i);
+                    sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(aZangaTowerEvents[i][j].uiZoneText));
                     break;
-                case EVENT_EAST_BEACON_PROGRESS_HORDE:
-                    ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam(), TOWER_ID_EAST_BEACON);
-                    sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_EAST_H));
-                    break;
-                case EVENT_EAST_BEACON_NEUTRAL_ALLIANCE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam(), TOWER_ID_EAST_BEACON);
-                    sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOOSE_EAST_A));
-                    break;
-                case EVENT_EAST_BEACON_NEUTRAL_HORDE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam(), TOWER_ID_EAST_BEACON);
-                    sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOOSE_EAST_H));
-                    break;
+                }
             }
-            break;
-        case GO_ZANGA_BANNER_WEST:
-            switch(uiEventId)
-            {
-                case EVENT_WEST_BEACON_PROGRESS_ALLIANCE:
-                    ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam(), TOWER_ID_WEST_BEACON);
-                    sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_WEST_A));
-                    break;
-                case EVENT_WEST_BEACON_PROGRESS_HORDE:
-                    ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam(), TOWER_ID_WEST_BEACON);
-                    sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_WEST_H));
-                    break;
-                case EVENT_WEST_BEACON_NEUTRAL_ALLIANCE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam(), TOWER_ID_WEST_BEACON);
-                    sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOOSE_WEST_A));
-                    break;
-                case EVENT_WEST_BEACON_NEUTRAL_HORDE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam(), TOWER_ID_WEST_BEACON);
-                    sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOOSE_WEST_H));
-                    break;
-            }
-            break;
+        }
     }
 }
 
-void WorldPvPZM::SetData(uint32 uiType, uint32 uiData)
+void WorldPvPZM::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32 uiNewWorldState, uint32 uiNewMapState, uint32 uiTower)
 {
-    switch(uiType)
+    for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
     {
-        case TYPE_EAST_BEACON_CONTROLLER:
-            if (uiData == ALLIANCE)
+        if (uiTower == i)
+        {
+            // remove old tower state
+            SendUpdateWorldState(m_uiBeaconWorldState[i], 0);
+            SendUpdateWorldState(m_uiBeaconMapState[i], 0);
+
+            if (uiCaptureType == PROGRESS)
             {
-                if (GetData(TYPE_EAST_BEACON_STATE) == NEUTRAL)
+                if (uiTeam == ALLIANCE)
                 {
-                    // in neutral case the team id is the opposite team
-                    // the team who captured the tower and set it to neutral
+                    DoSetBeaconArtkit(m_BeamBlueGUID[i], true);
+                    ++m_uiTowersAlly;
+                }
+                else
+                {
+                    DoSetBeaconArtkit(m_BeamRedGUID[i], true);
+                    ++m_uiTowersHorde;
+                }
+            }
+            else if (uiCaptureType == NEUTRAL)
+            {
+                if (uiTeam == ALLIANCE)
+                {
+                    DoSetBeaconArtkit(m_BeamRedGUID[i], false);
                     --m_uiTowersHorde;
-                    DoSetBeaconArtkit(m_BeamEastRedGUID, false);
-                    m_uiEastBeaconWorldState = WORLD_STATE_TOWER_EAST_NEUTRAL;
-                    m_uiEastBeaconMapState = WORLD_STATE_BEACON_EAST_NEUTRAL;
                 }
-                else if (GetData(TYPE_EAST_BEACON_STATE) == PROGRESS)
+                else
                 {
-                    m_uiEastBeaconWorldState = WORLD_STATE_TOWER_EAST_ALY;
-                    m_uiEastBeaconMapState = WORLD_STATE_BEACON_EAST_ALY;
-                    // increase tower count only if the controller is changed
-                    if (uiData != GetData(TYPE_EAST_BEACON_CONTROLLER))
-                    {
-                        DoSetBeaconArtkit(m_BeamEastBlueGUID, true);
-                        ++m_uiTowersAlly;
-                    }
-                }
-            }
-            else if (uiData == HORDE)
-            {
-                if (GetData(TYPE_EAST_BEACON_STATE) == NEUTRAL)
-                {
-                    // in neutral case the team id is the opposite team
-                    // the team who captured the tower and set it to neutral
+                    DoSetBeaconArtkit(m_BeamBlueGUID[i], false);
                     --m_uiTowersAlly;
-                    DoSetBeaconArtkit(m_BeamEastBlueGUID, false);
-                    m_uiEastBeaconWorldState = WORLD_STATE_TOWER_EAST_NEUTRAL;
-                    m_uiEastBeaconMapState = WORLD_STATE_BEACON_EAST_NEUTRAL;
-                }
-                if (GetData(TYPE_EAST_BEACON_STATE) == PROGRESS)
-                {
-                    m_uiEastBeaconWorldState = WORLD_STATE_TOWER_EAST_HORDE;
-                    m_uiEastBeaconMapState = WORLD_STATE_BEACON_EAST_HORDE;
-                    // increase tower count only if the controller is changed
-                    if (uiData != GetData(TYPE_EAST_BEACON_CONTROLLER))
-                    {
-                        DoSetBeaconArtkit(m_BeamEastRedGUID, true);
-                        ++m_uiTowersHorde;
-                    }
                 }
             }
 
-            // set controller only for progress and neutral
-            if (GetData(TYPE_EAST_BEACON_STATE) == PROGRESS)
-                m_uiEastBeaconController = GetData(TYPE_EAST_BEACON_STATE) == PROGRESS ? uiData : 0;
-
-            break;
-        case TYPE_WEST_BEACON_CONTROLLER:
-            if (uiData == ALLIANCE)
-            {
-                if (GetData(TYPE_WEST_BEACON_STATE) == NEUTRAL)
-                {
-                    // in neutral case the team id is the opposite team
-                    // the team who captured the tower and set it to neutral
-                    --m_uiTowersHorde;
-                    DoSetBeaconArtkit(m_BeamWestRedGUID, false);
-                    m_uiWestBeaconWorldState = WORLD_STATE_TOWER_WEST_NEUTRAL;
-                    m_uiWestBeaconMapState = WORLD_STATE_BEACON_WEST_NEUTRAL;
-                }
-                else if (GetData(TYPE_WEST_BEACON_STATE) == PROGRESS)
-                {
-                    m_uiWestBeaconWorldState = WORLD_STATE_TOWER_WEST_ALY;
-                    m_uiWestBeaconMapState = WORLD_STATE_BEACON_WEST_ALY;
-                    // increase tower count only if the controller is changed
-                    if (uiData != GetData(TYPE_WEST_BEACON_CONTROLLER))
-                    {
-                        DoSetBeaconArtkit(m_BeamWestBlueGUID, true);
-                        ++m_uiTowersAlly;
-                    }
-                }
-            }
-            else if (uiData == HORDE)
-            {
-                if (GetData(TYPE_WEST_BEACON_STATE) == NEUTRAL)
-                {
-                    // in neutral case the team id is the opposite team
-                    // the team who captured the tower and set it to neutral
-                    --m_uiTowersAlly;
-                    DoSetBeaconArtkit(m_BeamWestBlueGUID, false);
-                    m_uiWestBeaconWorldState = WORLD_STATE_TOWER_WEST_NEUTRAL;
-                    m_uiWestBeaconMapState = WORLD_STATE_BEACON_WEST_NEUTRAL;
-                }
-                if (GetData(TYPE_WEST_BEACON_STATE) == PROGRESS)
-                {
-                    m_uiWestBeaconWorldState = WORLD_STATE_TOWER_WEST_HORDE;
-                    m_uiWestBeaconMapState = WORLD_STATE_BEACON_WEST_HORDE;
-                    // increase tower count only if the controller is changed
-                    if (uiData != GetData(TYPE_WEST_BEACON_CONTROLLER))
-                    {
-                        DoSetBeaconArtkit(m_BeamWestRedGUID, true);
-                        ++m_uiTowersHorde;
-                    }
-                }
-            }
-
-            // set controller only for progress and neutral
-            if (GetData(TYPE_WEST_BEACON_STATE) == PROGRESS)
-                m_uiWestBeaconController = GetData(TYPE_WEST_BEACON_STATE) == PROGRESS ? uiData : 0;
-
-            break;
-        case TYPE_EAST_BEACON_STATE:
-            m_uiEastBeaconState = uiData;
-            return;
-        case TYPE_WEST_BEACON_STATE:
-            m_uiWestBeaconState = uiData;
-            return;
+            // send new tower state
+            m_uiBeaconWorldState[i] = uiNewWorldState;
+            m_uiBeaconMapState[i] = uiNewMapState;
+            SendUpdateWorldState(m_uiBeaconMapState[i], 1);
+            SendUpdateWorldState(m_uiBeaconWorldState[i], 1);
+        }
     }
 
     // buff players
@@ -332,52 +233,6 @@ void WorldPvPZM::SetData(uint32 uiType, uint32 uiData)
         DoResetScouts(HORDE);
     if (m_uiTowersAlly < MAX_ZM_TOWERS)
         DoResetScouts(ALLIANCE);
-}
-
-uint32 WorldPvPZM::GetData(uint32 uiType)
-{
-    switch (uiType)
-    {
-        case TYPE_EAST_BEACON_CONTROLLER:
-            return m_uiEastBeaconController;
-        case TYPE_WEST_BEACON_CONTROLLER:
-            return m_uiWestBeaconController;
-        case TYPE_EAST_BEACON_STATE:
-            return m_uiEastBeaconState;
-        case TYPE_WEST_BEACON_STATE:
-            return m_uiWestBeaconState;
-    }
-
-    return 0;
-}
-
-void WorldPvPZM::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32 uiTower)
-{
-    switch(uiTower)
-    {
-        case TOWER_ID_EAST_BEACON:
-             // remove old tower state
-            SendUpdateWorldState(m_uiEastBeaconWorldState, 0);
-            SendUpdateWorldState(m_uiEastBeaconMapState, 0);
-            // update data
-            SetData(TYPE_EAST_BEACON_STATE, uiCaptureType);
-            SetData(TYPE_EAST_BEACON_CONTROLLER, uiTeam);
-            // send new tower state
-            SendUpdateWorldState(m_uiEastBeaconWorldState, 1);
-            SendUpdateWorldState(m_uiEastBeaconMapState, 1);
-            break;
-        case TOWER_ID_WEST_BEACON:
-            // remove old tower state
-            SendUpdateWorldState(m_uiWestBeaconWorldState, 0);
-            SendUpdateWorldState(m_uiWestBeaconMapState, 0);
-            // update data
-            SetData(TYPE_WEST_BEACON_STATE, uiCaptureType);
-            SetData(TYPE_WEST_BEACON_CONTROLLER, uiTeam);
-            // send new tower state
-            SendUpdateWorldState(m_uiWestBeaconWorldState, 1);
-            SendUpdateWorldState(m_uiWestBeaconMapState, 1);
-            break;
-    }
 }
 
 void WorldPvPZM::DoPrepareFactionScouts(uint32 uiFaction)
