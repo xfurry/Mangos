@@ -23,20 +23,6 @@ enum
 {
     MAX_HP_TOWERS                           = 3,
 
-    TYPE_OVERLOOK_CONTROLLER                = 1,
-    TYPE_STADIUM_CONTROLLER                 = 2,
-    TYPE_BROKEN_HILL_CONTROLLER             = 3,
-
-    TYPE_OVERLOOK_STATE                     = 4,
-    TYPE_STADIUM_STATE                      = 5,
-    TYPE_BROKEN_HILL_STATE                  = 6,
-
-    // tower ids
-    // they are used in the process event functions
-    TOWER_ID_OVERLOOK                       = 1,
-    TOWER_ID_STADIUM                        = 2,
-    TOWER_ID_BROKEN_HILL                    = 3,
-
     // spells
     SPELL_HELLFIRE_TOWER_TOKEN_ALY          = 32155,
     SPELL_HELLFIRE_TOWER_TOKEN_HORDE        = 32158,
@@ -127,6 +113,35 @@ enum
     WORLD_STATE_STADIUM_NEUTRAL             = 2472,
 };
 
+struct HellfireTowersEvents
+{
+    uint32 uiEventEntry, uiEventType, uiZoneText, uiWorldState, uiTowerArtKit;
+};
+
+static const HellfireTowersEvents aHellfireTowerEvents[MAX_HP_TOWERS][4] =
+{
+    {
+        {EVENT_OVERLOOK_PROGRESS_ALLIANCE,      PROGRESS,   LANG_OPVP_HP_CAPTURE_OVERLOOK_A,    WORLD_STATE_OVERLOOK_ALY,           GO_ARTKIT_OVERLOOK_ALY},
+        {EVENT_OVERLOOK_PROGRESS_HORDE,         PROGRESS,   LANG_OPVP_HP_CAPTURE_OVERLOOK_H,    WORLD_STATE_OVERLOOK_HORDE,         GO_ARTKIT_OVERLOOK_HORDE},
+        {EVENT_OVERLOOK_NEUTRAL_ALLIANCE,       NEUTRAL,    LANG_OPVP_HP_LOOSE_OVERLOOK_A,      WORLD_STATE_OVERLOOK_NEUTRAL,       GO_ARTKIT_OVERLOOK_NEUTRAL},
+        {EVENT_OVERLOOK_NEUTRAL_HORDE,          NEUTRAL,    LANG_OPVP_HP_LOOSE_OVERLOOK_H,      WORLD_STATE_OVERLOOK_NEUTRAL,       GO_ARTKIT_OVERLOOK_NEUTRAL},
+    },
+    {
+        {EVENT_STADIUM_PROGRESS_ALLIANCE,       PROGRESS,   LANG_OPVP_HP_CAPTURE_STADIUM_A,     WORLD_STATE_STADIUM_ALY,            GO_ARTKIT_STADIUM_ALY},
+        {EVENT_STADIUM_PROGRESS_HORDE,          PROGRESS,   LANG_OPVP_HP_CAPTURE_STADIUM_H,     WORLD_STATE_STADIUM_HORDE,          GO_ARTKIT_STADIUM_HORDE},
+        {EVENT_STADIUM_NEUTRAL_ALLIANCE,        NEUTRAL,    LANG_OPVP_HP_LOOSE_STADIUM_A,       WORLD_STATE_STADIUM_NEUTRAL,        GO_ARTKIT_STADIUM_NEUTRAL},
+        {EVENT_STADIUM_NEUTRAL_HORDE,           NEUTRAL,    LANG_OPVP_HP_LOOSE_STADIUM_H,       WORLD_STATE_STADIUM_NEUTRAL,        GO_ARTKIT_STADIUM_NEUTRAL},
+    },
+    {
+        {EVENT_BROKEN_HILL_PROGRESS_ALLIANCE,   PROGRESS,   LANG_OPVP_HP_CAPTURE_BROKENHILL_A,  WORLD_STATE_BROKEN_HILL_ALY,        GO_ARTKIT_BROKEN_HILL_ALY},
+        {EVENT_BROKEN_HILL_PROGRESS_HORDE,      PROGRESS,   LANG_OPVP_HP_CAPTURE_BROKENHILL_H,  WORLD_STATE_BROKEN_HILL_HORDE,      GO_ARTKIT_BROKEN_HILL_HORDE},
+        {EVENT_BROKEN_HILL_NEUTRAL_ALLIANCE,    NEUTRAL,    LANG_OPVP_HP_LOOSE_BROKENHILL_A,    WORLD_STATE_BROKEN_HILL_NEUTRAL,    GO_ARTKIT_BROKEN_HILL_NEUTRAL},
+        {EVENT_BROKEN_HILL_NEUTRAL_HORDE,       NEUTRAL,    LANG_OPVP_HP_LOOSE_BROKENHILL_H,    WORLD_STATE_BROKEN_HILL_NEUTRAL,    GO_ARTKIT_BROKEN_HILL_NEUTRAL},
+    },
+};
+
+static const uint32 aHellfireBanners[MAX_HP_TOWERS] = {GO_HELLFIRE_BANNER_OVERLOOK, GO_HELLFIRE_BANNER_STADIUM, GO_HELLFIRE_BANNER_BROKEN_HILL};
+
 class WorldPvPHP : public WorldPvP
 {
     public:
@@ -141,38 +156,23 @@ class WorldPvPHP : public WorldPvP
         void HandlePlayerLeaveZone(Player* pPlayer);
         void HandleObjectiveComplete(PlayerSet m_sPlayersSet, uint32 uiEventId);
 
-        void SetData(uint32 uiType, uint32 uiData);
-        uint32 GetData(uint32 uiType);
-
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
         void SendRemoveWorldStates(Player* pPlayer);
-        void UpdateWorldState();
 
     private:
+        // world state update
+        void UpdateWorldState();
         // process capture events
-        void ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32 uiTower);
-
+        void ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32 uiNewWorldState, uint32 uiTowerArtKit, uint32 uiTower);
         // set banners artkit
         void SetBannerArtKit(ObjectGuid BannerGuid, uint32 uiArtKit);
 
-        uint32 m_uiBrokenHillController;
-        uint32 m_uiStadiumController;
-        uint32 m_uiOverlookController;
-        uint32 m_uiBrokenHillState;
-        uint32 m_uiStadiumState;
-        uint32 m_uiOverlookState;
-        uint32 m_uiBrokenHillWorldState;
-        uint32 m_uiStadiumWorldState;
-        uint32 m_uiOverlookWorldState;
+        uint32 m_uiTowerWorldState[MAX_HP_TOWERS];
         uint32 m_uiTowersAlly;
         uint32 m_uiTowersHorde;
 
-        ObjectGuid m_TowerBannerOverlookGUID;
-        ObjectGuid m_TowerBannerStadiumGUID;
-        ObjectGuid m_TowerBannerBrokenHillGUID;
-        ObjectGuid m_TowerPointOverlookGUID;
-        ObjectGuid m_TowerPointStadiumGUID;
-        ObjectGuid m_TowerPointBrokenHillGUID;
+        ObjectGuid m_HellfireBannerGUID[MAX_HP_TOWERS];
+        ObjectGuid m_HellfireTowerGUID[MAX_HP_TOWERS];
 };
 
 #endif

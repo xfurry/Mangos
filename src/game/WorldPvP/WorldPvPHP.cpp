@@ -21,22 +21,14 @@
 
 
 WorldPvPHP::WorldPvPHP() : WorldPvP(),
-    m_uiBrokenHillController(0),
-    m_uiStadiumController(0),
-    m_uiOverlookController(0),
-
-    m_uiBrokenHillState(NEUTRAL),
-    m_uiStadiumState(NEUTRAL),
-    m_uiOverlookState(NEUTRAL),
-
-    m_uiBrokenHillWorldState(WORLD_STATE_BROKEN_HILL_NEUTRAL),
-    m_uiStadiumWorldState(WORLD_STATE_STADIUM_NEUTRAL),
-    m_uiOverlookWorldState(WORLD_STATE_OVERLOOK_NEUTRAL),
-
     m_uiTowersAlly(0),
     m_uiTowersHorde(0)
 {
     m_uiTypeId = WORLD_PVP_TYPE_HP;
+
+    m_uiTowerWorldState[0] = WORLD_STATE_OVERLOOK_NEUTRAL;
+    m_uiTowerWorldState[1] = WORLD_STATE_STADIUM_NEUTRAL;
+    m_uiTowerWorldState[2] = WORLD_STATE_BROKEN_HILL_NEUTRAL;
 }
 
 bool WorldPvPHP::InitWorldPvPArea()
@@ -58,9 +50,8 @@ void WorldPvPHP::FillInitialWorldStates(WorldPacket& data, uint32& count)
     FillInitialWorldState(data, count, WORLD_STATE_TOWER_DISPLAY_HP_A, 1);
     FillInitialWorldState(data, count, WORLD_STATE_TOWER_DISPLAY_HP_H, 1);
 
-    FillInitialWorldState(data, count, m_uiBrokenHillWorldState,    1);
-    FillInitialWorldState(data, count, m_uiStadiumWorldState,       1);
-    FillInitialWorldState(data, count, m_uiOverlookWorldState,      1);
+    for (uint8  i = 0; i < MAX_HP_TOWERS; ++i)
+        FillInitialWorldState(data, count, m_uiTowerWorldState[i],    1);
 }
 
 void WorldPvPHP::SendRemoveWorldStates(Player* pPlayer)
@@ -68,9 +59,8 @@ void WorldPvPHP::SendRemoveWorldStates(Player* pPlayer)
     pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_DISPLAY_HP_A,    0);
     pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_DISPLAY_HP_H,    0);
 
-    pPlayer->SendUpdateWorldState(m_uiBrokenHillWorldState,         0);
-    pPlayer->SendUpdateWorldState(m_uiStadiumWorldState,            0);
-    pPlayer->SendUpdateWorldState(m_uiOverlookWorldState,           0);
+    for (uint8  i = 0; i < MAX_HP_TOWERS; ++i)
+        pPlayer->SendUpdateWorldState(m_uiTowerWorldState[i],         0);
 }
 
 void WorldPvPHP::UpdateWorldState()
@@ -105,27 +95,27 @@ void WorldPvPHP::OnGameObjectCreate(GameObject* pGo)
     switch (pGo->GetEntry())
     {
         case GO_TOWER_BANNER_OVERLOOK:
-            m_TowerBannerOverlookGUID = pGo->GetObjectGuid();
+            m_HellfireTowerGUID[0] = pGo->GetObjectGuid();
             pGo->SetGoArtKit(GO_ARTKIT_OVERLOOK_NEUTRAL);
             break;
         case GO_TOWER_BANNER_STADIUM:
-            m_TowerBannerStadiumGUID = pGo->GetObjectGuid();
+            m_HellfireTowerGUID[1] = pGo->GetObjectGuid();
             pGo->SetGoArtKit(GO_ARTKIT_STADIUM_NEUTRAL);
             break;
         case GO_TOWER_BANNER_BROKEN_HILL:
-            m_TowerBannerBrokenHillGUID = pGo->GetObjectGuid();
+            m_HellfireTowerGUID[2] = pGo->GetObjectGuid();
             pGo->SetGoArtKit(GO_ARTKIT_BROKEN_HILL_NEUTRAL);
             break;
         case GO_HELLFIRE_BANNER_OVERLOOK:
-            m_TowerPointOverlookGUID = pGo->GetObjectGuid();
+            m_HellfireBannerGUID[0] = pGo->GetObjectGuid();
             pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
             break;
         case GO_HELLFIRE_BANNER_STADIUM:
-            m_TowerPointStadiumGUID = pGo->GetObjectGuid();
+            m_HellfireBannerGUID[1] = pGo->GetObjectGuid();
             pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
             break;
         case GO_HELLFIRE_BANNER_BROKEN_HILL:
-            m_TowerPointBrokenHillGUID = pGo->GetObjectGuid();
+            m_HellfireBannerGUID[2] = pGo->GetObjectGuid();
             pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
             break;
 
@@ -168,269 +158,57 @@ void WorldPvPHP::HandleObjectiveComplete(PlayerSet m_sPlayersSet, uint32 uiEvent
 // process the capture events
 void WorldPvPHP::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId)
 {
-    switch(pGo->GetEntry())
+    for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
     {
-        case GO_HELLFIRE_BANNER_OVERLOOK:
-            switch(uiEventId)
+        if (pGo->GetEntry() == aHellfireBanners[i])
+        {
+            for (uint8 j = 0; j < 4; ++j)
             {
-                case EVENT_OVERLOOK_PROGRESS_ALLIANCE:
-                    ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam(), TOWER_ID_OVERLOOK);
-                    sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_HP_CAPTURE_OVERLOOK_A));
+                if (uiEventId == aHellfireTowerEvents[i][j].uiEventEntry)
+                {
+                    ProcessCaptureEvent(aHellfireTowerEvents[i][j].uiEventType, pPlayer->GetTeam(), aHellfireTowerEvents[i][j].uiWorldState, aHellfireTowerEvents[i][j].uiTowerArtKit, i);
+                    sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(aHellfireTowerEvents[i][j].uiZoneText));
                     break;
-                case EVENT_OVERLOOK_PROGRESS_HORDE:
-                    ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam(), TOWER_ID_OVERLOOK);
-                    sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_HP_CAPTURE_OVERLOOK_H));
-                    break;
-                case EVENT_OVERLOOK_NEUTRAL_ALLIANCE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam(), TOWER_ID_OVERLOOK);
-                    sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_HP_LOOSE_OVERLOOK_A));
-                    break;
-                case EVENT_OVERLOOK_NEUTRAL_HORDE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam(), TOWER_ID_OVERLOOK);
-                    sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_HP_LOOSE_OVERLOOK_H));
-                    break;
+                }
             }
-            break;
-        case GO_HELLFIRE_BANNER_STADIUM:
-            switch(uiEventId)
-            {
-                case EVENT_STADIUM_PROGRESS_ALLIANCE:
-                    ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam(), TOWER_ID_STADIUM);
-                    sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_HP_CAPTURE_STADIUM_A));
-                    break;
-                case EVENT_STADIUM_PROGRESS_HORDE:
-                    ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam(), TOWER_ID_STADIUM);
-                    sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_HP_CAPTURE_STADIUM_H));
-                    break;
-                case EVENT_STADIUM_NEUTRAL_ALLIANCE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam(), TOWER_ID_STADIUM);
-                    sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_HP_LOOSE_STADIUM_A));
-                    break;
-                case EVENT_STADIUM_NEUTRAL_HORDE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam(), TOWER_ID_STADIUM);
-                    sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_HP_LOOSE_STADIUM_H));
-                    break;
-            }
-            break;
-        case GO_HELLFIRE_BANNER_BROKEN_HILL:
-            switch(uiEventId)
-            {
-                case EVENT_BROKEN_HILL_PROGRESS_ALLIANCE:
-                    ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam(), TOWER_ID_BROKEN_HILL);
-                    sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_HP_CAPTURE_BROKENHILL_A));
-                    break;
-                case EVENT_BROKEN_HILL_PROGRESS_HORDE:
-                    ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam(), TOWER_ID_BROKEN_HILL);
-                    sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_HP_CAPTURE_BROKENHILL_H));
-                    break;
-                case EVENT_BROKEN_HILL_NEUTRAL_ALLIANCE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam(), TOWER_ID_BROKEN_HILL);
-                    sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_HP_LOOSE_BROKENHILL_A));
-                    break;
-                case EVENT_BROKEN_HILL_NEUTRAL_HORDE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam(), TOWER_ID_BROKEN_HILL);
-                    sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_HP_LOOSE_BROKENHILL_H));
-                    break;
-            }
-            break;
+        }
     }
 }
 
-void WorldPvPHP::SetData(uint32 uiType, uint32 uiData)
+void WorldPvPHP::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32 uiNewWorldState, uint32 uiTowerArtKit, uint32 uiTower)
 {
-    switch(uiType)
+    for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
     {
-        case TYPE_OVERLOOK_CONTROLLER:
-            if (uiData == ALLIANCE)
+        if (uiTower == i)
+        {
+            // remove old tower state
+            SendUpdateWorldState(m_uiTowerWorldState[i], 0);
+
+            if (uiCaptureType == PROGRESS)
             {
-                if (GetData(TYPE_OVERLOOK_STATE) == NEUTRAL)
-                {
-                    // in neutral case the team id is the opposite team
-                    // the team who captured the tower and set it to neutral
+                SetBannerArtKit(m_HellfireBannerGUID[i], uiTeam == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+                SetBannerArtKit(m_HellfireTowerGUID[i], uiTowerArtKit);
+
+                if (uiTeam == ALLIANCE)
+                    ++m_uiTowersAlly;
+                else
+                    ++m_uiTowersHorde;
+            }
+            else if (uiCaptureType == NEUTRAL)
+            {
+                SetBannerArtKit(m_HellfireBannerGUID[i], GO_ARTKIT_BANNER_NEUTRAL);
+                SetBannerArtKit(m_HellfireTowerGUID[i], uiTowerArtKit);
+
+                if (uiTeam == ALLIANCE)
                     --m_uiTowersHorde;
-                    m_uiOverlookWorldState = WORLD_STATE_OVERLOOK_NEUTRAL;
-                    // set artkit
-                    SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_OVERLOOK_NEUTRAL);
-                    SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_BANNER_NEUTRAL);
-                }
-                else if (GetData(TYPE_OVERLOOK_STATE) == PROGRESS)
-                {
-                    m_uiOverlookWorldState = WORLD_STATE_OVERLOOK_ALY;
-                    // increase tower count only if the controller is changed
-                    if (uiData != GetData(TYPE_OVERLOOK_CONTROLLER))
-                    {
-                        ++m_uiTowersAlly;
-                        // set artkit
-                        SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_OVERLOOK_ALY);
-                        SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_BANNER_ALLIANCE);
-                    }
-                }
-            }
-            else if (uiData == HORDE)
-            {
-                if (GetData(TYPE_OVERLOOK_STATE) == NEUTRAL)
-                {
-                    // in neutral case the team id is the opposite team
-                    // the team who captured the tower and set it to neutral
+                else
                     --m_uiTowersAlly;
-                    m_uiOverlookWorldState = WORLD_STATE_OVERLOOK_NEUTRAL;
-                    // set artkit
-                    SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_OVERLOOK_NEUTRAL);
-                    SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_BANNER_NEUTRAL);
-                }
-                if (GetData(TYPE_OVERLOOK_STATE) == PROGRESS)
-                {
-                    m_uiOverlookWorldState = WORLD_STATE_OVERLOOK_HORDE;
-                    // increase tower count only if the controller is changed
-                    if (uiData != GetData(TYPE_OVERLOOK_CONTROLLER))
-                    {
-                        ++m_uiTowersHorde;
-
-                        // set artkit
-                        SetBannerArtKit(m_TowerBannerOverlookGUID, GO_ARTKIT_OVERLOOK_HORDE);
-                        SetBannerArtKit(m_TowerPointOverlookGUID, GO_ARTKIT_BANNER_HORDE);
-                    }
-                }
             }
 
-            // set controller only for progress and neutral
-            if (GetData(TYPE_OVERLOOK_STATE) == PROGRESS)
-                m_uiOverlookController = GetData(TYPE_OVERLOOK_STATE) == PROGRESS ? uiData : 0;
-
-            break;
-        case TYPE_STADIUM_CONTROLLER:
-            if (uiData == ALLIANCE)
-            {
-                if (GetData(TYPE_STADIUM_STATE) == NEUTRAL)
-                {
-                    // in neutral case the team id is the opposite team
-                    // the team who captured the tower and set it to neutral
-                    --m_uiTowersHorde;
-                    m_uiStadiumWorldState = WORLD_STATE_STADIUM_NEUTRAL;
-                    // set artkit
-                    SetBannerArtKit(m_TowerBannerStadiumGUID, GO_ARTKIT_STADIUM_NEUTRAL);
-                    SetBannerArtKit(m_TowerPointStadiumGUID, GO_ARTKIT_BANNER_NEUTRAL);
-                }
-                else if (GetData(TYPE_STADIUM_STATE) == PROGRESS)
-                {
-                    m_uiStadiumWorldState = WORLD_STATE_STADIUM_ALY;
-                    // increase tower count only if the controller is changed
-                    if (uiData != GetData(TYPE_STADIUM_CONTROLLER))
-                    {
-                        ++m_uiTowersAlly;
-
-                        // set artkit
-                        SetBannerArtKit(m_TowerBannerStadiumGUID, GO_ARTKIT_STADIUM_ALY);
-                        SetBannerArtKit(m_TowerPointStadiumGUID, GO_ARTKIT_BANNER_ALLIANCE);
-                    }
-                }
-            }
-            else if (uiData == HORDE)
-            {
-                if (GetData(TYPE_STADIUM_STATE) == NEUTRAL)
-                {
-                    // in neutral case the team id is the opposite team
-                    // the team who captured the tower and set it to neutral
-                    --m_uiTowersAlly;
-                    m_uiStadiumWorldState = WORLD_STATE_STADIUM_NEUTRAL;
-                    // set artkit
-                    SetBannerArtKit(m_TowerBannerStadiumGUID, GO_ARTKIT_STADIUM_NEUTRAL);
-                    SetBannerArtKit(m_TowerPointStadiumGUID, GO_ARTKIT_BANNER_NEUTRAL);
-                }
-                if (GetData(TYPE_STADIUM_STATE) == PROGRESS)
-                {
-                    m_uiStadiumWorldState = WORLD_STATE_STADIUM_HORDE;
-                    // increase tower count only if the controller is changed
-                    if (uiData != GetData(TYPE_STADIUM_CONTROLLER))
-                    {
-                        ++m_uiTowersHorde;
-
-                        // set artkit
-                        SetBannerArtKit(m_TowerBannerStadiumGUID, GO_ARTKIT_STADIUM_HORDE);
-                        SetBannerArtKit(m_TowerPointStadiumGUID, GO_ARTKIT_BANNER_HORDE);
-                    }
-                }
-            }
-
-            // set controller only for progress and neutral
-            if (GetData(TYPE_STADIUM_STATE) == PROGRESS)
-                m_uiStadiumController = GetData(TYPE_STADIUM_STATE) == PROGRESS ? uiData : 0;
-
-            break;
-        case TYPE_BROKEN_HILL_CONTROLLER:
-            if (uiData == ALLIANCE)
-            {
-                if (GetData(TYPE_BROKEN_HILL_STATE) == NEUTRAL)
-                {
-                    // in neutral case the team id is the opposite team
-                    // the team who captured the tower and set it to neutral
-                    --m_uiTowersHorde;
-                    m_uiBrokenHillWorldState = WORLD_STATE_BROKEN_HILL_NEUTRAL;
-                    // set artkit
-                    SetBannerArtKit(m_TowerBannerBrokenHillGUID, GO_ARTKIT_BROKEN_HILL_NEUTRAL);
-                    SetBannerArtKit(m_TowerPointBrokenHillGUID, GO_ARTKIT_BANNER_NEUTRAL);
-                }
-                else if (GetData(TYPE_BROKEN_HILL_STATE) == PROGRESS)
-                {
-                    m_uiBrokenHillWorldState = WORLD_STATE_BROKEN_HILL_ALY;
-                    // increase tower count only if the controller is changed
-                    if (uiData != GetData(TYPE_BROKEN_HILL_CONTROLLER))
-                    {
-                        ++m_uiTowersAlly;
-
-                        // set artkit
-                        SetBannerArtKit(m_TowerBannerBrokenHillGUID, GO_ARTKIT_BROKEN_HILL_ALY);
-                        SetBannerArtKit(m_TowerPointBrokenHillGUID, GO_ARTKIT_BANNER_ALLIANCE);
-                    }
-                }
-            }
-            else if (uiData == HORDE)
-            {
-                if (GetData(TYPE_BROKEN_HILL_STATE) == NEUTRAL)
-                {
-                    // in neutral case the team id is the opposite team
-                    // the team who captured the tower and set it to neutral
-                    --m_uiTowersAlly;
-                    m_uiBrokenHillWorldState = WORLD_STATE_BROKEN_HILL_NEUTRAL;
-                    // set artkit
-                    SetBannerArtKit(m_TowerBannerBrokenHillGUID, GO_ARTKIT_BROKEN_HILL_NEUTRAL);
-                    SetBannerArtKit(m_TowerPointBrokenHillGUID, GO_ARTKIT_BANNER_NEUTRAL);
-                }
-                if (GetData(TYPE_BROKEN_HILL_STATE) == PROGRESS)
-                {
-                    m_uiBrokenHillWorldState = WORLD_STATE_BROKEN_HILL_HORDE;
-                    // increase tower count only if the controller is changed
-                    if (uiData != GetData(TYPE_BROKEN_HILL_CONTROLLER))
-                    {
-                        ++m_uiTowersHorde;
-
-                        // set artkit
-                        SetBannerArtKit(m_TowerBannerBrokenHillGUID, GO_ARTKIT_BROKEN_HILL_HORDE);
-                        SetBannerArtKit(m_TowerPointBrokenHillGUID, GO_ARTKIT_BANNER_HORDE);
-                    }
-                }
-            }
-
-            // set controller only for progress and neutral
-            if (GetData(TYPE_BROKEN_HILL_STATE) == PROGRESS)
-                m_uiBrokenHillController = GetData(TYPE_BROKEN_HILL_STATE) == PROGRESS ? uiData : 0;
-
-            break;
-        case TYPE_OVERLOOK_STATE:
-            m_uiOverlookState = uiData;
-            return;
-        case TYPE_STADIUM_STATE:
-            m_uiStadiumState = uiData;
-            return;
-        case TYPE_BROKEN_HILL_STATE:
-            m_uiBrokenHillState = uiData;
-            return;
+            // send new tower state
+            m_uiTowerWorldState[i] = uiNewWorldState;
+            SendUpdateWorldState(m_uiTowerWorldState[i], 1);
+        }
     }
 
     // buff players
@@ -446,63 +224,7 @@ void WorldPvPHP::SetData(uint32 uiType, uint32 uiData)
         DoProcessTeamBuff(ALLIANCE, SPELL_HELLFIRE_SUPERIORITY_HORDE, true);
 
     // update states counters
-    // the map tower states are updated in the ProcessCaptureEvent function
     UpdateWorldState();
-}
-
-uint32 WorldPvPHP::GetData(uint32 uiType)
-{
-    switch (uiType)
-    {
-        case TYPE_OVERLOOK_CONTROLLER:
-            return m_uiOverlookController;
-        case TYPE_STADIUM_CONTROLLER:
-            return m_uiStadiumController;
-        case TYPE_BROKEN_HILL_CONTROLLER:
-            return m_uiBrokenHillController;
-        case TYPE_OVERLOOK_STATE:
-            return m_uiOverlookState;
-        case TYPE_STADIUM_STATE:
-            return m_uiStadiumState;
-        case TYPE_BROKEN_HILL_STATE:
-            return m_uiBrokenHillState;
-    }
-
-    return 0;
-}
-
-void WorldPvPHP::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32 uiTower)
-{
-    switch(uiTower)
-    {
-        case TOWER_ID_OVERLOOK:
-             // remove old tower state
-            SendUpdateWorldState(m_uiOverlookWorldState, 0);
-            // update data
-            SetData(TYPE_OVERLOOK_STATE, uiCaptureType);
-            SetData(TYPE_OVERLOOK_CONTROLLER, uiTeam);
-            // send new tower state
-            SendUpdateWorldState(m_uiOverlookWorldState, 1);
-            break;
-        case TOWER_ID_STADIUM:
-            // remove old tower state
-            SendUpdateWorldState(m_uiStadiumWorldState, 0);
-            // update data
-            SetData(TYPE_STADIUM_STATE, uiCaptureType);
-            SetData(TYPE_STADIUM_CONTROLLER, uiTeam);
-            // send new tower state
-            SendUpdateWorldState(m_uiStadiumWorldState, 1);
-            break;
-        case TOWER_ID_BROKEN_HILL:
-            // remove old tower state
-            SendUpdateWorldState(m_uiBrokenHillWorldState, 0);
-            // update data
-            SetData(TYPE_BROKEN_HILL_STATE, uiCaptureType);
-            SetData(TYPE_BROKEN_HILL_CONTROLLER, uiTeam);
-            // send new tower state
-            SendUpdateWorldState(m_uiBrokenHillWorldState, 1);
-            break;
-    }
 }
 
 void WorldPvPHP::SetBannerArtKit(ObjectGuid BannerGuid, uint32 uiArtkit)
