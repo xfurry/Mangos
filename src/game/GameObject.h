@@ -735,6 +735,7 @@ class MANGOS_DLL_SPEC GameObject : public WorldObject
 
         uint32 GetUseCount() const { return m_useTimes; }
         uint32 GetUniqueUseCount() const { return m_UniqueUsers.size(); }
+        uint32 GetCapturePointTicks() const { return m_captureTicks; }
 
         void SaveRespawnTime();
 
@@ -746,6 +747,7 @@ class MANGOS_DLL_SPEC GameObject : public WorldObject
         void UseDoorOrButton(uint32 time_to_restore = 0, bool alternative = false);
                                                             // 0 = use `gameobject`.`spawntimesecs`
         void ResetDoorOrButton();
+        void ResetCapturePoint();
 
         bool IsHostileTo(Unit const* unit) const;
         bool IsFriendlyTo(Unit const* unit) const;

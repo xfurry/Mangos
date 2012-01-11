@@ -76,6 +76,8 @@ class WorldPvPGH : public WorldPvP
 
         ObjectGuid m_TowerBannerLighthouseGuid;
 
+        uint32 m_uiZoneController;
+
         std::list<ObjectGuid> lAllianceSoldiers;
         std::list<ObjectGuid> lHordeSoldiers;
         std::list<ObjectGuid> lAllianceVendors;

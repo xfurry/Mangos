@@ -164,6 +164,7 @@ class WorldPvPNA : public WorldPvP
         void HandlePlayerEnterZone(Player* pPlayer);
         void HandlePlayerLeaveZone(Player* pPlayer);
         void HandleObjectiveComplete(PlayerSet m_sPlayersSet, uint32 uiEventId);
+        void HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim);
 
         void OnCreatureCreate(Creature* pCreature);
         void OnCreatureDeath(Creature* pCreature);
@@ -203,8 +204,6 @@ class WorldPvPNA : public WorldPvP
         uint32 m_uiControllerMapState;
         uint32 m_uiRoostWorldState[MAX_NA_ROOSTS];
         uint32 m_uiGuardsLeft;
-
-        bool m_bCanCaptureHalaa;
 
         ObjectGuid m_HalaaBanerGuid;
         ObjectGuid m_AllianceRoost[MAX_NA_ROOSTS];

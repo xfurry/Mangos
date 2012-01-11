@@ -26,7 +26,6 @@
 #include "../SharedDefines.h"
 #include "Platform/Define.h"
 #include "../Map.h"
-#include "../GridStates.h"
 
 class Player;
 class GameObject;
@@ -58,6 +57,9 @@ class WorldPvPMgr
         // add zone id to world pvp handler
         void AddZone(uint32 uiZoneId, WorldPvP* pScriptHandler);
 
+        // add capture poit id to pvp handler
+        void AddCapturePoint(uint32 uiPointId, WorldPvP* pScriptHandler);
+
         void Update(uint32);
 
         // Handle cases when a player drops a flag
@@ -69,8 +71,18 @@ class WorldPvPMgr
         // Handle the complete credit for capture point win events
         void HandleObjectiveComplete(std::set<Player*> m_sObjectivePlayers, uint32 uiEventId);
 
+        // Handle the kill event inside the area
+        void HandlePlayerKill(Player* pPlayer, Unit* pVictim);
+
+        // Handle capture point stuff
+        uint32 GetCapturePointSlider(uint32 uiEntry);
+        bool GetCapturePointLockState(uint32 uiEntry);
+        void SetCapturePointLockState(uint32 uiEntry, bool bLockState) { m_CapturePointState[uiEntry] = bLockState; }
+        void SetCapturePointSlider(uint32 uiEntry, uint32 uiValue) { m_CapturePointSlider[uiEntry] = uiValue; }
+
         typedef std::vector<WorldPvP*> WorldPvPSet;
         typedef std::map<uint32 /* zoneid */, WorldPvP*> WorldPvPMap;
+
     private:
         // contains all initiated world pvp events
         // used when initing / cleaning up
@@ -79,6 +91,9 @@ class WorldPvPMgr
         // maps the zone ids to an world pvp event
         // used in player event handling
         WorldPvPMap m_WorldPvPMap;
+
+        std::map<uint32 /*capture point entry*/, uint32 /*capture ticks*/> m_CapturePointSlider;
+        std::map<uint32 /*capture point entry*/, bool /*is active*/> m_CapturePointState;
 
         // update interval
         IntervalTimer m_UpdateTimer;

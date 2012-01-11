@@ -18,6 +18,7 @@
 
 #include "WorldPvP.h"
 #include "WorldPvPZM.h"
+#include "../GameObject.h"
 
 
 WorldPvPZM::WorldPvPZM() : WorldPvP(),
@@ -25,6 +26,7 @@ WorldPvPZM::WorldPvPZM() : WorldPvP(),
     m_uiAllianceScoutWorldState(WORLD_STATE_ALY_FLAG_NOT_READY),
     m_uiHordeScoutWorldState(WORLD_STATE_HORDE_FLAG_NOT_READY),
 
+    m_uiGraveyardController(NEUTRAL),
     m_uiTowersAlly(0),
     m_uiTowersHorde(0)
 {
@@ -35,6 +37,9 @@ WorldPvPZM::WorldPvPZM() : WorldPvP(),
     m_uiBeaconWorldState[1] = WORLD_STATE_TOWER_WEST_NEUTRAL;
     m_uiBeaconMapState[0] = WORLD_STATE_BEACON_EAST_NEUTRAL;
     m_uiBeaconMapState[1] = WORLD_STATE_BEACON_WEST_NEUTRAL;
+
+    for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
+        m_uiBeaconController[i] = NEUTRAL;
 }
 
 bool WorldPvPZM::InitWorldPvPArea()
@@ -107,13 +112,25 @@ void WorldPvPZM::OnCreatureCreate(Creature* pCreature)
         case NPC_PVP_BEAM_RED:
             // East Beam
             if (pCreature->GetPositionY() < 7000.0f)
+            {
                 m_BeamRedGUID[0] = pCreature->GetObjectGuid();
+                if (m_uiBeaconController[0] == HORDE)
+                    return;
+            }
             // Center Beam
             else if (pCreature ->GetPositionY() < 7300.0f)
+            {
                 m_BeamCenterRedGUID = pCreature->GetObjectGuid();
+                if (m_uiGraveyardController == HORDE)
+                    return;
+            }
             // West Beam
             else
+            {
                 m_BeamRedGUID[1] = pCreature->GetObjectGuid();
+                if (m_uiBeaconController[1] == HORDE)
+                    return;
+            }
 
             pCreature->SetRespawnDelay(7*DAY);
             pCreature->ForcedDespawn();
@@ -121,13 +138,25 @@ void WorldPvPZM::OnCreatureCreate(Creature* pCreature)
         case NPC_PVP_BEAM_BLUE:
             // East Beam
             if (pCreature->GetPositionY() < 7000.0f)
+            {
                 m_BeamBlueGUID[0] = pCreature->GetObjectGuid();
+                if (m_uiBeaconController[0] == ALLIANCE)
+                    return;
+            }
             // Center Beam
             else if (pCreature ->GetPositionY() < 7300.0f)
+            {
                 m_BeamCenterBlueGUID = pCreature->GetObjectGuid();
+                if (m_uiGraveyardController == ALLIANCE)
+                    return;
+            }
             // West Beam
             else
+            {
                 m_BeamBlueGUID[1] = pCreature->GetObjectGuid();
+                if (m_uiBeaconController[1] == ALLIANCE)
+                    return;
+            }
 
             pCreature->SetRespawnDelay(7*DAY);
             pCreature->ForcedDespawn();
@@ -154,6 +183,29 @@ void WorldPvPZM::OnGameObjectCreate(GameObject* pGo)
         case GO_ZANGA_BANNER_CENTER_NEUTRAL:
             m_TowerBannerCenterNeutralGUID = pGo->GetObjectGuid();
             break;
+    }
+}
+
+// Cast player spell on oponent kill
+void WorldPvPZM::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
+{
+    for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
+    {
+        if (GameObject* pBanner = pPlayer->GetMap()->GetGameObject(m_TowerBannerGUID[i]))
+        {
+            GameObjectInfo const* info = pBanner->GetGOInfo();
+            if (!info)
+                continue;
+
+            if (!pPlayer->IsWithinDistInMap(pBanner, info->capturePoint.radius))
+                continue;
+
+            // check banner faction
+            if (pBanner->GetCapturePointTicks() > CAPTURE_SLIDER_NEUTRAL + info->capturePoint.neutralPercent * 0.5f && pPlayer->GetTeam() == ALLIANCE)
+                pPlayer->CastSpell(pPlayer, SPELL_ZANGA_TOWER_TOKEN_ALY, true);
+            else if (pBanner->GetCapturePointTicks() < CAPTURE_SLIDER_NEUTRAL - info->capturePoint.neutralPercent * 0.5f && pPlayer->GetTeam() == HORDE)
+                pPlayer->CastSpell(pPlayer, SPELL_ZANGA_TOWER_TOKEN_HORDE, true);
+        }
     }
 }
 
@@ -199,6 +251,8 @@ void WorldPvPZM::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32
                     DoSetBeaconArtkit(m_BeamRedGUID[i], true);
                     ++m_uiTowersHorde;
                 }
+
+                m_uiBeaconController[i] = uiTeam;
             }
             else if (uiCaptureType == NEUTRAL)
             {
@@ -212,6 +266,8 @@ void WorldPvPZM::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32
                     DoSetBeaconArtkit(m_BeamBlueGUID[i], false);
                     --m_uiTowersAlly;
                 }
+
+                m_uiBeaconController[i] = NEUTRAL;
             }
 
             // send new tower state
@@ -326,6 +382,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 
             // reset scout and remove player aura
             DoResetScouts(HORDE);
+            m_uiGraveyardController = HORDE;
             pPlayer->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_HORDE);
             DoSetBeaconArtkit(m_BeamCenterRedGUID, true);
             sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_H));
@@ -355,6 +412,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 
             // reset scout and remove player aura
             DoResetScouts(ALLIANCE);
+            m_uiGraveyardController = ALLIANCE;
             pPlayer->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_ALY);
             DoSetBeaconArtkit(m_BeamCenterBlueGUID, true);
             sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_A));
@@ -378,6 +436,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 
                 // reset scout and remove player aura
                 DoResetScouts(ALLIANCE);
+                m_uiGraveyardController = ALLIANCE;
                 pPlayer->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_ALY);
                 DoSetBeaconArtkit(m_BeamCenterBlueGUID, true);
                 sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_H));
@@ -395,6 +454,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 
                 // reset scout and remove player aura
                 DoResetScouts(HORDE);
+                m_uiGraveyardController = HORDE;
                 pPlayer->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_HORDE);
                 DoSetBeaconArtkit(m_BeamCenterRedGUID, true);
                 sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_H));

@@ -212,6 +212,18 @@ void WorldPvPMgr::HandleObjectiveComplete(std::set<Player*> m_sObjectivePlayers,
 }
 
 /**
+   Function that handles the player kill inside a capture point
+
+   @param   player
+   @param   victim
+ */
+void WorldPvPMgr::HandlePlayerKill(Player* pPlayer, Unit* pVictim)
+{
+    for (WorldPvPSet::iterator itr = m_WorldPvPSet.begin(); itr != m_WorldPvPSet.end(); ++itr)
+        (*itr)->HandlePlayerKill(pPlayer, pVictim);
+}
+
+/**
    Function that handles when a player uses a world pvp gameobject
 
    @param   player which executes the event
@@ -268,4 +280,34 @@ void WorldPvPMgr::Update(uint32 diff)
         (*itr)->Update((uint32)m_UpdateTimer.GetCurrent());
 
     m_UpdateTimer.SetCurrent(0);
+}
+
+/**
+   Function that initializes gets the Capture point slider
+
+   @param   capture point entry
+ */
+uint32 WorldPvPMgr::GetCapturePointSlider(uint32 uiEntry)
+{
+    std::map<uint32, uint32>::iterator find = m_CapturePointSlider.find(uiEntry);
+    if (find != m_CapturePointSlider.end())
+        return find->second;
+
+    // return default value if we can't find any
+    return CAPTURE_SLIDER_NEUTRAL;
+}
+
+/**
+   Function that initializes gets the Capture point lock state
+
+   @param   capture point entry
+ */
+bool WorldPvPMgr::GetCapturePointLockState(uint32 uiEntry)
+{
+    std::map<uint32, bool>::iterator find = m_CapturePointState.find(uiEntry);
+    if (find != m_CapturePointState.end())
+        return find->second;
+
+    // return default value if we can't find any
+    return false;
 }

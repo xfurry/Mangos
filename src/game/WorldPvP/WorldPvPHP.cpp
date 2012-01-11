@@ -18,6 +18,7 @@
 
 #include "WorldPvP.h"
 #include "WorldPvPHP.h"
+#include "../GameObject.h"
 
 
 WorldPvPHP::WorldPvPHP() : WorldPvP(),
@@ -29,6 +30,9 @@ WorldPvPHP::WorldPvPHP() : WorldPvP(),
     m_uiTowerWorldState[0] = WORLD_STATE_OVERLOOK_NEUTRAL;
     m_uiTowerWorldState[1] = WORLD_STATE_STADIUM_NEUTRAL;
     m_uiTowerWorldState[2] = WORLD_STATE_BROKEN_HILL_NEUTRAL;
+
+    for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
+        m_uiTowerController[i] = NEUTRAL;
 }
 
 bool WorldPvPHP::InitWorldPvPArea()
@@ -96,15 +100,24 @@ void WorldPvPHP::OnGameObjectCreate(GameObject* pGo)
     {
         case GO_TOWER_BANNER_OVERLOOK:
             m_HellfireTowerGUID[0] = pGo->GetObjectGuid();
-            pGo->SetGoArtKit(GO_ARTKIT_OVERLOOK_NEUTRAL);
+            if (m_uiTowerController[0] == NEUTRAL)
+                pGo->SetGoArtKit(GO_ARTKIT_OVERLOOK_NEUTRAL);
+            else
+                pGo->SetGoArtKit(m_uiTowerController[0] == ALLIANCE ? GO_ARTKIT_OVERLOOK_ALY : GO_ARTKIT_OVERLOOK_HORDE);
             break;
         case GO_TOWER_BANNER_STADIUM:
             m_HellfireTowerGUID[1] = pGo->GetObjectGuid();
-            pGo->SetGoArtKit(GO_ARTKIT_STADIUM_NEUTRAL);
+            if (m_uiTowerController[1] == NEUTRAL)
+                pGo->SetGoArtKit(GO_ARTKIT_STADIUM_NEUTRAL);
+            else
+                pGo->SetGoArtKit(m_uiTowerController[1] == ALLIANCE ? GO_ARTKIT_STADIUM_ALY : GO_ARTKIT_STADIUM_HORDE);
             break;
         case GO_TOWER_BANNER_BROKEN_HILL:
             m_HellfireTowerGUID[2] = pGo->GetObjectGuid();
-            pGo->SetGoArtKit(GO_ARTKIT_BROKEN_HILL_NEUTRAL);
+            if (m_uiTowerController[2] == NEUTRAL)
+                pGo->SetGoArtKit(GO_ARTKIT_BROKEN_HILL_NEUTRAL);
+            else
+                pGo->SetGoArtKit(m_uiTowerController[2] == ALLIANCE ? GO_ARTKIT_BROKEN_HILL_ALY : GO_ARTKIT_BROKEN_HILL_HORDE);
             break;
         case GO_HELLFIRE_BANNER_OVERLOOK:
             m_HellfireBannerGUID[0] = pGo->GetObjectGuid();
@@ -155,6 +168,29 @@ void WorldPvPHP::HandleObjectiveComplete(PlayerSet m_sPlayersSet, uint32 uiEvent
     }
 }
 
+// Cast player spell on oponent kill
+void WorldPvPHP::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
+{
+    for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
+    {
+        if (GameObject* pBanner = pPlayer->GetMap()->GetGameObject(m_HellfireBannerGUID[i]))
+        {
+            GameObjectInfo const* info = pBanner->GetGOInfo();
+            if (!info)
+                return;
+
+            if (!pPlayer->IsWithinDistInMap(pBanner, info->capturePoint.radius))
+                continue;
+
+            // check banner faction
+            if (pBanner->GetCapturePointTicks() > CAPTURE_SLIDER_NEUTRAL + info->capturePoint.neutralPercent * 0.5f && pPlayer->GetTeam() == ALLIANCE)
+                pPlayer->CastSpell(pPlayer, SPELL_HELLFIRE_TOWER_TOKEN_ALY, true);
+            else if (pBanner->GetCapturePointTicks() < CAPTURE_SLIDER_NEUTRAL - info->capturePoint.neutralPercent * 0.5f && pPlayer->GetTeam() == HORDE)
+                pPlayer->CastSpell(pPlayer, SPELL_HELLFIRE_TOWER_TOKEN_HORDE, true);
+        }
+    }
+}
+
 // process the capture events
 void WorldPvPHP::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId)
 {
@@ -188,6 +224,7 @@ void WorldPvPHP::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32
             {
                 SetBannerArtKit(m_HellfireBannerGUID[i], uiTeam == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
                 SetBannerArtKit(m_HellfireTowerGUID[i], uiTowerArtKit);
+                m_uiTowerController[i] = uiTeam;
 
                 if (uiTeam == ALLIANCE)
                     ++m_uiTowersAlly;
@@ -198,6 +235,7 @@ void WorldPvPHP::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32
             {
                 SetBannerArtKit(m_HellfireBannerGUID[i], GO_ARTKIT_BANNER_NEUTRAL);
                 SetBannerArtKit(m_HellfireTowerGUID[i], uiTowerArtKit);
+                m_uiTowerController[i] = NEUTRAL;
 
                 if (uiTeam == ALLIANCE)
                     --m_uiTowersHorde;

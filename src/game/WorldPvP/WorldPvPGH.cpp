@@ -20,7 +20,8 @@
 #include "WorldPvPGH.h"
 
 
-WorldPvPGH::WorldPvPGH() : WorldPvP()
+WorldPvPGH::WorldPvPGH() : WorldPvP(),
+    m_uiZoneController(NEUTRAL)
 {
     m_uiTypeId = WORLD_PVP_TYPE_GH;
 }
@@ -39,6 +40,8 @@ void WorldPvPGH::OnCreatureCreate(Creature* pCreature)
         case NPC_WESTFALL_BRIGADE_DEFENDER:
         case NPC_COMMANDER_HOWSER:
             lAllianceSoldiers.push_back(pCreature->GetObjectGuid());
+            if (m_uiZoneController == ALLIANCE)
+                return;
             break;
         case NPC_BLACKSMITH_JASON_RIGGINS:
         case NPC_STABLE_MASTER_TIM:
@@ -47,10 +50,14 @@ void WorldPvPGH::OnCreatureCreate(Creature* pCreature)
             // check the zone id because the horses can be found in other areas too
             if (pCreature->GetZoneId() == ZONE_ID_GRIZZLY_HILLS)
                 lAllianceVendors.push_back(pCreature->GetObjectGuid());
+            if (m_uiZoneController == ALLIANCE)
+                return;
             break;
         case NPC_CONQUEST_HOLD_DEFENDER:
         case NPC_GENERAL_GORLOK:
             lHordeSoldiers.push_back(pCreature->GetObjectGuid());
+            if (m_uiZoneController == HORDE)
+                return;
             break;
         case NPC_BLACKSMITH_KOLOTH:
         case NPC_STABLE_MASTER_KOR:
@@ -59,6 +66,8 @@ void WorldPvPGH::OnCreatureCreate(Creature* pCreature)
             // check the zone id because the wolfs can be found in other areas too
             if (pCreature->GetZoneId() == ZONE_ID_GRIZZLY_HILLS)
                 lHordeVendors.push_back(pCreature->GetObjectGuid());
+            if (m_uiZoneController == HORDE)
+                return;
             break;
 
         default:
@@ -109,10 +118,12 @@ void WorldPvPGH::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam)
     {
         case NEUTRAL:
             SetBannerArtKit(GO_ARTKIT_BANNER_NEUTRAL);
+            m_uiZoneController = NEUTRAL;
             break;
         case WIN:
             // Spawn the npcs only when the tower is fully controlled
             DoRespawnSoldiers(uiTeam);
+            m_uiZoneController = uiTeam;
             break;
         case PROGRESS:
             SetBannerArtKit(uiTeam == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);

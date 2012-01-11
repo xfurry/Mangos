@@ -155,6 +155,7 @@ class WorldPvPHP : public WorldPvP
         void HandlePlayerEnterZone(Player* pPlayer);
         void HandlePlayerLeaveZone(Player* pPlayer);
         void HandleObjectiveComplete(PlayerSet m_sPlayersSet, uint32 uiEventId);
+        void HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim);
 
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
         void SendRemoveWorldStates(Player* pPlayer);
@@ -168,6 +169,7 @@ class WorldPvPHP : public WorldPvP
         void SetBannerArtKit(ObjectGuid BannerGuid, uint32 uiArtKit);
 
         uint32 m_uiTowerWorldState[MAX_HP_TOWERS];
+        uint32 m_uiTowerController[MAX_HP_TOWERS];
         uint32 m_uiTowersAlly;
         uint32 m_uiTowersHorde;
 

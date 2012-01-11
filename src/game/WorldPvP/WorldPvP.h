@@ -106,6 +106,7 @@ class WorldPvP : public ZoneScript
         // Get a Player from the zone
         Player* GetPlayerInZone(bool bOnlyAlive = false, bool bCanBeGamemaster = true);
     protected:
+        // Player related stuff
         virtual void HandlePlayerEnterZone(Player* pPlayer);
         virtual void HandlePlayerLeaveZone(Player* pPlayer);
         virtual void HandlePlayerKill(Player* pKiller, Unit* pVictim);
@@ -113,11 +114,10 @@ class WorldPvP : public ZoneScript
         // remove world states
         virtual void SendRemoveWorldStates(Player* pPlayer) {}
 
-        // check if player is inside zone capture point
-        virtual bool IsPlayerInsideObjective(Player* pPlayer) { return false; }
-
-        void RegisterZone(uint32 zoneid);
+        void RegisterZone(uint32 zoneId);
         bool HasPlayer(Player* pPlayer) const;
+        void LockCapturePoint(uint32 pointEntry, bool isLocked);
+        void ResetCapturePoint(uint32 pointEntry, uint32 uiValue);
 
         // store the players inside the area depending on the faction
         PlayerSet m_sZonePlayers;

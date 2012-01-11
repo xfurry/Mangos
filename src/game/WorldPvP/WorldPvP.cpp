@@ -64,7 +64,6 @@ void WorldPvP::SendUpdateWorldState(uint32 uiField, uint32 uiValue)
  */
 void WorldPvP::HandlePlayerKill(Player* pKiller, Unit* pVictim)
 {
-    // ToDo: add the inside objective check
     if (Group* pGroup = pKiller->GetGroup())
     {
         for (GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
@@ -80,16 +79,14 @@ void WorldPvP::HandlePlayerKill(Player* pKiller, Unit* pVictim)
 
             // creature kills must be notified, even if not inside objective / not outdoor pvp active
             // player kills only count if active and inside objective
-            if ((pGroupGuy->IsWorldPvPActive() && IsPlayerInsideObjective(pGroupGuy)) ||
-                pVictim->GetTypeId() == TYPEID_UNIT)
+            if (pGroupGuy->IsWorldPvPActive())
                 HandlePlayerKillInsideArea(pGroupGuy, pVictim);
         }
     }
     else
     {
         // creature kills must be notified, even if not inside objective / not outdoor pvp active
-        if (pKiller && ((pKiller->IsWorldPvPActive() && IsPlayerInsideObjective(pKiller)) ||
-            pVictim->GetTypeId() == TYPEID_UNIT))
+        if (pKiller && (pKiller->IsWorldPvPActive()))
             HandlePlayerKillInsideArea(pKiller, pVictim);
     }
 }
@@ -104,6 +101,18 @@ void WorldPvP::RegisterZone(uint32 uiZoneId)
 bool WorldPvP::HasPlayer(Player* pPlayer) const
 {
     return m_sZonePlayers.find(pPlayer) != m_sZonePlayers.end();
+}
+
+// lock a capture point
+void WorldPvP::LockCapturePoint(uint32 pointEntry, bool isLocked)
+{
+     sWorldPvPMgr.SetCapturePointLockState(pointEntry, isLocked);
+}
+
+// reset a capture point slider
+void WorldPvP::ResetCapturePoint(uint32 pointEntry, uint32 uiValue)
+{
+    sWorldPvPMgr.SetCapturePointSlider(pointEntry, uiValue);
 }
 
 // apply a team buff for the specific zone

@@ -168,6 +168,32 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, uint32 phaseMa
     if (m_zoneScript)
         m_zoneScript->OnGameObjectCreate(this);
 
+    // In case of grid load / unload we need to reset the values of a Capture Point to the ones they were before the unload
+    if (goinfo->type == GAMEOBJECT_TYPE_CAPTURE_POINT)
+    {
+        // get current capture ticks if the grid is unloaded
+        m_captureTicks = sWorldPvPMgr.GetCapturePointSlider(GetEntry());
+
+        // based on the capture ticks set the state of the capture point
+        
+        if (m_captureTicks <= CAPTURE_SLIDER_NEUTRAL + goinfo->capturePoint.neutralPercent * 0.5f && m_captureTicks >= CAPTURE_SLIDER_NEUTRAL - goinfo->capturePoint.neutralPercent * 0.5f)
+        {
+            m_captureState = CAPTURE_STATE_NEUTRAL;
+            SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
+        }
+        // if there is no win or neutral set to progress - contest will be set automatically if necessary
+        else
+        {
+            if (m_captureTicks == CAPTURE_SLIDER_ALLIANCE || m_captureTicks == CAPTURE_SLIDER_HORDE)
+                m_captureState = CAPTURE_STATE_WIN;
+            else
+                m_captureState = CAPTURE_STATE_PROGRESS;
+
+            // Also reset artkits
+            SetGoArtKit(m_captureTicks > CAPTURE_SLIDER_NEUTRAL + goinfo->capturePoint.neutralPercent * 0.5f ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+        }
+    }
+
     return true;
 }
 
@@ -966,6 +992,20 @@ void GameObject::ResetDoorOrButton()
     m_cooldownTime = 0;
 }
 
+void GameObject::ResetCapturePoint()
+{
+    GameObjectInfo const* info = GetGOInfo();
+    if (!info)
+        return;
+
+    // don't use for other types
+    if (info->type != GAMEOBJECT_TYPE_CAPTURE_POINT)
+        return;
+
+    m_captureTicks = CAPTURE_SLIDER_NEUTRAL;
+    m_captureState = CAPTURE_STATE_NEUTRAL;
+}
+
 void GameObject::UseDoorOrButton(uint32 time_to_restore, bool alternative /* = false */)
 {
     if(m_lootState != GO_READY)
@@ -1616,6 +1656,10 @@ void GameObject::Use(Unit* user)
             if (!info)
                 return;
 
+            // if the capture point is locked return
+            if (sWorldPvPMgr.GetCapturePointLockState(GetEntry()))
+                return;
+
             // calculate the number of players which are actually capturing the point
             uint32 rangePlayers = m_AlliancePlayersSet.size() > m_HordePlayersSet.size() ? m_AlliancePlayersSet.size() - m_HordePlayersSet.size() : m_HordePlayersSet.size() - m_AlliancePlayersSet.size();
             if (rangePlayers == 0)
@@ -1663,6 +1707,9 @@ void GameObject::Use(Unit* user)
             player->SendUpdateWorldState(info->capturePoint.worldState1, 1);
             player->SendUpdateWorldState(info->capturePoint.worldState2, (uint32)m_captureTicks);
             player->SendUpdateWorldState(info->capturePoint.worldState3, neutralPercent);
+
+            // store the ticks value
+            sWorldPvPMgr.SetCapturePointSlider(GetEntry(), m_captureTicks);
 
             // ID1 vs ID2 are possibly related to team. The world states should probably
             // control which event to be used. For this to work, we need a far better system for

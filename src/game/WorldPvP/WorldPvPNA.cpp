@@ -25,7 +25,6 @@ WorldPvPNA::WorldPvPNA() : WorldPvP(),
     m_uiControllerMapState(WORLD_STATE_NA_HALAA_NEUTRAL),
     m_uiControllerWorldState(0),
     m_uiZoneController(NEUTRAL),
-    m_bCanCaptureHalaa(true),
     m_uiGuardsLeft(0)
 {
     m_uiTypeId = WORLD_PVP_TYPE_NA;
@@ -99,6 +98,26 @@ void WorldPvPNA::HandleObjectiveComplete(PlayerSet m_sPlayersSet, uint32 uiEvent
     }
 }
 
+// Cast player spell on oponent kill
+void WorldPvPNA::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
+{
+    if (GameObject* pBanner = pPlayer->GetMap()->GetGameObject(m_HalaaBanerGuid))
+    {
+        GameObjectInfo const* info = pBanner->GetGOInfo();
+        if (!info)
+            return;
+
+        if (!pPlayer->IsWithinDistInMap(pBanner, info->capturePoint.radius))
+            return;
+
+        // check banner faction
+        if (m_uiZoneController == ALLIANCE && pPlayer->GetTeam() == ALLIANCE)
+            pPlayer->CastSpell(pPlayer, SPELL_NAGRAND_TOKEN_ALLIANCE, true);
+        else if (m_uiZoneController == HORDE && pPlayer->GetTeam() == HORDE)
+            pPlayer->CastSpell(pPlayer, SPELL_NAGRAND_TOKEN_HORDE, true);
+    }
+}
+
 void WorldPvPNA::OnCreatureCreate(Creature* pCreature)
 {
     switch (pCreature->GetEntry())
@@ -110,6 +129,8 @@ void WorldPvPNA::OnCreatureCreate(Creature* pCreature)
         case NPC_VENDOR_CENDRII:
         case NPC_AMMUNITIONER_BANRO:
             lAllianceSoldiers.push_back(pCreature->GetObjectGuid());
+            if (m_uiZoneController == ALLIANCE)
+                return;
             break;
         case NPC_HORDE_HALAANI_GUARD:
         case NPC_RESEARCHER_AMERELDINE:
@@ -118,6 +139,8 @@ void WorldPvPNA::OnCreatureCreate(Creature* pCreature)
         case NPC_VENDOR_EMBELAR:
         case NPC_AMMUNITIONER_TASALDAN:
             lHordeSoldiers.push_back(pCreature->GetObjectGuid());
+            if (m_uiZoneController == HORDE)
+                return;
             break;
 
         default:
@@ -140,7 +163,7 @@ void WorldPvPNA::OnCreatureDeath(Creature* pCreature)
     if (m_uiGuardsLeft == 0)
     {
         // make capturable
-        m_bCanCaptureHalaa = true;
+        LockCapturePoint(GO_HALAA_BANNER, false);
         SendUpdateWorldState(m_uiControllerMapState, 0);
         m_uiControllerMapState = m_uiZoneController == ALLIANCE ? WORLD_STATE_NA_HALAA_NEU_A : WORLD_STATE_NA_HALAA_NEU_H;
         SendUpdateWorldState(m_uiControllerMapState, 1);
@@ -156,7 +179,7 @@ void WorldPvPNA::OnCreatureRespawn(Creature* pCreature)
     SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT,  m_uiGuardsLeft);
 
     if (m_uiGuardsLeft > 0)
-        m_bCanCaptureHalaa = false;
+        LockCapturePoint(GO_HALAA_BANNER, true);
 
     if (m_uiGuardsLeft == MAX_NA_GUARDS)
     {
@@ -279,10 +302,6 @@ void WorldPvPNA::UpdateWyvernsWorldState(uint8 uiValue)
 // process the capture events
 void WorldPvPNA::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId)
 {
-    // don't process when Halaa is not available
-    if (!m_bCanCaptureHalaa)
-        return;
-
     // If we are not using the Halaa banner return
     if (pGo->GetEntry() != GO_HALAA_BANNER)
         return;
@@ -309,7 +328,6 @@ void WorldPvPNA::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam)
 
         UpdateWorldState(0);
         m_uiZoneController = uiTeam;
-        m_bCanCaptureHalaa = false;
         DoRespawnSoldiers(uiTeam);
         DoSetGraveyard((Team)uiTeam);
         m_uiControllerWorldState = uiTeam == ALLIANCE ? WORLD_STATE_NA_GUARDS_ALLIANCE : WORLD_STATE_NA_GUARDS_HORDE;

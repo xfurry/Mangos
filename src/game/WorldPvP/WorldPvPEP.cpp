@@ -18,6 +18,7 @@
 
 #include "WorldPvP.h"
 #include "WorldPvPEP.h"
+#include "../GameObject.h"
 
 
 WorldPvPEP::WorldPvPEP() : WorldPvP(),
@@ -30,6 +31,9 @@ WorldPvPEP::WorldPvPEP() : WorldPvP(),
     m_uiTowerWorldState[1] = WORLD_STATE_CROWNGUARD_NEUTRAL;
     m_uiTowerWorldState[2] = WORLD_STATE_EASTWALL_NEUTRAL;
     m_uiTowerWorldState[3] = WORLD_STATE_PLAGUEWOOD_NEUTRAL;
+
+    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
+        m_uiTowerController[i] = NEUTRAL;
 }
 
 bool WorldPvPEP::InitWorldPvPArea()
@@ -120,15 +124,37 @@ void WorldPvPEP::OnGameObjectCreate(GameObject* pGo)
         case GO_TOWER_BANNER:
             // sort banners
             if (pGo->IsWithinDist2d(m_aTowersSpawnLocs[0].m_fX, m_aTowersSpawnLocs[0].m_fY, 50.0f))
+            {
                 m_lTowerBanners[0].push_back(pGo->GetObjectGuid());
+                if (m_uiTowerController[0] == NEUTRAL)
+                    pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
+                else
+                    pGo->SetGoArtKit(m_uiTowerController[0] == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+            }
             else if (pGo->IsWithinDist2d(m_aTowersSpawnLocs[1].m_fX, m_aTowersSpawnLocs[1].m_fY, 50.0f))
+            {
                 m_lTowerBanners[1].push_back(pGo->GetObjectGuid());
+                if (m_uiTowerController[1] == NEUTRAL)
+                    pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
+                else
+                    pGo->SetGoArtKit(m_uiTowerController[1] == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+            }
             else if (pGo->IsWithinDist2d(m_aTowersSpawnLocs[2].m_fX, m_aTowersSpawnLocs[2].m_fY, 50.0f))
+            {
                 m_lTowerBanners[2].push_back(pGo->GetObjectGuid());
+                if (m_uiTowerController[2] == NEUTRAL)
+                    pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
+                else
+                    pGo->SetGoArtKit(m_uiTowerController[2] == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+            }
             else if (pGo->IsWithinDist2d(m_aTowersSpawnLocs[3].m_fX, m_aTowersSpawnLocs[3].m_fY, 50.0f))
+            {
                 m_lTowerBanners[3].push_back(pGo->GetObjectGuid());
-            // set artkit to neutral
-            pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
+                if (m_uiTowerController[3] == NEUTRAL)
+                    pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
+                else
+                    pGo->SetGoArtKit(m_uiTowerController[3] == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+            }
             break;
         case GO_LORDAERON_SHRINE_ALY:
             m_uiLordaeronShrineAlyGUID = pGo->GetObjectGuid();
@@ -208,6 +234,7 @@ void WorldPvPEP::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32
             if (uiCaptureType == PROGRESS)
             {
                 SetBannersArtKit(m_lTowerBanners[i], uiTeam == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+                m_uiTowerController[i] = uiTeam;
 
                 if (uiTeam == ALLIANCE)
                     ++m_uiTowersAlly;
@@ -234,6 +261,7 @@ void WorldPvPEP::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32
             else if (uiCaptureType == NEUTRAL)
             {
                 SetBannersArtKit(m_lTowerBanners[i], GO_ARTKIT_BANNER_NEUTRAL);
+                m_uiTowerController[i] = NEUTRAL;
 
                 if (uiTeam == ALLIANCE)
                     --m_uiTowersHorde;

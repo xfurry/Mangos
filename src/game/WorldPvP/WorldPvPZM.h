@@ -140,6 +140,7 @@ class WorldPvPZM : public WorldPvP
 
         void HandlePlayerEnterZone(Player* pPlayer);
         void HandlePlayerLeaveZone(Player* pPlayer);
+        void HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim);
 
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
         void SendRemoveWorldStates(Player* pPlayer);
@@ -165,6 +166,9 @@ class WorldPvPZM : public WorldPvP
 
         uint32 m_uiBeaconWorldState[MAX_ZM_TOWERS];
         uint32 m_uiBeaconMapState[MAX_ZM_TOWERS];
+
+        uint32 m_uiBeaconController[MAX_ZM_TOWERS];
+        uint32 m_uiGraveyardController;
 
         uint32 m_uiGraveyardWorldState;
         uint32 m_uiAllianceScoutWorldState;

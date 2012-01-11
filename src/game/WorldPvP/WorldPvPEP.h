@@ -277,6 +277,7 @@ class WorldPvPEP : public WorldPvP
         void DoSetGraveyard(uint32 uiFaction, bool bRemove = false) { /* ToDo */ }
 
         uint32 m_uiTowerWorldState[MAX_EP_TOWERS];
+        uint32 m_uiTowerController[MAX_EP_TOWERS];
         uint32 m_uiTowersAlly;
         uint32 m_uiTowersHorde;
 

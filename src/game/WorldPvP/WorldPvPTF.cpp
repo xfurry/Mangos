@@ -222,6 +222,10 @@ void WorldPvPTF::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32
         UpdateTimerWorldState();
         m_uiZoneController = ALLIANCE;
         DoProcessTeamBuff(ALLIANCE, SPELL_AUCHINDOUN_BLESSING);
+
+        // lock the towers
+        for (uint8 i = 0; i < MAX_TF_TOWERS; i++)
+            LockCapturePoint(aTerokkarTowers[i], true);
     }
     else if (m_uiTowersHorde == MAX_TF_TOWERS)
     {
@@ -235,6 +239,10 @@ void WorldPvPTF::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32
         UpdateTimerWorldState();
         m_uiZoneController = HORDE;
         DoProcessTeamBuff(HORDE, SPELL_AUCHINDOUN_BLESSING);
+
+        // lock the towers
+        for (uint8 i = 0; i < MAX_TF_TOWERS; i++)
+            LockCapturePoint(aTerokkarTowers[i], true);
     }
 }
 
@@ -264,9 +272,15 @@ void WorldPvPTF::Update(uint32 diff)
             SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_A, m_uiTowersAlly);
             SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_H, m_uiTowersHorde);
 
-            // ToDo: Also reset the towers
             for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
+            {
                 SetBannerArtKit(m_TowerBannerGUID[i], GO_ARTKIT_BANNER_NEUTRAL);
+                // if grid is unloaded the slider reset is enough
+                ResetCapturePoint(aTerokkarTowers[i], CAPTURE_SLIDER_NEUTRAL);
+                // if grid is not unloaded then reset the tower manually
+                DoResetCapturePoints(m_TowerBannerGUID[i]);
+                LockCapturePoint(aTerokkarTowers[i], false);
+            }
 
             m_uiZoneLockTimer = 0;
         }
@@ -312,4 +326,15 @@ void WorldPvPTF::SetBannerArtKit(ObjectGuid BannerGuid, uint32 uiArtkit)
         pBanner->SetGoArtKit(uiArtkit);
         pBanner->Refresh();
     }
+}
+
+void WorldPvPTF::DoResetCapturePoints(ObjectGuid BannerGuid)
+{
+    // neet to use a player as anchor for the map
+    Player* pPlayer = GetPlayerInZone();
+    if (!pPlayer)
+        return;
+
+    if (GameObject* pBanner = pPlayer->GetMap()->GetGameObject(BannerGuid))
+        pBanner->ResetCapturePoint();
 }
