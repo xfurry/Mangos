@@ -469,6 +469,14 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
     return false;
 }
 
+void WorldPvPZM::DoSetGraveyard(uint32 uiFaction, bool bRemove)
+{
+    if (bRemove)
+        sObjectMgr.RemoveGraveYardLink(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE,  (Team)uiFaction,      false);
+    else
+        sObjectMgr.AddGraveYardLink(GRAVEYARD_ID_TWIN_SPIRE,    GRAVEYARD_ZONE_TWIN_SPIRE,  (Team)uiFaction, false);
+}
+
 void WorldPvPZM::DoHandleBanners(ObjectGuid BannerGuid, bool bRespawn)
 {
     // neet to use a player as anchor for the map

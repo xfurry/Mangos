@@ -159,7 +159,7 @@ class WorldPvPZM : public WorldPvP
         void DoResetScouts(uint32 uiFaction, bool bIncludeWorldStates = true);
 
         // Link graveyard on central node capture
-        void DoSetGraveyard(uint32 uiFaction, bool bRemove = false) { /* ToDo */ }
+        void DoSetGraveyard(uint32 uiFaction, bool bRemove = false);
 
         // Respawn npcs which act as an artkit visual
         void DoSetBeaconArtkit(ObjectGuid BeaconGuid, bool bRespawn);

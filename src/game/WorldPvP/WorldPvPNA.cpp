@@ -342,6 +342,14 @@ void WorldPvPNA::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam)
     }
 }
 
+void WorldPvPNA::DoSetGraveyard(uint32 uiFaction, bool bRemove)
+{
+    if (bRemove)
+        sObjectMgr.RemoveGraveYardLink(GRAVEYARD_ID_HALAA, GRAVEYARD_ZONE_ID_HALAA,  (Team)uiFaction,      false);
+    else
+        sObjectMgr.AddGraveYardLink(GRAVEYARD_ID_HALAA,    GRAVEYARD_ZONE_ID_HALAA,  (Team)uiFaction, false);
+}
+
 void WorldPvPNA::DoHandleFactionObjects(uint32 uiFaction)
 {
     if (uiFaction == ALLIANCE)

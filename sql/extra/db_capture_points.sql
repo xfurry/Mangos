@@ -27,6 +27,9 @@ INSERT INTO `gameobject` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`position_x`
 (500017, 182210, 530, 1, 1, -1572.57, 7945.3, -22.475, 2.05949, 0, 0, 0.857168, 0.515037, 180, 100, 1);
 /* ################################# */
 
+-- Remove graveyard links - they are set in script
+DELETE FROM game_graveyard_zone WHERE id IN (969, 927, 993);
+
 -- Venture bay fixes
 /* ################################# */
 -- creatures for world pvp - use guid from 300xxx

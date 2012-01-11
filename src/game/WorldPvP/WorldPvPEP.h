@@ -274,7 +274,7 @@ class WorldPvPEP : public WorldPvP
         void DoUpdateShrine(ObjectGuid uiShrineGuid, bool bRemove = false);
 
         // crownguard bonus - graveyard
-        void DoSetGraveyard(uint32 uiFaction, bool bRemove = false) { /* ToDo */ }
+        void DoSetGraveyard(uint32 uiFaction, bool bRemove = false);
 
         uint32 m_uiTowerWorldState[MAX_EP_TOWERS];
         uint32 m_uiTowerController[MAX_EP_TOWERS];

@@ -185,7 +185,7 @@ class WorldPvPNA : public WorldPvP
         bool HandlePlayerTaxiDrive(Player* pPlayer, uint8 uiPos);
 
         // Link graveyard on Halaa
-        void DoSetGraveyard(uint32 uiFaction, bool bRemove = false) { /* ToDo */ }
+        void DoSetGraveyard(uint32 uiFaction, bool bRemove = false);
 
         // process capture events
         void ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam);

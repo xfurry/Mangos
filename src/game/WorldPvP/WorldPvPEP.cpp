@@ -369,6 +369,14 @@ void WorldPvPEP::DoUnsummonSoldiers()
     }
 }
 
+void WorldPvPEP::DoSetGraveyard(uint32 uiFaction, bool bRemove)
+{
+    if (bRemove)
+        sObjectMgr.RemoveGraveYardLink(GRAVEYARD_ID_EASTERN_PLAGUE, GRAVEYARD_ZONE_EASTERN_PLAGUE,  (Team)uiFaction,      false);
+    else
+        sObjectMgr.AddGraveYardLink(GRAVEYARD_ID_EASTERN_PLAGUE,    GRAVEYARD_ZONE_EASTERN_PLAGUE,  (Team)uiFaction, false);
+}
+
 void WorldPvPEP::DoUpdateShrine(ObjectGuid uiShrineGuid, bool bRemove)
 {
     // neet to use a player as anchor for the map
