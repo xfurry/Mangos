@@ -142,7 +142,6 @@ void WorldPvPTF::HandleObjectiveComplete(PlayerSet m_sPlayersSet, uint32 uiEvent
                         continue;
 
                     (*itr)->AreaExploredOrEventHappens((*itr)->GetTeam() == ALLIANCE ? QUEST_SPIRITS_OF_AUCHINDOUM_ALLY : QUEST_SPIRITS_OF_AUCHINDOUM_HORDE);
-                    //(*itr)->RewardHonor(NULL, 1, HONOR_REWARD_HELLFIRE);
                 }
             }
         }

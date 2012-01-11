@@ -251,7 +251,8 @@ void WorldPvPEP::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32
                         DoSetGraveyard(uiTeam);
                         break;
                     case 2:     // Eastwall
-                        DoSummonSoldiersIfCan(uiTeam);
+                        if (m_uiTowerController[0] != uiTeam)
+                            DoSummonSoldiersIfCan(uiTeam);
                         break;
                     case 3:     // Plaguewood
                         DoSummonFlightMasterIfCan(uiTeam);
