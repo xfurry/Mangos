@@ -21,25 +21,15 @@
 
 
 WorldPvPEP::WorldPvPEP() : WorldPvP(),
-    m_uiPlaguewoodController(0),
-    m_uiEastwallController(0),
-    m_uiNorthpassController(0),
-    m_uiCrownguardController(0),
-
-    m_uiPlaguewoodState(NEUTRAL),
-    m_uiNorthpassState(NEUTRAL),
-    m_uiEastwallState(NEUTRAL),
-    m_uiCrownguardState(NEUTRAL),
-
-    m_uiPlaguewoodWorldState(WORLD_STATE_PLAGUEWOOD_NEUTRAL),
-    m_uiNorthpassWorldState(WORLD_STATE_NORTHPASS_NEUTRAL),
-    m_uiEastwallWorldState(WORLD_STATE_EASTWALL_NEUTRAL),
-    m_uiCrownguardWorldState(WORLD_STATE_CROWNGUARD_NEUTRAL),
-
     m_uiTowersAlly(0),
     m_uiTowersHorde(0)
 {
     m_uiTypeId = WORLD_PVP_TYPE_EP;
+
+    m_uiTowerWorldState[0] = WORLD_STATE_NORTHPASS_NEUTRAL;
+    m_uiTowerWorldState[1] = WORLD_STATE_CROWNGUARD_NEUTRAL;
+    m_uiTowerWorldState[2] = WORLD_STATE_EASTWALL_NEUTRAL;
+    m_uiTowerWorldState[3] = WORLD_STATE_PLAGUEWOOD_NEUTRAL;
 }
 
 bool WorldPvPEP::InitWorldPvPArea()
@@ -56,10 +46,8 @@ void WorldPvPEP::FillInitialWorldStates(WorldPacket& data, uint32& count)
     FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_ALY,   m_uiTowersAlly);
     FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_HORDE, m_uiTowersHorde);
 
-    FillInitialWorldState(data, count, m_uiPlaguewoodWorldState,    1);
-    FillInitialWorldState(data, count, m_uiNorthpassWorldState,     1);
-    FillInitialWorldState(data, count, m_uiEastwallWorldState,      1);
-    FillInitialWorldState(data, count, m_uiCrownguardWorldState,    1);
+    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
+        FillInitialWorldState(data, count, m_uiTowerWorldState[i],    1);
 }
 
 void WorldPvPEP::SendRemoveWorldStates(Player* pPlayer)
@@ -67,10 +55,8 @@ void WorldPvPEP::SendRemoveWorldStates(Player* pPlayer)
     pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_ALY,      0);
     pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HORDE,    0);
 
-    pPlayer->SendUpdateWorldState(m_uiPlaguewoodWorldState,         0);
-    pPlayer->SendUpdateWorldState(m_uiNorthpassWorldState,          0);
-    pPlayer->SendUpdateWorldState(m_uiEastwallWorldState,           0);
-    pPlayer->SendUpdateWorldState(m_uiCrownguardWorldState,         0);
+    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
+        pPlayer->SendUpdateWorldState(m_uiTowerWorldState[i],         0);
 }
 
 void WorldPvPEP::UpdateWorldState()
@@ -83,7 +69,7 @@ void WorldPvPEP::UpdateWorldState()
 void WorldPvPEP::HandlePlayerEnterZone(Player* pPlayer)
 {
     // remove the buff from the player first; Sometimes on relog players still have the aura
-    for (uint8 i = 0; i < MAX_TOWERS; i++)
+    for (uint8 i = 0; i < MAX_EP_TOWERS; i++)
     {
         if (pPlayer->HasAura(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlly : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde))
             pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlly : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde);
@@ -93,16 +79,16 @@ void WorldPvPEP::HandlePlayerEnterZone(Player* pPlayer)
     switch(pPlayer->GetTeam())
     {
         case ALLIANCE:
-            for (uint8 i = 0; i < MAX_TOWERS; i++)
+            for (uint8 i = 0; i < MAX_EP_TOWERS; i++)
             {
-                if (m_uiTowersAlly == m_aPlaguelandsTowerBuffs[i].uiTowers)
+                if (m_uiTowersAlly == i + 1)
                     pPlayer->CastSpell(pPlayer, m_aPlaguelandsTowerBuffs[i].uiSpellIdAlly, true);
             }
             break;
         case HORDE:
-            for (uint8 i = 0; i < MAX_TOWERS; i++)
+            for (uint8 i = 0; i < MAX_EP_TOWERS; i++)
             {
-                if (m_uiTowersHorde == m_aPlaguelandsTowerBuffs[i].uiTowers)
+                if (m_uiTowersHorde == i + 1)
                     pPlayer->CastSpell(pPlayer, m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde, true);
             }
             break;
@@ -114,7 +100,7 @@ void WorldPvPEP::HandlePlayerEnterZone(Player* pPlayer)
 void WorldPvPEP::HandlePlayerLeaveZone(Player* pPlayer)
 {
     // remove the buff from the player
-    for (uint8 i = 0; i < MAX_TOWERS; i++)
+    for (uint8 i = 0; i < MAX_EP_TOWERS; i++)
     {
         if (pPlayer->HasAura(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlly : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde))
             pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlly : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde);
@@ -134,13 +120,13 @@ void WorldPvPEP::OnGameObjectCreate(GameObject* pGo)
         case GO_TOWER_BANNER:
             // sort banners
             if (pGo->IsWithinDist2d(m_aTowersSpawnLocs[0].m_fX, m_aTowersSpawnLocs[0].m_fY, 50.0f))
-                m_lNorthpassTowerBanners.push_back(pGo->GetObjectGuid());
+                m_lTowerBanners[0].push_back(pGo->GetObjectGuid());
             else if (pGo->IsWithinDist2d(m_aTowersSpawnLocs[1].m_fX, m_aTowersSpawnLocs[1].m_fY, 50.0f))
-                m_lCrownguardTowerBanners.push_back(pGo->GetObjectGuid());
+                m_lTowerBanners[1].push_back(pGo->GetObjectGuid());
             else if (pGo->IsWithinDist2d(m_aTowersSpawnLocs[2].m_fX, m_aTowersSpawnLocs[2].m_fY, 50.0f))
-                m_lEastwallTowerBanners.push_back(pGo->GetObjectGuid());
+                m_lTowerBanners[2].push_back(pGo->GetObjectGuid());
             else if (pGo->IsWithinDist2d(m_aTowersSpawnLocs[3].m_fX, m_aTowersSpawnLocs[3].m_fY, 50.0f))
-                m_lPlaguewoodTowerBanners.push_back(pGo->GetObjectGuid());
+                m_lTowerBanners[3].push_back(pGo->GetObjectGuid());
             // set artkit to neutral
             pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
             break;
@@ -193,462 +179,99 @@ void WorldPvPEP::HandleObjectiveComplete(PlayerSet m_sPlayersSet, uint32 uiEvent
 // process the capture events
 void WorldPvPEP::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId)
 {
-    switch(pGo->GetEntry())
+    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
     {
-        case GO_BATTLEFIELD_BANNER_PLAGUELANDS_1:
-            switch(uiEventId)
+        if (pGo->GetEntry() == aPlaguelandsBanners[i])
+        {
+            for (uint8 j = 0; j < 4; ++j)
             {
-                case EVENT_NORTHPASS_WIN_ALLIANCE:
-                case EVENT_NORTHPASS_WIN_HORDE:
-                    ProcessCaptureEvent(WIN, pPlayer->GetTeam(), TOWER_ID_NORTHPASS);
+                if (uiEventId == aPlaguelandsTowerEvents[i][j].uiEventEntry)
+                {
+                    ProcessCaptureEvent(aPlaguelandsTowerEvents[i][j].uiEventType, pPlayer->GetTeam(), aPlaguelandsTowerEvents[i][j].uiWorldState, i);
+                    sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(aPlaguelandsTowerEvents[i][j].uiZoneText));
                     break;
-                case EVENT_NORTHPASS_CONTEST_ALLIANCE:
-                case EVENT_NORTHPASS_CONTEST_HORDE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(CONTESTED, pPlayer->GetTeam(), TOWER_ID_NORTHPASS);
-                    break;
-                case EVENT_NORTHPASS_PROGRESS_ALLIANCE:
-                    ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam(), TOWER_ID_NORTHPASS);
-                    sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_EP_CAPTURE_NPT_A));
-                    break;
-                case EVENT_NORTHPASS_PROGRESS_HORDE:
-                    ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam(), TOWER_ID_NORTHPASS);
-                    sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_EP_CAPTURE_NPT_H));
-                    break;
-                case EVENT_NORTHPASS_NEUTRAL_ALLIANCE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam(), TOWER_ID_NORTHPASS);
-                    sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_EP_LOOSE_NPT_A));
-                    break;
-                case EVENT_NORTHPASS_NEUTRAL_HORDE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam(), TOWER_ID_NORTHPASS);
-                    sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_EP_LOOSE_NPT_H));
-                    break;
+                }
             }
-            break;
-        case GO_BATTLEFIELD_BANNER_PLAGUELANDS_2:
-            switch(uiEventId)
-            {
-                case EVENT_CROWNGUARD_WIN_ALLIANCE:
-                case EVENT_CROWNGUARD_WIN_HORDE:
-                    ProcessCaptureEvent(WIN, pPlayer->GetTeam(), TOWER_ID_CROWNGUARD);
-                    break;
-                case EVENT_CROWNGUARD_CONTEST_ALLIANCE:
-                case EVENT_CROWNGUARD_CONTEST_HORDE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(CONTESTED, pPlayer->GetTeam(), TOWER_ID_CROWNGUARD);
-                    break;
-                case EVENT_CROWNGUARD_PROGRESS_ALLIANCE:
-                    ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam(), TOWER_ID_CROWNGUARD);
-                    sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_EP_CAPTURE_CGT_A));
-                    break;
-                case EVENT_CROWNGUARD_PROGRESS_HORDE:
-                    ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam(), TOWER_ID_CROWNGUARD);
-                    sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_EP_CAPTURE_CGT_H));
-                    break;
-                case EVENT_CROWNGUARD_NEUTRAL_ALLIANCE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam(), TOWER_ID_CROWNGUARD);
-                    sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_EP_LOOSE_CGT_A));
-                    break;
-                case EVENT_CROWNGUARD_NEUTRAL_HORDE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam(), TOWER_ID_CROWNGUARD);
-                    sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_EP_LOOSE_CGT_H));
-                    break;
-            }
-            break;
-        case GO_BATTLEFIELD_BANNER_PLAGUELANDS_3:
-            switch(uiEventId)
-            {
-                case EVENT_EASTWALL_WIN_ALLIANCE:
-                case EVENT_EASTWALL_WIN_HORDE:
-                    ProcessCaptureEvent(WIN, pPlayer->GetTeam(), TOWER_ID_EASTWALL);
-                    break;
-                case EVENT_EASTWALL_CONTEST_ALLIANCE:
-                case EVENT_EASTWALL_CONTEST_HORDE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(CONTESTED, pPlayer->GetTeam(), TOWER_ID_EASTWALL);
-                    break;
-                case EVENT_EASTWALL_PROGRESS_ALLIANCE:
-                    ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam(), TOWER_ID_EASTWALL);
-                    sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_EP_CAPTURE_EWT_A));
-                    break;
-                case EVENT_EASTWALL_PROGRESS_HORDE:
-                    ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam(), TOWER_ID_EASTWALL);
-                    sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_EP_CAPTURE_EWT_H));
-                    break;
-                case EVENT_EASTWALL_NEUTRAL_ALLIANCE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam(), TOWER_ID_EASTWALL);
-                    sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_EP_LOOSE_EWT_A));
-                    break;
-                case EVENT_EASTWALL_NEUTRAL_HORDE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam(), TOWER_ID_EASTWALL);
-                    sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_EP_LOOSE_EWT_H));
-                    break;
-            }
-            break;
-        case GO_BATTLEFIELD_BANNER_PLAGUELANDS_4:
-            switch(uiEventId)
-            {
-                case EVENT_PLAGUEWOOD_WIN_ALLIANCE:
-                case EVENT_PLAGUEWOOD_WIN_HORDE:
-                    ProcessCaptureEvent(WIN, pPlayer->GetTeam(), TOWER_ID_PLAGUEWOOD);
-                    break;
-                case EVENT_PLAGUEWOOD_CONTEST_ALLIANCE:
-                case EVENT_PLAGUEWOOD_CONTEST_HORDE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(CONTESTED, pPlayer->GetTeam(), TOWER_ID_PLAGUEWOOD);
-                    break;
-                case EVENT_PLAGUEWOOD_PROGRESS_ALLIANCE:
-                    ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam(), TOWER_ID_PLAGUEWOOD);
-                    sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_EP_CAPTURE_PWT_A));
-                    break;
-                case EVENT_PLAGUEWOOD_PROGRESS_HORDE:
-                    ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam(), TOWER_ID_PLAGUEWOOD);
-                    sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_EP_CAPTURE_PWT_H));
-                    break;
-                case EVENT_PLAGUEWOOD_NEUTRAL_ALLIANCE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam(), TOWER_ID_PLAGUEWOOD);
-                    sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_EP_LOOSE_PWT_A));
-                    break;
-                case EVENT_PLAGUEWOOD_NEUTRAL_HORDE:
-                    // handle event - in this case player's team will be the opposite team
-                    ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam(), TOWER_ID_PLAGUEWOOD);
-                    sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_EP_LOOSE_PWT_H));
-                    break;
-            }
-            break;
+        }
     }
 }
 
-void WorldPvPEP::SetData(uint32 uiType, uint32 uiData)
+void WorldPvPEP::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32 uiNewWorldState, uint32 uiTower)
 {
-    switch(uiType)
+    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
     {
-        case TYPE_CROWNGUARD_CONTROLLER:
-            if (uiData == ALLIANCE)
+        if (uiTower == i)
+        {
+            // remove old tower state
+            SendUpdateWorldState(m_uiTowerWorldState[i], 0);
+
+            if (uiCaptureType == PROGRESS)
             {
-                if (GetData(TYPE_CROWNGUARD_STATE) == NEUTRAL)
+                SetBannersArtKit(m_lTowerBanners[i], uiTeam == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+
+                if (uiTeam == ALLIANCE)
+                    ++m_uiTowersAlly;
+                else
+                    ++m_uiTowersHorde;
+
+                // handle rewards from each tower
+                switch (i)
                 {
-                    // in neutral case the team id is the opposite team
-                    // the team who captured the tower and set it to neutral
+                    case 0:     // Northpass
+                        DoUpdateShrine(uiTeam == ALLIANCE ? m_uiLordaeronShrineAlyGUID : m_uiLordaeronShrineHordeGUID);
+                        break;
+                    case 1:     // Crownguard
+                        DoSetGraveyard(uiTeam);
+                        break;
+                    case 2:     // Eastwall
+                        DoSummonSoldiersIfCan(uiTeam);
+                        break;
+                    case 3:     // Plaguewood
+                        DoSummonFlightMasterIfCan(uiTeam);
+                        break;
+                }
+            }
+            else if (uiCaptureType == NEUTRAL)
+            {
+                SetBannersArtKit(m_lTowerBanners[i], GO_ARTKIT_BANNER_NEUTRAL);
+
+                if (uiTeam == ALLIANCE)
                     --m_uiTowersHorde;
-                    m_uiCrownguardWorldState = WORLD_STATE_CROWNGUARD_NEUTRAL;
-                    // unsummon soldiers
-                    DoSetGraveyard(ALLIANCE, true);
-                    // set artkit
-                    SetBannersArtKit(m_lCrownguardTowerBanners, GO_ARTKIT_BANNER_NEUTRAL);
-                }
-                else if (GetData(TYPE_CROWNGUARD_STATE) == PROGRESS)
-                {
-                    m_uiCrownguardWorldState = WORLD_STATE_CROWNGUARD_PROG_ALY;
-                    // increase tower count only if the controller is changed
-                    if (uiData != GetData(TYPE_CROWNGUARD_CONTROLLER))
-                    {
-                        // summon alliance soldiers
-                        DoSetGraveyard(ALLIANCE);
-                        ++m_uiTowersAlly;
-
-                        // set artkit
-                        SetBannersArtKit(m_lCrownguardTowerBanners, GO_ARTKIT_BANNER_ALLIANCE);
-                    }
-                }
-                // contested states are also sent by the opposite team
-                // alliance contests horde tower
-                else if (GetData(TYPE_CROWNGUARD_STATE) == CONTESTED)
-                    m_uiCrownguardWorldState = WORLD_STATE_CROWNGUARD_CONT_HORDE;
-                else if (GetData(TYPE_CROWNGUARD_STATE) == WIN)
-                    m_uiCrownguardWorldState = WORLD_STATE_CROWNGUARD_ALY;
-            }
-            else if (uiData == HORDE)
-            {
-                if (GetData(TYPE_CROWNGUARD_STATE) == NEUTRAL)
-                {
-                    // in neutral case the team id is the opposite team
-                    // the team who captured the tower and set it to neutral
+                else
                     --m_uiTowersAlly;
-                    m_uiCrownguardWorldState = WORLD_STATE_CROWNGUARD_NEUTRAL;
-                    // unsummon soldiers
-                    DoSetGraveyard(HORDE, true);
-                    // set artkit
-                    SetBannersArtKit(m_lCrownguardTowerBanners, GO_ARTKIT_BANNER_NEUTRAL);
-                }
-                if (GetData(TYPE_CROWNGUARD_STATE) == PROGRESS)
-                {
-                    m_uiCrownguardWorldState = WORLD_STATE_CROWNGUARD_PROG_HORDE;
-                    // increase tower count only if the controller is changed
-                    if (uiData != GetData(TYPE_CROWNGUARD_CONTROLLER))
-                    {
-                        // summon horde soldiers
-                        DoSetGraveyard(HORDE);
-                        ++m_uiTowersHorde;
 
-                        // set artkit
-                        SetBannersArtKit(m_lCrownguardTowerBanners, GO_ARTKIT_BANNER_HORDE);
-                    }
+                // cancel rewards from each tower
+                switch (i)
+                {
+                    case 0:     // Northpass
+                        DoUpdateShrine(uiTeam == ALLIANCE ? m_uiLordaeronShrineAlyGUID : m_uiLordaeronShrineHordeGUID, true);
+                        break;
+                    case 1:     // Crownguard
+                        DoSetGraveyard(uiTeam, true);
+                        break;
+                    case 2:     // Eastwall
+                        DoUnsummonSoldiers();
+                        break;
+                    case 3:     // Plaguewood
+                        DoUnsummonFlightMaster();
+                        break;
                 }
-                // contested states are also sent by the opposite team
-                // horde contests alliance tower
-                else if (GetData(TYPE_CROWNGUARD_STATE) == CONTESTED)
-                    m_uiCrownguardWorldState = WORLD_STATE_CROWNGUARD_CONT_ALY;
-                else if (GetData(TYPE_CROWNGUARD_STATE) == WIN)
-                    m_uiCrownguardWorldState = WORLD_STATE_CROWNGUARD_HORDE;
             }
-            // set controller only for progress and neutral
-            if (GetData(TYPE_CROWNGUARD_STATE) == PROGRESS)
-                m_uiCrownguardController = uiData;
-            else if (GetData(TYPE_CROWNGUARD_STATE) == NEUTRAL)
-                m_uiCrownguardController = 0;
-            break;
-        case TYPE_EASTWALL_CONTROLLER:
-            if (uiData == ALLIANCE)
-            {
-                if (GetData(TYPE_EASTWALL_STATE) == NEUTRAL)
-                {
-                    // in neutral case the team id is the opposite team
-                    // the team who captured the tower and set it to neutral
-                    --m_uiTowersHorde;
-                    m_uiEastwallWorldState = WORLD_STATE_EASTWALL_NEUTRAL;
-                    // unsummon soldiers
-                    DoUnsummonSoldiers();
-                    // set artkit
-                    SetBannersArtKit(m_lEastwallTowerBanners, GO_ARTKIT_BANNER_NEUTRAL);
-                }
-                else if (GetData(TYPE_EASTWALL_STATE) == PROGRESS)
-                {
-                    m_uiEastwallWorldState = WORLD_STATE_EASTWALL_PROG_ALY;
-                    // increase tower count only if the controller is changed
-                    if (uiData != GetData(TYPE_EASTWALL_CONTROLLER))
-                    {
-                        // summon alliance soldiers
-                        DoSummonSoldiersIfCan(ALLIANCE);
-                        ++m_uiTowersAlly;
 
-                        // set artkit
-                        SetBannersArtKit(m_lEastwallTowerBanners, GO_ARTKIT_BANNER_ALLIANCE);
-                    }
-                }
-                // contested states are also sent by the opposite team
-                // alliance contests horde tower
-                else if (GetData(TYPE_EASTWALL_STATE) == CONTESTED)
-                    m_uiEastwallWorldState = WORLD_STATE_EASTWALL_CONT_HORDE;
-                else if (GetData(TYPE_EASTWALL_STATE) == WIN)
-                    m_uiEastwallWorldState = WORLD_STATE_EASTWALL_ALY;
-            }
-            else if (uiData == HORDE)
-            {
-                if (GetData(TYPE_EASTWALL_STATE) == NEUTRAL)
-                {
-                    // in neutral case the team id is the opposite team
-                    // the team who captured the tower and set it to neutral
-                    --m_uiTowersAlly;
-                    m_uiEastwallWorldState = WORLD_STATE_EASTWALL_NEUTRAL;
-                    // unsummon soldiers
-                    DoUnsummonSoldiers();
-                    // set artkit
-                    SetBannersArtKit(m_lEastwallTowerBanners, GO_ARTKIT_BANNER_NEUTRAL);
-                }
-                if (GetData(TYPE_EASTWALL_STATE) == PROGRESS)
-                {
-                    m_uiEastwallWorldState = WORLD_STATE_EASTWALL_PROG_HORDE;
-                    // increase tower count only if the controller is changed
-                    if (uiData != GetData(TYPE_EASTWALL_CONTROLLER))
-                    {
-                        // summon horde soldiers
-                        DoSummonSoldiersIfCan(HORDE);
-                        ++m_uiTowersHorde;
-
-                        // set artkit
-                        SetBannersArtKit(m_lEastwallTowerBanners, GO_ARTKIT_BANNER_HORDE);
-                    }
-                }
-                // contested states are also sent by the opposite team
-                // horde contests alliance tower
-                else if (GetData(TYPE_EASTWALL_STATE) == CONTESTED)
-                    m_uiEastwallWorldState = WORLD_STATE_EASTWALL_CONT_ALY;
-                else if (GetData(TYPE_EASTWALL_STATE) == WIN)
-                    m_uiEastwallWorldState = WORLD_STATE_EASTWALL_HORDE;
-            }
-            // set controller only for progress and neutral
-            if (GetData(TYPE_EASTWALL_STATE) == PROGRESS)
-                m_uiEastwallController = uiData;
-            else if (GetData(TYPE_EASTWALL_STATE) == NEUTRAL)
-                m_uiEastwallController = 0;
-            break;
-        case TYPE_NORTHPASS_CONTROLLER:
-            if (uiData == ALLIANCE)
-            {
-                if (GetData(TYPE_NORTHPASS_STATE) == NEUTRAL)
-                {
-                    // in neutral case the team id is the opposite team
-                    // the team who captured the tower and set it to neutral
-                    --m_uiTowersHorde;
-                    m_uiNorthpassWorldState = WORLD_STATE_NORTHPASS_NEUTRAL;
-                    // delete aly shrine
-                    DoUpdateShrine(m_uiLordaeronShrineHordeGUID, true);
-                    // set artkit
-                    SetBannersArtKit(m_lNorthpassTowerBanners, GO_ARTKIT_BANNER_NEUTRAL);
-                }
-                else if (GetData(TYPE_NORTHPASS_STATE) == PROGRESS)
-                {
-                    m_uiNorthpassWorldState = WORLD_STATE_NORTHPASS_PROG_ALY;
-                    // increase tower count only if the controller is changed
-                    if (uiData != GetData(TYPE_NORTHPASS_CONTROLLER))
-                    {
-                        DoUpdateShrine(m_uiLordaeronShrineAlyGUID);
-                        ++m_uiTowersAlly;
-
-                        // set artkit
-                        SetBannersArtKit(m_lNorthpassTowerBanners, GO_ARTKIT_BANNER_ALLIANCE);
-                    }
-                }
-                // contested states are also sent by the opposite team
-                // alliance contests horde tower
-                else if (GetData(TYPE_NORTHPASS_STATE) == CONTESTED)
-                    m_uiNorthpassWorldState = WORLD_STATE_NORTHPASS_CONT_HORDE;
-                else if (GetData(TYPE_NORTHPASS_STATE) == WIN)
-                    m_uiNorthpassWorldState = WORLD_STATE_NORTHPASS_ALY;
-            }
-            else if (uiData == HORDE)
-            {
-                if (GetData(TYPE_NORTHPASS_STATE) == NEUTRAL)
-                {
-                    // in neutral case the team id is the opposite team
-                    // the team who captured the tower and set it to neutral
-                    --m_uiTowersAlly;
-                    m_uiNorthpassWorldState = WORLD_STATE_NORTHPASS_NEUTRAL;
-                    // delete aly shrine
-                    DoUpdateShrine(m_uiLordaeronShrineAlyGUID, true);
-                    // set artkit
-                    SetBannersArtKit(m_lNorthpassTowerBanners, GO_ARTKIT_BANNER_NEUTRAL);
-                }
-                if (GetData(TYPE_NORTHPASS_STATE) == PROGRESS)
-                {
-                    m_uiNorthpassWorldState = WORLD_STATE_NORTHPASS_PROG_HORDE;
-                    // increase tower count only if the controller is changed
-                    if (uiData != GetData(TYPE_NORTHPASS_CONTROLLER))
-                    {
-                        // respawn horde shrine
-                        DoUpdateShrine(m_uiLordaeronShrineHordeGUID);
-                        ++m_uiTowersHorde;
-
-                        // set artkit
-                        SetBannersArtKit(m_lNorthpassTowerBanners, GO_ARTKIT_BANNER_HORDE);
-                    }
-                }
-                // contested states are also sent by the opposite team
-                // horde contests alliance tower
-                else if (GetData(TYPE_NORTHPASS_STATE) == CONTESTED)
-                    m_uiNorthpassWorldState = WORLD_STATE_NORTHPASS_CONT_ALY;
-                else if (GetData(TYPE_NORTHPASS_STATE) == WIN)
-                    m_uiNorthpassWorldState = WORLD_STATE_NORTHPASS_HORDE;
-            }
-            // set controller only for progress and neutral
-            if (GetData(TYPE_NORTHPASS_STATE) == PROGRESS)
-                m_uiNorthpassController = uiData;
-            else if (GetData(TYPE_NORTHPASS_STATE) == NEUTRAL)
-                m_uiNorthpassController = 0;
-            break;
-        case TYPE_PLAGUEWOOD_CONTROLLER:
-            if (uiData == ALLIANCE)
-            {
-                if (GetData(TYPE_PLAGUEWOOD_STATE) == NEUTRAL)
-                {
-                    // in neutral case the team id is the opposite team
-                    // the team who captured the tower and set it to neutral
-                    --m_uiTowersHorde;
-                    m_uiPlaguewoodWorldState = WORLD_STATE_PLAGUEWOOD_NEUTRAL;
-                    // unsummon flightmaster
-                    DoUnsummonFlightMaster();
-                    // set artkit
-                    SetBannersArtKit(m_lPlaguewoodTowerBanners, GO_ARTKIT_BANNER_NEUTRAL);
-                }
-                else if (GetData(TYPE_PLAGUEWOOD_STATE) == PROGRESS)
-                {
-                    m_uiPlaguewoodWorldState = WORLD_STATE_PLAGUEWOOD_PROG_ALY;
-                    // increase tower count only if the controller is changed
-                    if (uiData != GetData(TYPE_PLAGUEWOOD_CONTROLLER))
-                    {
-                        DoSummonFlightMasterIfCan(ALLIANCE);
-                        ++m_uiTowersAlly;
-
-                        // set artkit
-                        SetBannersArtKit(m_lPlaguewoodTowerBanners, GO_ARTKIT_BANNER_ALLIANCE);
-                    }
-                }
-                // contested states are also sent by the opposite team
-                // alliance contests horde tower
-                else if (GetData(TYPE_PLAGUEWOOD_STATE) == CONTESTED)
-                    m_uiPlaguewoodWorldState = WORLD_STATE_PLAGUEWOOD_CONT_HORDE;
-                else if (GetData(TYPE_PLAGUEWOOD_STATE) == WIN)
-                    m_uiPlaguewoodWorldState = WORLD_STATE_PLAGUEWOOD_ALY;
-            }
-            else if (uiData == HORDE)
-            {
-                if (GetData(TYPE_PLAGUEWOOD_STATE) == NEUTRAL)
-                {
-                    // in neutral case the team id is the opposite team
-                    // the team who captured the tower and set it to neutral
-                    --m_uiTowersAlly;
-                    m_uiPlaguewoodWorldState = WORLD_STATE_PLAGUEWOOD_NEUTRAL;
-                    // unsummon flightmaster
-                    DoUnsummonFlightMaster();
-                    // set artkit
-                    SetBannersArtKit(m_lPlaguewoodTowerBanners, GO_ARTKIT_BANNER_NEUTRAL);
-                }
-                if (GetData(TYPE_PLAGUEWOOD_STATE) == PROGRESS)
-                {
-                    m_uiPlaguewoodWorldState = WORLD_STATE_PLAGUEWOOD_PROG_HORDE;
-                    // increase tower count only if the controller is changed
-                    if (uiData != GetData(TYPE_PLAGUEWOOD_CONTROLLER))
-                    {
-                        DoSummonFlightMasterIfCan(HORDE);
-                        ++m_uiTowersHorde;
-
-                        // set artkit
-                        SetBannersArtKit(m_lPlaguewoodTowerBanners, GO_ARTKIT_BANNER_HORDE);
-                    }
-                }
-                // contested states are also sent by the opposite team
-                // horde contests alliance tower
-                else if (GetData(TYPE_PLAGUEWOOD_STATE) == CONTESTED)
-                    m_uiPlaguewoodWorldState = WORLD_STATE_PLAGUEWOOD_CONT_ALY;
-                else if (GetData(TYPE_PLAGUEWOOD_STATE) == WIN)
-                    m_uiPlaguewoodWorldState = WORLD_STATE_PLAGUEWOOD_HORDE;
-            }
-            // set controller only for progress and neutral
-            if (GetData(TYPE_PLAGUEWOOD_STATE) == PROGRESS)
-                m_uiPlaguewoodController = uiData;
-            else if (GetData(TYPE_PLAGUEWOOD_STATE) == NEUTRAL)
-                m_uiPlaguewoodController = 0;
-            break;
-        case TYPE_CROWNGUARD_STATE:
-            m_uiCrownguardState = uiData;
-            return;
-        case TYPE_EASTWALL_STATE:
-            m_uiEastwallState = uiData;
-            return;
-        case TYPE_NORTHPASS_STATE:
-            m_uiNorthpassState = uiData;
-            return;
-        case TYPE_PLAGUEWOOD_STATE:
-            m_uiPlaguewoodState = uiData;
-            return;
+            // send new tower state
+            m_uiTowerWorldState[i] = uiNewWorldState;
+            SendUpdateWorldState(m_uiTowerWorldState[i], 1);
+        }
     }
 
     // update buffs
-    for (uint8 i = 0; i < MAX_TOWERS; i++)
+    for (uint8 i = 0; i < MAX_EP_TOWERS; i++)
     {
         // buff alliance
-        if (m_uiTowersAlly == m_aPlaguelandsTowerBuffs[i].uiTowers)
+        if (m_uiTowersAlly == i + 1)
             DoProcessTeamBuff(ALLIANCE, m_aPlaguelandsTowerBuffs[i].uiSpellIdAlly);
         // buff horde
-        if (m_uiTowersHorde == m_aPlaguelandsTowerBuffs[i].uiTowers)
+        if (m_uiTowersHorde == i + 1)
             DoProcessTeamBuff(HORDE, m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde);
     }
 
@@ -659,75 +282,7 @@ void WorldPvPEP::SetData(uint32 uiType, uint32 uiData)
         DoProcessTeamBuff(ALLIANCE, m_aPlaguelandsTowerBuffs[0].uiSpellIdAlly, true);
 
     // update states counters
-    // the map tower states are updated in the ProcessCaptureEvent function
     UpdateWorldState();
-}
-
-uint32 WorldPvPEP::GetData(uint32 uiType)
-{
-    switch(uiType)
-    {
-        case TYPE_CROWNGUARD_CONTROLLER:
-            return m_uiCrownguardController;
-        case TYPE_EASTWALL_CONTROLLER:
-            return m_uiEastwallController;
-        case TYPE_NORTHPASS_CONTROLLER:
-            return m_uiNorthpassController;
-        case TYPE_PLAGUEWOOD_CONTROLLER:
-            return m_uiPlaguewoodController;
-        case TYPE_CROWNGUARD_STATE:
-            return m_uiCrownguardState;
-        case TYPE_EASTWALL_STATE:
-            return m_uiEastwallState;
-        case TYPE_NORTHPASS_STATE:
-            return m_uiNorthpassState;
-        case TYPE_PLAGUEWOOD_STATE:
-            return m_uiPlaguewoodState;
-    }
-    return 0;
-}
-
-void WorldPvPEP::ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32 uiTower)
-{
-    switch(uiTower)
-    {
-        case TOWER_ID_CROWNGUARD:
-             // remove old tower state
-            SendUpdateWorldState(m_uiCrownguardWorldState, 0);
-            // update data
-            SetData(TYPE_CROWNGUARD_STATE, uiCaptureType);
-            SetData(TYPE_CROWNGUARD_CONTROLLER, uiTeam);
-            // send new tower state
-            SendUpdateWorldState(m_uiCrownguardWorldState, 1);
-            break;
-        case TOWER_ID_EASTWALL:
-            // remove old tower state
-            SendUpdateWorldState(m_uiEastwallWorldState, 0);
-            // update data
-            SetData(TYPE_EASTWALL_STATE, uiCaptureType);
-            SetData(TYPE_EASTWALL_CONTROLLER, uiTeam);
-            // send new tower state
-            SendUpdateWorldState(m_uiEastwallWorldState, 1);
-            break;
-        case TOWER_ID_NORTHPASS:
-            // remove old tower state
-            SendUpdateWorldState(m_uiNorthpassWorldState, 0);
-            // update data
-            SetData(TYPE_NORTHPASS_STATE, uiCaptureType);
-            SetData(TYPE_NORTHPASS_CONTROLLER, uiTeam);
-            // send new tower state
-            SendUpdateWorldState(m_uiNorthpassWorldState, 1);
-            break;
-        case TOWER_ID_PLAGUEWOOD:
-            // remove old tower state
-            SendUpdateWorldState(m_uiPlaguewoodWorldState, 0);
-            // update data
-            SetData(TYPE_PLAGUEWOOD_STATE, uiCaptureType);
-            SetData(TYPE_PLAGUEWOOD_CONTROLLER, uiTeam);
-            // send new tower state
-            SendUpdateWorldState(m_uiPlaguewoodWorldState, 1);
-            break;
-    }
 }
 
 void WorldPvPEP::DoSummonFlightMasterIfCan(uint32 uiFaction)
@@ -736,17 +291,9 @@ void WorldPvPEP::DoSummonFlightMasterIfCan(uint32 uiFaction)
     if (!pPlayer)
         return;
 
-    // return if already summoned
-    if (m_uiFlightMasterGUID)
-        return;
-
-    // summon the flightmaster
-    if (Creature* pFlightMaster = pPlayer->SummonCreature(NPC_SPECTRAL_FLIGHTMASTER, m_aPlaguelandFlightmasterSpawnLocs[0].m_fX, m_aPlaguelandFlightmasterSpawnLocs[0].m_fY, m_aPlaguelandFlightmasterSpawnLocs[0].m_fZ, m_aPlaguelandFlightmasterSpawnLocs[0].m_fO, TEMPSUMMON_MANUAL_DESPAWN, 0))
-    {
-        //pFlightMaster->setFaction(uiFaction);
-        pFlightMaster->SetRespawnDelay(7*DAY);
+    // summon the flightmaster - NOTE: not sure how to handle factions
+    if (Creature* pFlightMaster = pPlayer->SummonCreature(NPC_SPECTRAL_FLIGHTMASTER, aFlightmasterSpawnLocs[0], aFlightmasterSpawnLocs[1], aFlightmasterSpawnLocs[2], aFlightmasterSpawnLocs[3], TEMPSUMMON_DEAD_DESPAWN, 0))
         m_uiFlightMasterGUID = pFlightMaster->GetObjectGuid();
-    }
 }
 
 void WorldPvPEP::DoUnsummonFlightMaster()
@@ -754,9 +301,6 @@ void WorldPvPEP::DoUnsummonFlightMaster()
     // neet to use a player as anchor for the map
     Player* pPlayer = GetPlayerInZone();
     if (!pPlayer)
-        return;
-
-    if (!m_uiFlightMasterGUID)
         return;
 
     if (Creature* pFlightMaster = pPlayer->GetMap()->GetCreature(m_uiFlightMasterGUID))
@@ -771,31 +315,15 @@ void WorldPvPEP::DoSummonSoldiersIfCan(uint32 uiFaction)
 
     uint32 uiEntry = 0;
 
-    if (uiFaction == ALLIANCE)
+    for (uint8 i = 0; i < 5; i++)
     {
-        for (uint8 i = 0; i < 5; i++)
-        {
-            if (i == 0)
-                uiEntry = NPC_LORDAERON_COMMANDER;
-            else
-                uiEntry = NPC_LORDAERON_SOLDIER;
+        if (i == 0)
+            uiEntry = uiFaction == ALLIANCE ? NPC_LORDAERON_COMMANDER : NPC_LORDAERON_VETERAN;
+        else
+            uiEntry = uiFaction == ALLIANCE ? NPC_LORDAERON_SOLDIER : NPC_LORDAERON_FIGHTER;
 
-            if (Creature* pSoldier = pPlayer->SummonCreature(uiEntry, m_aPlaguelandSoldiersSpawnLocs[i].m_fX, m_aPlaguelandSoldiersSpawnLocs[i].m_fY, m_aPlaguelandSoldiersSpawnLocs[i].m_fZ, m_aPlaguelandSoldiersSpawnLocs[i].m_fO, TEMPSUMMON_DEAD_DESPAWN, 0))
-                m_lSoldiersGuids.push_back(pSoldier->GetObjectGuid());
-        }
-    }
-    else
-    {
-        for (uint8 i = 0; i < 5; i++)
-        {
-            if (i == 0)
-                uiEntry = NPC_LORDAERON_VETERAN;
-            else
-                uiEntry = NPC_LORDAERON_FIGHTER;
-
-            if (Creature* pSoldier = pPlayer->SummonCreature(uiEntry, m_aPlaguelandSoldiersSpawnLocs[i].m_fX, m_aPlaguelandSoldiersSpawnLocs[i].m_fY, m_aPlaguelandSoldiersSpawnLocs[i].m_fZ, m_aPlaguelandSoldiersSpawnLocs[i].m_fO, TEMPSUMMON_DEAD_DESPAWN, 0))
-                m_lSoldiersGuids.push_back(pSoldier->GetObjectGuid());
-        }
+        if (Creature* pSoldier = pPlayer->SummonCreature(uiEntry, m_aPlaguelandSoldiersSpawnLocs[i].m_fX, m_aPlaguelandSoldiersSpawnLocs[i].m_fY, m_aPlaguelandSoldiersSpawnLocs[i].m_fZ, 2.2f, TEMPSUMMON_DEAD_DESPAWN, 0))
+            m_lSoldiersGuids.push_back(pSoldier->GetObjectGuid());
     }
 }
 

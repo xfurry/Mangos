@@ -173,11 +173,11 @@ bool WorldPvPSI::HandleDropFlag(Player* pPlayer, uint32 uiSpellId)
     switch(pPlayer->GetTeam())
     {
         case ALLIANCE:
-            if (pPlayer->IsWithinDist3d(m_aSilithusLocs[0].m_fX, m_aSilithusLocs[0].m_fY, m_aSilithusLocs[0].m_fZ, 5.0f))
+            if (pPlayer->IsWithinDist3d(aSilithusLocs[0].m_fX, aSilithusLocs[0].m_fY, aSilithusLocs[0].m_fZ, 5.0f))
                 return false;
             break;
         case HORDE:
-            if (pPlayer->IsWithinDist3d(m_aSilithusLocs[1].m_fX, m_aSilithusLocs[1].m_fY, m_aSilithusLocs[1].m_fZ, 5.0f))
+            if (pPlayer->IsWithinDist3d(aSilithusLocs[1].m_fX, aSilithusLocs[1].m_fY, aSilithusLocs[1].m_fZ, 5.0f))
                 return false;
             break;
     }

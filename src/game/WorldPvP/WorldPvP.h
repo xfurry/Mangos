@@ -57,12 +57,6 @@ enum CaptureState
     WIN         = 3
 };
 
-// Used to define the various summons
-struct sSpawnLocations
-{
-    float m_fX, m_fY, m_fZ, m_fO;
-};
-
 typedef std::set<Player*> PlayerSet;
 
 class WorldPvP : public ZoneScript

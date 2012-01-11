@@ -21,26 +21,7 @@
 
 enum
 {
-    MAX_TOWERS                              = 4,
-
-    // store the tower controller team
-    TYPE_CROWNGUARD_CONTROLLER              = 1,
-    TYPE_EASTWALL_CONTROLLER                = 2,
-    TYPE_NORTHPASS_CONTROLLER               = 3,
-    TYPE_PLAGUEWOOD_CONTROLLER              = 4,
-
-    // store tower world state to show
-    TYPE_CROWNGUARD_STATE                   = 5,
-    TYPE_EASTWALL_STATE                     = 6,
-    TYPE_NORTHPASS_STATE                    = 7,
-    TYPE_PLAGUEWOOD_STATE                   = 8,
-
-    // tower ids
-    // they are used in the process event functions
-    TOWER_ID_CROWNGUARD                     = 1,
-    TOWER_ID_EASTWALL                       = 2,
-    TOWER_ID_NORTHPASS                      = 3,
-    TOWER_ID_PLAGUEWOOD                     = 4,
+    MAX_EP_TOWERS                            = 4,
 
     // spells
     // aly
@@ -64,12 +45,6 @@ enum
     GRAVEYARD_ZONE_EASTERN_PLAGUE           = 139,
     GRAVEYARD_ID_EASTERN_PLAGUE             = 927,
     HONOR_REWARD_PLAGUELANDS                = 18,
-
-    // taxi nodes
-    TAXI_NODE_PLAGUEWOOD_TOWER              = 84,
-    TAXI_NODE_NORTHPASS_TOWER               = 85,
-    TAXI_NODE_EASTWALL_TOWER                = 86,
-    TAXI_NODE_CROWNGUARD_TOWER              = 87,
 
     // npcs
     NPC_SPECTRAL_FLIGHTMASTER               = 17209,
@@ -103,40 +78,40 @@ enum
 
     // events
     // northpass - banner 1
-    EVENT_NORTHPASS_WIN_ALLIANCE            = 10568,
-    EVENT_NORTHPASS_WIN_HORDE               = 10556,
-    EVENT_NORTHPASS_CONTEST_ALLIANCE        = 10697,
-    EVENT_NORTHPASS_CONTEST_HORDE           = 10696,
+    //EVENT_NORTHPASS_WIN_ALLIANCE          = 10568,
+    //EVENT_NORTHPASS_WIN_HORDE             = 10556,
+    //EVENT_NORTHPASS_CONTEST_ALLIANCE      = 10697,
+    //EVENT_NORTHPASS_CONTEST_HORDE         = 10696,
     EVENT_NORTHPASS_PROGRESS_ALLIANCE       = 10699,
     EVENT_NORTHPASS_PROGRESS_HORDE          = 10698,
     EVENT_NORTHPASS_NEUTRAL_ALLIANCE        = 11151,
     EVENT_NORTHPASS_NEUTRAL_HORDE           = 11150,
 
     // crownguard - banner 2
-    EVENT_CROWNGUARD_WIN_ALLIANCE           = 10570,
-    EVENT_CROWNGUARD_WIN_HORDE              = 10566,
-    EVENT_CROWNGUARD_CONTEST_ALLIANCE       = 10703,
-    EVENT_CROWNGUARD_CONTEST_HORDE          = 10702,
+    //EVENT_CROWNGUARD_WIN_ALLIANCE         = 10570,
+    //EVENT_CROWNGUARD_WIN_HORDE            = 10566,
+    //EVENT_CROWNGUARD_CONTEST_ALLIANCE     = 10703,
+    //EVENT_CROWNGUARD_CONTEST_HORDE        = 10702,
     EVENT_CROWNGUARD_PROGRESS_ALLIANCE      = 10705,
     EVENT_CROWNGUARD_PROGRESS_HORDE         = 10704,
     EVENT_CROWNGUARD_NEUTRAL_ALLIANCE       = 11155,
     EVENT_CROWNGUARD_NEUTRAL_HORDE          = 11154,
 
     // eastwall - banner 3
-    EVENT_EASTWALL_WIN_ALLIANCE             = 10569,
-    EVENT_EASTWALL_WIN_HORDE                = 10565,
-    EVENT_EASTWALL_CONTEST_ALLIANCE         = 10689,
-    EVENT_EASTWALL_CONTEST_HORDE            = 10690,
+    //EVENT_EASTWALL_WIN_ALLIANCE           = 10569,
+    //EVENT_EASTWALL_WIN_HORDE              = 10565,
+    //EVENT_EASTWALL_CONTEST_ALLIANCE       = 10689,
+    //EVENT_EASTWALL_CONTEST_HORDE          = 10690,
     EVENT_EASTWALL_PROGRESS_ALLIANCE        = 10691,
     EVENT_EASTWALL_PROGRESS_HORDE           = 10692,
     EVENT_EASTWALL_NEUTRAL_ALLIANCE         = 11149,
     EVENT_EASTWALL_NEUTRAL_HORDE            = 11148,
 
     // plaguewood - banner 4
-    EVENT_PLAGUEWOOD_WIN_ALLIANCE           = 10567,
-    EVENT_PLAGUEWOOD_WIN_HORDE              = 10564,
-    EVENT_PLAGUEWOOD_CONTEST_ALLIANCE       = 10687,
-    EVENT_PLAGUEWOOD_CONTEST_HORDE          = 10688,
+    //EVENT_PLAGUEWOOD_WIN_ALLIANCE         = 10567,
+    //EVENT_PLAGUEWOOD_WIN_HORDE            = 10564,
+    //EVENT_PLAGUEWOOD_CONTEST_ALLIANCE     = 10687,
+    //EVENT_PLAGUEWOOD_CONTEST_HORDE        = 10688,
     EVENT_PLAGUEWOOD_PROGRESS_ALLIANCE      = 10701,
     EVENT_PLAGUEWOOD_PROGRESS_HORDE         = 10700,
     EVENT_PLAGUEWOOD_NEUTRAL_ALLIANCE       = 11153,
@@ -147,37 +122,37 @@ enum
     WORLD_STATE_TOWER_COUNT_HORDE           = 2328,
 
     // plaguewood tower
-    WORLD_STATE_PLAGUEWOOD_CONT_ALY         = 2366,
-    WORLD_STATE_PLAGUEWOOD_CONT_HORDE       = 2367,
-    WORLD_STATE_PLAGUEWOOD_PROG_ALY         = 2368,
-    WORLD_STATE_PLAGUEWOOD_PROG_HORDE       = 2369,
+    //WORLD_STATE_PLAGUEWOOD_CONT_ALY       = 2366,         // state similar to neutral state - not used
+    //WORLD_STATE_PLAGUEWOOD_CONT_HORDE     = 2367,
+    //WORLD_STATE_PLAGUEWOOD_PROG_ALY       = 2368,         // state similar to faction control state - not used
+    //WORLD_STATE_PLAGUEWOOD_PROG_HORDE     = 2369,
     WORLD_STATE_PLAGUEWOOD_ALY              = 2370,
     WORLD_STATE_PLAGUEWOOD_HORDE            = 2371,
     WORLD_STATE_PLAGUEWOOD_NEUTRAL          = 2353,
 
     // northpass tower
-    WORLD_STATE_NORTHPASS_CONT_ALY          = 2362,
-    WORLD_STATE_NORTHPASS_CONT_HORDE        = 2363,
-    WORLD_STATE_NORTHPASS_PROG_ALY          = 2364,
-    WORLD_STATE_NORTHPASS_PROG_HORDE        = 2365,
+    //WORLD_STATE_NORTHPASS_CONT_ALY        = 2362,
+    //WORLD_STATE_NORTHPASS_CONT_HORDE      = 2363,
+    //WORLD_STATE_NORTHPASS_PROG_ALY        = 2364,
+    //WORLD_STATE_NORTHPASS_PROG_HORDE      = 2365,
     WORLD_STATE_NORTHPASS_ALY               = 2372,
     WORLD_STATE_NORTHPASS_HORDE             = 2373,
     WORLD_STATE_NORTHPASS_NEUTRAL           = 2352,
 
     // eastwall tower
-    WORLD_STATE_EASTWALL_CONT_ALY           = 2359,
-    WORLD_STATE_EASTWALL_CONT_HORDE         = 2360,
-    WORLD_STATE_EASTWALL_PROG_ALY           = 2357,
-    WORLD_STATE_EASTWALL_PROG_HORDE         = 2358,
+    //WORLD_STATE_EASTWALL_CONT_ALY         = 2359,
+    //WORLD_STATE_EASTWALL_CONT_HORDE       = 2360,
+    //WORLD_STATE_EASTWALL_PROG_ALY         = 2357,
+    //WORLD_STATE_EASTWALL_PROG_HORDE       = 2358,
     WORLD_STATE_EASTWALL_ALY                = 2354,
     WORLD_STATE_EASTWALL_HORDE              = 2356,
     WORLD_STATE_EASTWALL_NEUTRAL            = 2361,
 
     // crownguard tower
-    WORLD_STATE_CROWNGUARD_CONT_ALY         = 2374,
-    WORLD_STATE_CROWNGUARD_CONT_HORDE       = 2375,
-    WORLD_STATE_CROWNGUARD_PROG_ALY         = 2376,
-    WORLD_STATE_CROWNGUARD_PROG_HORDE       = 2377,
+    //WORLD_STATE_CROWNGUARD_CONT_ALY       = 2374,
+    //WORLD_STATE_CROWNGUARD_CONT_HORDE     = 2375,
+    //WORLD_STATE_CROWNGUARD_PROG_ALY       = 2376,
+    //WORLD_STATE_CROWNGUARD_PROG_HORDE     = 2377,
     WORLD_STATE_CROWNGUARD_ALY              = 2378,
     WORLD_STATE_CROWNGUARD_HORDE            = 2379,
     WORLD_STATE_CROWNGUARD_NEUTRAL          = 2355,
@@ -185,18 +160,25 @@ enum
 
 struct sTowerBuffs
 {
-    uint32 uiTowers, uiSpellIdAlly, uiSpellIdHorde;
+    uint32 uiSpellIdAlly, uiSpellIdHorde;
 };
 
-static sTowerBuffs m_aPlaguelandsTowerBuffs[MAX_TOWERS] =
+static sTowerBuffs m_aPlaguelandsTowerBuffs[MAX_EP_TOWERS] =
 {
-    {1, SPELL_ECOES_OF_LORDAERON_ALY_1, SPELL_ECOES_OF_LORDAERON_HORDE_1},
-    {2, SPELL_ECOES_OF_LORDAERON_ALY_2, SPELL_ECOES_OF_LORDAERON_HORDE_2},
-    {3, SPELL_ECOES_OF_LORDAERON_ALY_3, SPELL_ECOES_OF_LORDAERON_HORDE_3},
-    {4, SPELL_ECOES_OF_LORDAERON_ALY_4, SPELL_ECOES_OF_LORDAERON_HORDE_4}
+    {SPELL_ECOES_OF_LORDAERON_ALY_1, SPELL_ECOES_OF_LORDAERON_HORDE_1},
+    {SPELL_ECOES_OF_LORDAERON_ALY_2, SPELL_ECOES_OF_LORDAERON_HORDE_2},
+    {SPELL_ECOES_OF_LORDAERON_ALY_3, SPELL_ECOES_OF_LORDAERON_HORDE_3},
+    {SPELL_ECOES_OF_LORDAERON_ALY_4, SPELL_ECOES_OF_LORDAERON_HORDE_4}
 };
 
-// summon position at the eastwall tower
+
+// Used to define the various summons
+struct sSpawnLocations
+{
+    float m_fX, m_fY, m_fZ;
+};
+
+// summon position at the eastwall tower - guesswork
 static sSpawnLocations m_aPlaguelandSoldiersSpawnLocs[] =
 {
     {2526.220f, -4758.520f, 101.056f},
@@ -206,19 +188,53 @@ static sSpawnLocations m_aPlaguelandSoldiersSpawnLocs[] =
     {2522.425f, -4767.049f, 102.552f}
 };
 
-static sSpawnLocations m_aPlaguelandFlightmasterSpawnLocs[] =
-{
-    {2987.5f, -3049.11f, 120.126f, 5.75959f}
-};
-
 // Capture points coords to sort the banners
-static sSpawnLocations m_aTowersSpawnLocs[MAX_TOWERS] =
+static sSpawnLocations m_aTowersSpawnLocs[MAX_EP_TOWERS] =
 {
     {3181.08f, -4379.36f, 174.123f},       // northpass
     {1860.85f, -3731.23f, 196.716f},       // crownguard
     {2574.51f, -4794.89f, 144.704f},       // eastwall
     {2962.71f, -3042.31f, 154.789f}        // plaguewood
 };
+
+// summon coords for the flightmaster
+static const float aFlightmasterSpawnLocs[4] = {2987.5f, -3049.11f, 120.126f, 5.75959f};
+
+struct PlaguelandsTowersEvents
+{
+    uint32 uiEventEntry, uiEventType, uiZoneText, uiWorldState;
+};
+
+static const PlaguelandsTowersEvents aPlaguelandsTowerEvents[MAX_EP_TOWERS][4] =
+{
+    {
+        {EVENT_NORTHPASS_PROGRESS_ALLIANCE,     PROGRESS,   LANG_OPVP_EP_CAPTURE_NPT_A, WORLD_STATE_NORTHPASS_ALY},
+        {EVENT_NORTHPASS_PROGRESS_HORDE,        PROGRESS,   LANG_OPVP_EP_CAPTURE_NPT_H, WORLD_STATE_NORTHPASS_HORDE},
+        {EVENT_NORTHPASS_NEUTRAL_ALLIANCE,      NEUTRAL,    LANG_OPVP_EP_LOOSE_NPT_A,   WORLD_STATE_NORTHPASS_NEUTRAL},
+        {EVENT_NORTHPASS_NEUTRAL_HORDE,         NEUTRAL,    LANG_OPVP_EP_LOOSE_NPT_H,   WORLD_STATE_NORTHPASS_NEUTRAL},
+    },
+    {
+        {EVENT_CROWNGUARD_PROGRESS_ALLIANCE,    PROGRESS,   LANG_OPVP_EP_CAPTURE_CGT_A, WORLD_STATE_CROWNGUARD_ALY},
+        {EVENT_CROWNGUARD_PROGRESS_HORDE,       PROGRESS,   LANG_OPVP_EP_CAPTURE_CGT_H, WORLD_STATE_CROWNGUARD_HORDE},
+        {EVENT_CROWNGUARD_NEUTRAL_ALLIANCE,     NEUTRAL,    LANG_OPVP_EP_LOOSE_CGT_A,   WORLD_STATE_CROWNGUARD_NEUTRAL},
+        {EVENT_CROWNGUARD_NEUTRAL_HORDE,        NEUTRAL,    LANG_OPVP_EP_LOOSE_CGT_H,   WORLD_STATE_CROWNGUARD_NEUTRAL},
+    },
+    {
+        {EVENT_EASTWALL_PROGRESS_ALLIANCE,      PROGRESS,   LANG_OPVP_EP_CAPTURE_EWT_A, WORLD_STATE_EASTWALL_ALY},
+        {EVENT_EASTWALL_PROGRESS_HORDE,         PROGRESS,   LANG_OPVP_EP_CAPTURE_EWT_H, WORLD_STATE_EASTWALL_HORDE},
+        {EVENT_EASTWALL_NEUTRAL_ALLIANCE,       NEUTRAL,    LANG_OPVP_EP_LOOSE_EWT_A,   WORLD_STATE_EASTWALL_NEUTRAL},
+        {EVENT_EASTWALL_NEUTRAL_HORDE,          NEUTRAL,    LANG_OPVP_EP_LOOSE_EWT_H,   WORLD_STATE_EASTWALL_NEUTRAL},
+    },
+    {
+        {EVENT_PLAGUEWOOD_PROGRESS_ALLIANCE,    PROGRESS,   LANG_OPVP_EP_CAPTURE_PWT_A, WORLD_STATE_PLAGUEWOOD_ALY},
+        {EVENT_PLAGUEWOOD_PROGRESS_HORDE,       PROGRESS,   LANG_OPVP_EP_CAPTURE_PWT_H, WORLD_STATE_PLAGUEWOOD_HORDE},
+        {EVENT_PLAGUEWOOD_NEUTRAL_ALLIANCE,     NEUTRAL,    LANG_OPVP_EP_LOOSE_PWT_A,   WORLD_STATE_PLAGUEWOOD_NEUTRAL},
+        {EVENT_PLAGUEWOOD_NEUTRAL_HORDE,        NEUTRAL,    LANG_OPVP_EP_LOOSE_PWT_H,   WORLD_STATE_PLAGUEWOOD_NEUTRAL},
+    },
+};
+
+// Order: Northpass, Crownguard, Eastwall, Plaguewood
+static const uint32 aPlaguelandsBanners[MAX_EP_TOWERS] = {GO_BATTLEFIELD_BANNER_PLAGUELANDS_1, GO_BATTLEFIELD_BANNER_PLAGUELANDS_2, GO_BATTLEFIELD_BANNER_PLAGUELANDS_3, GO_BATTLEFIELD_BANNER_PLAGUELANDS_4};
 
 class WorldPvPEP : public WorldPvP
 {
@@ -234,18 +250,16 @@ class WorldPvPEP : public WorldPvP
         void HandlePlayerLeaveZone(Player* pPlayer);
         void HandleObjectiveComplete(PlayerSet m_sPlayersSet, uint32 uiEventId);
 
-        void SetData(uint32 uiType, uint32 uiData);
-        uint32 GetData(uint32 uiType);
-
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
         void SendRemoveWorldStates(Player* pPlayer);
-        void UpdateWorldState();
 
     private:
+        // update world state
+        void UpdateWorldState();
         // process capture events
-        void ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32 uiTower);
+        void ProcessCaptureEvent(uint32 uiCaptureType, uint32 uiTeam, uint32 uiNewWorldState, uint32 uiTower);
 
-        // set banners artkit
+        // set banners artkit - from a specific tower
         void SetBannersArtKit(std::list<ObjectGuid> lBannersGuids, uint32 uiArtKit);
 
         // plaguewood bonus - flightmaster
@@ -262,18 +276,7 @@ class WorldPvPEP : public WorldPvP
         // crownguard bonus - graveyard
         void DoSetGraveyard(uint32 uiFaction, bool bRemove = false) { /* ToDo */ }
 
-        uint32 m_uiPlaguewoodController;
-        uint32 m_uiEastwallController;
-        uint32 m_uiNorthpassController;
-        uint32 m_uiCrownguardController;
-        uint32 m_uiPlaguewoodState;
-        uint32 m_uiNorthpassState;
-        uint32 m_uiEastwallState;
-        uint32 m_uiCrownguardState;
-        uint32 m_uiPlaguewoodWorldState;
-        uint32 m_uiNorthpassWorldState;
-        uint32 m_uiEastwallWorldState;
-        uint32 m_uiCrownguardWorldState;
+        uint32 m_uiTowerWorldState[MAX_EP_TOWERS];
         uint32 m_uiTowersAlly;
         uint32 m_uiTowersHorde;
 
@@ -283,10 +286,7 @@ class WorldPvPEP : public WorldPvP
 
         std::list<ObjectGuid> m_lSoldiersGuids;
 
-        std::list<ObjectGuid> m_lPlaguewoodTowerBanners;
-        std::list<ObjectGuid> m_lNorthpassTowerBanners;
-        std::list<ObjectGuid> m_lEastwallTowerBanners;
-        std::list<ObjectGuid> m_lCrownguardTowerBanners;
+        std::list<ObjectGuid> m_lTowerBanners[MAX_EP_TOWERS];
 };
 
 #endif
