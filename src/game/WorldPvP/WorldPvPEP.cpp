@@ -203,7 +203,7 @@ void WorldPvPEP::HandleObjectiveComplete(PlayerSet m_sPlayersSet, uint32 uiEvent
 }
 
 // process the capture events
-void WorldPvPEP::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId)
+void WorldPvPEP::ProcessEvent(GameObject* pGo, uint32 uiEventId, uint32 uiFaction)
 {
     for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
     {
@@ -213,7 +213,7 @@ void WorldPvPEP::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId
             {
                 if (uiEventId == aPlaguelandsTowerEvents[i][j].uiEventEntry)
                 {
-                    ProcessCaptureEvent(aPlaguelandsTowerEvents[i][j].uiEventType, pPlayer->GetTeam(), aPlaguelandsTowerEvents[i][j].uiWorldState, i);
+                    ProcessCaptureEvent(aPlaguelandsTowerEvents[i][j].uiEventType, uiFaction, aPlaguelandsTowerEvents[i][j].uiWorldState, i);
                     sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(aPlaguelandsTowerEvents[i][j].uiZoneText));
                     break;
                 }

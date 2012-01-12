@@ -192,7 +192,7 @@ void WorldPvPHP::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
 }
 
 // process the capture events
-void WorldPvPHP::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId)
+void WorldPvPHP::ProcessEvent(GameObject* pGo, uint32 uiEventId, uint32 uiFaction)
 {
     for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
     {
@@ -202,7 +202,7 @@ void WorldPvPHP::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId
             {
                 if (uiEventId == aHellfireTowerEvents[i][j].uiEventEntry)
                 {
-                    ProcessCaptureEvent(aHellfireTowerEvents[i][j].uiEventType, pPlayer->GetTeam(), aHellfireTowerEvents[i][j].uiWorldState, aHellfireTowerEvents[i][j].uiTowerArtKit, i);
+                    ProcessCaptureEvent(aHellfireTowerEvents[i][j].uiEventType, uiFaction, aHellfireTowerEvents[i][j].uiWorldState, aHellfireTowerEvents[i][j].uiTowerArtKit, i);
                     sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(aHellfireTowerEvents[i][j].uiZoneText));
                     break;
                 }

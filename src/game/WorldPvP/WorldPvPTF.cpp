@@ -149,7 +149,7 @@ void WorldPvPTF::HandleObjectiveComplete(PlayerSet m_sPlayersSet, uint32 uiEvent
 }
 
 // process the capture events
-void WorldPvPTF::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId)
+void WorldPvPTF::ProcessEvent(GameObject* pGo, uint32 uiEventId, uint32 uiFaction)
 {
     // No events during the lock timer
     if (m_uiZoneLockTimer)
@@ -163,7 +163,7 @@ void WorldPvPTF::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId
             {
                 if (uiEventId == aTerokkarTowerEvents[i][j].uiEventEntry)
                 {
-                    ProcessCaptureEvent(aTerokkarTowerEvents[i][j].uiEventType, pPlayer->GetTeam(), aTerokkarTowerEvents[i][j].uiWorldState, i);
+                    ProcessCaptureEvent(aTerokkarTowerEvents[i][j].uiEventType, uiFaction, aTerokkarTowerEvents[i][j].uiWorldState, i);
                     sWorld.SendZoneText(ZONE_ID_TEROKKAR, sObjectMgr.GetMangosStringForDBCLocale(aTerokkarTowerEvents[i][j].uiZoneText));
                     break;
                 }

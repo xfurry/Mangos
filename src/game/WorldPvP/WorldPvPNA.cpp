@@ -300,7 +300,7 @@ void WorldPvPNA::UpdateWyvernsWorldState(uint8 uiValue)
 }
 
 // process the capture events
-void WorldPvPNA::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId)
+void WorldPvPNA::ProcessEvent(GameObject* pGo, uint32 uiEventId, uint32 uiFaction)
 {
     // If we are not using the Halaa banner return
     if (pGo->GetEntry() != GO_HALAA_BANNER)
@@ -310,7 +310,7 @@ void WorldPvPNA::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId
     {
         case EVENT_HALAA_BANNER_WIN_ALLIANCE:
         case EVENT_HALAA_BANNER_WIN_HORDE:
-            ProcessCaptureEvent(WIN, pPlayer->GetTeam());
+            ProcessCaptureEvent(WIN, uiFaction);
             break;
     }
 }

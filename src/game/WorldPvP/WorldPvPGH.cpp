@@ -89,7 +89,7 @@ void WorldPvPGH::OnGameObjectCreate(GameObject* pGo)
 }
 
 // process the capture events
-void WorldPvPGH::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId)
+void WorldPvPGH::ProcessEvent(GameObject* pGo, uint32 uiEventId, uint32 uiFaction)
 {
     // If we are not using the lighthouse return
     if (pGo->GetEntry() != GO_VENTURE_BAY_LIGHTHOUSE)
@@ -99,15 +99,15 @@ void WorldPvPGH::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId
     {
         case EVENT_LIGHTHOUSE_PROGRESS_ALLIANCE:
         case EVENT_LIGHTHOUSE_PROGRESS_HORDE:
-            ProcessCaptureEvent(PROGRESS, pPlayer->GetTeam());
+            ProcessCaptureEvent(PROGRESS, uiFaction);
             break;
         case EVENT_LIGHTHOUSE_NEUTRAL_ALLIANCE:
         case EVENT_LIGHTHOUSE_NEUTRAL_HORDE:
-            ProcessCaptureEvent(NEUTRAL, pPlayer->GetTeam());
+            ProcessCaptureEvent(NEUTRAL, uiFaction);
             break;
         case EVENT_LIGHTHOUSE_WIN_ALLIANCE:
         case EVENT_LIGHTHOUSE_WIN_HORDE:
-            ProcessCaptureEvent(WIN, pPlayer->GetTeam());
+            ProcessCaptureEvent(WIN, uiFaction);
             break;
     }
 }

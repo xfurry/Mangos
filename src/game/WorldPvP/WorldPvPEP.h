@@ -244,7 +244,7 @@ class WorldPvPEP : public WorldPvP
         bool InitWorldPvPArea();
 
         void OnGameObjectCreate(GameObject* pGo);
-        void ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId);
+        void ProcessEvent(GameObject* pGo, uint32 uiEventId, uint32 uiFaction);
 
         void HandlePlayerEnterZone(Player* pPlayer);
         void HandlePlayerLeaveZone(Player* pPlayer);

@@ -778,9 +778,7 @@ class MANGOS_DLL_SPEC GameObject : public WorldObject
         typedef std::set<ObjectGuid> GuidsSet;
         typedef std::set<Player*> PlayersSet;
 
-        PlayersSet m_CapturePlayersSet;                     // players in the radius of the capture point
-        PlayersSet m_AlliancePlayersSet;                    // player sets for each faction
-        PlayersSet m_HordePlayersSet;
+        PlayersSet m_capturePlayers[BG_TEAMS_COUNT];        // player sets for each faction // TODO: Use generic enum
 
         GuidsSet m_SkillupSet;                              // players that already have skill-up at GO use
 

@@ -210,7 +210,7 @@ void WorldPvPZM::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
 }
 
 // process the capture events
-void WorldPvPZM::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId)
+void WorldPvPZM::ProcessEvent(GameObject* pGo, uint32 uiEventId, uint32 uiFaction)
 {
     for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
     {
@@ -220,7 +220,7 @@ void WorldPvPZM::ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId
             {
                 if (uiEventId == aZangaTowerEvents[i][j].uiEventEntry)
                 {
-                    ProcessCaptureEvent(aZangaTowerEvents[i][j].uiEventType, pPlayer->GetTeam(), aZangaTowerEvents[i][j].uiWorldState, aZangaTowerEvents[i][j].uiMapState, i);
+                    ProcessCaptureEvent(aZangaTowerEvents[i][j].uiEventType, uiFaction, aZangaTowerEvents[i][j].uiWorldState, aZangaTowerEvents[i][j].uiMapState, i);
                     sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(aZangaTowerEvents[i][j].uiZoneText));
                     break;
                 }

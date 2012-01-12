@@ -64,7 +64,7 @@ class WorldPvPGH : public WorldPvP
 
         void OnCreatureCreate(Creature* pCreature);
         void OnGameObjectCreate(GameObject* pGo);
-        void ProcessEvent(GameObject* pGo, Player* pPlayer, uint32 uiEventId);
+        void ProcessEvent(GameObject* pGo, uint32 uiEventId, uint32 uiFaction);
 
     private:
         // process capture events
