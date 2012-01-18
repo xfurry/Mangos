@@ -39,13 +39,13 @@ INSERT INTO `mangos_string` (`entry`, `content_default`) VALUES
 
 -- zangarmarsh
 -- SMSG_DEFENSE_MESSAGE (all messages)
-(10031,'The Horde has taken the West Beacon!'),
+(10031,'|cffffff00The Horde has taken control of the West Beacon!|r'),
 (10032,'|cffffff00The Alliance has taken control of the West Beacon!|r'),
-(10033,'The Horde has taken the East Beacon!'),
+(10033,'|cffffff00The Horde has taken control of the East Beacon!|r'),
 (10034,'|cffffff00The Alliance has taken control of the East Beacon!|r'),
 -- '|cffffff00The Alliance has taken control of both beacons!|r' (if both beacons are captured)
 -- '|cffffff00The Alliance Field Scout is now issuing battle standards.|r' (if both beacons are captured)
-(10035,'The Horde has captured the Twin Spire Graveyard!'),
+(10035,'|cffffff00The Horde has taken control of Twin Spire Ruins!|r'),
 (10036,'|cffffff00The Alliance has taken control of Twin Spire Ruins!|r'), -- SMSG_PLAY_SOUND id 8173, from npc 15384 (npc id may be a parsing error, but unlikely)
 (10037,'The Horde lost the West Beacon!'),
 (10038,'The Alliance lost the West Beacon!'),
