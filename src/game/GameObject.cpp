@@ -266,7 +266,7 @@ void GameObject::Update(uint32 update_diff, uint32 diff)
             }
 
             // return if there are not enough players capturing the point (works because minSuperiority is always 1)
-            int rangePlayers = m_capturePlayers[TEAM_INDEX_ALLIANCE] - m_capturePlayers[TEAM_INDEX_HORDE];
+            int rangePlayers = m_capturePlayers[TEAM_INDEX_ALLIANCE].size() - m_capturePlayers[TEAM_INDEX_HORDE].size();
             if (rangePlayers == 0)
                 return;
 
@@ -302,7 +302,7 @@ void GameObject::Update(uint32 update_diff, uint32 diff)
             if ((uint32)m_captureTicks == oldTicks)
                 return;
 
-            // this is sent also for new players even though they already received the capture tick value
+            // this is also sent to newly added players even though they already received the capture tick value
             for (uint8 team = 0; team < PVP_TEAM_COUNT; ++team)
                 for (PlayerSet::iterator itr = m_capturePlayers[team].begin(); itr != m_capturePlayers[team].end(); ++itr)
                 {
