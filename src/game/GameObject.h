@@ -603,15 +603,11 @@ enum CapturePointState
     CAPTURE_STATE_WIN
 };
 
-// slider values meaning
-// 0   = full horde
-// 100 = full alliance
-// 50  = middle
 enum CapturePointSlider
 {
-    CAPTURE_SLIDER_ALLIANCE = 100,
-    CAPTURE_SLIDER_HORDE    = 0,
-    CAPTURE_SLIDER_NEUTRAL  = 50
+    CAPTURE_SLIDER_ALLIANCE = 100,                          // full alliance
+    CAPTURE_SLIDER_HORDE    = 0,                            // full horde
+    CAPTURE_SLIDER_NEUTRAL  = 50                            // middle
 };
 
 class Unit;
@@ -735,7 +731,6 @@ class MANGOS_DLL_SPEC GameObject : public WorldObject
 
         uint32 GetUseCount() const { return m_useTimes; }
         uint32 GetUniqueUseCount() const { return m_UniqueUsers.size(); }
-        uint32 GetCapturePointTicks() const { return m_captureTicks; }
 
         void SaveRespawnTime();
 
@@ -747,7 +742,6 @@ class MANGOS_DLL_SPEC GameObject : public WorldObject
         void UseDoorOrButton(uint32 time_to_restore = 0, bool alternative = false);
                                                             // 0 = use `gameobject`.`spawntimesecs`
         void ResetDoorOrButton();
-        void ResetCapturePoint();
 
         bool IsHostileTo(Unit const* unit) const;
         bool IsFriendlyTo(Unit const* unit) const;
@@ -759,13 +753,12 @@ class MANGOS_DLL_SPEC GameObject : public WorldObject
 
         GameObject* LookupFishingHoleAround(float range);
 
+        void ResetCapturePoint() { SetCapturePointSliderValue(GetCapturePointSliderStartingValue()); }
+        Team GetOwnerFaction() const { return m_ownerFaction; }
+
         GridReference<GameObject> &GetGridRef() { return m_gridRef; }
 
     protected:
-        uint32      m_captureTime;
-        float       m_captureTicks;
-        CapturePointState m_captureState;
-        uint32      m_ownerFaction;                         // faction which has conquered the capture point
         uint32      m_spellId;
         time_t      m_respawnTime;                          // (secs) time of next respawn (or despawn if GO have owner()),
         uint32      m_respawnDelayTime;                     // (secs) if 0 then current GO state no dependent from timer
@@ -773,6 +766,11 @@ class MANGOS_DLL_SPEC GameObject : public WorldObject
         bool        m_spawnedByDefault;
         time_t      m_cooldownTime;                         // used as internal reaction delay time store (not state change reaction).
                                                             // For traps/goober this: spell casting cooldown, for doors/buttons: reset time.
+
+        uint32      m_tickTime;
+        float       m_sliderValue;
+        CapturePointState m_captureState;
+        Team        m_ownerFaction;                         // faction which has taken the capture point
 
         typedef std::set<ObjectGuid> GuidsSet;
         typedef std::set<Player*> PlayersSet;
@@ -793,6 +791,11 @@ class MANGOS_DLL_SPEC GameObject : public WorldObject
         QuaternionData m_worldRotation;
     private:
         void SwitchDoorOrButton(bool activate, bool alternative = false);
+
+        void UpdateCapturePoint(uint32 diff);
+        void CallCapturePointEvents();
+        void SetCapturePointSliderValue(uint32 value);
+        uint32 GetCapturePointSliderStartingValue() const { return GetGOInfo()->capturePoint.startingValue; } // CAPTURE_SLIDER_NEUTRAL in TBC
 
         GridReference<GameObject> m_gridRef;
 };
