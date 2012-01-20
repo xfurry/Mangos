@@ -2017,7 +2017,7 @@ void GameObject::TickCapturePoint()
             // send capture point zone enter packets
             (*itr)->SendUpdateWorldState(info->capturePoint.worldState3, neutralPercent);
             (*itr)->SendUpdateWorldState(info->capturePoint.worldState2, oldValue);
-            (*itr)->SendUpdateWorldState(info->capturePoint.worldState1, 1);
+            (*itr)->SendUpdateWorldState(info->capturePoint.worldState1, WORLD_STATE_ADDED);
             //(*itr)->SendUpdateWorldState(info->capturePoint.worldState2, oldValue); // redundantly sent on retail
         }
     }
@@ -2026,10 +2026,10 @@ void GameObject::TickCapturePoint()
     {
         // send capture point leave packet
         if (Player* owner = GetMap()->GetPlayer(*itr))
-            owner->SendUpdateWorldState(info->capturePoint.worldState1, 0); // TODO: Create enum for world state activate and deactivate (1 and 0)
+            owner->SendUpdateWorldState(info->capturePoint.worldState1, WORLD_STATE_REMOVED);
 
         // player left capture point zone
-        m_UniqueUsers.erase(itr);
+        m_UniqueUsers.erase((*itr));
     }
 
     // return if there are not enough players capturing the point (works because minSuperiority is always 1)

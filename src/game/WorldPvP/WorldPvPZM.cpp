@@ -68,14 +68,14 @@ void WorldPvPZM::FillInitialWorldStates(WorldPacket& data, uint32& count)
 
 void WorldPvPZM::SendRemoveWorldStates(Player* pPlayer)
 {
-    pPlayer->SendUpdateWorldState(m_uiAllianceScoutWorldState, 0);
-    pPlayer->SendUpdateWorldState(m_uiHordeScoutWorldState, 0);
-    pPlayer->SendUpdateWorldState(m_uiGraveyardWorldState, 0);
+    pPlayer->SendUpdateWorldState(m_uiAllianceScoutWorldState, WORLD_STATE_REMOVED);
+    pPlayer->SendUpdateWorldState(m_uiHordeScoutWorldState, WORLD_STATE_REMOVED);
+    pPlayer->SendUpdateWorldState(m_uiGraveyardWorldState, WORLD_STATE_REMOVED);
 
     for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
     {
-        pPlayer->SendUpdateWorldState(m_uiBeaconWorldState[i], 0);
-        pPlayer->SendUpdateWorldState(m_uiBeaconMapState[i], 0);
+        pPlayer->SendUpdateWorldState(m_uiBeaconWorldState[i], WORLD_STATE_REMOVED);
+        pPlayer->SendUpdateWorldState(m_uiBeaconMapState[i], WORLD_STATE_REMOVED);
     }
 }
 
@@ -236,8 +236,8 @@ void WorldPvPZM::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
         if (uiTower == i)
         {
             // remove old tower state
-            SendUpdateWorldState(m_uiBeaconWorldState[i], 0);
-            SendUpdateWorldState(m_uiBeaconMapState[i], 0);
+            SendUpdateWorldState(m_uiBeaconWorldState[i], WORLD_STATE_REMOVED);
+            SendUpdateWorldState(m_uiBeaconMapState[i], WORLD_STATE_REMOVED);
 
             if (faction == ALLIANCE)
             {
@@ -267,8 +267,8 @@ void WorldPvPZM::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
             m_uiBeaconController[i] = faction;
             m_uiBeaconWorldState[i] = uiNewWorldState;
             m_uiBeaconMapState[i] = uiNewMapState;
-            SendUpdateWorldState(m_uiBeaconMapState[i], 1);
-            SendUpdateWorldState(m_uiBeaconWorldState[i], 1);
+            SendUpdateWorldState(m_uiBeaconMapState[i], WORLD_STATE_ADDED);
+            SendUpdateWorldState(m_uiBeaconWorldState[i], WORLD_STATE_ADDED);
         }
     }
 
@@ -296,18 +296,18 @@ void WorldPvPZM::DoPrepareFactionScouts(Team faction)
         if (Creature* pScout = pPlayer->GetMap()->GetCreature(m_AllianceScoutGUID))
             pScout->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
-        SendUpdateWorldState(m_uiAllianceScoutWorldState, 0);
+        SendUpdateWorldState(m_uiAllianceScoutWorldState, WORLD_STATE_REMOVED);
         m_uiAllianceScoutWorldState = WORLD_STATE_ALY_FLAG_READY;
-        SendUpdateWorldState(m_uiAllianceScoutWorldState, 1);
+        SendUpdateWorldState(m_uiAllianceScoutWorldState, WORLD_STATE_ADDED);
     }
     else if (faction == HORDE)
     {
         if (Creature* pScout = pPlayer->GetMap()->GetCreature(m_HorderScoutGUID))
             pScout->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
-        SendUpdateWorldState(m_uiHordeScoutWorldState, 0);
+        SendUpdateWorldState(m_uiHordeScoutWorldState, WORLD_STATE_REMOVED);
         m_uiHordeScoutWorldState = WORLD_STATE_HORDE_FLAG_READY;
-        SendUpdateWorldState(m_uiHordeScoutWorldState, 1);
+        SendUpdateWorldState(m_uiHordeScoutWorldState, WORLD_STATE_ADDED);
     }
 }
 
@@ -325,9 +325,9 @@ void WorldPvPZM::DoResetScouts(Team faction, bool bIncludeWorldStates)
         // reset world states only if requested
         if (bIncludeWorldStates)
         {
-            SendUpdateWorldState(m_uiAllianceScoutWorldState, 0);
+            SendUpdateWorldState(m_uiAllianceScoutWorldState, WORLD_STATE_REMOVED);
             m_uiAllianceScoutWorldState = WORLD_STATE_ALY_FLAG_NOT_READY;
-            SendUpdateWorldState(m_uiAllianceScoutWorldState, 1);
+            SendUpdateWorldState(m_uiAllianceScoutWorldState, WORLD_STATE_ADDED);
         }
     }
     else if (faction == HORDE)
@@ -338,9 +338,9 @@ void WorldPvPZM::DoResetScouts(Team faction, bool bIncludeWorldStates)
         // reset world states only if requested
         if (bIncludeWorldStates)
         {
-            SendUpdateWorldState(m_uiHordeScoutWorldState, 0);
+            SendUpdateWorldState(m_uiHordeScoutWorldState, WORLD_STATE_REMOVED);
             m_uiHordeScoutWorldState = WORLD_STATE_HORDE_FLAG_NOT_READY;
-            SendUpdateWorldState(m_uiHordeScoutWorldState, 1);
+            SendUpdateWorldState(m_uiHordeScoutWorldState, WORLD_STATE_ADDED);
         }
     }
 }
@@ -358,7 +358,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
                 return false;
 
             // change banners
-            SendUpdateWorldState(m_uiGraveyardWorldState, 0);
+            SendUpdateWorldState(m_uiGraveyardWorldState, WORLD_STATE_REMOVED);
             DoHandleBanners(m_TowerBannerCenterAlyGUID, false);
             DoHandleBanners(m_TowerBannerCenterHordeGUID, true);
             DoSetBeaconArtkit(m_BeamCenterBlueGUID, false);
@@ -370,7 +370,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 
             // add the buff and the graveyard to horde
             m_uiGraveyardWorldState = WORLD_STATE_GRAVEYARD_HORDE;
-            SendUpdateWorldState(m_uiGraveyardWorldState, 1);
+            SendUpdateWorldState(m_uiGraveyardWorldState, WORLD_STATE_ADDED);
             DoProcessTeamBuff(HORDE, SPELL_TWIN_SPIRE_BLESSING);
             DoSetGraveyard(HORDE);
 
@@ -388,7 +388,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
                 return false;
 
             // change banners
-            SendUpdateWorldState(m_uiGraveyardWorldState, 0);
+            SendUpdateWorldState(m_uiGraveyardWorldState, WORLD_STATE_REMOVED);
             DoHandleBanners(m_TowerBannerCenterHordeGUID, false);
             DoHandleBanners(m_TowerBannerCenterAlyGUID, true);
             DoSetBeaconArtkit(m_BeamCenterRedGUID, false);
@@ -400,7 +400,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 
             // add the buff and the graveyard to horde
             m_uiGraveyardWorldState = WORLD_STATE_GRAVEYARD_ALY;
-            SendUpdateWorldState(m_uiGraveyardWorldState, 1);
+            SendUpdateWorldState(m_uiGraveyardWorldState, WORLD_STATE_ADDED);
             DoProcessTeamBuff(ALLIANCE, SPELL_TWIN_SPIRE_BLESSING);
             DoSetGraveyard(ALLIANCE);
 
@@ -415,7 +415,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
         case GO_ZANGA_BANNER_CENTER_NEUTRAL:
 
             // remove old world state
-            SendUpdateWorldState(m_uiGraveyardWorldState, 0);
+            SendUpdateWorldState(m_uiGraveyardWorldState, WORLD_STATE_REMOVED);
 
             if (pPlayer->GetTeam() == ALLIANCE)
             {
@@ -455,7 +455,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
             }
 
             // add new world state
-            SendUpdateWorldState(m_uiGraveyardWorldState, 1);
+            SendUpdateWorldState(m_uiGraveyardWorldState, WORLD_STATE_ADDED);
 
             return true;
     }

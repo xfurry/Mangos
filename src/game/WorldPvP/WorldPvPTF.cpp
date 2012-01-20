@@ -68,10 +68,10 @@ void WorldPvPTF::FillInitialWorldStates(WorldPacket& data, uint32& count)
 
 void WorldPvPTF::SendRemoveWorldStates(Player* pPlayer)
 {
-    pPlayer->SendUpdateWorldState(m_uiControllerWorldState, 0);
+    pPlayer->SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_REMOVED);
 
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
-        pPlayer->SendUpdateWorldState(m_uiTowerWorldState[i], 0);
+        pPlayer->SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVED);
 }
 
 void WorldPvPTF::UpdateWorldState(uint8 uiValue)
@@ -197,7 +197,7 @@ void WorldPvPTF::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
         if (uiTower == i)
         {
             // remove old tower state
-            SendUpdateWorldState(m_uiTowerWorldState[i], 0);
+            SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVED);
 
             if (faction != TEAM_NONE)
             {
@@ -221,7 +221,7 @@ void WorldPvPTF::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
             // send new tower state
             m_uiTowerController[i] = faction;
             m_uiTowerWorldState[i] = uiNewWorldState;
-            SendUpdateWorldState(m_uiTowerWorldState[i], 1);
+            SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_ADDED);
         }
     }
 
@@ -232,9 +232,9 @@ void WorldPvPTF::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
     // If all towers are captured then process event
     if (m_uiTowersAlly == MAX_TF_TOWERS)
     {
-        SendUpdateWorldState(m_uiControllerWorldState, 0);
+        SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_REMOVED);
         m_uiControllerWorldState = WORLD_STATE_TF_LOCKED_ALLIANCE;
-        SendUpdateWorldState(m_uiControllerWorldState, 1);
+        SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_ADDED);
 
         m_uiZoneLockTimer = TIMER_TF_LOCK_TIME;
         UpdateTimerWorldState();
@@ -248,9 +248,9 @@ void WorldPvPTF::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
     }
     else if (m_uiTowersHorde == MAX_TF_TOWERS)
     {
-        SendUpdateWorldState(m_uiControllerWorldState, 0);
+        SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_REMOVED);
         m_uiControllerWorldState = WORLD_STATE_TF_LOCKED_HORDE;
-        SendUpdateWorldState(m_uiControllerWorldState, 1);
+        SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_ADDED);
 
         m_uiZoneLockTimer = TIMER_TF_LOCK_TIME;
         UpdateTimerWorldState();

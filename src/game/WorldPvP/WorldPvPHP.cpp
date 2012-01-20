@@ -60,11 +60,11 @@ void WorldPvPHP::FillInitialWorldStates(WorldPacket& data, uint32& count)
 
 void WorldPvPHP::SendRemoveWorldStates(Player* pPlayer)
 {
-    pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_DISPLAY_HP_A, 0);
-    pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_DISPLAY_HP_H, 0);
+    pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_DISPLAY_HP_A, WORLD_STATE_REMOVED);
+    pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_DISPLAY_HP_H, WORLD_STATE_REMOVED);
 
     for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
-        pPlayer->SendUpdateWorldState(m_uiTowerWorldState[i], 0);
+        pPlayer->SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVED);
 }
 
 void WorldPvPHP::UpdateWorldState()
@@ -219,7 +219,7 @@ void WorldPvPHP::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
         if (uiTower == i)
         {
             // remove old tower state
-            SendUpdateWorldState(m_uiTowerWorldState[i], 0);
+            SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVED);
 
             if (faction != TEAM_NONE)
             {
@@ -245,7 +245,7 @@ void WorldPvPHP::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
             // send new tower state
             m_uiTowerController[i] = faction;
             m_uiTowerWorldState[i] = uiNewWorldState;
-            SendUpdateWorldState(m_uiTowerWorldState[i], 1);
+            SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_ADDED);
         }
     }
 

@@ -56,11 +56,11 @@ void WorldPvPEP::FillInitialWorldStates(WorldPacket& data, uint32& count)
 
 void WorldPvPEP::SendRemoveWorldStates(Player* pPlayer)
 {
-    pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_ALY, 0);
-    pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HORDE, 0);
+    pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_ALY, WORLD_STATE_REMOVED);
+    pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HORDE, WORLD_STATE_REMOVED);
 
     for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
-        pPlayer->SendUpdateWorldState(m_uiTowerWorldState[i], 0);
+        pPlayer->SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVED);
 }
 
 void WorldPvPEP::UpdateWorldState()
@@ -229,7 +229,7 @@ void WorldPvPEP::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
         if (uiTower == i)
         {
             // remove old tower state
-            SendUpdateWorldState(m_uiTowerWorldState[i], 0);
+            SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVED);
 
             if (faction != TEAM_NONE)
             {
@@ -289,7 +289,7 @@ void WorldPvPEP::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
             // send new tower state
             m_uiTowerController[i] = faction;
             m_uiTowerWorldState[i] = uiNewWorldState;
-            SendUpdateWorldState(m_uiTowerWorldState[i], 1);
+            SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_ADDED);
         }
     }
 

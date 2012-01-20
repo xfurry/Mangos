@@ -46,9 +46,9 @@ void WorldPvPSI::FillInitialWorldStates(WorldPacket& data, uint32& count)
 // Remove world states
 void WorldPvPSI::SendRemoveWorldStates(Player* pPlayer)
 {
-    pPlayer->SendUpdateWorldState(WORLD_STATE_SI_GATHERED_A, 0);
-    pPlayer->SendUpdateWorldState(WORLD_STATE_SI_GATHERED_H, 0);
-    pPlayer->SendUpdateWorldState(WORLD_STATE_SI_SILITHYST_MAX, 0);
+    pPlayer->SendUpdateWorldState(WORLD_STATE_SI_GATHERED_A, WORLD_STATE_REMOVED);
+    pPlayer->SendUpdateWorldState(WORLD_STATE_SI_GATHERED_H, WORLD_STATE_REMOVED);
+    pPlayer->SendUpdateWorldState(WORLD_STATE_SI_SILITHYST_MAX, WORLD_STATE_REMOVED);
 }
 
 // Update current world states

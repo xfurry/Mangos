@@ -41,6 +41,12 @@ enum WorldPvPTypes
     WORLD_PVP_TYPE_GH,
 };
 
+enum WorldStateType
+{
+    WORLD_STATE_REMOVED                     = 0,
+    WORLD_STATE_ADDED                       = 1
+};
+
 enum GameObjectArtKits
 {
     GO_ARTKIT_BANNER_ALLIANCE               = 2,
