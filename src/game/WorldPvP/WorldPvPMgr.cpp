@@ -287,27 +287,12 @@ void WorldPvPMgr::Update(uint32 diff)
 
    @param   capture point entry
  */
-int8 WorldPvPMgr::GetCapturePointSliderValue(uint32 uiEntry, int8 iDefaultValue)
+int8 WorldPvPMgr::GetCapturePointSliderValue(uint32 uiEntry)
 {
     std::map<uint32, int8>::iterator find = m_CapturePointSlider.find(uiEntry);
-    if (find != m_CapturePointSlider.end() && find->second != -1)
-        return find->second;
-
-    // return default value if we can't find any or if capture point was reset (-1)
-    return iDefaultValue;
-}
-
-/**
-   Function that initializes gets the Capture point lock state
-
-   @param   capture point entry
- */
-bool WorldPvPMgr::GetCapturePointLockState(uint32 uiEntry)
-{
-    std::map<uint32, bool>::iterator find = m_CapturePointState.find(uiEntry);
-    if (find != m_CapturePointState.end())
+    if (find != m_CapturePointSlider.end())
         return find->second;
 
     // return default value if we can't find any
-    return false;
+    return CAPTURE_SLIDER_RESET;
 }

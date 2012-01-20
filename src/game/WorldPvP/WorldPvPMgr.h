@@ -75,11 +75,8 @@ class WorldPvPMgr
         void HandlePlayerKill(Player* pPlayer, Unit* pVictim);
 
         // Handle capture point stuff
-        int8 GetCapturePointSliderValue(uint32 uiEntry, int8 iDefaultValue);
+        int8 GetCapturePointSliderValue(uint32 uiEntry);
         void SetCapturePointSlider(uint32 uiEntry, int8 iValue) { m_CapturePointSlider[uiEntry] = iValue; }
-
-        bool GetCapturePointLockState(uint32 uiEntry);
-        void SetCapturePointLockState(uint32 uiEntry, bool bLockState) { m_CapturePointState[uiEntry] = bLockState; }
 
         typedef std::vector<WorldPvP*> WorldPvPSet;
         typedef std::map<uint32 /* zoneid */, WorldPvP*> WorldPvPMap;
@@ -94,7 +91,6 @@ class WorldPvPMgr
         WorldPvPMap m_WorldPvPMap;
 
         std::map<uint32 /*capture point entry*/, int8 /*slider value*/> m_CapturePointSlider;
-        std::map<uint32 /*capture point entry*/, bool /*is active*/> m_CapturePointState;
 
         // update interval
         IntervalTimer m_UpdateTimer;

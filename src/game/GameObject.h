@@ -750,7 +750,7 @@ class MANGOS_DLL_SPEC GameObject : public WorldObject
 
         GameObject* LookupFishingHoleAround(float range);
 
-        void ResetCapturePoint() { SetCapturePointSlider(GetCapturePointStartingValue()); }
+        void SetCapturePointSlider(int8 value);
         CapturePointState GetCaptureState() const { return m_captureState; }
 
         GridReference<GameObject> &GetGridRef() { return m_gridRef; }
@@ -791,10 +791,7 @@ class MANGOS_DLL_SPEC GameObject : public WorldObject
 
     private:
         void SwitchDoorOrButton(bool activate, bool alternative = false);
-
-        void UpdateCapturePoint(uint32 diff);
-        void SetCapturePointSlider(int8 value);
-        uint8 GetCapturePointStartingValue() const { return GetGOInfo()->capturePoint.startingValue; } // Should be CAPTURE_SLIDER_NEUTRAL in TBC
+        void TickCapturePoint();
 
         GridReference<GameObject> m_gridRef;
 };

@@ -185,6 +185,7 @@ class WorldPvPTF : public WorldPvP
         void ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint32 uiTower);
         // Set artkit visuals
         void SetBannerArtKit(ObjectGuid BannerGuid, uint32 uiArtkit);
+        void LockTower(uint8 uiTowerId, Team faction);
         void ResetTower(uint8 uiTowerId);
 
         uint32 m_uiTowerWorldState[MAX_TF_TOWERS];

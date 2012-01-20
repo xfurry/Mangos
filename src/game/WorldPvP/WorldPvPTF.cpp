@@ -244,7 +244,7 @@ void WorldPvPTF::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
 
         // lock the towers
         for (uint8 i = 0; i < MAX_TF_TOWERS; i++)
-            LockCapturePoint(aTerokkarTowers[i], true);
+            LockTower(aTerokkarTowers[i], ALLIANCE);
     }
     else if (m_uiTowersHorde == MAX_TF_TOWERS)
     {
@@ -260,7 +260,7 @@ void WorldPvPTF::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
 
         // lock the towers
         for (uint8 i = 0; i < MAX_TF_TOWERS; i++)
-            LockCapturePoint(aTerokkarTowers[i], true);
+            LockTower(aTerokkarTowers[i], HORDE);
     }
 }
 
@@ -292,10 +292,7 @@ void WorldPvPTF::Update(uint32 diff)
             SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_H, m_uiTowersHorde);
 
             for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
-            {
                 ResetTower(i);
-                LockCapturePoint(aTerokkarTowers[i], false);
-            }
 
             m_uiZoneLockTimer = 0;
         }
@@ -343,6 +340,19 @@ void WorldPvPTF::SetBannerArtKit(ObjectGuid BannerGuid, uint32 uiArtkit)
     }
 }
 
+void WorldPvPTF::LockTower(uint8 uiTowerId, Team faction)
+{
+    // neet to use a player as anchor for the map
+    Player* pPlayer = GetPlayerInZone();
+    if (!pPlayer)
+        return;
+
+    if (GameObject* pBanner = pPlayer->GetMap()->GetGameObject(m_TowerBannerGUID[uiTowerId]))
+        pBanner->SetLootState(GO_JUST_DEACTIVATED);
+
+    SetCapturePointSliderValue(aTerokkarTowers[uiTowerId], faction == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
+}
+
 void WorldPvPTF::ResetTower(uint8 uiTowerId)
 {
     // neet to use a player as anchor for the map
@@ -352,10 +362,10 @@ void WorldPvPTF::ResetTower(uint8 uiTowerId)
 
     if (GameObject* pBanner = pPlayer->GetMap()->GetGameObject(m_TowerBannerGUID[uiTowerId]))
     {
-        pBanner->ResetCapturePoint();
+        pBanner->SetCapturePointSlider(CAPTURE_SLIDER_RESET);
         pBanner->Refresh();
     }
     else
         // if grid is unloaded the slider reset is enough
-        ResetCapturePointSliderValue(aTerokkarTowers[uiTowerId]);
+        SetCapturePointSliderValue(aTerokkarTowers[uiTowerId], CAPTURE_SLIDER_RESET);
 }

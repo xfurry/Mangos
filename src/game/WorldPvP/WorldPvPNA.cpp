@@ -159,7 +159,7 @@ void WorldPvPNA::OnCreatureDeath(Creature* pCreature)
     if (m_uiGuardsLeft == 0)
     {
         // make capturable
-        LockCapturePoint(GO_HALAA_BANNER, false);
+        UnlockHalaa(m_uiZoneController);
         SendUpdateWorldState(m_uiControllerMapState, 0);
         m_uiControllerMapState = m_uiZoneController == ALLIANCE ? WORLD_STATE_NA_HALAA_NEU_A : WORLD_STATE_NA_HALAA_NEU_H;
         SendUpdateWorldState(m_uiControllerMapState, 1);
@@ -175,7 +175,7 @@ void WorldPvPNA::OnCreatureRespawn(Creature* pCreature)
     SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT,  m_uiGuardsLeft);
 
     if (m_uiGuardsLeft > 0)
-        LockCapturePoint(GO_HALAA_BANNER, true);
+        LockHalaa(m_uiZoneController);
 
     if (m_uiGuardsLeft == MAX_NA_GUARDS)
     {
@@ -583,4 +583,31 @@ void WorldPvPNA::DoRespawnObjects(ObjectGuid GameObjectGuid, bool bRespawn)
         else if (pBanner->isSpawned())
             pBanner->Delete();
     }
+}
+
+void WorldPvPNA::LockHalaa(Team faction)
+{
+    // neet to use a player as anchor for the map
+    Player* pPlayer = GetPlayerInZone();
+    if (!pPlayer)
+        return;
+
+    if (GameObject* pBanner = pPlayer->GetMap()->GetGameObject(m_HalaaBanerGuid))
+        pBanner->SetLootState(GO_JUST_DEACTIVATED);
+
+    SetCapturePointSliderValue(m_HalaaBanerGuid, faction == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
+}
+
+void WorldPvPNA::UnlockHalaa(Team faction)
+{
+    // neet to use a player as anchor for the map
+    Player* pPlayer = GetPlayerInZone();
+    if (!pPlayer)
+        return;
+
+    if (GameObject* pBanner = pPlayer->GetMap()->GetGameObject(m_HalaaBanerGuid))
+        pBanner->SetCapturePointSlider(faction == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
+    else
+        // if grid is unloaded the slider reset is enough
+        SetCapturePointSliderValue(m_HalaaBanerGuid, faction == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
 }

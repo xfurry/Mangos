@@ -198,6 +198,8 @@ class WorldPvPNA : public WorldPvP
         void SetBannerArtKit(uint32 uiArtKit);
         // handle a specific game objects
         void DoRespawnObjects(ObjectGuid GameObjectGuid, bool bRespawn);
+        void LockHalaa(Team faction);
+        void UnlockHalaa(Team faction);
 
         Team m_uiZoneController;
         uint32 m_uiControllerWorldState;

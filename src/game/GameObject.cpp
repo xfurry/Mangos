@@ -159,10 +159,7 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, uint32 phaseMa
 
     // set saved capture point info if the grid was unloaded
     if (goinfo->type == GAMEOBJECT_TYPE_CAPTURE_POINT)
-    {
-        SetCapturePointSlider(sWorldPvPMgr.GetCapturePointSliderValue(GetEntry(), GetCapturePointStartingValue()));
-        m_cooldownTime = time(NULL) + 1000;                 // initial delay for capture points
-    }
+        SetCapturePointSlider(sWorldPvPMgr.GetCapturePointSliderValue(GetEntry()));
     else
         SetGoArtKit(0);                                     // unknown what this is
 
@@ -185,12 +182,6 @@ void GameObject::Update(uint32 update_diff, uint32 diff)
     if (GetObjectGuid().IsMOTransport())
     {
         //((Transport*)this)->Update(p_time);
-        return;
-    }
-
-    if (GetGoType() == GAMEOBJECT_TYPE_CAPTURE_POINT)
-    {
-        UpdateCapturePoint(diff);
         return;
     }
 
@@ -395,6 +386,10 @@ void GameObject::Update(uint32 update_diff, uint32 diff)
                         SetLootState(GO_JUST_DEACTIVATED);
                         m_cooldownTime = 0;
                     }
+                    break;
+                case GAMEOBJECT_TYPE_CAPTURE_POINT:
+                    if (m_cooldownTime < time(NULL))
+                        TickCapturePoint();
                     break;
                 default:
                     break;
@@ -1942,22 +1937,38 @@ bool GameObject::HasStaticDBSpawnData() const
 
 void GameObject::SetCapturePointSlider(int8 value)
 {
-    m_captureSlider = value;
-    int8 neutralHalf = GetGOInfo()->capturePoint.neutralPercent * 0.5f;
+    GameObjectInfo const* info = GetGOInfo();
+
+    switch (value)
+    {
+        case CAPTURE_SLIDER_ALLIANCE_LOCKED:
+            m_captureSlider = CAPTURE_SLIDER_ALLIANCE;
+            break;
+        case CAPTURE_SLIDER_HORDE_LOCKED:
+            m_captureSlider = CAPTURE_SLIDER_HORDE;
+            break;
+        case CAPTURE_SLIDER_RESET:
+            value = info->capturePoint.startingValue; // CAPTURE_SLIDER_NEUTRAL in TBC
+        default:
+            m_captureSlider = value;
+            m_cooldownTime = time(NULL) + 3000; // initial delay for capture points
+            SetLootState(GO_READY);
+            break;
+    }
 
     // set the state of the capture point based on the capture ticks
-    if (value > CAPTURE_SLIDER_NEUTRAL + neutralHalf)
+    if (m_captureSlider > CAPTURE_SLIDER_NEUTRAL + info->capturePoint.neutralPercent * 0.5f)
     {
-        if (value == CAPTURE_SLIDER_ALLIANCE)
+        if (m_captureSlider == CAPTURE_SLIDER_ALLIANCE)
             m_captureState = CAPTURE_STATE_WIN_ALLIANCE;
         else
             m_captureState = CAPTURE_STATE_PROGRESS_ALLIANCE;
 
         SetGoArtKit(GO_ARTKIT_BANNER_ALLIANCE);
     }
-    else if (value < CAPTURE_SLIDER_NEUTRAL - neutralHalf)
+    else if (m_captureSlider < CAPTURE_SLIDER_NEUTRAL - info->capturePoint.neutralPercent * 0.5f)
     {
-        if (value == CAPTURE_SLIDER_HORDE)
+        if (m_captureSlider == CAPTURE_SLIDER_HORDE)
             m_captureState = CAPTURE_STATE_WIN_HORDE;
         else
             m_captureState = CAPTURE_STATE_PROGRESS_HORDE;
@@ -1971,23 +1982,16 @@ void GameObject::SetCapturePointSlider(int8 value)
     }
 }
 
-void GameObject::UpdateCapturePoint(uint32 diff)
+void GameObject::TickCapturePoint()
 {
-    if (m_cooldownTime >= time(NULL))
-        return;
-
     // TODO: On blizz at Zanga with 1 player it increased every 5 seconds + ~150ms and always increased the slider by 1 at same time as player get capture point zone enter packet
-    m_cooldownTime = time(NULL) + 1000;
+    m_cooldownTime = time(NULL) + 3000;
 
     GameObjectInfo const* info = GetGOInfo();
 
     // visual banners of go type 29 don't have radius
     float radius = info->capturePoint.radius;
     if (!radius)
-        return;
-
-    // return if the capture point is locked
-    if (sWorldPvPMgr.GetCapturePointLockState(GetEntry()))
         return;
 
     // search for players in radius
@@ -2044,7 +2048,7 @@ void GameObject::UpdateCapturePoint(uint32 diff)
         rangePlayers = -maxSuperiority;
 
     // time to capture from 0% to 100% is minTime for maxSuperiority amount of players and maxTime for minSuperiority amount of players
-    float diffTicks = 100.0f /
+    float diffTicks = 300.0f /
         (float)((maxSuperiority - abs(rangePlayers)) * (info->capturePoint.maxTime - info->capturePoint.minTime) /
         (float)(maxSuperiority - info->capturePoint.minSuperiority) + info->capturePoint.minTime);
 

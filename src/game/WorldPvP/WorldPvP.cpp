@@ -103,16 +103,10 @@ bool WorldPvP::HasPlayer(Player* pPlayer) const
     return m_sZonePlayers.find(pPlayer) != m_sZonePlayers.end();
 }
 
-// lock a capture point
-void WorldPvP::LockCapturePoint(uint32 pointEntry, bool isLocked)
+// reset or lock a capture point slider
+void WorldPvP::SetCapturePointSliderValue(uint32 pointEntry, CapturePointSlider value)
 {
-     sWorldPvPMgr.SetCapturePointLockState(pointEntry, isLocked);
-}
-
-// reset a capture point slider, should only be used for unloaded GOs
-void WorldPvP::ResetCapturePointSliderValue(uint32 pointEntry)
-{
-    sWorldPvPMgr.SetCapturePointSlider(pointEntry, -1);
+    sWorldPvPMgr.SetCapturePointSlider(pointEntry, value);
 }
 
 // apply a team buff for the specific zone

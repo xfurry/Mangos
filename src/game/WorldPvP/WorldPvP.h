@@ -61,9 +61,13 @@ enum CapturePointState
 
 enum CapturePointSlider
 {
-    CAPTURE_SLIDER_ALLIANCE = 100,                          // full alliance
-    CAPTURE_SLIDER_HORDE    = 0,                            // full horde
-    CAPTURE_SLIDER_NEUTRAL  = 50                            // middle
+    CAPTURE_SLIDER_ALLIANCE         = 100,                  // full alliance
+    CAPTURE_SLIDER_HORDE            = 0,                    // full horde
+    CAPTURE_SLIDER_NEUTRAL          = 50,                   // middle
+
+    CAPTURE_SLIDER_RESET            = -1,                   // used to store additional information
+    CAPTURE_SLIDER_ALLIANCE_LOCKED  = -2,
+    CAPTURE_SLIDER_HORDE_LOCKED     = -3
 };
 
 typedef std::set<Player*> PlayerSet;
@@ -125,8 +129,7 @@ class WorldPvP : public ZoneScript
 
         void RegisterZone(uint32 zoneId);
         bool HasPlayer(Player* pPlayer) const;
-        void LockCapturePoint(uint32 pointEntry, bool isLocked);
-        void ResetCapturePointSliderValue(uint32 pointEntry);
+        void SetCapturePointSliderValue(uint32 pointEntry, CapturePointSlider value);
 
         // store the players inside the area depending on the faction
         PlayerSet m_sZonePlayers;
