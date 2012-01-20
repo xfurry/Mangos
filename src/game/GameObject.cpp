@@ -157,8 +157,8 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, uint32 phaseMa
     SetGoType(GameobjectTypes(goinfo->type));
     SetGoAnimProgress(animprogress);
 
-    // set saved capture point info if the grid was unloaded
-    if (goinfo->type == GAMEOBJECT_TYPE_CAPTURE_POINT)
+    // set saved capture point info if the grid was unloaded (for non visual capture points)
+    if (goinfo->type == GAMEOBJECT_TYPE_CAPTURE_POINT && goinfo->capturePoint.radius)
         SetCapturePointSlider(sWorldPvPMgr.GetCapturePointSliderValue(GetEntry()));
     else
         SetGoArtKit(0);                                     // unknown what this is
@@ -177,7 +177,7 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, uint32 phaseMa
     return true;
 }
 
-void GameObject::Update(uint32 update_diff, uint32 diff)
+void GameObject::Update(uint32 update_diff, uint32 /*p_time*/)
 {
     if (GetObjectGuid().IsMOTransport())
     {
@@ -1952,7 +1952,7 @@ void GameObject::SetCapturePointSlider(int8 value)
         default:
             m_captureSlider = value;
             m_cooldownTime = time(NULL) + 3000; // initial delay for capture points
-            SetLootState(GO_READY);
+            SetLootState(GO_ACTIVATED);
             break;
     }
 
@@ -1988,11 +1988,7 @@ void GameObject::TickCapturePoint()
     m_cooldownTime = time(NULL) + 3000;
 
     GameObjectInfo const* info = GetGOInfo();
-
-    // visual banners of go type 29 don't have radius
     float radius = info->capturePoint.radius;
-    if (!radius)
-        return;
 
     // search for players in radius
     std::list<Player*> capturingPlayers;
