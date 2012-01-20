@@ -43,7 +43,7 @@ void BattleGroundAV::HandleKillPlayer(Player *player, Player *killer)
         return;
 
     BattleGround::HandleKillPlayer(player, killer);
-    UpdateScore(GetTeamIndex(player->GetTeam()), -1);
+    UpdateScore(GetTeamIndexByTeamId(player->GetTeam()), -1);
 }
 
 void BattleGroundAV::HandleKillUnit(Creature *creature, Player *killer)
@@ -89,10 +89,10 @@ void BattleGroundAV::HandleKillUnit(Creature *creature, Player *killer)
             SpawnEvent(BG_AV_NodeEventCaptainDead_H, 0, true);
             break;
         case BG_AV_MINE_BOSSES_NORTH:
-            ChangeMineOwner(BG_AV_NORTH_MINE, GetTeamIndex(killer->GetTeam()));
+            ChangeMineOwner(BG_AV_NORTH_MINE, GetTeamIndexByTeamId(killer->GetTeam()));
             break;
         case BG_AV_MINE_BOSSES_SOUTH:
-            ChangeMineOwner(BG_AV_SOUTH_MINE, GetTeamIndex(killer->GetTeam()));
+            ChangeMineOwner(BG_AV_SOUTH_MINE, GetTeamIndexByTeamId(killer->GetTeam()));
             break;
     }
 }
@@ -101,7 +101,7 @@ void BattleGroundAV::HandleQuestComplete(uint32 questid, Player *player)
 {
     if (GetStatus() != STATUS_IN_PROGRESS)
         return;
-    TeamIndex teamIdx = GetTeamIndex(player->GetTeam());
+    TeamIndex teamIdx = GetTeamIndexByTeamId(player->GetTeam());
     MANGOS_ASSERT(teamIdx != TEAM_INDEX_NEUTRAL);
 
     uint32 reputation = 0;                                  // reputation for the whole team (other reputation must be done in db)
@@ -336,7 +336,7 @@ void BattleGroundAV::EndBattleGround(Team winner)
         if (mines_owned[i])
             RewardReputationToTeam(faction[i], mines_owned[i] * m_RepOwnedMine, team[i]);
         // captain survived?:
-        if (!IsActiveEvent(BG_AV_NodeEventCaptainDead_A + GetTeamIndex(team[i]), 0))
+        if (!IsActiveEvent(BG_AV_NodeEventCaptainDead_A + GetTeamIndexByTeamId(team[i]), 0))
         {
             RewardReputationToTeam(faction[i], m_RepSurviveCaptain, team[i]);
             RewardHonorToTeam(GetBonusHonorFromKill(BG_AV_KILL_SURVIVING_CAPTAIN), team[i]);
@@ -480,9 +480,9 @@ void BattleGroundAV::ChangeMineOwner(uint8 mine, TeamIndex teamIdx)
 bool BattleGroundAV::PlayerCanDoMineQuest(int32 GOId, Team team)
 {
     if (GOId == BG_AV_OBJECTID_MINE_N)
-        return (m_Mine_Owner[BG_AV_NORTH_MINE] == GetTeamIndex(team));
+        return (m_Mine_Owner[BG_AV_NORTH_MINE] == GetTeamIndexByTeamId(team));
     if (GOId == BG_AV_OBJECTID_MINE_S)
-        return (m_Mine_Owner[BG_AV_SOUTH_MINE] == GetTeamIndex(team));
+        return (m_Mine_Owner[BG_AV_SOUTH_MINE] == GetTeamIndexByTeamId(team));
     return true;                                            // cause it's no mine'object it is ok if this is true
 }
 
@@ -538,7 +538,7 @@ void BattleGroundAV::EventPlayerDefendsPoint(Player* player, BG_AV_Nodes node)
 {
     MANGOS_ASSERT(GetStatus() == STATUS_IN_PROGRESS);
 
-    TeamIndex teamIdx = GetTeamIndex(player->GetTeam());
+    TeamIndex teamIdx = GetTeamIndexByTeamId(player->GetTeam());
 
     if (m_Nodes[node].Owner == TeamIndex(teamIdx) || m_Nodes[node].State != POINT_ASSAULTED)
         return;
@@ -584,7 +584,7 @@ void BattleGroundAV::EventPlayerDefendsPoint(Player* player, BG_AV_Nodes node)
 void BattleGroundAV::EventPlayerAssaultsPoint(Player* player, BG_AV_Nodes node)
 {
     // TODO implement quest 7101, 7081
-    TeamIndex teamIdx  = GetTeamIndex(player->GetTeam());
+    TeamIndex teamIdx  = GetTeamIndexByTeamId(player->GetTeam());
     DEBUG_LOG("BattleGroundAV: player assaults node %i", node);
     if (m_Nodes[node].Owner == TeamIndex(teamIdx) || TeamIndex(teamIdx) == m_Nodes[node].TotalOwner)
         return;
@@ -674,7 +674,7 @@ WorldSafeLocsEntry const* BattleGroundAV::GetClosestGraveYard(Player *plr)
 {
     float x = plr->GetPositionX();
     float y = plr->GetPositionY();
-    TeamIndex teamIdx = GetTeamIndex(plr->GetTeam());
+    TeamIndex teamIdx = GetTeamIndexByTeamId(plr->GetTeam());
     WorldSafeLocsEntry const* good_entry = NULL;
     if (GetStatus() == STATUS_IN_PROGRESS)
     {

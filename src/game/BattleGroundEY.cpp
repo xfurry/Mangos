@@ -116,7 +116,7 @@ void BattleGroundEY::StartingEventOpenDoors()
 
 void BattleGroundEY::AddPoints(Team team, uint32 Points)
 {
-    TeamIndex team_index = GetTeamIndex(team);
+    TeamIndex team_index = GetTeamIndexByTeamId(team);
     m_TeamScores[team_index] += Points;
     m_HonorScoreTics[team_index] += Points;
     if (m_HonorScoreTics[team_index] >= m_HonorTics )
@@ -191,7 +191,7 @@ void BattleGroundEY::CheckSomeoneLeftPoint()
             else
             {
                 //player is neat flag, so update count:
-                m_CurrentPointPlayersCount[2 * i + GetTeamIndex(plr->GetTeam())]++;
+                m_CurrentPointPlayersCount[2 * i + GetTeamIndexByTeamId(plr->GetTeam())]++;
                 ++j;
             }
         }
@@ -591,8 +591,8 @@ void BattleGroundEY::EventTeamCapturedPoint(Player *Source, uint32 Point)
 
     Team team = Source->GetTeam();
 
-    ++m_TeamPointsCount[GetTeamIndex(team)];
-    SpawnEvent(Point, GetTeamIndex(team), true);
+    ++m_TeamPointsCount[GetTeamIndexByTeamId(team)];
+    SpawnEvent(Point, GetTeamIndexByTeamId(team), true);
 
     //buff isn't respawned
 
