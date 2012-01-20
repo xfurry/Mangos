@@ -53,7 +53,7 @@ bool WorldPvPTF::InitWorldPvPArea()
 
 void WorldPvPTF::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
-    FillInitialWorldState(data, count, m_uiControllerWorldState, 1);
+    FillInitialWorldState(data, count, m_uiControllerWorldState, WORLD_STATE_ADD);
     if (m_uiControllerWorldState == WORLD_STATE_TF_TOWERS_CONTROLLED)
     {
         FillInitialWorldState(data, count, WORLD_STATE_TF_TOWER_COUNT_H, m_uiTowersHorde);
@@ -63,15 +63,15 @@ void WorldPvPTF::FillInitialWorldStates(WorldPacket& data, uint32& count)
         UpdateTimerWorldState();
 
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
-        FillInitialWorldState(data, count, m_uiTowerWorldState[i], 1);
+        FillInitialWorldState(data, count, m_uiTowerWorldState[i], WORLD_STATE_ADD);
 }
 
 void WorldPvPTF::SendRemoveWorldStates(Player* pPlayer)
 {
-    pPlayer->SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_REMOVED);
+    pPlayer->SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_REMOVE);
 
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
-        pPlayer->SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVED);
+        pPlayer->SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVE);
 }
 
 void WorldPvPTF::UpdateWorldState(uint8 uiValue)
@@ -197,7 +197,7 @@ void WorldPvPTF::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
         if (uiTower == i)
         {
             // remove old tower state
-            SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVED);
+            SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVE);
 
             if (faction != TEAM_NONE)
             {
@@ -221,7 +221,7 @@ void WorldPvPTF::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
             // send new tower state
             m_uiTowerController[i] = faction;
             m_uiTowerWorldState[i] = uiNewWorldState;
-            SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_ADDED);
+            SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_ADD);
         }
     }
 
@@ -232,9 +232,9 @@ void WorldPvPTF::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
     // If all towers are captured then process event
     if (m_uiTowersAlly == MAX_TF_TOWERS)
     {
-        SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_REMOVED);
+        SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_REMOVE);
         m_uiControllerWorldState = WORLD_STATE_TF_LOCKED_ALLIANCE;
-        SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_ADDED);
+        SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_ADD);
 
         m_uiZoneLockTimer = TIMER_TF_LOCK_TIME;
         UpdateTimerWorldState();
@@ -248,9 +248,9 @@ void WorldPvPTF::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
     }
     else if (m_uiTowersHorde == MAX_TF_TOWERS)
     {
-        SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_REMOVED);
+        SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_REMOVE);
         m_uiControllerWorldState = WORLD_STATE_TF_LOCKED_HORDE;
-        SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_ADDED);
+        SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_ADD);
 
         m_uiZoneLockTimer = TIMER_TF_LOCK_TIME;
         UpdateTimerWorldState();

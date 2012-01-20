@@ -51,20 +51,20 @@ void WorldPvPHP::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
     FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_HP_ALY, m_uiTowersAlly);
     FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_HP_HORDE, m_uiTowersHorde);
-    FillInitialWorldState(data, count, WORLD_STATE_TOWER_DISPLAY_HP_A, 1);
-    FillInitialWorldState(data, count, WORLD_STATE_TOWER_DISPLAY_HP_H, 1);
+    FillInitialWorldState(data, count, WORLD_STATE_TOWER_DISPLAY_HP_A, WORLD_STATE_ADD);
+    FillInitialWorldState(data, count, WORLD_STATE_TOWER_DISPLAY_HP_H, WORLD_STATE_ADD);
 
     for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
-        FillInitialWorldState(data, count, m_uiTowerWorldState[i], 1);
+        FillInitialWorldState(data, count, m_uiTowerWorldState[i], WORLD_STATE_ADD);
 }
 
 void WorldPvPHP::SendRemoveWorldStates(Player* pPlayer)
 {
-    pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_DISPLAY_HP_A, WORLD_STATE_REMOVED);
-    pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_DISPLAY_HP_H, WORLD_STATE_REMOVED);
+    pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_DISPLAY_HP_A, WORLD_STATE_REMOVE);
+    pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_DISPLAY_HP_H, WORLD_STATE_REMOVE);
 
     for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
-        pPlayer->SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVED);
+        pPlayer->SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVE);
 }
 
 void WorldPvPHP::UpdateWorldState()
@@ -219,7 +219,7 @@ void WorldPvPHP::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
         if (uiTower == i)
         {
             // remove old tower state
-            SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVED);
+            SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVE);
 
             if (faction != TEAM_NONE)
             {
@@ -245,7 +245,7 @@ void WorldPvPHP::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
             // send new tower state
             m_uiTowerController[i] = faction;
             m_uiTowerWorldState[i] = uiNewWorldState;
-            SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_ADDED);
+            SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_ADD);
         }
     }
 

@@ -41,25 +41,25 @@ void WorldPvPNA::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
     if (m_uiZoneController != TEAM_NONE)
     {
-        FillInitialWorldState(data, count, m_uiControllerWorldState, 1);
+        FillInitialWorldState(data, count, m_uiControllerWorldState, WORLD_STATE_ADD);
         FillInitialWorldState(data, count, WORLD_STATE_NA_GUARDS_LEFT, m_uiGuardsLeft);
         FillInitialWorldState(data, count, WORLD_STATE_NA_GUARDS_MAX, MAX_NA_GUARDS);
 
         // map states
         for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
-            FillInitialWorldState(data, count, m_uiRoostWorldState[i], 1);
+            FillInitialWorldState(data, count, m_uiRoostWorldState[i], WORLD_STATE_ADD);
     }
 
-    FillInitialWorldState(data, count, m_uiControllerMapState, 1);
+    FillInitialWorldState(data, count, m_uiControllerMapState, WORLD_STATE_ADD);
 }
 
 void WorldPvPNA::SendRemoveWorldStates(Player* pPlayer)
 {
-    pPlayer->SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_REMOVED);
-    pPlayer->SendUpdateWorldState(m_uiControllerMapState, WORLD_STATE_REMOVED);
+    pPlayer->SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_REMOVE);
+    pPlayer->SendUpdateWorldState(m_uiControllerMapState, WORLD_STATE_REMOVE);
 
     for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
-        pPlayer->SendUpdateWorldState(m_uiRoostWorldState[i], WORLD_STATE_REMOVED);
+        pPlayer->SendUpdateWorldState(m_uiRoostWorldState[i], WORLD_STATE_REMOVE);
 }
 
 void WorldPvPNA::HandlePlayerEnterZone(Player* pPlayer)
@@ -154,15 +154,15 @@ void WorldPvPNA::OnCreatureDeath(Creature* pCreature)
         return;
 
     --m_uiGuardsLeft;
-    SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT,  m_uiGuardsLeft);
+    SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT, m_uiGuardsLeft);
 
     if (m_uiGuardsLeft == 0)
     {
         // make capturable
         UnlockHalaa(m_uiZoneController);
-        SendUpdateWorldState(m_uiControllerMapState, WORLD_STATE_REMOVED);
+        SendUpdateWorldState(m_uiControllerMapState, WORLD_STATE_REMOVE);
         m_uiControllerMapState = m_uiZoneController == ALLIANCE ? WORLD_STATE_NA_HALAA_NEU_A : WORLD_STATE_NA_HALAA_NEU_H;
-        SendUpdateWorldState(m_uiControllerMapState, WORLD_STATE_ADDED);
+        SendUpdateWorldState(m_uiControllerMapState, WORLD_STATE_ADD);
     }
 }
 
@@ -172,16 +172,16 @@ void WorldPvPNA::OnCreatureRespawn(Creature* pCreature)
         return;
 
     ++m_uiGuardsLeft;
-    SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT,  m_uiGuardsLeft);
+    SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT, m_uiGuardsLeft);
 
     if (m_uiGuardsLeft > 0)
         LockHalaa(m_uiZoneController);
 
     if (m_uiGuardsLeft == MAX_NA_GUARDS)
     {
-        SendUpdateWorldState(m_uiControllerMapState, WORLD_STATE_REMOVED);
+        SendUpdateWorldState(m_uiControllerMapState, WORLD_STATE_REMOVE);
         m_uiControllerMapState = m_uiZoneController == ALLIANCE ? WORLD_STATE_NA_HALAA_ALLIANCE : WORLD_STATE_NA_HALAA_HORDE;
-        SendUpdateWorldState(m_uiControllerMapState, WORLD_STATE_ADDED);
+        SendUpdateWorldState(m_uiControllerMapState, WORLD_STATE_ADD);
     }
 }
 

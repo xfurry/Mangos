@@ -43,8 +43,8 @@ enum WorldPvPTypes
 
 enum WorldStateType
 {
-    WORLD_STATE_REMOVED                     = 0,
-    WORLD_STATE_ADDED                       = 1
+    WORLD_STATE_REMOVE                      = 0,
+    WORLD_STATE_ADD                         = 1
 };
 
 enum GameObjectArtKits
