@@ -1984,7 +1984,7 @@ void GameObject::SetCapturePointSlider(int8 value)
 
 void GameObject::TickCapturePoint()
 {
-    // TODO: On retail at ZM and HP: Ticks every 5.25 seconds (ticks probably depend on players in range). slider increases by 1 at same time as player enters capture point
+    // TODO: On retail at ZM and HP: Ticks every 5.28 seconds (ticks probably depend on players in range). slider increases by 1 at same time as player enters capture point
     m_cooldownTime = time(NULL) + 3000;
 
     GameObjectInfo const* info = GetGOInfo();
@@ -2043,10 +2043,10 @@ void GameObject::TickCapturePoint()
     else if (rangePlayers < -maxSuperiority)
         rangePlayers = -maxSuperiority;
 
-    // time to capture from 0% to 100% is minTime for maxSuperiority amount of players and maxTime for minSuperiority amount of players
+    // time to capture from 0% to 100% is maxTime for 0 players and minTime for maxSuperiority amount of players
     float diffTicks = 300.0f /
         (float)((maxSuperiority - abs(rangePlayers)) * (info->capturePoint.maxTime - info->capturePoint.minTime) /
-        (float)(maxSuperiority - info->capturePoint.minSuperiority) + info->capturePoint.minTime);
+        (float)maxSuperiority + info->capturePoint.minTime);
 
     Team progressFaction;
     if (rangePlayers > 0)
