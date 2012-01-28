@@ -1594,8 +1594,17 @@ void Aura::TriggerSpell()
 //                    case 58040: break;
 //                    // Draw Magic
 //                    case 58185: break;
-//                    // Food
-//                    case 58886: break;
+                    case 58886:                             // Food
+                    {
+                        if (GetAuraTicks() != 1)
+                            return;
+
+                        uint32 randomBuff[5] = {57288, 57139, 57111, 57286, 57291};
+
+                        trigger_spell_id = urand(0, 1) ? 58891 : randomBuff[urand(0, 4)];
+
+                        break;
+                    }
 //                    // Shadow Sickle
 //                    case 59103: break;
 //                    // Time Bomb
@@ -1614,8 +1623,7 @@ void Aura::TriggerSpell()
 //                    case 62571: break;
 //                    // Mulgore Hatchling
 //                    case 62586: break;
-                    // Durotar Scorpion
-                    case 62679:
+                    case 62679:                             // Durotar Scorpion
                         trigger_spell_id = auraSpellInfo->CalculateSimpleValue(m_effIndex);
                         break;
 //                    // Fighting Fish
@@ -4006,9 +4014,7 @@ void Aura::HandleModPossess(bool apply, bool Real)
         if(target->GetTypeId() == TYPEID_UNIT)
         {
             ((Creature*)target)->AIM_Initialize();
-
-            if (((Creature*)target)->AI())
-                ((Creature*)target)->AI()->AttackedBy(caster);
+            target->AttackedBy(caster);
         }
     }
 }
@@ -4201,8 +4207,7 @@ void Aura::HandleModCharm(bool apply, bool Real)
         if(target->GetTypeId() == TYPEID_UNIT)
         {
             ((Creature*)target)->AIM_Initialize();
-            if (((Creature*)target)->AI())
-                ((Creature*)target)->AI()->AttackedBy(caster);
+            target->AttackedBy(caster);
         }
     }
 }
