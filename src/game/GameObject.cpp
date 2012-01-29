@@ -159,7 +159,7 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, uint32 phaseMa
 
     // set saved capture point info if the grid was unloaded (for non visual capture points)
     if (goinfo->type == GAMEOBJECT_TYPE_CAPTURE_POINT && goinfo->capturePoint.radius)
-        SetCapturePointSlider(sWorldPvPMgr.GetCapturePointSliderValue(GetEntry()));
+        SetCapturePointSlider(sWorldPvPMgr.GetCapturePointSliderValue(goinfo->id));
     else
         SetGoArtKit(0);                                     // unknown what this is
 
@@ -1931,6 +1931,7 @@ void GameObject::SetCapturePointSlider(int8 value)
 {
     GameObjectInfo const* info = GetGOInfo();
 
+    // TODO: should locked capture point still display slider?
     switch (value)
     {
         case CAPTURE_SLIDER_ALLIANCE_LOCKED:
@@ -1943,7 +1944,7 @@ void GameObject::SetCapturePointSlider(int8 value)
             value = info->capturePoint.startingValue; // CAPTURE_SLIDER_NEUTRAL in TBC
         default:
             m_captureSlider = value;
-            m_cooldownTime = time(NULL) + 3000; // initial delay for capture points
+            m_cooldownTime = time(NULL) + 3; // initial delay for capture points
             SetLootState(GO_ACTIVATED);
             break;
     }
@@ -1977,7 +1978,7 @@ void GameObject::SetCapturePointSlider(int8 value)
 void GameObject::TickCapturePoint()
 {
     // TODO: On retail at ZM and HP: Ticks every 5.28 seconds (ticks probably depend on players in range). slider increases by 1 at same time as player enters capture point
-    m_cooldownTime = time(NULL) + 3000;
+    m_cooldownTime = time(NULL) + 3;
 
     GameObjectInfo const* info = GetGOInfo();
     float radius = info->capturePoint.radius;
@@ -2068,13 +2069,13 @@ void GameObject::TickCapturePoint()
     uint32 eventId = 0;
 
     // alliance wins tower with max points
-    if ((uint32)m_captureSlider == CAPTURE_SLIDER_ALLIANCE && m_captureState == CAPTURE_STATE_PROGRESS_ALLIANCE)
+    if ((uint32)m_captureSlider == CAPTURE_SLIDER_ALLIANCE && m_captureState != CAPTURE_STATE_WIN_ALLIANCE)
     {
         eventId = info->capturePoint.winEventID1;
         m_captureState = CAPTURE_STATE_WIN_ALLIANCE;
     }
     // horde wins tower with max points
-    else if ((uint32)m_captureSlider == CAPTURE_SLIDER_HORDE && m_captureState == CAPTURE_STATE_PROGRESS_HORDE)
+    else if ((uint32)m_captureSlider == CAPTURE_SLIDER_HORDE && m_captureState != CAPTURE_STATE_WIN_HORDE)
     {
         eventId = info->capturePoint.winEventID2;
         m_captureState = CAPTURE_STATE_WIN_HORDE;
