@@ -2070,13 +2070,13 @@ void GameObject::TickCapturePoint()
 
     /* WIN EVENTS */
     // alliance wins tower with max points
-    if ((uint32)m_captureSlider == CAPTURE_SLIDER_ALLIANCE && m_captureState != CAPTURE_STATE_WIN_ALLIANCE)
+    if (m_captureState != CAPTURE_STATE_WIN_ALLIANCE && (uint32)m_captureSlider == CAPTURE_SLIDER_ALLIANCE)
     {
         eventId = info->capturePoint.winEventID1;
         m_captureState = CAPTURE_STATE_WIN_ALLIANCE;
     }
     // horde wins tower with max points
-    else if ((uint32)m_captureSlider == CAPTURE_SLIDER_HORDE && m_captureState != CAPTURE_STATE_WIN_HORDE)
+    else if (m_captureState != CAPTURE_STATE_WIN_HORDE && (uint32)m_captureSlider == CAPTURE_SLIDER_HORDE)
     {
         eventId = info->capturePoint.winEventID2;
         m_captureState = CAPTURE_STATE_WIN_HORDE;
@@ -2084,7 +2084,7 @@ void GameObject::TickCapturePoint()
 
     /* PROGRESS EVENTS */
     // alliance takes the tower from neutral or contested to alliance
-    else if ((m_captureState == CAPTURE_STATE_NEUTRAL || m_captureState == CAPTURE_STATE_CONTEST_ALLIANCE) && progressFaction == ALLIANCE && m_captureSlider > CAPTURE_SLIDER_NEUTRAL + neutralPercent * 0.5f)
+    else if ((m_captureState == CAPTURE_STATE_NEUTRAL && m_captureSlider > CAPTURE_SLIDER_NEUTRAL + neutralPercent * 0.5f) || (m_captureState == CAPTURE_STATE_CONTEST_ALLIANCE && progressFaction == ALLIANCE))
     {
         eventId = info->capturePoint.progressEventID1;
 
@@ -2096,7 +2096,7 @@ void GameObject::TickCapturePoint()
         m_captureState = CAPTURE_STATE_PROGRESS_ALLIANCE;
     }
     // horde takes the tower from neutral or contested to horde
-    else if ((m_captureState == CAPTURE_STATE_NEUTRAL || m_captureState == CAPTURE_STATE_CONTEST_HORDE) && progressFaction == HORDE && m_captureSlider < CAPTURE_SLIDER_NEUTRAL - neutralPercent * 0.5f)
+    else if ((m_captureState == CAPTURE_STATE_NEUTRAL && m_captureSlider < CAPTURE_SLIDER_NEUTRAL - neutralPercent * 0.5f) || (m_captureState == CAPTURE_STATE_CONTEST_HORDE && progressFaction == HORDE))
     {
         eventId = info->capturePoint.progressEventID2;
 
@@ -2110,13 +2110,13 @@ void GameObject::TickCapturePoint()
 
     /* NEUTRAL EVENTS */
     // alliance takes the tower from horde to neutral
-    else if ((m_captureState != CAPTURE_STATE_NEUTRAL) && progressFaction == ALLIANCE && (m_captureSlider >= CAPTURE_SLIDER_NEUTRAL - neutralPercent * 0.5f && m_captureSlider <= CAPTURE_SLIDER_NEUTRAL + neutralPercent * 0.5f))
+    else if (m_captureState != CAPTURE_STATE_NEUTRAL && m_captureSlider >= CAPTURE_SLIDER_NEUTRAL - neutralPercent * 0.5f && m_captureSlider <= CAPTURE_SLIDER_NEUTRAL + neutralPercent * 0.5f)
     {
         eventId = info->capturePoint.neutralEventID1;
         m_captureState = CAPTURE_STATE_NEUTRAL;
     }
     // horde takes the tower from alliance to neutral
-    else if ((m_captureState != CAPTURE_STATE_NEUTRAL) && progressFaction == HORDE && (m_captureSlider <= CAPTURE_SLIDER_NEUTRAL + neutralPercent * 0.5f && m_captureSlider >= CAPTURE_SLIDER_NEUTRAL - neutralPercent * 0.5f))
+    else if (m_captureState != CAPTURE_STATE_NEUTRAL && m_captureSlider >= CAPTURE_SLIDER_NEUTRAL - neutralPercent * 0.5f && m_captureSlider <= CAPTURE_SLIDER_NEUTRAL + neutralPercent * 0.5f)
     {
         eventId = info->capturePoint.neutralEventID2;
         m_captureState = CAPTURE_STATE_NEUTRAL;

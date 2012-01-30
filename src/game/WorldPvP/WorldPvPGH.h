@@ -67,12 +67,10 @@ class WorldPvPGH : public WorldPvP
         void ProcessEvent(GameObject* pGo, uint32 uiEventId);
 
     private:
-        // process capture events
-        void ProcessCaptureEvent(CapturePointState captureState);
         // respawn faction soldiers
-        void DoRespawnSoldiers(Team faction);
+        void DoRespawnSoldiers(GameObject* pGoReference, Team faction);
         // set banner artkit
-        void SetBannerArtKit(uint32 uiArtKit);
+        void SetBannerArtKit(GameObject* pGo, uint32 uiArtkit);
 
         ObjectGuid m_TowerBannerLighthouseGuid;
 

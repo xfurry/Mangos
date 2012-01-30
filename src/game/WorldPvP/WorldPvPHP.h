@@ -168,9 +168,10 @@ class WorldPvPHP : public WorldPvP
         // world state update
         void UpdateWorldState();
         // process capture events
-        void ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint32 uiTowerArtKit, uint32 uiTower);
+        void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team faction, uint32 uiNewWorldState, uint32 uiTowerArtKit);
         // set banners artkit
-        void SetBannerArtKit(ObjectGuid BannerGuid, uint32 uiArtKit);
+        void SetBannerArtKit(GameObject* pGoReference, ObjectGuid bannerGuid, uint32 uiArtkit);
+        void SetBannerArtKit(GameObject* pGo, uint32 uiArtkit);
 
         Team m_uiTowerController[MAX_HP_TOWERS];
         uint32 m_uiTowerWorldState[MAX_HP_TOWERS];

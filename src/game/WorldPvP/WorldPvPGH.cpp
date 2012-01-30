@@ -98,76 +98,49 @@ void WorldPvPGH::ProcessEvent(GameObject* pGo, uint32 uiEventId)
     switch (uiEventId)
     {
         case EVENT_LIGHTHOUSE_WIN_ALLIANCE:
-            ProcessCaptureEvent(CAPTURE_STATE_WIN_ALLIANCE);
+            // Spawn the npcs only when the tower is fully controlled
+            DoRespawnSoldiers(pGo, ALLIANCE);
+            m_uiZoneController = ALLIANCE;
             break;
         case EVENT_LIGHTHOUSE_WIN_HORDE:
-            ProcessCaptureEvent(CAPTURE_STATE_WIN_HORDE);
+            // Spawn the npcs only when the tower is fully controlled
+            DoRespawnSoldiers(pGo, HORDE);
+            m_uiZoneController = HORDE;
             break;
         case EVENT_LIGHTHOUSE_PROGRESS_ALLIANCE:
-            ProcessCaptureEvent(CAPTURE_STATE_PROGRESS_ALLIANCE);
+            SetBannerArtKit(pGo, GO_ARTKIT_BANNER_ALLIANCE);
             break;
         case EVENT_LIGHTHOUSE_PROGRESS_HORDE:
-            ProcessCaptureEvent(CAPTURE_STATE_PROGRESS_HORDE);
+            SetBannerArtKit(pGo, GO_ARTKIT_BANNER_HORDE);
             break;
         case EVENT_LIGHTHOUSE_NEUTRAL_ALLIANCE:
         case EVENT_LIGHTHOUSE_NEUTRAL_HORDE:
-            ProcessCaptureEvent(CAPTURE_STATE_NEUTRAL);
-            break;
-    }
-}
-
-void WorldPvPGH::ProcessCaptureEvent(CapturePointState captureState)
-{
-    switch (captureState)
-    {
-        case CAPTURE_STATE_WIN_ALLIANCE:
-            // Spawn the npcs only when the tower is fully controlled
-            DoRespawnSoldiers(ALLIANCE);
-            m_uiZoneController = ALLIANCE;
-            break;
-        case CAPTURE_STATE_WIN_HORDE:
-            // Spawn the npcs only when the tower is fully controlled
-            DoRespawnSoldiers(HORDE);
-            m_uiZoneController = HORDE;
-            break;
-        case CAPTURE_STATE_PROGRESS_ALLIANCE:
-            SetBannerArtKit(GO_ARTKIT_BANNER_ALLIANCE);
-            break;
-        case CAPTURE_STATE_PROGRESS_HORDE:
-            SetBannerArtKit(GO_ARTKIT_BANNER_HORDE);
-            break;
-        case CAPTURE_STATE_NEUTRAL:
-            SetBannerArtKit(GO_ARTKIT_BANNER_NEUTRAL);
+            SetBannerArtKit(pGo, GO_ARTKIT_BANNER_NEUTRAL);
             m_uiZoneController = TEAM_NONE;
             break;
     }
 }
 
-void WorldPvPGH::DoRespawnSoldiers(Team faction)
+void WorldPvPGH::DoRespawnSoldiers(GameObject* pGoReference, Team faction)
 {
-    // neet to use a player as anchor for the map
-    Player* pPlayer = GetPlayerInZone();
-    if (!pPlayer)
-        return;
-
     if (faction == ALLIANCE)
     {
         // despawn all horde vendors
         for (std::list<ObjectGuid>::const_iterator itr = lHordeVendors.begin(); itr != lHordeVendors.end(); ++itr)
         {
-            if (Creature* pSoldier = pPlayer->GetMap()->GetCreature(*itr))
+            if (Creature* pSoldier = pGoReference->GetMap()->GetCreature(*itr))
                 pSoldier->ForcedDespawn();
         }
 
         // spawn all alliance soldiers and vendors
         for (std::list<ObjectGuid>::const_iterator itr = lAllianceSoldiers.begin(); itr != lAllianceSoldiers.end(); ++itr)
         {
-            if (Creature* pSoldier = pPlayer->GetMap()->GetCreature(*itr))
+            if (Creature* pSoldier = pGoReference->GetMap()->GetCreature(*itr))
                 pSoldier->Respawn();
         }
         for (std::list<ObjectGuid>::const_iterator itr = lAllianceVendors.begin(); itr != lAllianceVendors.end(); ++itr)
         {
-            if (Creature* pSoldier = pPlayer->GetMap()->GetCreature(*itr))
+            if (Creature* pSoldier = pGoReference->GetMap()->GetCreature(*itr))
                 pSoldier->Respawn();
         }
     }
@@ -176,34 +149,26 @@ void WorldPvPGH::DoRespawnSoldiers(Team faction)
         // despawn all alliance vendors
         for (std::list<ObjectGuid>::const_iterator itr = lAllianceVendors.begin(); itr != lAllianceVendors.end(); ++itr)
         {
-            if (Creature* pSoldier = pPlayer->GetMap()->GetCreature(*itr))
+            if (Creature* pSoldier = pGoReference->GetMap()->GetCreature(*itr))
                 pSoldier->ForcedDespawn();
         }
 
         // spawn all horde soldiers and vendors
         for (std::list<ObjectGuid>::const_iterator itr = lHordeSoldiers.begin(); itr != lHordeSoldiers.end(); ++itr)
         {
-            if (Creature* pSoldier = pPlayer->GetMap()->GetCreature(*itr))
+            if (Creature* pSoldier = pGoReference->GetMap()->GetCreature(*itr))
                 pSoldier->Respawn();
         }
         for (std::list<ObjectGuid>::const_iterator itr = lHordeVendors.begin(); itr != lHordeVendors.end(); ++itr)
         {
-            if (Creature* pSoldier = pPlayer->GetMap()->GetCreature(*itr))
+            if (Creature* pSoldier = pGoReference->GetMap()->GetCreature(*itr))
                 pSoldier->Respawn();
         }
     }
 }
 
-void WorldPvPGH::SetBannerArtKit(uint32 uiArtkit)
+void WorldPvPHP::SetBannerArtKit(GameObject* pGo, uint32 uiArtkit)
 {
-    // neet to use a player as anchor for the map
-    Player* pPlayer = GetPlayerInZone();
-    if (!pPlayer)
-        return;
-
-    if (GameObject* pBanner = pPlayer->GetMap()->GetGameObject(m_TowerBannerLighthouseGuid))
-    {
-        pBanner->SetGoArtKit(uiArtkit);
-        pBanner->Refresh();
-    }
+    pGo->SetGoArtKit(uiArtkit);
+    pGo->Refresh();
 }
