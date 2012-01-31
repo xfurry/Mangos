@@ -22,7 +22,7 @@
 
 
 WorldPvPHP::WorldPvPHP() : WorldPvP(),
-    m_uiTowersAlly(0),
+    m_uiTowersAlliance(0),
     m_uiTowersHorde(0)
 {
     m_uiTypeId = WORLD_PVP_TYPE_HP;
@@ -49,7 +49,7 @@ bool WorldPvPHP::InitWorldPvPArea()
 
 void WorldPvPHP::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
-    FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_HP_ALY, m_uiTowersAlly);
+    FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_HP_ALLIANCE, m_uiTowersAlliance);
     FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_HP_HORDE, m_uiTowersHorde);
     FillInitialWorldState(data, count, WORLD_STATE_TOWER_DISPLAY_HP_A, WORLD_STATE_ADD);
     FillInitialWorldState(data, count, WORLD_STATE_TOWER_DISPLAY_HP_H, WORLD_STATE_ADD);
@@ -70,18 +70,18 @@ void WorldPvPHP::SendRemoveWorldStates(Player* pPlayer)
 void WorldPvPHP::UpdateWorldState()
 {
     // update only tower count; tower states are sent in the process event
-    SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HP_ALY, m_uiTowersAlly);
+    SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HP_ALLIANCE, m_uiTowersAlliance);
     SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HP_HORDE, m_uiTowersHorde);
 }
 
 void WorldPvPHP::HandlePlayerEnterZone(Player* pPlayer)
 {
     // remove the buff from the player first; Sometimes on relog players still have the aura
-    pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? SPELL_HELLFIRE_SUPERIORITY_ALY : SPELL_HELLFIRE_SUPERIORITY_HORDE);
+    pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? SPELL_HELLFIRE_SUPERIORITY_ALLIANCE : SPELL_HELLFIRE_SUPERIORITY_HORDE);
 
     // buff the player if same faction is controlling all capture points
-    if (m_uiTowersAlly == MAX_HP_TOWERS && pPlayer->GetTeam() == ALLIANCE)
-        pPlayer->CastSpell(pPlayer, SPELL_HELLFIRE_SUPERIORITY_ALY, true);
+    if (m_uiTowersAlliance == MAX_HP_TOWERS && pPlayer->GetTeam() == ALLIANCE)
+        pPlayer->CastSpell(pPlayer, SPELL_HELLFIRE_SUPERIORITY_ALLIANCE, true);
     else if (m_uiTowersHorde == MAX_HP_TOWERS && pPlayer->GetTeam() == HORDE)
         pPlayer->CastSpell(pPlayer, SPELL_HELLFIRE_SUPERIORITY_HORDE, true);
 
@@ -91,7 +91,7 @@ void WorldPvPHP::HandlePlayerEnterZone(Player* pPlayer)
 void WorldPvPHP::HandlePlayerLeaveZone(Player* pPlayer)
 {
     // remove the buff from the player
-    pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? SPELL_HELLFIRE_SUPERIORITY_ALY : SPELL_HELLFIRE_SUPERIORITY_HORDE);
+    pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? SPELL_HELLFIRE_SUPERIORITY_ALLIANCE : SPELL_HELLFIRE_SUPERIORITY_HORDE);
 
     WorldPvP::HandlePlayerLeaveZone(pPlayer);
 }
@@ -105,21 +105,21 @@ void WorldPvPHP::OnGameObjectCreate(GameObject* pGo)
             if (m_uiTowerController[0] == TEAM_NONE)
                 pGo->SetGoArtKit(GO_ARTKIT_OVERLOOK_NEUTRAL);
             else
-                pGo->SetGoArtKit(m_uiTowerController[0] == ALLIANCE ? GO_ARTKIT_OVERLOOK_ALY : GO_ARTKIT_OVERLOOK_HORDE);
+                pGo->SetGoArtKit(m_uiTowerController[0] == ALLIANCE ? GO_ARTKIT_OVERLOOK_ALLIANCE : GO_ARTKIT_OVERLOOK_HORDE);
             break;
         case GO_TOWER_BANNER_STADIUM:
             m_HellfireTowerGUID[1] = pGo->GetObjectGuid();
             if (m_uiTowerController[1] == TEAM_NONE)
                 pGo->SetGoArtKit(GO_ARTKIT_STADIUM_NEUTRAL);
             else
-                pGo->SetGoArtKit(m_uiTowerController[1] == ALLIANCE ? GO_ARTKIT_STADIUM_ALY : GO_ARTKIT_STADIUM_HORDE);
+                pGo->SetGoArtKit(m_uiTowerController[1] == ALLIANCE ? GO_ARTKIT_STADIUM_ALLIANCE : GO_ARTKIT_STADIUM_HORDE);
             break;
         case GO_TOWER_BANNER_BROKEN_HILL:
             m_HellfireTowerGUID[2] = pGo->GetObjectGuid();
             if (m_uiTowerController[2] == TEAM_NONE)
                 pGo->SetGoArtKit(GO_ARTKIT_BROKEN_HILL_NEUTRAL);
             else
-                pGo->SetGoArtKit(m_uiTowerController[2] == ALLIANCE ? GO_ARTKIT_BROKEN_HILL_ALY : GO_ARTKIT_BROKEN_HILL_HORDE);
+                pGo->SetGoArtKit(m_uiTowerController[2] == ALLIANCE ? GO_ARTKIT_BROKEN_HILL_ALLIANCE : GO_ARTKIT_BROKEN_HILL_HORDE);
             break;
         case GO_HELLFIRE_BANNER_OVERLOOK:
             m_HellfireBannerGUID[0] = pGo->GetObjectGuid();
@@ -185,7 +185,7 @@ void WorldPvPHP::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
 
             // check banner faction
             if (pBanner->GetCaptureState() == ALLIANCE && pPlayer->GetTeam() == ALLIANCE)
-                pPlayer->CastSpell(pPlayer, SPELL_HELLFIRE_TOWER_TOKEN_ALY, true);
+                pPlayer->CastSpell(pPlayer, SPELL_HELLFIRE_TOWER_TOKEN_ALLIANCE, true);
             else if (pBanner->GetCaptureState() == HORDE && pPlayer->GetTeam() == HORDE)
                 pPlayer->CastSpell(pPlayer, SPELL_HELLFIRE_TOWER_TOKEN_HORDE, true);
         }
@@ -218,10 +218,10 @@ void WorldPvPHP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team fac
     if (faction == ALLIANCE)
     {
         SetBannerArtKit(pGo, GO_ARTKIT_BANNER_ALLIANCE);
-        ++m_uiTowersAlly;
+        ++m_uiTowersAlliance;
 
-        if (m_uiTowersAlly == MAX_HP_TOWERS)
-            DoProcessTeamBuff(ALLIANCE, SPELL_HELLFIRE_SUPERIORITY_ALY);
+        if (m_uiTowersAlliance == MAX_HP_TOWERS)
+            DoProcessTeamBuff(ALLIANCE, SPELL_HELLFIRE_SUPERIORITY_ALLIANCE);
     }
     else if (faction == HORDE)
     {
@@ -237,10 +237,10 @@ void WorldPvPHP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team fac
 
         if (m_uiTowerController[uiTowerId] == ALLIANCE)
         {
-            if (m_uiTowersAlly == MAX_HP_TOWERS)
-                DoProcessTeamBuff(ALLIANCE, SPELL_HELLFIRE_SUPERIORITY_ALY, true);
+            if (m_uiTowersAlliance == MAX_HP_TOWERS)
+                DoProcessTeamBuff(ALLIANCE, SPELL_HELLFIRE_SUPERIORITY_ALLIANCE, true);
 
-            --m_uiTowersAlly;
+            --m_uiTowersAlliance;
         }
         else
         {

@@ -19,7 +19,7 @@
 #include "WorldPvP.h"
 #include "WorldPvPSI.h"
 
-WorldPvPSI::WorldPvPSI() : WorldPvP(), m_uiResourcesAly(0), m_uiResourcesHorde(0), m_uiLastControllerTeam(0)
+WorldPvPSI::WorldPvPSI() : WorldPvP(), m_uiResourcesAlliance(0), m_uiResourcesHorde(0), m_uiLastControllerTeam(0)
 {
     m_uiTypeId = WORLD_PVP_TYPE_SI;
 }
@@ -38,7 +38,7 @@ bool WorldPvPSI::InitWorldPvPArea()
 // Send initial world states
 void WorldPvPSI::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
-    FillInitialWorldState(data, count, WORLD_STATE_SI_GATHERED_A, m_uiResourcesAly);
+    FillInitialWorldState(data, count, WORLD_STATE_SI_GATHERED_A, m_uiResourcesAlliance);
     FillInitialWorldState(data, count, WORLD_STATE_SI_GATHERED_H, m_uiResourcesHorde);
     FillInitialWorldState(data, count, WORLD_STATE_SI_SILITHYST_MAX, MAX_SILITHYST);
 }
@@ -54,7 +54,7 @@ void WorldPvPSI::SendRemoveWorldStates(Player* pPlayer)
 // Update current world states
 void WorldPvPSI::UpdateWorldState()
 {
-    SendUpdateWorldState(WORLD_STATE_SI_GATHERED_A, m_uiResourcesAly);
+    SendUpdateWorldState(WORLD_STATE_SI_GATHERED_A, m_uiResourcesAlliance);
     SendUpdateWorldState(WORLD_STATE_SI_GATHERED_H, m_uiResourcesHorde);
 }
 
@@ -87,15 +87,15 @@ bool WorldPvPSI::HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId)
     if (pPlayer->isGameMaster() || pPlayer->isDead())
         return false;
 
-    if (uiTriggerId == AREATRIGGER_SILITHUS_ALY)
+    if (uiTriggerId == AREATRIGGER_SILITHUS_ALLIANCE)
     {
         if (pPlayer->GetTeam() == ALLIANCE && pPlayer->HasAura(SPELL_SILITHYST))
         {
             // remove aura
             pPlayer->RemoveAurasDueToSpell(SPELL_SILITHYST);
 
-            ++m_uiResourcesAly;
-            if (m_uiResourcesAly == MAX_SILITHYST)
+            ++m_uiResourcesAlliance;
+            if (m_uiResourcesAlliance == MAX_SILITHYST)
             {
                 // apply buff to controler faction
                 DoProcessTeamBuff(ALLIANCE, SPELL_CENARION_FAVOR);
@@ -104,7 +104,7 @@ bool WorldPvPSI::HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId)
                 sWorld.SendZoneText(ZONE_ID_SILITHUS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_SI_CAPTURE_A));
 
                 m_uiLastControllerTeam = ALLIANCE;
-                m_uiResourcesAly = 0;
+                m_uiResourcesAlliance = 0;
                 m_uiResourcesHorde = 0;
             }
 
@@ -117,8 +117,8 @@ bool WorldPvPSI::HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId)
             pPlayer->GetReputationMgr().ModifyReputation(sFactionStore.LookupEntry(FACTION_CENARION_CIRCLE), REPUTATION_REWARD_SILITHYST);
 
             // complete quest
-            if (pPlayer->GetQuestStatus(QUEST_SCOURING_DESERT_ALY) == QUEST_STATUS_INCOMPLETE)
-                pPlayer->KilledMonsterCredit(NPC_SILITHUS_DUST_QUEST_ALY);
+            if (pPlayer->GetQuestStatus(QUEST_SCOURING_DESERT_ALLIANCE) == QUEST_STATUS_INCOMPLETE)
+                pPlayer->KilledMonsterCredit(NPC_SILITHUS_DUST_QUEST_ALLIANCE);
 
             return true;
         }
@@ -139,7 +139,7 @@ bool WorldPvPSI::HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId)
                 //send zone text and reset stats
                 sWorld.SendZoneText(ZONE_ID_SILITHUS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_SI_CAPTURE_H));
                 m_uiLastControllerTeam = HORDE;
-                m_uiResourcesAly = 0;
+                m_uiResourcesAlliance = 0;
                 m_uiResourcesHorde = 0;
             }
 

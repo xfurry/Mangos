@@ -22,7 +22,7 @@
 
 
 WorldPvPEP::WorldPvPEP() : WorldPvP(),
-    m_uiTowersAlly(0),
+    m_uiTowersAlliance(0),
     m_uiTowersHorde(0)
 {
     m_uiTypeId = WORLD_PVP_TYPE_EP;
@@ -47,7 +47,7 @@ bool WorldPvPEP::InitWorldPvPArea()
 
 void WorldPvPEP::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
-    FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_ALY, m_uiTowersAlly);
+    FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_ALLIANCE, m_uiTowersAlliance);
     FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_HORDE, m_uiTowersHorde);
 
     for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
@@ -56,7 +56,7 @@ void WorldPvPEP::FillInitialWorldStates(WorldPacket& data, uint32& count)
 
 void WorldPvPEP::SendRemoveWorldStates(Player* pPlayer)
 {
-    pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_ALY, WORLD_STATE_REMOVE);
+    pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_ALLIANCE, WORLD_STATE_REMOVE);
     pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HORDE, WORLD_STATE_REMOVE);
 
     for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
@@ -66,7 +66,7 @@ void WorldPvPEP::SendRemoveWorldStates(Player* pPlayer)
 void WorldPvPEP::UpdateWorldState()
 {
     // update only tower count; tower states are sent in the process event
-    SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_ALY, m_uiTowersAlly);
+    SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_ALLIANCE, m_uiTowersAlliance);
     SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HORDE, m_uiTowersHorde);
 }
 
@@ -75,8 +75,8 @@ void WorldPvPEP::HandlePlayerEnterZone(Player* pPlayer)
     // remove the buff from the player first; Sometimes on relog players still have the aura
     for (uint8 i = 0; i < MAX_EP_TOWERS; i++)
     {
-        if (pPlayer->HasAura(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlly : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde))
-            pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlly : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde);
+        if (pPlayer->HasAura(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlliance : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde))
+            pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlliance : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde);
     }
 
     // cast buff the the player which enters the zone
@@ -85,8 +85,8 @@ void WorldPvPEP::HandlePlayerEnterZone(Player* pPlayer)
         case ALLIANCE:
             for (uint8 i = 0; i < MAX_EP_TOWERS; i++)
             {
-                if (m_uiTowersAlly == i + 1)
-                    pPlayer->CastSpell(pPlayer, m_aPlaguelandsTowerBuffs[i].uiSpellIdAlly, true);
+                if (m_uiTowersAlliance == i + 1)
+                    pPlayer->CastSpell(pPlayer, m_aPlaguelandsTowerBuffs[i].uiSpellIdAlliance, true);
             }
             break;
         case HORDE:
@@ -106,8 +106,8 @@ void WorldPvPEP::HandlePlayerLeaveZone(Player* pPlayer)
     // remove the buff from the player
     for (uint8 i = 0; i < MAX_EP_TOWERS; i++)
     {
-        if (pPlayer->HasAura(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlly : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde))
-            pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlly : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde);
+        if (pPlayer->HasAura(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlliance : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde))
+            pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlliance : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde);
     }
 
     WorldPvP::HandlePlayerLeaveZone(pPlayer);
@@ -156,8 +156,8 @@ void WorldPvPEP::OnGameObjectCreate(GameObject* pGo)
                     pGo->SetGoArtKit(m_uiTowerController[3] == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
             }
             break;
-        case GO_LORDAERON_SHRINE_ALY:
-            m_uiLordaeronShrineAlyGUID = pGo->GetObjectGuid();
+        case GO_LORDAERON_SHRINE_ALLIANCE:
+            m_uiLordaeronShrineAllianceGUID = pGo->GetObjectGuid();
             break;
         case GO_LORDAERON_SHRINE_HORDE:
             m_uiLordaeronShrineHordeGUID = pGo->GetObjectGuid();
@@ -236,7 +236,7 @@ void WorldPvPEP::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
                 SetBannersArtKit(m_lTowerBanners[i], faction == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
 
                 if (faction == ALLIANCE)
-                    ++m_uiTowersAlly;
+                    ++m_uiTowersAlliance;
                 else
                     ++m_uiTowersHorde;
 
@@ -244,7 +244,7 @@ void WorldPvPEP::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
                 switch (i)
                 {
                     case 0:     // Northpass
-                        DoUpdateShrine(faction == ALLIANCE ? m_uiLordaeronShrineAlyGUID : m_uiLordaeronShrineHordeGUID);
+                        DoUpdateShrine(faction == ALLIANCE ? m_uiLordaeronShrineAllianceGUID : m_uiLordaeronShrineHordeGUID);
                         break;
                     case 1:     // Crownguard
                         DoSetGraveyard(faction);
@@ -264,7 +264,7 @@ void WorldPvPEP::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
 
                 Team oldFaction = m_uiTowerController[i];
                 if (oldFaction == ALLIANCE)
-                    --m_uiTowersAlly;
+                    --m_uiTowersAlliance;
                 else
                     --m_uiTowersHorde;
 
@@ -272,7 +272,7 @@ void WorldPvPEP::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
                 switch (i)
                 {
                     case 0:     // Northpass
-                        DoUpdateShrine(oldFaction == ALLIANCE ? m_uiLordaeronShrineAlyGUID : m_uiLordaeronShrineHordeGUID, true);
+                        DoUpdateShrine(oldFaction == ALLIANCE ? m_uiLordaeronShrineAllianceGUID : m_uiLordaeronShrineHordeGUID, true);
                         break;
                     case 1:     // Crownguard
                         DoSetGraveyard(oldFaction, true);
@@ -297,8 +297,8 @@ void WorldPvPEP::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
     for (uint8 i = 0; i < MAX_EP_TOWERS; i++)
     {
         // buff alliance
-        if (m_uiTowersAlly == i + 1)
-            DoProcessTeamBuff(ALLIANCE, m_aPlaguelandsTowerBuffs[i].uiSpellIdAlly);
+        if (m_uiTowersAlliance == i + 1)
+            DoProcessTeamBuff(ALLIANCE, m_aPlaguelandsTowerBuffs[i].uiSpellIdAlliance);
         // buff horde
         if (m_uiTowersHorde == i + 1)
             DoProcessTeamBuff(HORDE, m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde);
@@ -307,8 +307,8 @@ void WorldPvPEP::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
     // debuff players if towers == 0; spell to remove will be always the first
     if (m_uiTowersHorde == 0)
         DoProcessTeamBuff(HORDE, m_aPlaguelandsTowerBuffs[0].uiSpellIdHorde, true);
-    if (m_uiTowersAlly == 0)
-        DoProcessTeamBuff(ALLIANCE, m_aPlaguelandsTowerBuffs[0].uiSpellIdAlly, true);
+    if (m_uiTowersAlliance == 0)
+        DoProcessTeamBuff(ALLIANCE, m_aPlaguelandsTowerBuffs[0].uiSpellIdAlliance, true);
 
     // update states counters
     UpdateWorldState();

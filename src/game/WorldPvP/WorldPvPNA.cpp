@@ -194,16 +194,16 @@ void WorldPvPNA::OnGameObjectCreate(GameObject* pGo)
             pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
             break;
 
-        case GO_WYVERN_ROOST_ALY_SOUTH:
+        case GO_WYVERN_ROOST_ALLIANCE_SOUTH:
             m_AllianceRoost[0] = pGo->GetObjectGuid();
             break;
-        case GO_WYVERN_ROOST_ALY_NORTH:
+        case GO_WYVERN_ROOST_ALLIANCE_NORTH:
             m_AllianceRoost[1] = pGo->GetObjectGuid();
             break;
-        case GO_WYVERN_ROOST_ALY_EAST:
+        case GO_WYVERN_ROOST_ALLIANCE_EAST:
             m_AllianceRoost[2] = pGo->GetObjectGuid();
             break;
-        case GO_WYVERN_ROOST_ALY_WEST:
+        case GO_WYVERN_ROOST_ALLIANCE_WEST:
             m_AllianceRoost[3] = pGo->GetObjectGuid();
             break;
 
@@ -220,16 +220,16 @@ void WorldPvPNA::OnGameObjectCreate(GameObject* pGo)
             m_HordeWagons[3] = pGo->GetObjectGuid();
             break;
 
-        case GO_DESTROYED_ROOST_ALY_SOUTH:
+        case GO_DESTROYED_ROOST_ALLIANCE_SOUTH:
             m_AllianceBrokenRoost[0] = pGo->GetObjectGuid();
             break;
-        case GO_DESTROYED_ROOST_ALY_NORTH:
+        case GO_DESTROYED_ROOST_ALLIANCE_NORTH:
             m_AllianceBrokenRoost[1] = pGo->GetObjectGuid();
             break;
-        case GO_DESTROYED_ROOST_ALY_EAST:
+        case GO_DESTROYED_ROOST_ALLIANCE_EAST:
             m_AllianceBrokenRoost[2] = pGo->GetObjectGuid();
             break;
-        case GO_DESTROYED_ROOST_ALY_WEST:
+        case GO_DESTROYED_ROOST_ALLIANCE_WEST:
             m_AllianceBrokenRoost[3] = pGo->GetObjectGuid();
             break;
 
@@ -246,16 +246,16 @@ void WorldPvPNA::OnGameObjectCreate(GameObject* pGo)
             m_HordeRoost[3] = pGo->GetObjectGuid();
             break;
 
-        case GO_BOMB_WAGON_ALY_SOUTH:
+        case GO_BOMB_WAGON_ALLIANCE_SOUTH:
             m_AllianceWagons[0] = pGo->GetObjectGuid();
             break;
-        case GO_BOMB_WAGON_ALY_NORTH:
+        case GO_BOMB_WAGON_ALLIANCE_NORTH:
             m_AllianceWagons[1] = pGo->GetObjectGuid();
             break;
-        case GO_BOMB_WAGON_ALY_EAST:
+        case GO_BOMB_WAGON_ALLIANCE_EAST:
             m_AllianceWagons[2] = pGo->GetObjectGuid();
             break;
-        case GO_BOMB_WAGON_ALY_WEST:
+        case GO_BOMB_WAGON_ALLIANCE_WEST:
             m_AllianceWagons[3] = pGo->GetObjectGuid();
             break;
 
