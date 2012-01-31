@@ -163,7 +163,7 @@ class WorldPvPNA : public WorldPvP
 
         void HandlePlayerEnterZone(Player* pPlayer);
         void HandlePlayerLeaveZone(Player* pPlayer);
-        void HandleObjectiveComplete(std::list<Player*> players, uint32 uiEventId, Team faction);
+        void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team faction);
         void HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim);
 
         void OnCreatureCreate(Creature* pCreature);
@@ -171,7 +171,7 @@ class WorldPvPNA : public WorldPvP
         void OnCreatureRespawn(Creature* pCreature);
         void OnGameObjectCreate(GameObject* pGo);
 
-        void ProcessEvent(GameObject* pGo, uint32 uiEventId);
+        void ProcessEvent(uint32 uiEventId, GameObject* pGo);
 
         bool HandleObjectUse(Player* pPlayer, GameObject* pGo);
 

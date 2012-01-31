@@ -76,7 +76,7 @@ void WorldPvPTF::SendRemoveWorldStates(Player* pPlayer)
 
 void WorldPvPTF::UpdateWorldState(uint8 uiValue)
 {
-    // update only tower count; tower states is updated in the process event
+    // update only tower count; tower states are sent in the process event
     SendUpdateWorldState(m_uiControllerWorldState, uiValue);
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
         SendUpdateWorldState(m_uiTowerWorldState[i], uiValue);
@@ -148,7 +148,7 @@ void WorldPvPTF::OnGameObjectCreate(GameObject* pGo)
     pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
 }
 
-void WorldPvPTF::HandleObjectiveComplete(std::list<Player*> players, uint32 uiEventId, Team faction)
+void WorldPvPTF::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team faction)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
@@ -167,7 +167,7 @@ void WorldPvPTF::HandleObjectiveComplete(std::list<Player*> players, uint32 uiEv
 }
 
 // process the capture events
-void WorldPvPTF::ProcessEvent(GameObject* pGo, uint32 uiEventId)
+void WorldPvPTF::ProcessEvent(uint32 uiEventId, GameObject* pGo)
 {
     // No events during the lock timer
     if (m_uiZoneLockTimer)

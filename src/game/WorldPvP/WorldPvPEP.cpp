@@ -65,7 +65,7 @@ void WorldPvPEP::SendRemoveWorldStates(Player* pPlayer)
 
 void WorldPvPEP::UpdateWorldState()
 {
-    // update only tower count; tower states is updated in the process event
+    // update only tower count; tower states are sent in the process event
     SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_ALY, m_uiTowersAlly);
     SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HORDE, m_uiTowersHorde);
 }
@@ -165,7 +165,7 @@ void WorldPvPEP::OnGameObjectCreate(GameObject* pGo)
     }
 }
 
-void WorldPvPEP::HandleObjectiveComplete(std::list<Player*> players, uint32 uiEventId, Team faction)
+void WorldPvPEP::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team faction)
 {
     uint32 uiCredit = 0;
 
@@ -203,7 +203,7 @@ void WorldPvPEP::HandleObjectiveComplete(std::list<Player*> players, uint32 uiEv
 }
 
 // process the capture events
-void WorldPvPEP::ProcessEvent(GameObject* pGo, uint32 uiEventId)
+void WorldPvPEP::ProcessEvent(uint32 uiEventId, GameObject* pGo)
 {
     for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
     {

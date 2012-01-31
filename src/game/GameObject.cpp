@@ -2090,7 +2090,7 @@ void GameObject::TickCapturePoint()
 
         // handle objective complete
         if (m_captureState == CAPTURE_STATE_NEUTRAL)
-            sWorldPvPMgr.HandleObjectiveComplete(capturingPlayers, eventId, progressFaction);
+            sWorldPvPMgr.HandleObjectiveComplete(eventId, capturingPlayers, progressFaction);
 
         // set capture state to alliance
         m_captureState = CAPTURE_STATE_PROGRESS_ALLIANCE;
@@ -2102,7 +2102,7 @@ void GameObject::TickCapturePoint()
 
         // handle objective complete
         if (m_captureState == CAPTURE_STATE_NEUTRAL)
-            sWorldPvPMgr.HandleObjectiveComplete(capturingPlayers, eventId, progressFaction);
+            sWorldPvPMgr.HandleObjectiveComplete(eventId, capturingPlayers, progressFaction);
 
         // set capture state to horde
         m_captureState = CAPTURE_STATE_PROGRESS_HORDE;
@@ -2140,7 +2140,7 @@ void GameObject::TickCapturePoint()
     {
         // send zone script
         if (m_zoneScript)
-            m_zoneScript->ProcessEvent(this, eventId);
+            m_zoneScript->ProcessEvent(eventId, this);
 
         // Send script event to SD2 and database as well - this can be used for summoning creatures, casting specific spells or spawning GOs
         if (!sScriptMgr.OnProcessEvent(eventId, this, this, true))

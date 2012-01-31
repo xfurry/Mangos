@@ -82,7 +82,7 @@ void WorldPvPNA::HandlePlayerLeaveZone(Player* pPlayer)
     WorldPvP::HandlePlayerLeaveZone(pPlayer);
 }
 
-void WorldPvPNA::HandleObjectiveComplete(std::list<Player*> players, uint32 uiEventId, Team faction)
+void WorldPvPNA::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team faction)
 {
     if (uiEventId == EVENT_HALAA_BANNER_WIN_ALLIANCE || uiEventId == EVENT_HALAA_BANNER_WIN_HORDE)
     {
@@ -296,7 +296,7 @@ void WorldPvPNA::UpdateWyvernsWorldState(uint8 uiValue)
 }
 
 // process the capture events
-void WorldPvPNA::ProcessEvent(GameObject* pGo, uint32 uiEventId)
+void WorldPvPNA::ProcessEvent(uint32 uiEventId, GameObject* pGo)
 {
     // If we are not using the Halaa banner return
     if (pGo->GetEntry() != GO_HALAA_BANNER)

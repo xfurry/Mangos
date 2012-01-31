@@ -47,7 +47,7 @@ class ZoneScript
         //virtual void SetData(uint32 /*DataId*/, uint32 /*Value*/) {}
 
         // Process Capture event
-        virtual void ProcessEvent(GameObject* pGo, uint32 uiEventId) {}
+        virtual void ProcessEvent(uint32 uiEventId, GameObject* pGo) {}
 };
 
 #endif

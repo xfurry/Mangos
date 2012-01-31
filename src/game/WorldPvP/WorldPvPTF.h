@@ -167,11 +167,11 @@ class WorldPvPTF : public WorldPvP
         bool InitWorldPvPArea();
 
         void OnGameObjectCreate(GameObject* pGo);
-        void ProcessEvent(GameObject* pGo, uint32 uiEventId);
+        void ProcessEvent(uint32 uiEventId, GameObject* pGo);
 
         void HandlePlayerEnterZone(Player* pPlayer);
         void HandlePlayerLeaveZone(Player* pPlayer);
-        void HandleObjectiveComplete(std::list<Player*> players, uint32 uiEventId, Team faction);
+        void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team faction);
 
         void Update(uint32 diff);
 

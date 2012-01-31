@@ -140,7 +140,7 @@ class WorldPvPZM : public WorldPvP
 
         void OnCreatureCreate(Creature* pCreature);
         void OnGameObjectCreate(GameObject* pGo);
-        void ProcessEvent(GameObject* pGo, uint32 uiEventId);
+        void ProcessEvent(uint32 uiEventId, GameObject* pGo);
 
         void HandlePlayerEnterZone(Player* pPlayer);
         void HandlePlayerLeaveZone(Player* pPlayer);

@@ -89,7 +89,7 @@ void WorldPvPGH::OnGameObjectCreate(GameObject* pGo)
 }
 
 // process the capture events
-void WorldPvPGH::ProcessEvent(GameObject* pGo, uint32 uiEventId)
+void WorldPvPGH::ProcessEvent(uint32 uiEventId, GameObject* pGo)
 {
     // If we are not using the lighthouse return
     if (pGo->GetEntry() != GO_VENTURE_BAY_LIGHTHOUSE)
@@ -167,7 +167,7 @@ void WorldPvPGH::DoRespawnSoldiers(GameObject* pGoReference, Team faction)
     }
 }
 
-void WorldPvPHP::SetBannerArtKit(GameObject* pGo, uint32 uiArtkit)
+void WorldPvPGH::SetBannerArtKit(GameObject* pGo, uint32 uiArtkit)
 {
     pGo->SetGoArtKit(uiArtkit);
     pGo->Refresh();

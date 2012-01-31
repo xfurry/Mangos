@@ -210,7 +210,7 @@ void WorldPvPZM::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
 }
 
 // process the capture events
-void WorldPvPZM::ProcessEvent(GameObject* pGo, uint32 uiEventId)
+void WorldPvPZM::ProcessEvent(uint32 uiEventId, GameObject* pGo)
 {
     for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
     {

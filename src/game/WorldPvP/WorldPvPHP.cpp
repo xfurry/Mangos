@@ -136,7 +136,7 @@ void WorldPvPHP::OnGameObjectCreate(GameObject* pGo)
     }
 }
 
-void WorldPvPHP::HandleObjectiveComplete(std::list<Player*> players, uint32 uiEventId, Team faction)
+void WorldPvPHP::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team faction)
 {
     uint32 uiCredit = 0;
 
@@ -193,7 +193,7 @@ void WorldPvPHP::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
 }
 
 // process the capture events
-void WorldPvPHP::ProcessEvent(GameObject* pGo, uint32 uiEventId)
+void WorldPvPHP::ProcessEvent(uint32 uiEventId, GameObject* pGo)
 {
     for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
     {
