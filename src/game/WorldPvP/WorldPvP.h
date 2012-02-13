@@ -41,41 +41,6 @@ enum WorldPvPTypes
     WORLD_PVP_TYPE_GH,
 };
 
-enum WorldStateType
-{
-    WORLD_STATE_REMOVE                      = 0,
-    WORLD_STATE_ADD                         = 1
-};
-
-enum GameObjectArtKits
-{
-    GO_ARTKIT_BANNER_ALLIANCE               = 2,
-    GO_ARTKIT_BANNER_HORDE                  = 1,
-    GO_ARTKIT_BANNER_NEUTRAL                = 21,
-};
-
-enum CapturePointState
-{
-    CAPTURE_STATE_NEUTRAL = 0,
-    CAPTURE_STATE_PROGRESS_ALLIANCE,
-    CAPTURE_STATE_PROGRESS_HORDE,
-    CAPTURE_STATE_CONTEST_ALLIANCE,
-    CAPTURE_STATE_CONTEST_HORDE,
-    CAPTURE_STATE_WIN_ALLIANCE,
-    CAPTURE_STATE_WIN_HORDE
-};
-
-enum CapturePointSlider
-{
-    CAPTURE_SLIDER_ALLIANCE         = 100,                  // full alliance
-    CAPTURE_SLIDER_HORDE            = 0,                    // full horde
-    CAPTURE_SLIDER_NEUTRAL          = 50,                   // middle
-
-    CAPTURE_SLIDER_RESET            = -1,                   // used to store additional information
-    CAPTURE_SLIDER_ALLIANCE_LOCKED  = -2,
-    CAPTURE_SLIDER_HORDE_LOCKED     = -3
-};
-
 typedef std::set<Player*> PlayerSet;
 
 class WorldPvP : public ZoneScript

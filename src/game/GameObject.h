@@ -24,7 +24,6 @@
 #include "Object.h"
 #include "LootMgr.h"
 #include "Database/DatabaseEnv.h"
-#include "WorldPvP/WorldPvPMgr.h"
 
 // GCC have alternative #pragma pack(N) syntax and old gcc version not support pack(push,N), also any gcc version not support it at some platform
 #if defined( __GNUC__ )
@@ -594,6 +593,43 @@ enum LootState
     GO_READY,                                               // can be ready but despawned, and then not possible activate until spawn
     GO_ACTIVATED,
     GO_JUST_DEACTIVATED
+};
+
+// TODO: Move this somewhere else or dont use an enum for that (though makes it easier to read the code)
+enum WorldStateType
+{
+    WORLD_STATE_REMOVE              = 0,
+    WORLD_STATE_ADD                 = 1
+};
+
+enum CapturePointState
+{
+    CAPTURE_STATE_NEUTRAL = 0,
+    CAPTURE_STATE_PROGRESS_ALLIANCE,
+    CAPTURE_STATE_PROGRESS_HORDE,
+    CAPTURE_STATE_CONTEST_ALLIANCE,
+    CAPTURE_STATE_CONTEST_HORDE,
+    CAPTURE_STATE_WIN_ALLIANCE,
+    CAPTURE_STATE_WIN_HORDE
+};
+
+enum CapturePointSlider
+{
+    CAPTURE_SLIDER_ALLIANCE         = 100,                  // full alliance
+    CAPTURE_SLIDER_HORDE            = 0,                    // full horde
+    CAPTURE_SLIDER_NEUTRAL          = 50,                   // middle
+
+    CAPTURE_SLIDER_RESET            = -1,                   // used to store additional information
+    CAPTURE_SLIDER_ALLIANCE_LOCKED  = -2,
+    CAPTURE_SLIDER_HORDE_LOCKED     = -3
+};
+
+// TODO: Either only set artkits in gameobject code or outdoor pvp scripts (now we initially set them in gameobject and change them in scripts)
+enum GameObjectArtKits
+{
+    GO_ARTKIT_BANNER_ALLIANCE               = 2,
+    GO_ARTKIT_BANNER_HORDE                  = 1,
+    GO_ARTKIT_BANNER_NEUTRAL                = 21,
 };
 
 class Unit;
