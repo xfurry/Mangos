@@ -36,6 +36,7 @@
 #include "MapPersistentStateMgr.h"
 #include "BattleGround.h"
 #include "BattleGroundAV.h"
+#include "WorldPvP/WorldPvPMgr.h"
 #include "Util.h"
 #include "ScriptMgr.h"
 #include <G3D/Quat.h>
