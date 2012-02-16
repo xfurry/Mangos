@@ -43,7 +43,7 @@ enum
 
     // timers
     TIMER_TF_LOCK_TIME                      = 6 * HOUR * IN_MILLISECONDS,
-    TIMER_TF_UPDATE_TIME                    = 15000,
+    TIMER_TF_UPDATE_TIME                    = MINUTE * IN_MILLISECONDS,
 
     // quests
     QUEST_SPIRITS_OF_AUCHINDOUM_ALLIANCE    = 11505,

@@ -50,10 +50,12 @@ INSERT INTO `mangos_string` (`entry`, `content_default`) VALUES
 (10034,'|cffffff00The Alliance has taken control of the East Beacon!|r'),
 -- '|cffffff00The Horde has taken control of both beacons!|r'
 -- '|cffffff00The Alliance has taken control of both beacons!|r'
--- '|cffffff00The Horde Field Scout is now issuing battle standards.|r'
+-- '|cffffff00The Horde Field Scout is now issuing battle standards.|r' -- right after 'both beacons' message
 -- '|cffffff00The Alliance Field Scout is now issuing battle standards.|r'
 (10035,'|cffffff00The Horde has taken control of Twin Spire Ruins!|r'),
 (10036,'|cffffff00The Alliance has taken control of Twin Spire Ruins!|r'), -- SMSG_PLAY_SOUND id 8173, from npc 15384 (npc id may be a parsing error, but unlikely)
+
+-- following might not exist (not confirmed)
 (10037,'The Horde lost the West Beacon!'),
 (10038,'The Alliance lost the West Beacon!'),
 (10039,'The Horde lost the East Beacon!'),
@@ -62,13 +64,21 @@ INSERT INTO `mangos_string` (`entry`, `content_default`) VALUES
 (10042,'The Alliance lost the Twin Spire Graveyard!'),
 
 -- nagrand
-(10043,'The Horde has captured Halaa!'),
-(10044,'The Alliance has captured Halaa!'),
+-- '|cffffff00The Horde is gaining control of Halaa!|r' -- at 51 % (progress event)
+-- '|cffffff00The Alliance is gaining control of Halaa!|r'
+(10043,'|cffffff00The Horde has taken control of Halaa!|r'),
+(10044,'|cffffff00The Alliance has taken control of Halaa!|r'),
+
+-- following might not exist (not confirmed)
 (10045,'The Horde lost Halaa!'),
 (10046,'The Alliance lost Halaa!'),
 
 -- terokkar forest
-(10047,'The Horde has taken a Spirit Tower!'),
-(10048,'The Alliance has taken a Spirit Tower!'),
+(10047,'|cffffff00The Horde has taken control of a Spirit Tower!|r'),
+(10048,'|cffffff00The Alliance has taken control of a Spirit Tower!|r'),
+-- '|cffffff00The Alliance has taken control of The Bone Wastes!|r'
+-- '|cffffff00The Horde has taken control of The Bone Wastes!|r'
+
+-- following might not exist (not confirmed)
 (10049,'The Horde lost a Spirit Tower!'),
 (10050,'The Alliance lost a Spirit Tower!');
