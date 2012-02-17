@@ -189,9 +189,9 @@ class WorldPvPTF : public WorldPvP
         void ResetTower(uint8 uiTowerId);
 
         uint32 m_uiTowerWorldState[MAX_TF_TOWERS];
-        uint32 m_uiTowerController[MAX_TF_TOWERS];
+        uint32 m_uiTowerOwner[MAX_TF_TOWERS];
 
-        Team m_uiZoneController;
+        Team m_uiZoneOwner;
         uint32 m_uiControllerWorldState;
 
         uint32 m_uiZoneLockTimer;

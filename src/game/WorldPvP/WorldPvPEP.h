@@ -259,27 +259,25 @@ class WorldPvPEP : public WorldPvP
     private:
         // update world state
         void UpdateWorldState();
-        // process capture events
-        void ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint32 uiTower);
 
-        // set banners artkit - from a specific tower
-        void SetBannersArtKit(std::list<ObjectGuid> lBannersGuids, uint32 uiArtKit);
+        // process capture events
+        void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team faction, uint32 uiNewWorldState);
 
         // plaguewood bonus - flightmaster
-        void DoSummonFlightMasterIfCan(Team faction);
-        void DoUnsummonFlightMaster();
+        void SummonFlightMaster(WorldObject* objRef, Team faction);
+        void UnsummonFlightMaster(const WorldObject* objRef);
 
         // eastwall bonus - soldiers
-        void DoSummonSoldiersIfCan(Team faction);
-        void DoUnsummonSoldiers();
+        void SummonSoldiers(WorldObject* objRef, Team faction);
+        void UnsummonSoldiers(const WorldObject* objRef);
 
         // northpass bonus - shrine
-        void DoUpdateShrine(ObjectGuid uiShrineGuid, bool bRemove = false);
+        void UpdateShrine(const WorldObject* objRef, ObjectGuid uiShrineGuid, bool bRemove = false);
 
         // crownguard bonus - graveyard
-        void DoSetGraveyard(Team faction, bool bRemove = false);
+        void SetGraveyard(Team faction, bool bRemove = false);
 
-        Team m_uiTowerController[MAX_EP_TOWERS];
+        Team m_uiTowerOwner[MAX_EP_TOWERS];
         uint32 m_uiTowerWorldState[MAX_EP_TOWERS];
         uint32 m_uiTowersAlliance;
         uint32 m_uiTowersHorde;

@@ -423,7 +423,7 @@ void GameObject::Update(uint32 update_diff, uint32 /*p_time*/)
                     for (GuidsSet::const_iterator itr = m_UniqueUsers.begin(); itr != m_UniqueUsers.end(); ++itr)
                     {
                         if (Player* owner = GetMap()->GetPlayer(*itr))
-                            owner->SendUpdateWorldState(info->capturePoint.worldState1, WORLD_STATE_REMOVE);
+                            owner->SendUpdateWorldState(GetGOInfo()->capturePoint.worldState1, WORLD_STATE_REMOVE);
                     }
 
                     m_UniqueUsers.clear();

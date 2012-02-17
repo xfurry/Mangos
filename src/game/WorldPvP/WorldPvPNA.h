@@ -185,7 +185,7 @@ class WorldPvPNA : public WorldPvP
         bool HandlePlayerTaxiDrive(Player* pPlayer, uint8 uiPos);
 
         // Link graveyard on Halaa
-        void DoSetGraveyard(Team faction, bool bRemove = false);
+        void SetGraveyard(Team faction, bool bRemove = false);
 
         // process capture events
         void ProcessCaptureEvent(Team faction);
@@ -201,7 +201,7 @@ class WorldPvPNA : public WorldPvP
         void LockHalaa(Team faction);
         void UnlockHalaa(Team faction);
 
-        Team m_uiZoneController;
+        Team m_uiZoneOwner;
         uint32 m_uiControllerWorldState;
         uint32 m_uiControllerMapState;
         uint32 m_uiRoostWorldState[MAX_NA_ROOSTS];

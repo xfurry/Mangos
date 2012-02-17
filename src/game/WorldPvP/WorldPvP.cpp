@@ -138,3 +138,15 @@ Player* WorldPvP::GetPlayerInZone(bool bOnlyAlive /*=false*/, bool bCanBeGamemas
 
     return NULL;
 }
+
+void WorldPvP::SetBannerArtKit(const WorldObject* objRef, ObjectGuid bannerGuid, uint32 artkit)
+{
+    if (GameObject* pBanner = objRef->GetMap()->GetGameObject(bannerGuid))
+        SetBannerArtKit(pBanner, artkit);
+}
+
+void WorldPvP::SetBannerArtKit(GameObject* go, uint32 artkit)
+{
+    go->SetGoArtKit(artkit);
+    go->Refresh();
+}

@@ -201,9 +201,12 @@ void WorldPvPZM::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
                 continue;
 
             // check banner faction
-            if (pBanner->GetCaptureState() == ALLIANCE && pPlayer->GetTeam() == ALLIANCE)
+            CapturePointState towerState = pBanner->GetCaptureState();
+            if ((towerState == CAPTURE_STATE_PROGRESS_ALLIANCE || towerState == CAPTURE_STATE_CONTEST_ALLIANCE || towerState == CAPTURE_STATE_WIN_ALLIANCE) &&
+                pPlayer->GetTeam() == ALLIANCE)
                 pPlayer->CastSpell(pPlayer, SPELL_ZANGA_TOWER_TOKEN_ALLIANCE, true);
-            else if (pBanner->GetCaptureState() == HORDE && pPlayer->GetTeam() == HORDE)
+            else if ((towerState == CAPTURE_STATE_PROGRESS_HORDE || towerState == CAPTURE_STATE_CONTEST_HORDE || towerState == CAPTURE_STATE_WIN_HORDE) &&
+                pPlayer->GetTeam() == HORDE)
                 pPlayer->CastSpell(pPlayer, SPELL_ZANGA_TOWER_TOKEN_HORDE, true);
         }
     }
@@ -263,7 +266,7 @@ void WorldPvPZM::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint3
                 }
             }
 
-            // send new tower state
+            // update tower state
             m_uiBeaconController[i] = faction;
             m_uiBeaconWorldState[i] = uiNewWorldState;
             m_uiBeaconMapState[i] = uiNewMapState;
@@ -366,13 +369,13 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 
             // remove buff and graveyard from alliance
             DoProcessTeamBuff(ALLIANCE, SPELL_TWIN_SPIRE_BLESSING, true);
-            DoSetGraveyard(ALLIANCE, true);
+            SetGraveyard(ALLIANCE, true);
 
             // add the buff and the graveyard to horde
             m_uiGraveyardWorldState = WORLD_STATE_GRAVEYARD_HORDE;
             SendUpdateWorldState(m_uiGraveyardWorldState, WORLD_STATE_ADD);
             DoProcessTeamBuff(HORDE, SPELL_TWIN_SPIRE_BLESSING);
-            DoSetGraveyard(HORDE);
+            SetGraveyard(HORDE);
 
             // reset scout and remove player aura
             DoResetScouts(HORDE);
@@ -396,13 +399,13 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 
             // remove buff and graveyard from alliance
             DoProcessTeamBuff(HORDE, SPELL_TWIN_SPIRE_BLESSING, true);
-            DoSetGraveyard(HORDE, true);
+            SetGraveyard(HORDE, true);
 
             // add the buff and the graveyard to horde
             m_uiGraveyardWorldState = WORLD_STATE_GRAVEYARD_ALLIANCE;
             SendUpdateWorldState(m_uiGraveyardWorldState, WORLD_STATE_ADD);
             DoProcessTeamBuff(ALLIANCE, SPELL_TWIN_SPIRE_BLESSING);
-            DoSetGraveyard(ALLIANCE);
+            SetGraveyard(ALLIANCE);
 
             // reset scout and remove player aura
             DoResetScouts(ALLIANCE);
@@ -426,7 +429,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
                 // add the buff and the graveyard to horde
                 m_uiGraveyardWorldState = WORLD_STATE_GRAVEYARD_ALLIANCE;
                 DoProcessTeamBuff(ALLIANCE, SPELL_TWIN_SPIRE_BLESSING);
-                DoSetGraveyard(ALLIANCE);
+                SetGraveyard(ALLIANCE);
 
                 // reset scout and remove player aura
                 DoResetScouts(ALLIANCE);
@@ -444,7 +447,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
                 // add the buff and the graveyard to horde
                 m_uiGraveyardWorldState = WORLD_STATE_GRAVEYARD_HORDE;
                 DoProcessTeamBuff(HORDE, SPELL_TWIN_SPIRE_BLESSING);
-                DoSetGraveyard(HORDE);
+                SetGraveyard(HORDE);
 
                 // reset scout and remove player aura
                 DoResetScouts(HORDE);
@@ -463,7 +466,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
     return false;
 }
 
-void WorldPvPZM::DoSetGraveyard(Team faction, bool bRemove)
+void WorldPvPZM::SetGraveyard(Team faction, bool bRemove)
 {
     if (bRemove)
         sObjectMgr.RemoveGraveYardLink(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, faction, false);

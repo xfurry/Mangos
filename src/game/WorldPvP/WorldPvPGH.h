@@ -69,12 +69,10 @@ class WorldPvPGH : public WorldPvP
     private:
         // respawn faction soldiers
         void DoRespawnSoldiers(GameObject* pGoReference, Team faction);
-        // set banner artkit
-        void SetBannerArtKit(GameObject* pGo, uint32 uiArtkit);
 
         ObjectGuid m_TowerBannerLighthouseGuid;
 
-        Team m_uiZoneController;
+        Team m_uiZoneOwner;
 
         std::list<ObjectGuid> lAllianceSoldiers;
         std::list<ObjectGuid> lHordeSoldiers;

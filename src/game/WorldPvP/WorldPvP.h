@@ -89,6 +89,11 @@ class WorldPvP : public ZoneScript
 
         // Get a Player from the zone
         Player* GetPlayerInZone(bool bOnlyAlive = false, bool bCanBeGamemaster = true);
+
+        // set banners artkit
+        void SetBannerArtKit(const WorldObject* objRef, ObjectGuid bannerGuid, uint32 artkit);
+        void SetBannerArtKit(GameObject* go, uint32 artkit);
+
     protected:
         // Player related stuff
         virtual void HandlePlayerEnterZone(Player* pPlayer);

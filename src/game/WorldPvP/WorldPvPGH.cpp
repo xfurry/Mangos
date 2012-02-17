@@ -21,7 +21,7 @@
 
 
 WorldPvPGH::WorldPvPGH() : WorldPvP(),
-    m_uiZoneController(TEAM_NONE)
+    m_uiZoneOwner(TEAM_NONE)
 {
     m_uiTypeId = WORLD_PVP_TYPE_GH;
 }
@@ -40,7 +40,7 @@ void WorldPvPGH::OnCreatureCreate(Creature* pCreature)
         case NPC_WESTFALL_BRIGADE_DEFENDER:
         case NPC_COMMANDER_HOWSER:
             lAllianceSoldiers.push_back(pCreature->GetObjectGuid());
-            if (m_uiZoneController == ALLIANCE)
+            if (m_uiZoneOwner == ALLIANCE)
                 return;
             break;
         case NPC_BLACKSMITH_JASON_RIGGINS:
@@ -50,13 +50,13 @@ void WorldPvPGH::OnCreatureCreate(Creature* pCreature)
             // check the zone id because the horses can be found in other areas too
             if (pCreature->GetZoneId() == ZONE_ID_GRIZZLY_HILLS)
                 lAllianceVendors.push_back(pCreature->GetObjectGuid());
-            if (m_uiZoneController == ALLIANCE)
+            if (m_uiZoneOwner == ALLIANCE)
                 return;
             break;
         case NPC_CONQUEST_HOLD_DEFENDER:
         case NPC_GENERAL_GORLOK:
             lHordeSoldiers.push_back(pCreature->GetObjectGuid());
-            if (m_uiZoneController == HORDE)
+            if (m_uiZoneOwner == HORDE)
                 return;
             break;
         case NPC_BLACKSMITH_KOLOTH:
@@ -66,7 +66,7 @@ void WorldPvPGH::OnCreatureCreate(Creature* pCreature)
             // check the zone id because the wolfs can be found in other areas too
             if (pCreature->GetZoneId() == ZONE_ID_GRIZZLY_HILLS)
                 lHordeVendors.push_back(pCreature->GetObjectGuid());
-            if (m_uiZoneController == HORDE)
+            if (m_uiZoneOwner == HORDE)
                 return;
             break;
 
@@ -100,12 +100,12 @@ void WorldPvPGH::ProcessEvent(uint32 uiEventId, GameObject* pGo)
         case EVENT_LIGHTHOUSE_WIN_ALLIANCE:
             // Spawn the npcs only when the tower is fully controlled
             DoRespawnSoldiers(pGo, ALLIANCE);
-            m_uiZoneController = ALLIANCE;
+            m_uiZoneOwner = ALLIANCE;
             break;
         case EVENT_LIGHTHOUSE_WIN_HORDE:
             // Spawn the npcs only when the tower is fully controlled
             DoRespawnSoldiers(pGo, HORDE);
-            m_uiZoneController = HORDE;
+            m_uiZoneOwner = HORDE;
             break;
         case EVENT_LIGHTHOUSE_PROGRESS_ALLIANCE:
             SetBannerArtKit(pGo, GO_ARTKIT_BANNER_ALLIANCE);
@@ -116,7 +116,7 @@ void WorldPvPGH::ProcessEvent(uint32 uiEventId, GameObject* pGo)
         case EVENT_LIGHTHOUSE_NEUTRAL_ALLIANCE:
         case EVENT_LIGHTHOUSE_NEUTRAL_HORDE:
             SetBannerArtKit(pGo, GO_ARTKIT_BANNER_NEUTRAL);
-            m_uiZoneController = TEAM_NONE;
+            m_uiZoneOwner = TEAM_NONE;
             break;
     }
 }
@@ -165,10 +165,4 @@ void WorldPvPGH::DoRespawnSoldiers(GameObject* pGoReference, Team faction)
                 pSoldier->Respawn();
         }
     }
-}
-
-void WorldPvPGH::SetBannerArtKit(GameObject* pGo, uint32 uiArtkit)
-{
-    pGo->SetGoArtKit(uiArtkit);
-    pGo->Refresh();
 }
