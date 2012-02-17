@@ -99,12 +99,12 @@ void WorldPvPGH::ProcessEvent(uint32 uiEventId, GameObject* pGo)
     {
         case EVENT_LIGHTHOUSE_WIN_ALLIANCE:
             // Spawn the npcs only when the tower is fully controlled
-            DoRespawnSoldiers(pGo, ALLIANCE);
+            RespawnSoldiers(pGo, ALLIANCE);
             m_uiZoneOwner = ALLIANCE;
             break;
         case EVENT_LIGHTHOUSE_WIN_HORDE:
             // Spawn the npcs only when the tower is fully controlled
-            DoRespawnSoldiers(pGo, HORDE);
+            RespawnSoldiers(pGo, HORDE);
             m_uiZoneOwner = HORDE;
             break;
         case EVENT_LIGHTHOUSE_PROGRESS_ALLIANCE:
@@ -121,7 +121,7 @@ void WorldPvPGH::ProcessEvent(uint32 uiEventId, GameObject* pGo)
     }
 }
 
-void WorldPvPGH::DoRespawnSoldiers(GameObject* pGoReference, Team faction)
+void WorldPvPGH::RespawnSoldiers(GameObject* pGoReference, Team faction)
 {
     if (faction == ALLIANCE)
     {

@@ -94,7 +94,7 @@ class WorldPvPSI : public WorldPvP
     private:
         uint32 m_uiResourcesAlliance;
         uint32 m_uiResourcesHorde;
-        uint32 m_uiLastControllerTeam;
+        uint32 m_uiZoneOwner;
 };
 
 #endif

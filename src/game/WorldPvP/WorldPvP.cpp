@@ -127,18 +127,6 @@ void WorldPvP::DoProcessTeamBuff(Team faction, uint32 uiSpellId, bool bRemove)
     }
 }
 
-/// Get the first found Player* (with requested properties) in the zone. Can return NULL.
-Player* WorldPvP::GetPlayerInZone(bool bOnlyAlive /*=false*/, bool bCanBeGamemaster /*=true*/)
-{
-    for (PlayerSet::iterator itr = m_sZonePlayers.begin(); itr != m_sZonePlayers.end(); ++itr)
-    {
-        if ((*itr) && (!bOnlyAlive || (*itr)->isAlive()) && (bCanBeGamemaster || !(*itr)->isGameMaster()))
-            return (*itr);
-    }
-
-    return NULL;
-}
-
 void WorldPvP::SetBannerArtKit(const WorldObject* objRef, ObjectGuid bannerGuid, uint32 artkit)
 {
     if (GameObject* pBanner = objRef->GetMap()->GetGameObject(bannerGuid))

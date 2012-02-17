@@ -21,7 +21,7 @@
 
 
 WorldPvPTF::WorldPvPTF() : WorldPvP(),
-    m_uiControllerWorldState(WORLD_STATE_TF_TOWERS_CONTROLLED),
+    m_uiZoneWorldState(WORLD_STATE_TF_TOWERS_CONTROLLED),
     m_uiZoneOwner(TEAM_NONE),
     m_uiZoneUpdateTimer(TIMER_TF_UPDATE_TIME),
     m_uiZoneLockTimer(0),
@@ -53,8 +53,8 @@ bool WorldPvPTF::InitWorldPvPArea()
 
 void WorldPvPTF::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
-    FillInitialWorldState(data, count, m_uiControllerWorldState, WORLD_STATE_ADD);
-    if (m_uiControllerWorldState == WORLD_STATE_TF_TOWERS_CONTROLLED)
+    FillInitialWorldState(data, count, m_uiZoneWorldState, WORLD_STATE_ADD);
+    if (m_uiZoneWorldState == WORLD_STATE_TF_TOWERS_CONTROLLED)
     {
         FillInitialWorldState(data, count, WORLD_STATE_TF_TOWER_COUNT_H, m_uiTowersHorde);
         FillInitialWorldState(data, count, WORLD_STATE_TF_TOWER_COUNT_A, m_uiTowersAlliance);
@@ -68,7 +68,7 @@ void WorldPvPTF::FillInitialWorldStates(WorldPacket& data, uint32& count)
 
 void WorldPvPTF::SendRemoveWorldStates(Player* pPlayer)
 {
-    pPlayer->SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_REMOVE);
+    pPlayer->SendUpdateWorldState(m_uiZoneWorldState, WORLD_STATE_REMOVE);
 
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
         pPlayer->SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVE);
@@ -77,7 +77,7 @@ void WorldPvPTF::SendRemoveWorldStates(Player* pPlayer)
 void WorldPvPTF::UpdateWorldState(uint8 uiValue)
 {
     // update only tower count; tower states are sent in the process event
-    SendUpdateWorldState(m_uiControllerWorldState, uiValue);
+    SendUpdateWorldState(m_uiZoneWorldState, uiValue);
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
         SendUpdateWorldState(m_uiTowerWorldState[i], uiValue);
 }
@@ -177,7 +177,7 @@ void WorldPvPTF::ProcessEvent(uint32 uiEventId, GameObject* pGo)
             {
                 if (uiEventId == aTerokkarTowerEvents[i][j].uiEventEntry && aTerokkarTowerEvents[i][j].faction != m_uiTowerOwner[i])
                 {
-                    ProcessCaptureEvent(aTerokkarTowerEvents[i][j].faction, aTerokkarTowerEvents[i][j].uiWorldState, i);
+                    ProcessCaptureEvent(pGo, i, aTerokkarTowerEvents[i][j].faction, aTerokkarTowerEvents[i][j].uiWorldState);
                     sWorld.SendZoneText(ZONE_ID_TEROKKAR, sObjectMgr.GetMangosStringForDBCLocale(aTerokkarTowerEvents[i][j].uiZoneText));
                     break;
                 }
@@ -186,78 +186,60 @@ void WorldPvPTF::ProcessEvent(uint32 uiEventId, GameObject* pGo)
     }
 }
 
-void WorldPvPTF::ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint32 uiTower)
+void WorldPvPTF::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team faction, uint32 uiNewWorldState)
 {
-    for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
+    if (faction != TEAM_NONE)
     {
-        if (uiTower == i)
+        if (faction == ALLIANCE)
         {
-            // remove old tower state
-            SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVE);
+            SetBannerArtKit(pGo, GO_ARTKIT_BANNER_ALLIANCE);
+            ++m_uiTowersAlliance;
+        }
+        else
+        {
+            SetBannerArtKit(pGo, GO_ARTKIT_BANNER_HORDE);
+            ++m_uiTowersHorde;
+        }
 
-            if (faction != TEAM_NONE)
-            {
-                SetBannerArtKit(m_TowerBannerGUID[i], faction == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+        // if all towers are captured then process event
+        if (m_uiTowersAlliance == MAX_TF_TOWERS || m_uiTowersHorde == MAX_TF_TOWERS)
+        {
+            SendUpdateWorldState(m_uiZoneWorldState, WORLD_STATE_REMOVE);
+            m_uiZoneWorldState = faction == ALLIANCE ? WORLD_STATE_TF_LOCKED_ALLIANCE : WORLD_STATE_TF_LOCKED_HORDE;
+            SendUpdateWorldState(m_uiZoneWorldState, WORLD_STATE_ADD);
 
-                if (faction == ALLIANCE)
-                    ++m_uiTowersAlliance;
-                else
-                    ++m_uiTowersHorde;
-            }
-            else
-            {
-                SetBannerArtKit(m_TowerBannerGUID[i], GO_ARTKIT_BANNER_NEUTRAL);
+            m_uiZoneLockTimer = TIMER_TF_LOCK_TIME;
+            UpdateTimerWorldState();
 
-                if (m_uiTowerOwner[i] == ALLIANCE)
-                    --m_uiTowersAlliance;
-                else
-                    --m_uiTowersHorde;
-            }
+            m_uiZoneOwner = faction;
+            DoProcessTeamBuff(faction, SPELL_AUCHINDOUN_BLESSING);
 
-            // update tower state
-            m_uiTowerOwner[i] = faction;
-            m_uiTowerWorldState[i] = uiNewWorldState;
-            SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_ADD);
+            // lock the towers
+            LockTowers(pGo, faction);
         }
     }
+    else
+    {
+        SetBannerArtKit(pGo, GO_ARTKIT_BANNER_NEUTRAL);
 
-    // update towers count
+        if (m_uiTowerOwner[uiTowerId] == ALLIANCE)
+            --m_uiTowersAlliance;
+        else
+            --m_uiTowersHorde;
+    }
+
+    // update tower state
+    SendUpdateWorldState(m_uiTowerWorldState[uiTowerId], WORLD_STATE_REMOVE);
+    m_uiTowerWorldState[uiTowerId] = uiNewWorldState;
+    SendUpdateWorldState(m_uiTowerWorldState[uiTowerId], WORLD_STATE_ADD);
+
+    // update tower count
     SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_A, m_uiTowersAlliance);
     SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_H, m_uiTowersHorde);
 
-    // If all towers are captured then process event
-    if (m_uiTowersAlliance == MAX_TF_TOWERS)
-    {
-        SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_REMOVE);
-        m_uiControllerWorldState = WORLD_STATE_TF_LOCKED_ALLIANCE;
-        SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_ADD);
+    // update tower owner
+    m_uiTowerOwner[uiTowerId] = faction;
 
-        m_uiZoneLockTimer = TIMER_TF_LOCK_TIME;
-        UpdateTimerWorldState();
-
-        m_uiZoneOwner = ALLIANCE;
-        DoProcessTeamBuff(ALLIANCE, SPELL_AUCHINDOUN_BLESSING);
-
-        // lock the towers
-        for (uint8 i = 0; i < MAX_TF_TOWERS; i++)
-            LockTower(aTerokkarTowers[i], ALLIANCE);
-    }
-    else if (m_uiTowersHorde == MAX_TF_TOWERS)
-    {
-        SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_REMOVE);
-        m_uiControllerWorldState = WORLD_STATE_TF_LOCKED_HORDE;
-        SendUpdateWorldState(m_uiControllerWorldState, WORLD_STATE_ADD);
-
-        m_uiZoneLockTimer = TIMER_TF_LOCK_TIME;
-        UpdateTimerWorldState();
-
-        m_uiZoneOwner = HORDE;
-        DoProcessTeamBuff(HORDE, SPELL_AUCHINDOUN_BLESSING);
-
-        // lock the towers
-        for (uint8 i = 0; i < MAX_TF_TOWERS; i++)
-            LockTower(aTerokkarTowers[i], HORDE);
-    }
 }
 
 void WorldPvPTF::Update(uint32 diff)
@@ -267,13 +249,12 @@ void WorldPvPTF::Update(uint32 diff)
         if (m_uiZoneLockTimer < diff)
         {
             // remove buffs
-            DoProcessTeamBuff(ALLIANCE, SPELL_AUCHINDOUN_BLESSING, true);
-            DoProcessTeamBuff(HORDE, SPELL_AUCHINDOUN_BLESSING, true);
+            DoProcessTeamBuff(m_uiZoneOwner, SPELL_AUCHINDOUN_BLESSING, true);
 
             // reset world states and towers
-            UpdateWorldState(0);
+            UpdateWorldState(WORLD_STATE_REMOVE);
             m_uiZoneOwner = TEAM_NONE;
-            m_uiControllerWorldState = WORLD_STATE_TF_TOWERS_CONTROLLED;
+            m_uiZoneWorldState = WORLD_STATE_TF_TOWERS_CONTROLLED;
             m_uiTowersAlliance = 0;
             m_uiTowersHorde = 0;
             m_uiTowerWorldState[0] = WORLD_STATE_TOWER_1_NEUTRAL;
@@ -281,14 +262,20 @@ void WorldPvPTF::Update(uint32 diff)
             m_uiTowerWorldState[2] = WORLD_STATE_TOWER_3_NEUTRAL;
             m_uiTowerWorldState[3] = WORLD_STATE_TOWER_4_NEUTRAL;
             m_uiTowerWorldState[4] = WORLD_STATE_TOWER_5_NEUTRAL;
-            UpdateWorldState(1);
+            UpdateWorldState(WORLD_STATE_ADD);
 
-            // update towers count
+            // update tower count
             SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_A, m_uiTowersAlliance);
             SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_H, m_uiTowersHorde);
 
-            for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
-                ResetTower(i);
+            for (PlayerSet::iterator itr = m_sZonePlayers.begin(); itr != m_sZonePlayers.end(); ++itr)
+            {
+                if ((*itr) && (*itr)->isAlive())
+                {
+                    ResetTowers((*itr));
+                    break;
+                }
+            }
 
             m_uiZoneLockTimer = 0;
         }
@@ -322,46 +309,28 @@ void WorldPvPTF::UpdateTimerWorldState()
     SendUpdateWorldState(WORLD_STATE_TF_TIME_HOURS, hoursLeft);
 }
 
-void WorldPvPTF::SetBannerArtKit(ObjectGuid BannerGuid, uint32 uiArtkit)
+void WorldPvPTF::LockTowers(const WorldObject* objRef, Team faction)
 {
-    // neet to use a player as anchor for the map
-    Player* pPlayer = GetPlayerInZone();
-    if (!pPlayer)
-        return;
-
-    if (GameObject* pBanner = pPlayer->GetMap()->GetGameObject(BannerGuid))
+    for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
-        pBanner->SetGoArtKit(uiArtkit);
-        pBanner->Refresh();
+        if (GameObject* pBanner = objRef->GetMap()->GetGameObject(m_TowerBannerGUID[i]))
+            pBanner->SetLootState(GO_JUST_DEACTIVATED);
+
+        SetCapturePointSliderValue(aTerokkarTowers[i], faction == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
     }
 }
 
-void WorldPvPTF::LockTower(uint8 uiTowerId, Team faction)
+void WorldPvPTF::ResetTowers(const WorldObject* objRef)
 {
-    // neet to use a player as anchor for the map
-    Player* pPlayer = GetPlayerInZone();
-    if (!pPlayer)
-        return;
-
-    if (GameObject* pBanner = pPlayer->GetMap()->GetGameObject(m_TowerBannerGUID[uiTowerId]))
-        pBanner->SetLootState(GO_JUST_DEACTIVATED);
-
-    SetCapturePointSliderValue(aTerokkarTowers[uiTowerId], faction == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
-}
-
-void WorldPvPTF::ResetTower(uint8 uiTowerId)
-{
-    // neet to use a player as anchor for the map
-    Player* pPlayer = GetPlayerInZone();
-    if (!pPlayer)
-        return;
-
-    if (GameObject* pBanner = pPlayer->GetMap()->GetGameObject(m_TowerBannerGUID[uiTowerId]))
+    for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
-        pBanner->SetCapturePointSlider(CAPTURE_SLIDER_RESET);
-        pBanner->Refresh();
+        if (GameObject* pBanner = objRef->GetMap()->GetGameObject(m_TowerBannerGUID[i]))
+        {
+            pBanner->SetCapturePointSlider(CAPTURE_SLIDER_RESET);
+            pBanner->Refresh();
+        }
+        else
+            // if grid is unloaded, resetting the slider value is enough
+            SetCapturePointSliderValue(aTerokkarTowers[i], CAPTURE_SLIDER_RESET);
     }
-    else
-        // if grid is unloaded, resetting the slider value is enough
-        SetCapturePointSliderValue(aTerokkarTowers[uiTowerId], CAPTURE_SLIDER_RESET);
 }

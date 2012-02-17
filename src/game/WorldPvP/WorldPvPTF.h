@@ -181,18 +181,18 @@ class WorldPvPTF : public WorldPvP
     private:
         void UpdateWorldState(uint8 uiValue);
         void UpdateTimerWorldState();
+
         // process capture events
-        void ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint32 uiTower);
-        // Set artkit visuals
-        void SetBannerArtKit(ObjectGuid BannerGuid, uint32 uiArtkit);
-        void LockTower(uint8 uiTowerId, Team faction);
-        void ResetTower(uint8 uiTowerId);
+        void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team faction, uint32 uiNewWorldState);
+
+        void LockTowers(const WorldObject* objRef, Team faction);
+        void ResetTowers(const WorldObject* objRef);
 
         uint32 m_uiTowerWorldState[MAX_TF_TOWERS];
         uint32 m_uiTowerOwner[MAX_TF_TOWERS];
 
         Team m_uiZoneOwner;
-        uint32 m_uiControllerWorldState;
+        uint32 m_uiZoneWorldState;
 
         uint32 m_uiZoneLockTimer;
         uint32 m_uiZoneUpdateTimer;

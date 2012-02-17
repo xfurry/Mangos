@@ -28,7 +28,7 @@ enum
     // zone ids
     ZONE_ID_NAGRAND                         = 3518,
 
-    // spell
+    // spells
     SPELL_STRENGTH_HALAANI                  = 33795,
     SPELL_NAGRAND_TOKEN_ALLIANCE            = 33005,
     SPELL_NAGRAND_TOKEN_HORDE               = 33004,
@@ -109,29 +109,29 @@ enum
     WORLD_STATE_NA_GUARDS_LEFT              = 2491,
 
     // map states
-    WORLD_STATE_NA_WYVERN_NORTH_NEU_H       = 2762,
-    WORLD_STATE_NA_WYVERN_NORTH_NEU_A       = 2662,
+    WORLD_STATE_NA_WYVERN_NORTH_NEUTRAL_H   = 2762,
+    WORLD_STATE_NA_WYVERN_NORTH_NEUTRAL_A   = 2662,
     WORLD_STATE_NA_WYVERN_NORTH_H           = 2663,
     WORLD_STATE_NA_WYVERN_NORTH_A           = 2664,
 
-    WORLD_STATE_NA_WYVERN_SOUTH_NEU_H       = 2760,
-    WORLD_STATE_NA_WYVERN_SOUTH_NEU_A       = 2670,
+    WORLD_STATE_NA_WYVERN_SOUTH_NEUTRAL_H   = 2760,
+    WORLD_STATE_NA_WYVERN_SOUTH_NEUTRAL_A   = 2670,
     WORLD_STATE_NA_WYVERN_SOUTH_H           = 2668,
     WORLD_STATE_NA_WYVERN_SOUTH_A           = 2669,
 
-    WORLD_STATE_NA_WYVERN_WEST_NEU_H        = 2761,
-    WORLD_STATE_NA_WYVERN_WEST_NEU_A        = 2667,
+    WORLD_STATE_NA_WYVERN_WEST_NEUTRAL_H    = 2761,
+    WORLD_STATE_NA_WYVERN_WEST_NEUTRAL_A    = 2667,
     WORLD_STATE_NA_WYVERN_WEST_H            = 2665,
     WORLD_STATE_NA_WYVERN_WEST_A            = 2666,
 
-    WORLD_STATE_NA_WYVERN_EAST_NEU_H        = 2763,
-    WORLD_STATE_NA_WYVERN_EAST_NEU_A        = 2659,
+    WORLD_STATE_NA_WYVERN_EAST_NEUTRAL_H    = 2763,
+    WORLD_STATE_NA_WYVERN_EAST_NEUTRAL_A    = 2659,
     WORLD_STATE_NA_WYVERN_EAST_H            = 2660,
     WORLD_STATE_NA_WYVERN_EAST_A            = 2661,
 
     WORLD_STATE_NA_HALAA_NEUTRAL            = 2671,
-    WORLD_STATE_NA_HALAA_NEU_A              = 2676,
-    WORLD_STATE_NA_HALAA_NEU_H              = 2677,
+    WORLD_STATE_NA_HALAA_NEUTRAL_A          = 2676,
+    WORLD_STATE_NA_HALAA_NEUTRAL_H          = 2677,
     WORLD_STATE_NA_HALAA_HORDE              = 2672,
     WORLD_STATE_NA_HALAA_ALLIANCE           = 2673,
 };
@@ -139,17 +139,17 @@ enum
 static const uint32 aFlightPathStartNodes[MAX_NA_ROOSTS]    = {103, 107, 109, 105};
 static const uint32 aFlightPathEndNodes[MAX_NA_ROOSTS]      = {104, 108, 110, 106};
 
-static const uint32 aAllianceRoosts[MAX_NA_ROOSTS]          = {GO_WYVERN_ROOST_ALLIANCE_SOUTH,      GO_WYVERN_ROOST_ALLIANCE_NORTH,     GO_WYVERN_ROOST_ALLIANCE_EAST,      GO_WYVERN_ROOST_ALLIANCE_WEST};
-static const uint32 aHordeRoosts[MAX_NA_ROOSTS]             = {GO_WYVERN_ROOST_HORDE_SOUTH,         GO_WYVERN_ROOST_HORDE_NORTH,        GO_WYVERN_ROOST_HORDE_EAST,         GO_WYVERN_ROOST_HORDE_WEST};
-static const uint32 aAllianceBrokenRoosts[MAX_NA_ROOSTS]    = {GO_DESTROYED_ROOST_ALLIANCE_SOUTH,   GO_DESTROYED_ROOST_ALLIANCE_NORTH,  GO_DESTROYED_ROOST_ALLIANCE_EAST,   GO_DESTROYED_ROOST_ALLIANCE_WEST};
-static const uint32 aHordeBrokenRoosts[MAX_NA_ROOSTS]       = {GO_DESTROYED_ROOST_HORDE_SOUTH,      GO_DESTROYED_ROOST_HORDE_NORTH,     GO_DESTROYED_ROOST_HORDE_EAST,      GO_DESTROYED_ROOST_HORDE_WEST};
-static const uint32 aAllianceWagons[MAX_NA_ROOSTS]          = {GO_BOMB_WAGON_ALLIANCE_SOUTH,        GO_BOMB_WAGON_ALLIANCE_NORTH,       GO_BOMB_WAGON_ALLIANCE_EAST,        GO_BOMB_WAGON_ALLIANCE_WEST};
-static const uint32 aHordeWagons[MAX_NA_ROOSTS]             = {GO_BOMB_WAGON_HORDE_SOUTH,           GO_BOMB_WAGON_HORDE_NORTH,          GO_BOMB_WAGON_HORDE_EAST,           GO_BOMB_WAGON_HORDE_WEST};
+static const uint32 aAllianceRoosts[MAX_NA_ROOSTS]          = {GO_WYVERN_ROOST_ALLIANCE_SOUTH,          GO_WYVERN_ROOST_ALLIANCE_NORTH,         GO_WYVERN_ROOST_ALLIANCE_EAST,          GO_WYVERN_ROOST_ALLIANCE_WEST};
+static const uint32 aHordeRoosts[MAX_NA_ROOSTS]             = {GO_WYVERN_ROOST_HORDE_SOUTH,             GO_WYVERN_ROOST_HORDE_NORTH,            GO_WYVERN_ROOST_HORDE_EAST,             GO_WYVERN_ROOST_HORDE_WEST};
+static const uint32 aAllianceBrokenRoosts[MAX_NA_ROOSTS]    = {GO_DESTROYED_ROOST_ALLIANCE_SOUTH,       GO_DESTROYED_ROOST_ALLIANCE_NORTH,      GO_DESTROYED_ROOST_ALLIANCE_EAST,       GO_DESTROYED_ROOST_ALLIANCE_WEST};
+static const uint32 aHordeBrokenRoosts[MAX_NA_ROOSTS]       = {GO_DESTROYED_ROOST_HORDE_SOUTH,          GO_DESTROYED_ROOST_HORDE_NORTH,         GO_DESTROYED_ROOST_HORDE_EAST,          GO_DESTROYED_ROOST_HORDE_WEST};
+static const uint32 aAllianceWagons[MAX_NA_ROOSTS]          = {GO_BOMB_WAGON_ALLIANCE_SOUTH,            GO_BOMB_WAGON_ALLIANCE_NORTH,           GO_BOMB_WAGON_ALLIANCE_EAST,            GO_BOMB_WAGON_ALLIANCE_WEST};
+static const uint32 aHordeWagons[MAX_NA_ROOSTS]             = {GO_BOMB_WAGON_HORDE_SOUTH,               GO_BOMB_WAGON_HORDE_NORTH,              GO_BOMB_WAGON_HORDE_EAST,               GO_BOMB_WAGON_HORDE_WEST};
 
-static const uint32 aAllianceRoostStates[MAX_NA_ROOSTS]     = {WORLD_STATE_NA_WYVERN_SOUTH_A,       WORLD_STATE_NA_WYVERN_NORTH_A,      WORLD_STATE_NA_WYVERN_EAST_A,       WORLD_STATE_NA_WYVERN_WEST_A};
-static const uint32 aHordeRoostStates[MAX_NA_ROOSTS]        = {WORLD_STATE_NA_WYVERN_SOUTH_H,       WORLD_STATE_NA_WYVERN_NORTH_H,      WORLD_STATE_NA_WYVERN_EAST_H,       WORLD_STATE_NA_WYVERN_WEST_H};
-static const uint32 aAllianceNeutralStates[MAX_NA_ROOSTS]   = {WORLD_STATE_NA_WYVERN_SOUTH_NEU_A,   WORLD_STATE_NA_WYVERN_NORTH_NEU_A,  WORLD_STATE_NA_WYVERN_EAST_NEU_A,   WORLD_STATE_NA_WYVERN_WEST_NEU_A};
-static const uint32 aHordeNeutralStates[MAX_NA_ROOSTS]      = {WORLD_STATE_NA_WYVERN_SOUTH_NEU_H,   WORLD_STATE_NA_WYVERN_NORTH_NEU_H,  WORLD_STATE_NA_WYVERN_EAST_NEU_H,   WORLD_STATE_NA_WYVERN_WEST_NEU_H};
+static const uint32 aAllianceRoostStates[MAX_NA_ROOSTS]     = {WORLD_STATE_NA_WYVERN_SOUTH_A,           WORLD_STATE_NA_WYVERN_NORTH_A,          WORLD_STATE_NA_WYVERN_EAST_A,           WORLD_STATE_NA_WYVERN_WEST_A};
+static const uint32 aHordeRoostStates[MAX_NA_ROOSTS]        = {WORLD_STATE_NA_WYVERN_SOUTH_H,           WORLD_STATE_NA_WYVERN_NORTH_H,          WORLD_STATE_NA_WYVERN_EAST_H,           WORLD_STATE_NA_WYVERN_WEST_H};
+static const uint32 aAllianceNeutralStates[MAX_NA_ROOSTS]   = {WORLD_STATE_NA_WYVERN_SOUTH_NEUTRAL_A,   WORLD_STATE_NA_WYVERN_NORTH_NEUTRAL_A,  WORLD_STATE_NA_WYVERN_EAST_NEUTRAL_A,   WORLD_STATE_NA_WYVERN_WEST_NEUTRAL_A};
+static const uint32 aHordeNeutralStates[MAX_NA_ROOSTS]      = {WORLD_STATE_NA_WYVERN_SOUTH_NEUTRAL_H,   WORLD_STATE_NA_WYVERN_NORTH_NEUTRAL_H,  WORLD_STATE_NA_WYVERN_EAST_NEUTRAL_H,   WORLD_STATE_NA_WYVERN_WEST_NEUTRAL_H};
 
 class WorldPvPNA : public WorldPvP
 {
@@ -180,6 +180,9 @@ class WorldPvPNA : public WorldPvP
         void UpdateWorldState(uint8 uiValue);
         void UpdateWyvernsWorldState(uint8 uiValue);
 
+        // process capture events
+        void ProcessCaptureEvent(GameObject* pGo, Team faction);
+
         // Functions to handle some missing spells
         bool AddBombsToInventory(Player* pPlayer);
         bool HandlePlayerTaxiDrive(Player* pPlayer, uint8 uiPos);
@@ -187,27 +190,22 @@ class WorldPvPNA : public WorldPvP
         // Link graveyard on Halaa
         void SetGraveyard(Team faction, bool bRemove = false);
 
-        // process capture events
-        void ProcessCaptureEvent(Team faction);
-
         // set specific faction soldiers and objects after capture
-        void DoRespawnSoldiers(Team faction);
-        void DoHandleFactionObjects(Team faction);
+        void RespawnSoldiers(const WorldObject* objRef, Team faction);
+        void HandleFactionObjects(const WorldObject* objRef, Team faction);
 
-        // set banner artkit
-        void SetBannerArtKit(uint32 uiArtKit);
         // handle a specific game objects
-        void DoRespawnObjects(ObjectGuid GameObjectGuid, bool bRespawn);
-        void LockHalaa(Team faction);
-        void UnlockHalaa(Team faction);
+        void RespawnObjects(const WorldObject* objRef, ObjectGuid goGuid, bool bRespawn);
+        void LockHalaa(const WorldObject* objRef, Team faction);
+        void UnlockHalaa(const WorldObject* objRef, Team faction);
 
         Team m_uiZoneOwner;
-        uint32 m_uiControllerWorldState;
-        uint32 m_uiControllerMapState;
+        uint32 m_uiZoneWorldState;
+        uint32 m_uiZoneMapState;
         uint32 m_uiRoostWorldState[MAX_NA_ROOSTS];
         uint32 m_uiGuardsLeft;
 
-        ObjectGuid m_HalaaBanerGuid;
+        ObjectGuid m_HalaaBannerGuid;
         ObjectGuid m_AllianceRoost[MAX_NA_ROOSTS];
         ObjectGuid m_HordeRoost[MAX_NA_ROOSTS];
         ObjectGuid m_AllianceBrokenRoost[MAX_NA_ROOSTS];

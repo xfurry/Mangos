@@ -19,7 +19,10 @@
 #include "WorldPvP.h"
 #include "WorldPvPSI.h"
 
-WorldPvPSI::WorldPvPSI() : WorldPvP(), m_uiResourcesAlliance(0), m_uiResourcesHorde(0), m_uiLastControllerTeam(0)
+WorldPvPSI::WorldPvPSI() : WorldPvP(),
+    m_uiResourcesAlliance(0),
+    m_uiResourcesHorde(0),
+    m_uiZoneOwner(TEAM_NONE)
 {
     m_uiTypeId = WORLD_PVP_TYPE_SI;
 }
@@ -65,7 +68,8 @@ void WorldPvPSI::HandlePlayerEnterZone(Player* pPlayer)
     if (pPlayer->HasAura(SPELL_CENARION_FAVOR))
         pPlayer->RemoveAurasDueToSpell(SPELL_CENARION_FAVOR);
 
-    if (pPlayer->GetTeam() == m_uiLastControllerTeam)
+    // buff the player if same faction is controlling the zone
+    if (pPlayer->GetTeam() == m_uiZoneOwner && m_uiZoneOwner != TEAM_NONE)
         pPlayer->CastSpell(pPlayer, SPELL_CENARION_FAVOR, true);
 
     WorldPvP::HandlePlayerEnterZone(pPlayer);
@@ -97,13 +101,13 @@ bool WorldPvPSI::HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId)
             ++m_uiResourcesAlliance;
             if (m_uiResourcesAlliance == MAX_SILITHYST)
             {
-                // apply buff to controler faction
+                // apply buff to owner faction
                 DoProcessTeamBuff(ALLIANCE, SPELL_CENARION_FAVOR);
 
                 //send zone text and reset stats
                 sWorld.SendZoneText(ZONE_ID_SILITHUS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_SI_CAPTURE_A));
 
-                m_uiLastControllerTeam = ALLIANCE;
+                m_uiZoneOwner = ALLIANCE;
                 m_uiResourcesAlliance = 0;
                 m_uiResourcesHorde = 0;
             }
@@ -133,12 +137,12 @@ bool WorldPvPSI::HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId)
             ++ m_uiResourcesHorde;
             if (m_uiResourcesHorde == MAX_SILITHYST)
             {
-                // apply buff to controler faction
+                // apply buff to owner faction
                 DoProcessTeamBuff(HORDE, SPELL_CENARION_FAVOR);
 
                 //send zone text and reset stats
                 sWorld.SendZoneText(ZONE_ID_SILITHUS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_SI_CAPTURE_H));
-                m_uiLastControllerTeam = HORDE;
+                m_uiZoneOwner = HORDE;
                 m_uiResourcesAlliance = 0;
                 m_uiResourcesHorde = 0;
             }

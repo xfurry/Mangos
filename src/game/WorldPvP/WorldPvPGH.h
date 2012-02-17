@@ -68,7 +68,7 @@ class WorldPvPGH : public WorldPvP
 
     private:
         // respawn faction soldiers
-        void DoRespawnSoldiers(GameObject* pGoReference, Team faction);
+        void RespawnSoldiers(GameObject* pGoReference, Team faction);
 
         ObjectGuid m_TowerBannerLighthouseGuid;
 

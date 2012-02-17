@@ -153,26 +153,26 @@ class WorldPvPZM : public WorldPvP
 
     private:
         // process capture events
-        void ProcessCaptureEvent(Team faction, uint32 uiNewWorldState, uint32 uiNewMapState, uint32 uiTower);
+        void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team faction, uint32 uiNewWorldState, uint32 uiNewMapState);
 
-        // handle graveyard faction banners
-        void DoHandleBanners(ObjectGuid BannerGuid, bool bRespawn);
+        // handles scout world states and gossip - ToDo: implement gossip based on condition
+        void PrepareFactionScouts(const WorldObject* objRef, Team faction);
+        void ResetScouts(const WorldObject* objRef, Team faction, bool bIncludeWorldStates = true);
 
-        // Handles scouts world states and gossip - ToDo: implement gossip based on condition
-        void DoPrepareFactionScouts(Team faction);
-        void DoResetScouts(Team faction, bool bIncludeWorldStates = true);
-
-        // Link graveyard on central node capture
+        // link graveyard on central node capture
         void SetGraveyard(Team faction, bool bRemove = false);
 
-        // Respawn npcs which act as an artkit visual
-        void DoSetBeaconArtkit(ObjectGuid BeaconGuid, bool bRespawn);
+        // handle graveyard faction banners
+        void SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool bRespawn);
+
+        // respawn npcs which act as an artkit visual
+        void SetBeaconArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool bRespawn);
 
         uint32 m_uiBeaconWorldState[MAX_ZM_TOWERS];
         uint32 m_uiBeaconMapState[MAX_ZM_TOWERS];
 
-        Team m_uiBeaconController[MAX_ZM_TOWERS];
-        Team m_uiGraveyardController;
+        Team m_uiBeaconOwner[MAX_ZM_TOWERS];
+        Team m_uiGraveyardOwner;
 
         uint32 m_uiGraveyardWorldState;
         uint32 m_uiAllianceScoutWorldState;
