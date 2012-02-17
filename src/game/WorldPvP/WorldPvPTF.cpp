@@ -169,10 +169,6 @@ void WorldPvPTF::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> pl
 // process the capture events
 void WorldPvPTF::ProcessEvent(uint32 uiEventId, GameObject* pGo)
 {
-    // No events during the lock timer
-    if (m_uiZoneLockTimer)
-        return;
-
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
         if (pGo->GetEntry() == aTerokkarTowers[i])
@@ -366,6 +362,6 @@ void WorldPvPTF::ResetTower(uint8 uiTowerId)
         pBanner->Refresh();
     }
     else
-        // if grid is unloaded the slider reset is enough
+        // if grid is unloaded, resetting the slider value is enough
         SetCapturePointSliderValue(aTerokkarTowers[uiTowerId], CAPTURE_SLIDER_RESET);
 }

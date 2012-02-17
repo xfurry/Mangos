@@ -86,7 +86,7 @@ void WorldPvP::HandlePlayerKill(Player* pKiller, Unit* pVictim)
     else
     {
         // creature kills must be notified, even if not inside objective / not outdoor pvp active
-        if (pKiller && (pKiller->IsWorldPvPActive()))
+        if (pKiller && pKiller->IsWorldPvPActive())
             HandlePlayerKillInsideArea(pKiller, pVictim);
     }
 }
@@ -103,7 +103,7 @@ bool WorldPvP::HasPlayer(Player* pPlayer) const
     return m_sZonePlayers.find(pPlayer) != m_sZonePlayers.end();
 }
 
-// reset or lock a capture point slider
+// set a capture point slider value for when the gameobject is being reloaded the next time
 void WorldPvP::SetCapturePointSliderValue(uint32 pointEntry, CapturePointSlider value)
 {
     sWorldPvPMgr.SetCapturePointSlider(pointEntry, value);

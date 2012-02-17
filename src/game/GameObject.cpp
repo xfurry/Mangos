@@ -399,25 +399,35 @@ void GameObject::Update(uint32 update_diff, uint32 /*p_time*/)
         }
         case GO_JUST_DEACTIVATED:
         {
-            // if Gameobject should cast spell, then this, but some GOs (type = 10) should be destroyed
-            if (GetGoType() == GAMEOBJECT_TYPE_GOOBER)
+            switch (GetGoType())
             {
-                uint32 spellId = GetGOInfo()->goober.spellId;
+                case GAMEOBJECT_TYPE_GOOBER:
+                    // if gameobject should cast spell, then this, but some GOs (type = 10) should be destroyed
+                    if (uint32 spellId = GetGOInfo()->goober.spellId)
+                    {
+                        for (GuidsSet::const_iterator itr = m_UniqueUsers.begin(); itr != m_UniqueUsers.end(); ++itr)
+                        {
+                            if (Player* owner = GetMap()->GetPlayer(*itr))
+                                owner->CastSpell(owner, spellId, false, NULL, NULL, GetObjectGuid());
+                        }
 
-                if (spellId)
-                {
+                        ClearAllUsesData();
+                    }
+
+                    SetGoState(GO_STATE_READY);
+
+                    //any return here in case battleground traps
+                    break;
+                case GAMEOBJECT_TYPE_CAPTURE_POINT:
+                    // remove capturing players because slider wont be displayed if capture point is being locked
                     for (GuidsSet::const_iterator itr = m_UniqueUsers.begin(); itr != m_UniqueUsers.end(); ++itr)
                     {
                         if (Player* owner = GetMap()->GetPlayer(*itr))
-                            owner->CastSpell(owner, spellId, false, NULL, NULL, GetObjectGuid());
+                            owner->SendUpdateWorldState(info->capturePoint.worldState1, WORLD_STATE_REMOVE);
                     }
 
-                    ClearAllUsesData();
-                }
-
-                SetGoState(GO_STATE_READY);
-
-                //any return here in case battleground traps
+                    m_UniqueUsers.clear();
+                    break;
             }
 
             if (GetOwnerGuid())
@@ -1943,7 +1953,6 @@ void GameObject::SetCapturePointSlider(int8 value)
 {
     GameObjectInfo const* info = GetGOInfo();
 
-    // TODO: should locked capture point still display slider?
     switch (value)
     {
         case CAPTURE_SLIDER_ALLIANCE_LOCKED:
@@ -1954,6 +1963,7 @@ void GameObject::SetCapturePointSlider(int8 value)
             break;
         case CAPTURE_SLIDER_RESET:
             value = info->capturePoint.startingValue; // CAPTURE_SLIDER_NEUTRAL in TBC
+            // no break here
         default:
             m_captureSlider = value;
             m_cooldownTime = time(NULL) + 3; // initial delay for capture points

@@ -607,7 +607,8 @@ void WorldPvPNA::UnlockHalaa(Team faction)
 
     if (GameObject* pBanner = pPlayer->GetMap()->GetGameObject(m_HalaaBanerGuid))
         pBanner->SetCapturePointSlider(faction == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
+        // no banner refresh needed because it already has the correct artkit
     else
-        // if grid is unloaded the slider reset is enough
+        // if grid is unloaded, resetting the slider value is enough
         SetCapturePointSliderValue(m_HalaaBanerGuid, faction == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
 }
