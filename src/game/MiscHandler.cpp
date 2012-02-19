@@ -745,9 +745,9 @@ void WorldSession::HandleAreaTriggerOpcode(WorldPacket & recv_data)
         return;
     }
 
-    if(WorldPvP* pOutdoorBg = GetPlayer()->GetWorldPvP())
+    if (WorldPvP* outdoorBg = GetPlayer()->GetWorldPvP())
     {
-        if (pOutdoorBg->HandleAreaTrigger(pl, Trigger_ID))
+        if (outdoorBg->HandleAreaTrigger(pl, Trigger_ID))
             return;
     }
 

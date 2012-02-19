@@ -1363,7 +1363,7 @@ void World::SetInitialWorldSettings()
     sBattleGroundMgr.InitAutomaticArenaPointDistribution();
 
     ///- Initialize World PvP
-    sLog.outString( "Starting World PvP System" );
+    sLog.outString("Starting World PvP System");
     sWorldPvPMgr.InitWorldPvP();
 
     //Not sure if this can be moved up in the sequence (with static data loading) as it uses MapManager

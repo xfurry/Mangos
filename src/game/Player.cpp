@@ -8791,7 +8791,7 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
             if (outdoorBg)
                 outdoorBg->FillInitialWorldStates(data,count);
             else
-                FillInitialWorldState(data,count, HP_world_states);
+                FillInitialWorldState(data, count, HP_world_states);
             break;
         case 3518:                                          // Nagrand - Halaa
             if (outdoorBg)
@@ -8803,13 +8803,13 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
             if (outdoorBg)
                 outdoorBg->FillInitialWorldStates(data,count);
             else
-                FillInitialWorldState(data,count, TF_world_states);
+                FillInitialWorldState(data, count, TF_world_states);
             break;
         case 3521:                                          // Zangarmarsh
             if (outdoorBg)
                 outdoorBg->FillInitialWorldStates(data,count);
             else
-                FillInitialWorldState(data,count, ZM_world_states);
+                FillInitialWorldState(data, count, ZM_world_states);
             break;
         case 3698:                                          // Nagrand Arena
             if (bg && bg->GetTypeID() == BATTLEGROUND_NA)
