@@ -65,11 +65,10 @@ void WorldPvPSI::UpdateWorldState()
 void WorldPvPSI::HandlePlayerEnterZone(Player* pPlayer)
 {
     // remove the buff from the player first; Sometimes on relog players still have the aura
-    if (pPlayer->HasAura(SPELL_CENARION_FAVOR))
-        pPlayer->RemoveAurasDueToSpell(SPELL_CENARION_FAVOR);
+    pPlayer->RemoveAurasDueToSpell(SPELL_CENARION_FAVOR);
 
     // buff the player if same faction is controlling the zone
-    if (pPlayer->GetTeam() == m_uiZoneOwner && m_uiZoneOwner != TEAM_NONE)
+    if (pPlayer->GetTeam() == m_uiZoneOwner)
         pPlayer->CastSpell(pPlayer, SPELL_CENARION_FAVOR, true);
 
     WorldPvP::HandlePlayerEnterZone(pPlayer);
@@ -78,9 +77,8 @@ void WorldPvPSI::HandlePlayerEnterZone(Player* pPlayer)
 // Remove buffs when player leaves zone
 void WorldPvPSI::HandlePlayerLeaveZone(Player* pPlayer)
 {
-    // remove buffs
-    if (pPlayer->HasAura(SPELL_CENARION_FAVOR))
-        pPlayer->RemoveAurasDueToSpell(SPELL_CENARION_FAVOR);
+    // remove the buff from the player
+    pPlayer->RemoveAurasDueToSpell(SPELL_CENARION_FAVOR);
 
     WorldPvP::HandlePlayerLeaveZone(pPlayer);
 }

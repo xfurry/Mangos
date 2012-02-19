@@ -787,7 +787,6 @@ class MANGOS_DLL_SPEC GameObject : public WorldObject
         GameObject* LookupFishingHoleAround(float range);
 
         void SetCapturePointSlider(int8 value);
-        CapturePointState GetCaptureState() const { return m_captureState; }
 
         GridReference<GameObject> &GetGridRef() { return m_gridRef; }
 

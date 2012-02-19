@@ -90,7 +90,7 @@ void WorldPvPTF::HandlePlayerEnterZone(Player* pPlayer)
     pPlayer->RemoveAurasDueToSpell(SPELL_AUCHINDOUN_BLESSING);
 
     // Handle the buffs
-    if (m_uiZoneOwner == pPlayer->GetTeam() && m_uiZoneOwner != TEAM_NONE)
+    if (m_uiZoneOwner == pPlayer->GetTeam())
         pPlayer->CastSpell(pPlayer, SPELL_AUCHINDOUN_BLESSING, true);
 }
 
@@ -161,6 +161,7 @@ void WorldPvPTF::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> pl
                     if ((*itr) && (*itr)->GetTeam() == faction)
                         (*itr)->AreaExploredOrEventHappens(faction == ALLIANCE ? QUEST_SPIRITS_OF_AUCHINDOUM_ALLIANCE : QUEST_SPIRITS_OF_AUCHINDOUM_HORDE);
                 }
+                return;
             }
         }
     }
@@ -175,11 +176,14 @@ void WorldPvPTF::ProcessEvent(uint32 uiEventId, GameObject* pGo)
         {
             for (uint8 j = 0; j < 4; ++j)
             {
-                if (uiEventId == aTerokkarTowerEvents[i][j].uiEventEntry && aTerokkarTowerEvents[i][j].faction != m_uiTowerOwner[i])
+                if (uiEventId == aTerokkarTowerEvents[i][j].uiEventEntry)
                 {
-                    ProcessCaptureEvent(pGo, i, aTerokkarTowerEvents[i][j].faction, aTerokkarTowerEvents[i][j].uiWorldState);
-                    sWorld.SendZoneText(ZONE_ID_TEROKKAR, sObjectMgr.GetMangosStringForDBCLocale(aTerokkarTowerEvents[i][j].uiZoneText));
-                    break;
+                    if (aTerokkarTowerEvents[i][j].faction != m_uiTowerOwner[i])
+                    {
+                        ProcessCaptureEvent(pGo, i, aTerokkarTowerEvents[i][j].faction, aTerokkarTowerEvents[i][j].uiWorldState);
+                        sWorld.SendZoneText(ZONE_ID_TEROKKAR, sObjectMgr.GetMangosStringForDBCLocale(aTerokkarTowerEvents[i][j].uiZoneText));
+                    }
+                    return;
                 }
             }
         }

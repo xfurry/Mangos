@@ -73,11 +73,8 @@ void WorldPvPEP::UpdateWorldState()
 void WorldPvPEP::HandlePlayerEnterZone(Player* pPlayer)
 {
     // remove the buff from the player first; Sometimes on relog players still have the aura
-    for (uint8 i = 0; i < MAX_EP_TOWERS; i++)
-    {
-        if (pPlayer->HasAura(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlliance : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde))
-            pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlliance : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde);
-    }
+    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
+        pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlliance : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde);
 
     // buff the player
     switch (pPlayer->GetTeam())
@@ -98,11 +95,8 @@ void WorldPvPEP::HandlePlayerEnterZone(Player* pPlayer)
 void WorldPvPEP::HandlePlayerLeaveZone(Player* pPlayer)
 {
     // remove the buff from the player
-    for (uint8 i = 0; i < MAX_EP_TOWERS; i++)
-    {
-        if (pPlayer->HasAura(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlliance : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde))
-            pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlliance : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde);
-    }
+    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
+        pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlliance : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde);
 
     WorldPvP::HandlePlayerLeaveZone(pPlayer);
 }
@@ -205,11 +199,14 @@ void WorldPvPEP::ProcessEvent(uint32 uiEventId, GameObject* pGo)
         {
             for (uint8 j = 0; j < 4; ++j)
             {
-                if (uiEventId == aPlaguelandsTowerEvents[i][j].uiEventEntry && aPlaguelandsTowerEvents[i][j].faction != m_uiTowerOwner[i])
+                if (uiEventId == aPlaguelandsTowerEvents[i][j].uiEventEntry)
                 {
-                    ProcessCaptureEvent(pGo, i, aPlaguelandsTowerEvents[i][j].faction, aPlaguelandsTowerEvents[i][j].uiWorldState);
-                    sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(aPlaguelandsTowerEvents[i][j].uiZoneText));
-                    break;
+                    if (aPlaguelandsTowerEvents[i][j].faction != m_uiTowerOwner[i])
+                    {
+                        ProcessCaptureEvent(pGo, i, aPlaguelandsTowerEvents[i][j].faction, aPlaguelandsTowerEvents[i][j].uiWorldState);
+                        sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(aPlaguelandsTowerEvents[i][j].uiZoneText));
+                    }
+                    return;
                 }
             }
         }
@@ -316,17 +313,15 @@ void WorldPvPEP::UnsummonFlightMaster(const WorldObject* objRef)
 
 void WorldPvPEP::SummonSoldiers(WorldObject* objRef, Team faction)
 {
-    uint32 uiEntry = 0;
+    uint32 uiEntry = faction == ALLIANCE ? NPC_LORDAERON_COMMANDER : NPC_LORDAERON_VETERAN;
 
-    for (uint8 i = 0; i < 5; i++)
+    for (uint8 i = 0; i < 5; ++i)
     {
-        if (i == 0)
-            uiEntry = faction == ALLIANCE ? NPC_LORDAERON_COMMANDER : NPC_LORDAERON_VETERAN;
-        else
-            uiEntry = faction == ALLIANCE ? NPC_LORDAERON_SOLDIER : NPC_LORDAERON_FIGHTER;
-
         if (Creature* pSoldier = objRef->SummonCreature(uiEntry, m_aPlaguelandSoldiersSpawnLocs[i].m_fX, m_aPlaguelandSoldiersSpawnLocs[i].m_fY, m_aPlaguelandSoldiersSpawnLocs[i].m_fZ, 2.2f, TEMPSUMMON_DEAD_DESPAWN, 0))
             m_lSoldiersGuids.push_back(pSoldier->GetObjectGuid());
+
+        if (i == 0)
+            uiEntry = faction == ALLIANCE ? NPC_LORDAERON_SOLDIER : NPC_LORDAERON_FIGHTER;
     }
 }
 

@@ -174,20 +174,18 @@ void WorldPvPHP::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
 {
     for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
     {
-        if (GameObject* pBanner = pPlayer->GetMap()->GetGameObject(m_HellfireBannerGUID[i]))
+        if (GameObject* capturePoint = pPlayer->GetMap()->GetGameObject(m_HellfireBannerGUID[i]))
         {
-            GameObjectInfo const* info = pBanner->GetGOInfo();
-            if (!info)
-                continue;
+            // check capture point range
+            GameObjectInfo const* info = capturePoint->GetGOInfo();
+            if (info && pPlayer->IsWithinDistInMap(capturePoint, info->capturePoint.radius))
+            {
+                // check capture point faction
+                if (pPlayer->GetTeam() == m_uiTowerOwner[i])
+                    pPlayer->CastSpell(pPlayer, pPlayer->GetTeam() == ALLIANCE ? SPELL_HELLFIRE_TOWER_TOKEN_ALLIANCE : SPELL_HELLFIRE_TOWER_TOKEN_HORDE, true);
 
-            if (!pPlayer->IsWithinDistInMap(pBanner, info->capturePoint.radius))
-                continue;
-
-            // check banner faction
-            if (pBanner->GetCaptureState() == ALLIANCE && pPlayer->GetTeam() == ALLIANCE)
-                pPlayer->CastSpell(pPlayer, SPELL_HELLFIRE_TOWER_TOKEN_ALLIANCE, true);
-            else if (pBanner->GetCaptureState() == HORDE && pPlayer->GetTeam() == HORDE)
-                pPlayer->CastSpell(pPlayer, SPELL_HELLFIRE_TOWER_TOKEN_HORDE, true);
+                return;
+            }
         }
     }
 }
@@ -201,11 +199,14 @@ void WorldPvPHP::ProcessEvent(uint32 uiEventId, GameObject* pGo)
         {
             for (uint8 j = 0; j < 4; ++j)
             {
-                if (uiEventId == aHellfireTowerEvents[i][j].uiEventEntry && aHellfireTowerEvents[i][j].faction != m_uiTowerOwner[i])
+                if (uiEventId == aHellfireTowerEvents[i][j].uiEventEntry)
                 {
-                    ProcessCaptureEvent(pGo, i, aHellfireTowerEvents[i][j].faction, aHellfireTowerEvents[i][j].uiWorldState, aHellfireTowerEvents[i][j].uiTowerArtKit);
-                    sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(aHellfireTowerEvents[i][j].uiZoneText));
-                    break;
+                    if (aHellfireTowerEvents[i][j].faction != m_uiTowerOwner[i])
+                    {
+                        ProcessCaptureEvent(pGo, i, aHellfireTowerEvents[i][j].faction, aHellfireTowerEvents[i][j].uiWorldState, aHellfireTowerEvents[i][j].uiTowerArtKit);
+                        sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(aHellfireTowerEvents[i][j].uiZoneText));
+                    }
+                    return;
                 }
             }
         }

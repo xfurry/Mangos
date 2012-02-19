@@ -191,23 +191,18 @@ void WorldPvPZM::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
 {
     for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
     {
-        if (GameObject* pBanner = pPlayer->GetMap()->GetGameObject(m_TowerBannerGUID[i]))
+        if (GameObject* capturePoint = pPlayer->GetMap()->GetGameObject(m_TowerBannerGUID[i]))
         {
-            GameObjectInfo const* info = pBanner->GetGOInfo();
-            if (!info)
-                continue;
+            // check capture point range
+            GameObjectInfo const* info = capturePoint->GetGOInfo();
+            if (info && pPlayer->IsWithinDistInMap(capturePoint, info->capturePoint.radius))
+            {
+                // check capture point faction
+                if (pPlayer->GetTeam() == m_uiBeaconOwner[i])
+                    pPlayer->CastSpell(pPlayer, pPlayer->GetTeam() == ALLIANCE ? SPELL_ZANGA_TOWER_TOKEN_ALLIANCE : SPELL_ZANGA_TOWER_TOKEN_HORDE, true);
 
-            if (!pPlayer->IsWithinDistInMap(pBanner, info->capturePoint.radius))
-                continue;
-
-            // check banner faction
-            CapturePointState towerState = pBanner->GetCaptureState();
-            if ((towerState == CAPTURE_STATE_PROGRESS_ALLIANCE || towerState == CAPTURE_STATE_CONTEST_ALLIANCE || towerState == CAPTURE_STATE_WIN_ALLIANCE) &&
-                pPlayer->GetTeam() == ALLIANCE)
-                pPlayer->CastSpell(pPlayer, SPELL_ZANGA_TOWER_TOKEN_ALLIANCE, true);
-            else if ((towerState == CAPTURE_STATE_PROGRESS_HORDE || towerState == CAPTURE_STATE_CONTEST_HORDE || towerState == CAPTURE_STATE_WIN_HORDE) &&
-                pPlayer->GetTeam() == HORDE)
-                pPlayer->CastSpell(pPlayer, SPELL_ZANGA_TOWER_TOKEN_HORDE, true);
+                return;
+            }
         }
     }
 }
@@ -221,11 +216,14 @@ void WorldPvPZM::ProcessEvent(uint32 uiEventId, GameObject* pGo)
         {
             for (uint8 j = 0; j < 4; ++j)
             {
-                if (uiEventId == aZangaTowerEvents[i][j].uiEventEntry && aZangaTowerEvents[i][j].faction != m_uiBeaconOwner[i])
+                if (uiEventId == aZangaTowerEvents[i][j].uiEventEntry)
                 {
-                    ProcessCaptureEvent(pGo, i, aZangaTowerEvents[i][j].faction, aZangaTowerEvents[i][j].uiWorldState, aZangaTowerEvents[i][j].uiMapState);
-                    sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(aZangaTowerEvents[i][j].uiZoneText));
-                    break;
+                    if (aZangaTowerEvents[i][j].faction != m_uiBeaconOwner[i])
+                    {
+                        ProcessCaptureEvent(pGo, i, aZangaTowerEvents[i][j].faction, aZangaTowerEvents[i][j].uiWorldState, aZangaTowerEvents[i][j].uiMapState);
+                        sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(aZangaTowerEvents[i][j].uiZoneText));
+                    }
+                    return;
                 }
             }
         }

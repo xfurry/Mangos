@@ -117,10 +117,7 @@ void WorldPvP::DoProcessTeamBuff(Team faction, uint32 uiSpellId, bool bRemove)
         if ((*itr) && (*itr)->GetTeam() == faction)
         {
             if (bRemove)
-            {
-                if ((*itr)->HasAura(uiSpellId))
-                    (*itr)->RemoveAurasDueToSpell(uiSpellId);
-            }
+                (*itr)->RemoveAurasDueToSpell(uiSpellId);
             else
                 (*itr)->CastSpell(*itr, uiSpellId, true);
         }

@@ -70,7 +70,7 @@ void WorldPvPNA::HandlePlayerEnterZone(Player* pPlayer)
     pPlayer->RemoveAurasDueToSpell(SPELL_STRENGTH_HALAANI);
 
     // buff the player if same faction is controlling the zone
-    if (pPlayer->GetTeam() == m_uiZoneOwner && m_uiZoneOwner != TEAM_NONE)
+    if (pPlayer->GetTeam() == m_uiZoneOwner)
         pPlayer->CastSpell(pPlayer, SPELL_STRENGTH_HALAANI, true);
 }
 
@@ -97,19 +97,18 @@ void WorldPvPNA::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> pl
 // Cast player spell on opponent kill
 void WorldPvPNA::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
 {
-    if (GameObject* pBanner = pPlayer->GetMap()->GetGameObject(m_HalaaBannerGuid))
+    if (GameObject* capturePoint = pPlayer->GetMap()->GetGameObject(m_HalaaBannerGuid))
     {
-        GameObjectInfo const* info = pBanner->GetGOInfo();
-        if (!info)
-            return;
+        // check capture point range
+        GameObjectInfo const* info = capturePoint->GetGOInfo();
+        if (info && pPlayer->IsWithinDistInMap(capturePoint, info->capturePoint.radius))
+        {
+            // check capture point faction
+            if (pPlayer->GetTeam() == m_uiZoneOwner)
+                pPlayer->CastSpell(pPlayer, pPlayer->GetTeam() == ALLIANCE ? SPELL_NAGRAND_TOKEN_ALLIANCE : SPELL_NAGRAND_TOKEN_HORDE, true);
 
-        if (!pPlayer->IsWithinDistInMap(pBanner, info->capturePoint.radius))
             return;
-
-        if (m_uiZoneOwner == ALLIANCE && pPlayer->GetTeam() == ALLIANCE)
-            pPlayer->CastSpell(pPlayer, SPELL_NAGRAND_TOKEN_ALLIANCE, true);
-        else if (m_uiZoneOwner == HORDE && pPlayer->GetTeam() == HORDE)
-            pPlayer->CastSpell(pPlayer, SPELL_NAGRAND_TOKEN_HORDE, true);
+        }
     }
 }
 
