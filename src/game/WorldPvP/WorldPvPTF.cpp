@@ -152,21 +152,17 @@ void WorldPvPTF::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> pl
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
-        if (aTerokkarTowers[i] == pGo->GetEntry())
+        for (uint8 j = 0; j < 4; ++j)
         {
-            for (uint8 j = 0; j < 4; ++j)
+            if (aTerokkarTowerEvents[i][j].uiEventEntry == uiEventId)
             {
-                if (aTerokkarTowerEvents[i][j].uiEventEntry == uiEventId)
+                for (std::list<Player*>::iterator itr = players.begin(); itr != players.end(); ++itr)
                 {
-                    for (std::list<Player*>::iterator itr = players.begin(); itr != players.end(); ++itr)
-                    {
-                        if ((*itr) && (*itr)->GetTeam() == faction)
-                            (*itr)->AreaExploredOrEventHappens(faction == ALLIANCE ? QUEST_SPIRITS_OF_AUCHINDOUM_ALLIANCE : QUEST_SPIRITS_OF_AUCHINDOUM_HORDE);
-                    }
-                    return;
+                    if ((*itr) && (*itr)->GetTeam() == faction)
+                        (*itr)->AreaExploredOrEventHappens(faction == ALLIANCE ? QUEST_SPIRITS_OF_AUCHINDOUM_ALLIANCE : QUEST_SPIRITS_OF_AUCHINDOUM_HORDE);
                 }
+                return;
             }
-            return;
         }
     }
 }
