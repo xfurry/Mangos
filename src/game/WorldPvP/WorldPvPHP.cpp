@@ -195,11 +195,11 @@ void WorldPvPHP::ProcessEvent(uint32 uiEventId, GameObject* pGo)
 {
     for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
     {
-        if (pGo->GetEntry() == aHellfireBanners[i])
+        if (aHellfireBanners[i] == pGo->GetEntry())
         {
             for (uint8 j = 0; j < 4; ++j)
             {
-                if (uiEventId == aHellfireTowerEvents[i][j].uiEventEntry)
+                if (aHellfireTowerEvents[i][j].uiEventEntry == uiEventId)
                 {
                     if (aHellfireTowerEvents[i][j].faction != m_uiTowerOwner[i])
                     {
@@ -209,6 +209,7 @@ void WorldPvPHP::ProcessEvent(uint32 uiEventId, GameObject* pGo)
                     return;
                 }
             }
+            return;
         }
     }
 }

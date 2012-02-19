@@ -212,11 +212,11 @@ void WorldPvPZM::ProcessEvent(uint32 uiEventId, GameObject* pGo)
 {
     for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
     {
-        if (pGo->GetEntry() == aZangaTowers[i])
+        if (aZangaTowers[i] == pGo->GetEntry())
         {
             for (uint8 j = 0; j < 4; ++j)
             {
-                if (uiEventId == aZangaTowerEvents[i][j].uiEventEntry)
+                if (aZangaTowerEvents[i][j].uiEventEntry == uiEventId)
                 {
                     if (aZangaTowerEvents[i][j].faction != m_uiBeaconOwner[i])
                     {
@@ -226,6 +226,7 @@ void WorldPvPZM::ProcessEvent(uint32 uiEventId, GameObject* pGo)
                     return;
                 }
             }
+            return;
         }
     }
 }

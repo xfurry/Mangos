@@ -195,11 +195,11 @@ void WorldPvPEP::ProcessEvent(uint32 uiEventId, GameObject* pGo)
 {
     for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
     {
-        if (pGo->GetEntry() == aPlaguelandsBanners[i])
+        if (aPlaguelandsBanners[i] == pGo->GetEntry())
         {
             for (uint8 j = 0; j < 4; ++j)
             {
-                if (uiEventId == aPlaguelandsTowerEvents[i][j].uiEventEntry)
+                if (aPlaguelandsTowerEvents[i][j].uiEventEntry == uiEventId)
                 {
                     if (aPlaguelandsTowerEvents[i][j].faction != m_uiTowerOwner[i])
                     {
@@ -209,6 +209,7 @@ void WorldPvPEP::ProcessEvent(uint32 uiEventId, GameObject* pGo)
                     return;
                 }
             }
+            return;
         }
     }
 }

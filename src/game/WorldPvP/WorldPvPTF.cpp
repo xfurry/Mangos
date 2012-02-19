@@ -172,11 +172,11 @@ void WorldPvPTF::ProcessEvent(uint32 uiEventId, GameObject* pGo)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
-        if (pGo->GetEntry() == aTerokkarTowers[i])
+        if (aTerokkarTowers[i] == pGo->GetEntry())
         {
             for (uint8 j = 0; j < 4; ++j)
             {
-                if (uiEventId == aTerokkarTowerEvents[i][j].uiEventEntry)
+                if (aTerokkarTowerEvents[i][j].uiEventEntry == uiEventId)
                 {
                     if (aTerokkarTowerEvents[i][j].faction != m_uiTowerOwner[i])
                     {
@@ -186,6 +186,7 @@ void WorldPvPTF::ProcessEvent(uint32 uiEventId, GameObject* pGo)
                     return;
                 }
             }
+            return;
         }
     }
 }
