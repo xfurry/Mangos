@@ -103,7 +103,7 @@ enum
     //WORLD_STATE_UNK                       = 2653,
 };
 
-struct ZangaTowersEvents
+struct ZangaTowerEvent
 {
     uint32  uiEventEntry;
     Team    faction;
@@ -112,7 +112,7 @@ struct ZangaTowersEvents
     uint32  uiMapState;
 };
 
-static const ZangaTowersEvents aZangaTowerEvents[MAX_ZM_TOWERS][4] =
+static const ZangaTowerEvent aZangaTowerEvents[MAX_ZM_TOWERS][4] =
 {
     {
         {EVENT_EAST_BEACON_PROGRESS_ALLIANCE,   ALLIANCE,   LANG_OPVP_ZM_CAPTURE_EAST_A,    WORLD_STATE_TOWER_EAST_ALLIANCE,    WORLD_STATE_BEACON_EAST_ALLIANCE},

@@ -203,7 +203,7 @@ void WorldPvPHP::ProcessEvent(uint32 uiEventId, GameObject* pGo)
                 {
                     if (aHellfireTowerEvents[i][j].faction != m_uiTowerOwner[i])
                     {
-                        ProcessCaptureEvent(pGo, i, aHellfireTowerEvents[i][j].faction, aHellfireTowerEvents[i][j].uiWorldState, aHellfireTowerEvents[i][j].uiTowerArtKit);
+                        ProcessCaptureEvent(pGo, i, aHellfireTowerEvents[i][j].faction, aHellfireTowerEvents[i][j].uiWorldState, aHellfireTowerEvents[i][j].uiTowerArtKit, aHellfireTowerEvents[i][j].uiTowerAnim);
                         sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(aHellfireTowerEvents[i][j].uiZoneText));
                     }
                     return;
@@ -214,12 +214,12 @@ void WorldPvPHP::ProcessEvent(uint32 uiEventId, GameObject* pGo)
     }
 }
 
-void WorldPvPHP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team faction, uint32 uiNewWorldState, uint32 uiTowerArtKit)
+void WorldPvPHP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team faction, uint32 uiNewWorldState, uint32 uiTowerArtKit, uint32 uiTowerAnim)
 {
     // set artkits and process buffs
     if (faction == ALLIANCE)
     {
-        SetBannerArtKit(pGo, GO_ARTKIT_BANNER_ALLIANCE);
+        SetCapturePointVisual(pGo, GO_ARTKIT_BANNER_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
         ++m_uiTowersAlliance;
 
         if (m_uiTowersAlliance == MAX_HP_TOWERS)
@@ -227,7 +227,7 @@ void WorldPvPHP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team fac
     }
     else if (faction == HORDE)
     {
-        SetBannerArtKit(pGo, GO_ARTKIT_BANNER_HORDE);
+        SetCapturePointVisual(pGo, GO_ARTKIT_BANNER_HORDE, CAPTURE_ANIM_HORDE);
         ++m_uiTowersHorde;
 
         if (m_uiTowersHorde == MAX_HP_TOWERS)
@@ -235,7 +235,7 @@ void WorldPvPHP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team fac
     }
     else
     {
-        SetBannerArtKit(pGo, GO_ARTKIT_BANNER_NEUTRAL);
+        SetCapturePointVisual(pGo, GO_ARTKIT_BANNER_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
 
         if (m_uiTowerOwner[uiTowerId] == ALLIANCE)
         {
@@ -253,7 +253,7 @@ void WorldPvPHP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team fac
         }
     }
 
-    SetBannerArtKit(pGo, m_HellfireTowerGUID[uiTowerId], uiTowerArtKit);
+    SetCapturePointVisual(pGo, m_HellfireTowerGUID[uiTowerId], uiTowerArtKit, uiTowerAnim);
 
     // update tower state
     SendUpdateWorldState(m_uiTowerWorldState[uiTowerId], WORLD_STATE_REMOVE);

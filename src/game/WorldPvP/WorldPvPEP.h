@@ -200,7 +200,7 @@ static sSpawnLocations m_aTowersSpawnLocs[MAX_EP_TOWERS] =
 // summon coords for the flightmaster
 static const float aFlightmasterSpawnLocs[4] = {2987.5f, -3049.11f, 120.126f, 5.75959f};
 
-struct PlaguelandsTowersEvents
+struct PlaguelandsTowerEvent
 {
     uint32  uiEventEntry;
     Team    faction;
@@ -208,7 +208,7 @@ struct PlaguelandsTowersEvents
     uint32  uiWorldState;
 };
 
-static const PlaguelandsTowersEvents aPlaguelandsTowerEvents[MAX_EP_TOWERS][4] =
+static const PlaguelandsTowerEvent aPlaguelandsTowerEvents[MAX_EP_TOWERS][4] =
 {
     {
         {EVENT_NORTHPASS_PROGRESS_ALLIANCE,     ALLIANCE,   LANG_OPVP_EP_CAPTURE_NPT_A, WORLD_STATE_NORTHPASS_ALLIANCE},

@@ -41,6 +41,13 @@ enum WorldPvPTypes
     WORLD_PVP_TYPE_GH,
 };
 
+enum CapturePointAnimations
+{
+    CAPTURE_ANIM_ALLIANCE   = 1,
+    CAPTURE_ANIM_HORDE      = 0,
+    CAPTURE_ANIM_NEUTRAL    = 2,
+};
+
 typedef std::set<Player*> PlayerSet;
 
 class WorldPvP : public ZoneScript
@@ -87,9 +94,9 @@ class WorldPvP : public ZoneScript
         // return outdoor pvp type
         uint32 GetTypeId() { return m_uiTypeId; }
 
-        // set banners artkit
-        void SetBannerArtKit(const WorldObject* objRef, ObjectGuid bannerGuid, uint32 artkit);
-        void SetBannerArtKit(GameObject* go, uint32 artkit);
+        // set capture point visual
+        void SetCapturePointVisual(const WorldObject* objRef, ObjectGuid capturePointGuid, uint32 artKit, uint32 animId);
+        void SetCapturePointVisual(GameObject* go, uint32 artKit, uint32 animId);
 
     protected:
         // Player related stuff

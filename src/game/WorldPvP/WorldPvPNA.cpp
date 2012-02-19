@@ -325,10 +325,22 @@ void WorldPvPNA::ProcessCaptureEvent(GameObject* pGo, Team faction)
     UpdateWorldState(WORLD_STATE_REMOVE);
     RespawnSoldiers(pGo, faction);
     SetGraveyard(faction);
-    m_uiZoneWorldState = faction == ALLIANCE ? WORLD_STATE_NA_GUARDS_ALLIANCE : WORLD_STATE_NA_GUARDS_HORDE;
-    m_uiZoneMapState = faction == ALLIANCE ? WORLD_STATE_NA_HALAA_ALLIANCE : WORLD_STATE_NA_HALAA_HORDE;
 
-    SetBannerArtKit(pGo, faction == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+    if (faction == ALLIANCE)
+    {
+        m_uiZoneWorldState = WORLD_STATE_NA_GUARDS_ALLIANCE;
+        m_uiZoneMapState = WORLD_STATE_NA_HALAA_ALLIANCE;
+
+        SetCapturePointVisual(pGo, GO_ARTKIT_BANNER_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
+    }
+    else
+    {
+        m_uiZoneWorldState = WORLD_STATE_NA_GUARDS_HORDE;
+        m_uiZoneMapState = WORLD_STATE_NA_HALAA_HORDE;
+
+        SetCapturePointVisual(pGo, GO_ARTKIT_BANNER_HORDE, CAPTURE_ANIM_HORDE);
+    }
+
     HandleFactionObjects(pGo, faction);
     m_uiZoneOwner = faction;
     UpdateWorldState(WORLD_STATE_ADD);

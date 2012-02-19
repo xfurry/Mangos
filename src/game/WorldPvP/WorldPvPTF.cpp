@@ -197,12 +197,12 @@ void WorldPvPTF::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team fac
     {
         if (faction == ALLIANCE)
         {
-            SetBannerArtKit(pGo, GO_ARTKIT_BANNER_ALLIANCE);
+            SetCapturePointVisual(pGo, GO_ARTKIT_BANNER_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
             ++m_uiTowersAlliance;
         }
         else
         {
-            SetBannerArtKit(pGo, GO_ARTKIT_BANNER_HORDE);
+            SetCapturePointVisual(pGo, GO_ARTKIT_BANNER_HORDE, CAPTURE_ANIM_HORDE);
             ++m_uiTowersHorde;
         }
 
@@ -225,7 +225,7 @@ void WorldPvPTF::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team fac
     }
     else
     {
-        SetBannerArtKit(pGo, GO_ARTKIT_BANNER_NEUTRAL);
+        SetCapturePointVisual(pGo, GO_ARTKIT_BANNER_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
 
         if (m_uiTowerOwner[uiTowerId] == ALLIANCE)
             --m_uiTowersAlliance;

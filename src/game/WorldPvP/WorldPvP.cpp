@@ -124,14 +124,15 @@ void WorldPvP::DoProcessTeamBuff(Team faction, uint32 uiSpellId, bool bRemove)
     }
 }
 
-void WorldPvP::SetBannerArtKit(const WorldObject* objRef, ObjectGuid bannerGuid, uint32 artkit)
+void WorldPvP::SetCapturePointVisual(const WorldObject* objRef, ObjectGuid capturePointGuid, uint32 artKit, uint32 animId)
 {
-    if (GameObject* pBanner = objRef->GetMap()->GetGameObject(bannerGuid))
-        SetBannerArtKit(pBanner, artkit);
+    if (GameObject* capturePoint = objRef->GetMap()->GetGameObject(capturePointGuid))
+        SetCapturePointVisual(capturePoint, artKit, animId);
 }
 
-void WorldPvP::SetBannerArtKit(GameObject* go, uint32 artkit)
+void WorldPvP::SetCapturePointVisual(GameObject* go, uint32 artKit, uint32 animId)
 {
-    go->SetGoArtKit(artkit);
+    go->SendGameObjectCustomAnim(go->GetObjectGuid(), animId);
+    go->SetGoArtKit(artKit);
     go->Refresh();
 }

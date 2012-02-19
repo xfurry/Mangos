@@ -221,7 +221,7 @@ void WorldPvPEP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team fac
         if (faction == ALLIANCE)
         {
             for (std::list<ObjectGuid>::iterator itr = m_lTowerBanners[uiTowerId].begin(); itr != m_lTowerBanners[uiTowerId].end(); ++itr)
-                SetBannerArtKit(pGo, (*itr), GO_ARTKIT_BANNER_ALLIANCE);
+                SetCapturePointVisual(pGo, (*itr), GO_ARTKIT_BANNER_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
 
             ++m_uiTowersAlliance;
             DoProcessTeamBuff(ALLIANCE, m_aPlaguelandsTowerBuffs[m_uiTowersAlliance - 1].uiSpellIdAlliance);
@@ -229,7 +229,7 @@ void WorldPvPEP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team fac
         else
         {
             for (std::list<ObjectGuid>::iterator itr = m_lTowerBanners[uiTowerId].begin(); itr != m_lTowerBanners[uiTowerId].end(); ++itr)
-                SetBannerArtKit(pGo, (*itr), GO_ARTKIT_BANNER_HORDE);
+                SetCapturePointVisual(pGo, (*itr), GO_ARTKIT_BANNER_HORDE, CAPTURE_ANIM_HORDE);
 
             ++m_uiTowersHorde;
             DoProcessTeamBuff(HORDE, m_aPlaguelandsTowerBuffs[m_uiTowersHorde - 1].uiSpellIdHorde);
@@ -256,7 +256,7 @@ void WorldPvPEP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team fac
     else
     {
         for (std::list<ObjectGuid>::iterator itr = m_lTowerBanners[uiTowerId].begin(); itr != m_lTowerBanners[uiTowerId].end(); ++itr)
-            SetBannerArtKit(pGo, (*itr), GO_ARTKIT_BANNER_NEUTRAL);
+            SetCapturePointVisual(pGo, (*itr), GO_ARTKIT_BANNER_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
 
         Team oldFaction = m_uiTowerOwner[uiTowerId];
         if (oldFaction == ALLIANCE)

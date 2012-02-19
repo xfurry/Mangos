@@ -113,7 +113,7 @@ enum
     WORLD_STATE_TOWER_5_NEUTRAL             = 2693,
 };
 
-struct TerokkarTowersEvents
+struct TerokkarTowerEvent
 {
     uint32  uiEventEntry;
     Team    faction;
@@ -121,7 +121,7 @@ struct TerokkarTowersEvents
     uint32  uiWorldState;
 };
 
-static const TerokkarTowersEvents aTerokkarTowerEvents[MAX_TF_TOWERS][4] =
+static const TerokkarTowerEvent aTerokkarTowerEvents[MAX_TF_TOWERS][4] =
 {
     {
         {EVENT_TOWER_1_PROGRESS_ALLIANCE,   ALLIANCE,   LANG_OPVP_TF_CAPTURE_A, WORLD_STATE_TOWER_1_ALLIANCE},

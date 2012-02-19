@@ -108,14 +108,14 @@ void WorldPvPGH::ProcessEvent(uint32 uiEventId, GameObject* pGo)
             m_uiZoneOwner = HORDE;
             break;
         case EVENT_LIGHTHOUSE_PROGRESS_ALLIANCE:
-            SetBannerArtKit(pGo, GO_ARTKIT_BANNER_ALLIANCE);
+            SetCapturePointVisual(pGo, GO_ARTKIT_BANNER_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
             break;
         case EVENT_LIGHTHOUSE_PROGRESS_HORDE:
-            SetBannerArtKit(pGo, GO_ARTKIT_BANNER_HORDE);
+            SetCapturePointVisual(pGo, GO_ARTKIT_BANNER_HORDE, CAPTURE_ANIM_HORDE);
             break;
         case EVENT_LIGHTHOUSE_NEUTRAL_ALLIANCE:
         case EVENT_LIGHTHOUSE_NEUTRAL_HORDE:
-            SetBannerArtKit(pGo, GO_ARTKIT_BANNER_NEUTRAL);
+            SetCapturePointVisual(pGo, GO_ARTKIT_BANNER_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
             m_uiZoneOwner = TEAM_NONE;
             break;
     }
