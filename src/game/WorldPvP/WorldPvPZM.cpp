@@ -30,8 +30,6 @@ WorldPvPZM::WorldPvPZM() : WorldPvP(),
     m_uiTowersAlliance(0),
     m_uiTowersHorde(0)
 {
-    m_uiTypeId = WORLD_PVP_TYPE_ZM;
-
     // init world states
     m_uiBeaconWorldState[0] = WORLD_STATE_TOWER_EAST_NEUTRAL;
     m_uiBeaconWorldState[1] = WORLD_STATE_TOWER_WEST_NEUTRAL;

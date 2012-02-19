@@ -24,7 +24,6 @@ WorldPvPSI::WorldPvPSI() : WorldPvP(),
     m_uiResourcesHorde(0),
     m_uiZoneOwner(TEAM_NONE)
 {
-    m_uiTypeId = WORLD_PVP_TYPE_SI;
 }
 
 // Init outdoor pvp zones

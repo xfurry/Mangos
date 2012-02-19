@@ -25,8 +25,6 @@ WorldPvPEP::WorldPvPEP() : WorldPvP(),
     m_uiTowersAlliance(0),
     m_uiTowersHorde(0)
 {
-    m_uiTypeId = WORLD_PVP_TYPE_EP;
-
     m_uiTowerWorldState[0] = WORLD_STATE_NORTHPASS_NEUTRAL;
     m_uiTowerWorldState[1] = WORLD_STATE_CROWNGUARD_NEUTRAL;
     m_uiTowerWorldState[2] = WORLD_STATE_EASTWALL_NEUTRAL;

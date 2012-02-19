@@ -27,7 +27,6 @@ WorldPvPNA::WorldPvPNA() : WorldPvP(),
     m_uiZoneOwner(TEAM_NONE),
     m_uiGuardsLeft(0)
 {
-    m_uiTypeId = WORLD_PVP_TYPE_NA;
 }
 
 bool WorldPvPNA::InitWorldPvPArea()

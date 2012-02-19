@@ -23,7 +23,6 @@
 WorldPvPGH::WorldPvPGH() : WorldPvP(),
     m_uiZoneOwner(TEAM_NONE)
 {
-    m_uiTypeId = WORLD_PVP_TYPE_GH;
 }
 
 bool WorldPvPGH::InitWorldPvPArea()

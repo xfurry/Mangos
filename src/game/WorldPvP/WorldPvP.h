@@ -30,17 +30,6 @@
 #include "../GameObject.h"
 #include "../ObjectMgr.h"
 
-enum WorldPvPTypes
-{
-    WORLD_PVP_TYPE_SI = 1,
-    WORLD_PVP_TYPE_EP,
-    WORLD_PVP_TYPE_HP,
-    WORLD_PVP_TYPE_ZM,
-    WORLD_PVP_TYPE_TF,
-    WORLD_PVP_TYPE_NA,
-    WORLD_PVP_TYPE_GH,
-};
-
 enum CapturePointAnimations
 {
     CAPTURE_ANIM_ALLIANCE   = 1,
@@ -91,9 +80,6 @@ class WorldPvP : public ZoneScript
         // applies buff to a team inside the specific zone
         void DoProcessTeamBuff(Team faction, uint32 spellId, bool bRemove = false);
 
-        // return outdoor pvp type
-        uint32 GetTypeId() { return m_uiTypeId; }
-
         // set capture point visual
         void SetCapturePointVisual(const WorldObject* objRef, ObjectGuid capturePointGuid, uint32 artKit, uint32 animId);
         void SetCapturePointVisual(GameObject* go, uint32 artKit, uint32 animId);
@@ -113,8 +99,6 @@ class WorldPvP : public ZoneScript
 
         // store the players inside the area depending on the faction
         PlayerSet m_sZonePlayers;
-
-        uint32 m_uiTypeId;
 };
 
 #endif
