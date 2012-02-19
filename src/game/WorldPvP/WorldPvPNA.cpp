@@ -171,18 +171,18 @@ void WorldPvPNA::OnCreatureRespawn(Creature* pCreature)
     if (pCreature->GetEntry() != NPC_HORDE_HALAANI_GUARD && pCreature->GetEntry() != NPC_ALLIANCE_HANAANI_GUARD)
         return;
 
-    ++m_uiGuardsLeft;
-    SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT, m_uiGuardsLeft);
-
-    if (m_uiGuardsLeft > 0)
+    if (m_uiGuardsLeft == 0)
+    {
         LockHalaa(pCreature, m_uiZoneOwner);
 
-    if (m_uiGuardsLeft == MAX_NA_GUARDS)
-    {
+        // update world state
         SendUpdateWorldState(m_uiZoneMapState, WORLD_STATE_REMOVE);
         m_uiZoneMapState = m_uiZoneOwner == ALLIANCE ? WORLD_STATE_NA_HALAA_ALLIANCE : WORLD_STATE_NA_HALAA_HORDE;
         SendUpdateWorldState(m_uiZoneMapState, WORLD_STATE_ADD);
     }
+
+    ++m_uiGuardsLeft;
+    SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT, m_uiGuardsLeft);
 }
 
 void WorldPvPNA::OnGameObjectCreate(GameObject* pGo)
