@@ -66,7 +66,7 @@ void WorldPvPSI::HandlePlayerEnterZone(Player* pPlayer)
     // remove the buff from the player first; Sometimes on relog players still have the aura
     pPlayer->RemoveAurasDueToSpell(SPELL_CENARION_FAVOR);
 
-    // buff the player if same faction is controlling the zone
+    // buff the player if same team is controlling the zone
     if (pPlayer->GetTeam() == m_uiZoneOwner)
         pPlayer->CastSpell(pPlayer, SPELL_CENARION_FAVOR, true);
 
@@ -98,8 +98,8 @@ bool WorldPvPSI::HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId)
             ++m_uiResourcesAlliance;
             if (m_uiResourcesAlliance == MAX_SILITHYST)
             {
-                // apply buff to owner faction
-                DoProcessTeamBuff(ALLIANCE, SPELL_CENARION_FAVOR);
+                // apply buff to owner team
+                BuffTeam(ALLIANCE, SPELL_CENARION_FAVOR);
 
                 //send zone text and reset stats
                 sWorld.SendZoneText(ZONE_ID_SILITHUS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_SI_CAPTURE_A));
@@ -134,8 +134,8 @@ bool WorldPvPSI::HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId)
             ++ m_uiResourcesHorde;
             if (m_uiResourcesHorde == MAX_SILITHYST)
             {
-                // apply buff to owner faction
-                DoProcessTeamBuff(HORDE, SPELL_CENARION_FAVOR);
+                // apply buff to owner team
+                BuffTeam(HORDE, SPELL_CENARION_FAVOR);
 
                 //send zone text and reset stats
                 sWorld.SendZoneText(ZONE_ID_SILITHUS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_SI_CAPTURE_H));

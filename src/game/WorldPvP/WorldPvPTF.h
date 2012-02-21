@@ -116,7 +116,7 @@ enum
 struct TerokkarTowerEvent
 {
     uint32  uiEventEntry;
-    Team    faction;
+    Team    team;
     uint32  uiZoneText;
     uint32  uiWorldState;
 };
@@ -171,7 +171,7 @@ class WorldPvPTF : public WorldPvP
 
         void HandlePlayerEnterZone(Player* pPlayer);
         void HandlePlayerLeaveZone(Player* pPlayer);
-        void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team faction);
+        void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team);
 
         void Update(uint32 diff);
 
@@ -183,9 +183,9 @@ class WorldPvPTF : public WorldPvP
         void UpdateTimerWorldState();
 
         // process capture events
-        void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team faction, uint32 uiNewWorldState);
+        void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState);
 
-        void LockTowers(const WorldObject* objRef, Team faction);
+        void LockTowers(const WorldObject* objRef, Team team);
         void ResetTowers(const WorldObject* objRef);
 
         uint32 m_uiTowerWorldState[MAX_TF_TOWERS];

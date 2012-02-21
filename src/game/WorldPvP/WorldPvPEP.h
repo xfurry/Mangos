@@ -124,7 +124,7 @@ enum
     // plaguewood tower
     //WORLD_STATE_PLAGUEWOOD_CONT_ALLIANCE  = 2366,         // state similar to neutral state - not used
     //WORLD_STATE_PLAGUEWOOD_CONT_HORDE     = 2367,
-    //WORLD_STATE_PLAGUEWOOD_PROG_ALLIANCE  = 2368,         // state similar to faction control state - not used
+    //WORLD_STATE_PLAGUEWOOD_PROG_ALLIANCE  = 2368,         // state similar to team control state - not used
     //WORLD_STATE_PLAGUEWOOD_PROG_HORDE     = 2369,
     WORLD_STATE_PLAGUEWOOD_ALLIANCE         = 2370,
     WORLD_STATE_PLAGUEWOOD_HORDE            = 2371,
@@ -203,7 +203,7 @@ static const float aFlightmasterSpawnLocs[4] = {2987.5f, -3049.11f, 120.126f, 5.
 struct PlaguelandsTowerEvent
 {
     uint32  uiEventEntry;
-    Team    faction;
+    Team    team;
     uint32  uiZoneText;
     uint32  uiWorldState;
 };
@@ -251,7 +251,7 @@ class WorldPvPEP : public WorldPvP
 
         void HandlePlayerEnterZone(Player* pPlayer);
         void HandlePlayerLeaveZone(Player* pPlayer);
-        void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team faction);
+        void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team);
 
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
         void SendRemoveWorldStates(Player* pPlayer);
@@ -261,21 +261,21 @@ class WorldPvPEP : public WorldPvP
         void UpdateWorldState();
 
         // process capture events
-        void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team faction, uint32 uiNewWorldState);
+        void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState);
 
         // plaguewood bonus - flightmaster
-        void SummonFlightMaster(WorldObject* objRef, Team faction);
+        void SummonFlightMaster(WorldObject* objRef, Team team);
         void UnsummonFlightMaster(const WorldObject* objRef);
 
         // eastwall bonus - soldiers
-        void SummonSoldiers(WorldObject* objRef, Team faction);
+        void SummonSoldiers(WorldObject* objRef, Team team);
         void UnsummonSoldiers(const WorldObject* objRef);
 
         // northpass bonus - shrine
         void UpdateShrine(const WorldObject* objRef, ObjectGuid uiShrineGuid, bool bRemove = false);
 
         // crownguard bonus - graveyard
-        void SetGraveyard(Team faction, bool bRemove = false);
+        void SetGraveyard(Team team, bool bRemove = false);
 
         Team m_uiTowerOwner[MAX_EP_TOWERS];
         uint32 m_uiTowerWorldState[MAX_EP_TOWERS];

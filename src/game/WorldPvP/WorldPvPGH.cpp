@@ -107,22 +107,22 @@ void WorldPvPGH::ProcessEvent(uint32 uiEventId, GameObject* pGo)
             m_uiZoneOwner = HORDE;
             break;
         case EVENT_LIGHTHOUSE_PROGRESS_ALLIANCE:
-            SetCapturePointVisual(pGo, GO_ARTKIT_BANNER_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
+            SetBannerVisual(pGo, GO_ARTKIT_BANNER_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
             break;
         case EVENT_LIGHTHOUSE_PROGRESS_HORDE:
-            SetCapturePointVisual(pGo, GO_ARTKIT_BANNER_HORDE, CAPTURE_ANIM_HORDE);
+            SetBannerVisual(pGo, GO_ARTKIT_BANNER_HORDE, CAPTURE_ANIM_HORDE);
             break;
         case EVENT_LIGHTHOUSE_NEUTRAL_ALLIANCE:
         case EVENT_LIGHTHOUSE_NEUTRAL_HORDE:
-            SetCapturePointVisual(pGo, GO_ARTKIT_BANNER_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
+            SetBannerVisual(pGo, GO_ARTKIT_BANNER_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
             m_uiZoneOwner = TEAM_NONE;
             break;
     }
 }
 
-void WorldPvPGH::RespawnSoldiers(GameObject* pGoReference, Team faction)
+void WorldPvPGH::RespawnSoldiers(GameObject* pGoReference, Team team)
 {
-    if (faction == ALLIANCE)
+    if (team == ALLIANCE)
     {
         // despawn all horde vendors
         for (std::list<ObjectGuid>::const_iterator itr = lHordeVendors.begin(); itr != lHordeVendors.end(); ++itr)
@@ -143,7 +143,7 @@ void WorldPvPGH::RespawnSoldiers(GameObject* pGoReference, Team faction)
                 pSoldier->Respawn();
         }
     }
-    else if (faction == HORDE)
+    else if (team == HORDE)
     {
         // despawn all alliance vendors
         for (std::list<ObjectGuid>::const_iterator itr = lAllianceVendors.begin(); itr != lAllianceVendors.end(); ++itr)

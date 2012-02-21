@@ -22,7 +22,7 @@
 enum
 {
     MAX_NA_GUARDS                           = 15,
-    MAX_NA_ROOSTS                           = 4,                // roosts for each type and faction
+    MAX_NA_ROOSTS                           = 4,                // roosts for each type and team
     MAX_FIRE_BOMBS                          = 10,
 
     // zone ids
@@ -163,7 +163,7 @@ class WorldPvPNA : public WorldPvP
 
         void HandlePlayerEnterZone(Player* pPlayer);
         void HandlePlayerLeaveZone(Player* pPlayer);
-        void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team faction);
+        void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team);
         void HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim);
 
         void OnCreatureCreate(Creature* pCreature);
@@ -181,23 +181,23 @@ class WorldPvPNA : public WorldPvP
         void UpdateWyvernsWorldState(uint8 uiValue);
 
         // process capture events
-        void ProcessCaptureEvent(GameObject* pGo, Team faction);
+        void ProcessCaptureEvent(GameObject* pGo, Team team);
 
         // Functions to handle some missing spells
         bool AddBombsToInventory(Player* pPlayer);
         bool HandlePlayerTaxiDrive(Player* pPlayer, uint8 uiPos);
 
         // Link graveyard on Halaa
-        void SetGraveyard(Team faction, bool bRemove = false);
+        void SetGraveyard(Team team, bool bRemove = false);
 
-        // set specific faction soldiers and objects after capture
-        void RespawnSoldiers(const WorldObject* objRef, Team faction);
-        void HandleFactionObjects(const WorldObject* objRef, Team faction);
+        // set specific team soldiers and objects after capture
+        void RespawnSoldiers(const WorldObject* objRef, Team team);
+        void HandleFactionObjects(const WorldObject* objRef, Team team);
 
         // handle a specific game objects
         void RespawnObjects(const WorldObject* objRef, ObjectGuid goGuid, bool bRespawn);
-        void LockHalaa(const WorldObject* objRef, Team faction);
-        void UnlockHalaa(const WorldObject* objRef, Team faction);
+        void LockHalaa(const WorldObject* objRef, Team team);
+        void UnlockHalaa(const WorldObject* objRef, Team team);
 
         Team m_uiZoneOwner;
         uint32 m_uiZoneWorldState;

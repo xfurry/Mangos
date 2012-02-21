@@ -26,7 +26,7 @@
 #include "WorldPvPZM.h"
 #include "Policies/SingletonImp.h"
 
-INSTANTIATE_SINGLETON_1( WorldPvPMgr );
+INSTANTIATE_SINGLETON_1(WorldPvPMgr);
 
 WorldPvPMgr::WorldPvPMgr()
 {
@@ -44,94 +44,33 @@ WorldPvPMgr::~WorldPvPMgr()
  */
 void WorldPvPMgr::InitWorldPvP()
 {
-    uint8 uiPvPZonesInitialized = 0;
+    uint8 count = 7;
+    for (uint8 id = 0; id < count; ++id)
+    {
+        WorldPvP* outdoorPvP = NULL;
+        switch (id)
+        {
+            case 0: outdoorPvP = new WorldPvPEP; break;
+            case 1: outdoorPvP = new WorldPvPSI; break;
+            case 2: outdoorPvP = new WorldPvPHP; break;
+            case 3: outdoorPvP = new WorldPvPNA; break;
+            case 4: outdoorPvP = new WorldPvPTF; break;
+            case 5: outdoorPvP = new WorldPvPZM; break;
+            case 6: outdoorPvP = new WorldPvPGH; break;
+        }
 
-    WorldPvP* pWorldPvP = new WorldPvPEP;
-    if (!pWorldPvP->InitWorldPvPArea())
-    {
-        sLog.outDebug("WorldPvP : EASTER PLAGUELANDS init failed.");
-        delete pWorldPvP;
-    }
-    else
-    {
-        m_WorldPvPSet.push_back(pWorldPvP);
-        ++uiPvPZonesInitialized;
-    }
-
-    pWorldPvP = new WorldPvPHP;
-    if (!pWorldPvP->InitWorldPvPArea())
-    {
-        sLog.outDebug("WorldPvP : HELLFIRE PENINSULA init failed.");
-        delete pWorldPvP;
-    }
-    else
-    {
-        m_WorldPvPSet.push_back(pWorldPvP);
-        ++uiPvPZonesInitialized;
-    }
-
-    pWorldPvP = new WorldPvPGH;
-    if (!pWorldPvP->InitWorldPvPArea())
-    {
-        sLog.outDebug("WorldPvP : GRIZZLY HILLS init failed.");
-        delete pWorldPvP;
-    }
-    else
-    {
-        m_WorldPvPSet.push_back(pWorldPvP);
-        ++uiPvPZonesInitialized;
-    }
-
-    pWorldPvP = new WorldPvPNA;
-    if (!pWorldPvP->InitWorldPvPArea())
-    {
-        sLog.outDebug("WorldPvP : NAGRAND init failed.");
-        delete pWorldPvP;
-    }
-    else
-    {
-        m_WorldPvPSet.push_back(pWorldPvP);
-        ++uiPvPZonesInitialized;
-    }
-
-    pWorldPvP = new WorldPvPSI;
-    if (!pWorldPvP->InitWorldPvPArea())
-    {
-        sLog.outDebug("WorldPvP : SILITHUS init failed.");
-        delete pWorldPvP;
-    }
-    else
-    {
-        m_WorldPvPSet.push_back(pWorldPvP);
-        ++uiPvPZonesInitialized;
-    }
-
-    pWorldPvP = new WorldPvPTF;
-    if (!pWorldPvP->InitWorldPvPArea())
-    {
-        sLog.outDebug("WorldPvP : TEROKKAR FOREST init failed.");
-        delete pWorldPvP;
-    }
-    else
-    {
-        m_WorldPvPSet.push_back(pWorldPvP);
-        ++uiPvPZonesInitialized;
-    }
-
-    pWorldPvP = new WorldPvPZM;
-    if (!pWorldPvP->InitWorldPvPArea())
-    {
-        sLog.outDebug("WorldPvP : ZANGAMARSH init failed.");
-        delete pWorldPvP;
-    }
-    else
-    {
-        m_WorldPvPSet.push_back(pWorldPvP);
-        ++uiPvPZonesInitialized;
+        if (outdoorPvP->InitWorldPvPArea())
+            m_WorldPvPSet.push_back(outdoorPvP);
+        else
+        {
+            sLog.outDebug("WorldPvP: Outdoor PvP id %u loading failed.", id);
+            --count;
+            delete outdoorPvP;
+        }
     }
 
     sLog.outString();
-    sLog.outString(">> Loaded %u World PvP zones", uiPvPZonesInitialized);
+    sLog.outString(">> Loaded %u World PvP zones", count);
 }
 
 /**
@@ -203,10 +142,10 @@ void WorldPvPMgr::HandleDropFlag(Player* pPlayer, uint32 uiSpellId)
    @param   player set to which to send the credit
    @param   capture evetn id
  */
-void WorldPvPMgr::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team faction)
+void WorldPvPMgr::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team)
 {
     for (WorldPvPSet::iterator itr = m_WorldPvPSet.begin(); itr != m_WorldPvPSet.end(); ++itr)
-        (*itr)->HandleObjectiveComplete(players, uiEventId, faction);
+        (*itr)->HandleObjectiveComplete(players, uiEventId, team);
 }
 
 /**
@@ -281,7 +220,7 @@ void WorldPvPMgr::Update(uint32 diff)
 }
 
 /**
-   Function that initializes gets the Capture point slider
+   Function that gets the capture point slider value
 
    @param   capture point entry
  */

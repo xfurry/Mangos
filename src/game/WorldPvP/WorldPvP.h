@@ -63,7 +63,7 @@ class WorldPvP : public ZoneScript
         virtual void HandlePlayerKillInsideArea(Player* /*pKiller*/, Unit* /*pVictim*/) {}
 
         // handle capture objective complete
-        virtual void HandleObjectiveComplete(std::list<Player*> /*players*/, uint32 /*uiEventId*/, Team /*faction*/) {}
+        virtual void HandleObjectiveComplete(std::list<Player*> /*players*/, uint32 /*uiEventId*/, Team /*team*/) {}
 
         // init all the outdoor pvp area relates stuff
         virtual bool InitWorldPvPArea() { return false; }
@@ -78,11 +78,11 @@ class WorldPvP : public ZoneScript
         virtual void Update(uint32 diff) {}
 
         // applies buff to a team inside the specific zone
-        void DoProcessTeamBuff(Team faction, uint32 spellId, bool bRemove = false);
+        void BuffTeam(Team team, uint32 spellId, bool bRemove = false);
 
         // set capture point visual
-        void SetCapturePointVisual(const WorldObject* objRef, ObjectGuid capturePointGuid, uint32 artKit, uint32 animId);
-        void SetCapturePointVisual(GameObject* go, uint32 artKit, uint32 animId);
+        void SetBannerVisual(const WorldObject* objRef, ObjectGuid goGuid, uint32 artKit, uint32 animId);
+        void SetBannerVisual(GameObject* go, uint32 artKit, uint32 animId);
 
     protected:
         // Player related stuff
@@ -97,7 +97,7 @@ class WorldPvP : public ZoneScript
         bool HasPlayer(Player* pPlayer) const;
         void SetCapturePointSliderValue(uint32 pointEntry, CapturePointSlider value);
 
-        // store the players inside the area depending on the faction
+        // store the players inside the area depending on the team
         PlayerSet m_sZonePlayers;
 };
 

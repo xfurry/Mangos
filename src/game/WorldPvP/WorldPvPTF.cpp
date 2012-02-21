@@ -146,7 +146,7 @@ void WorldPvPTF::OnGameObjectCreate(GameObject* pGo)
     pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
 }
 
-void WorldPvPTF::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team faction)
+void WorldPvPTF::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
@@ -156,8 +156,8 @@ void WorldPvPTF::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> pl
             {
                 for (std::list<Player*>::iterator itr = players.begin(); itr != players.end(); ++itr)
                 {
-                    if ((*itr) && (*itr)->GetTeam() == faction)
-                        (*itr)->AreaExploredOrEventHappens(faction == ALLIANCE ? QUEST_SPIRITS_OF_AUCHINDOUM_ALLIANCE : QUEST_SPIRITS_OF_AUCHINDOUM_HORDE);
+                    if ((*itr) && (*itr)->GetTeam() == team)
+                        (*itr)->AreaExploredOrEventHappens(team == ALLIANCE ? QUEST_SPIRITS_OF_AUCHINDOUM_ALLIANCE : QUEST_SPIRITS_OF_AUCHINDOUM_HORDE);
                 }
                 return;
             }
@@ -176,9 +176,9 @@ void WorldPvPTF::ProcessEvent(uint32 uiEventId, GameObject* pGo)
             {
                 if (aTerokkarTowerEvents[i][j].uiEventEntry == uiEventId)
                 {
-                    if (aTerokkarTowerEvents[i][j].faction != m_uiTowerOwner[i])
+                    if (aTerokkarTowerEvents[i][j].team != m_uiTowerOwner[i])
                     {
-                        ProcessCaptureEvent(pGo, i, aTerokkarTowerEvents[i][j].faction, aTerokkarTowerEvents[i][j].uiWorldState);
+                        ProcessCaptureEvent(pGo, i, aTerokkarTowerEvents[i][j].team, aTerokkarTowerEvents[i][j].uiWorldState);
                         sWorld.SendZoneText(ZONE_ID_TEROKKAR, sObjectMgr.GetMangosStringForDBCLocale(aTerokkarTowerEvents[i][j].uiZoneText));
                     }
                     return;
@@ -189,18 +189,18 @@ void WorldPvPTF::ProcessEvent(uint32 uiEventId, GameObject* pGo)
     }
 }
 
-void WorldPvPTF::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team faction, uint32 uiNewWorldState)
+void WorldPvPTF::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState)
 {
-    if (faction != TEAM_NONE)
+    if (team != TEAM_NONE)
     {
-        if (faction == ALLIANCE)
+        if (team == ALLIANCE)
         {
-            SetCapturePointVisual(pGo, GO_ARTKIT_BANNER_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
+            SetBannerVisual(pGo, GO_ARTKIT_BANNER_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
             ++m_uiTowersAlliance;
         }
         else
         {
-            SetCapturePointVisual(pGo, GO_ARTKIT_BANNER_HORDE, CAPTURE_ANIM_HORDE);
+            SetBannerVisual(pGo, GO_ARTKIT_BANNER_HORDE, CAPTURE_ANIM_HORDE);
             ++m_uiTowersHorde;
         }
 
@@ -208,22 +208,22 @@ void WorldPvPTF::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team fac
         if (m_uiTowersAlliance == MAX_TF_TOWERS || m_uiTowersHorde == MAX_TF_TOWERS)
         {
             SendUpdateWorldState(m_uiZoneWorldState, WORLD_STATE_REMOVE);
-            m_uiZoneWorldState = faction == ALLIANCE ? WORLD_STATE_TF_LOCKED_ALLIANCE : WORLD_STATE_TF_LOCKED_HORDE;
+            m_uiZoneWorldState = team == ALLIANCE ? WORLD_STATE_TF_LOCKED_ALLIANCE : WORLD_STATE_TF_LOCKED_HORDE;
             SendUpdateWorldState(m_uiZoneWorldState, WORLD_STATE_ADD);
 
             m_uiZoneLockTimer = TIMER_TF_LOCK_TIME;
             UpdateTimerWorldState();
 
-            m_uiZoneOwner = faction;
-            DoProcessTeamBuff(faction, SPELL_AUCHINDOUN_BLESSING);
+            m_uiZoneOwner = team;
+            BuffTeam(team, SPELL_AUCHINDOUN_BLESSING);
 
             // lock the towers
-            LockTowers(pGo, faction);
+            LockTowers(pGo, team);
         }
     }
     else
     {
-        SetCapturePointVisual(pGo, GO_ARTKIT_BANNER_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
+        SetBannerVisual(pGo, GO_ARTKIT_BANNER_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
 
         if (m_uiTowerOwner[uiTowerId] == ALLIANCE)
             --m_uiTowersAlliance;
@@ -241,7 +241,7 @@ void WorldPvPTF::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team fac
     SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_H, m_uiTowersHorde);
 
     // update tower owner
-    m_uiTowerOwner[uiTowerId] = faction;
+    m_uiTowerOwner[uiTowerId] = team;
 
 }
 
@@ -252,7 +252,7 @@ void WorldPvPTF::Update(uint32 diff)
         if (m_uiZoneLockTimer < diff)
         {
             // remove buffs
-            DoProcessTeamBuff(m_uiZoneOwner, SPELL_AUCHINDOUN_BLESSING, true);
+            BuffTeam(m_uiZoneOwner, SPELL_AUCHINDOUN_BLESSING, true);
 
             // reset world states and towers
             UpdateWorldState(WORLD_STATE_REMOVE);
@@ -312,14 +312,14 @@ void WorldPvPTF::UpdateTimerWorldState()
     SendUpdateWorldState(WORLD_STATE_TF_TIME_HOURS, hoursLeft);
 }
 
-void WorldPvPTF::LockTowers(const WorldObject* objRef, Team faction)
+void WorldPvPTF::LockTowers(const WorldObject* objRef, Team team)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
         if (GameObject* pBanner = objRef->GetMap()->GetGameObject(m_TowerBannerGUID[i]))
             pBanner->SetLootState(GO_JUST_DEACTIVATED);
 
-        SetCapturePointSliderValue(aTerokkarTowers[i], faction == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
+        SetCapturePointSliderValue(aTerokkarTowers[i], team == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
     }
 }
 

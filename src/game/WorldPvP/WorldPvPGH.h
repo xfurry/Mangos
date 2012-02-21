@@ -67,8 +67,8 @@ class WorldPvPGH : public WorldPvP
         void ProcessEvent(uint32 uiEventId, GameObject* pGo);
 
     private:
-        // respawn faction soldiers
-        void RespawnSoldiers(GameObject* pGoReference, Team faction);
+        // respawn team soldiers
+        void RespawnSoldiers(GameObject* pGoReference, Team team);
 
         ObjectGuid m_TowerBannerLighthouseGuid;
 

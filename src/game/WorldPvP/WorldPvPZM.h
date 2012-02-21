@@ -106,7 +106,7 @@ enum
 struct ZangaTowerEvent
 {
     uint32  uiEventEntry;
-    Team    faction;
+    Team    team;
     uint32  uiZoneText;
     uint32  uiWorldState;
     uint32  uiMapState;
@@ -153,16 +153,16 @@ class WorldPvPZM : public WorldPvP
 
     private:
         // process capture events
-        void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team faction, uint32 uiNewWorldState, uint32 uiNewMapState);
+        void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState, uint32 uiNewMapState);
 
         // handles scout world states and gossip - ToDo: implement gossip based on condition
-        void PrepareFactionScouts(const WorldObject* objRef, Team faction);
-        void ResetScouts(const WorldObject* objRef, Team faction, bool bIncludeWorldStates = true);
+        void PrepareFactionScouts(const WorldObject* objRef, Team team);
+        void ResetScouts(const WorldObject* objRef, Team team, bool bIncludeWorldStates = true);
 
         // link graveyard on central node capture
-        void SetGraveyard(Team faction, bool bRemove = false);
+        void SetGraveyard(Team team, bool bRemove = false);
 
-        // handle graveyard faction banners
+        // handle graveyard team banners
         void SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool bRespawn);
 
         // respawn npcs which act as an artkit visual

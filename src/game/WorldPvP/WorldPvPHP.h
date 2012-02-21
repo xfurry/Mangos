@@ -116,7 +116,7 @@ enum
 struct HellfireTowerEvent
 {
     uint32  uiEventEntry;
-    Team    faction;
+    Team    team;
     uint32  uiZoneText;
     uint32  uiWorldState;
     uint32  uiTowerArtKit;
@@ -159,7 +159,7 @@ class WorldPvPHP : public WorldPvP
 
         void HandlePlayerEnterZone(Player* pPlayer);
         void HandlePlayerLeaveZone(Player* pPlayer);
-        void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team faction);
+        void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team);
         void HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim);
 
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
@@ -170,7 +170,7 @@ class WorldPvPHP : public WorldPvP
         void UpdateWorldState();
 
         // process capture events
-        void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team faction, uint32 uiNewWorldState, uint32 uiTowerArtKit, uint32 uiTowerAnim);
+        void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState, uint32 uiTowerArtKit, uint32 uiTowerAnim);
 
         Team m_uiTowerOwner[MAX_HP_TOWERS];
         uint32 m_uiTowerWorldState[MAX_HP_TOWERS];

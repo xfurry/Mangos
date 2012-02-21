@@ -195,7 +195,7 @@ void WorldPvPZM::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
             GameObjectInfo const* info = capturePoint->GetGOInfo();
             if (info && pPlayer->IsWithinDistInMap(capturePoint, info->capturePoint.radius))
             {
-                // check capture point faction
+                // check capture point team
                 if (pPlayer->GetTeam() == m_uiBeaconOwner[i])
                     pPlayer->CastSpell(pPlayer, pPlayer->GetTeam() == ALLIANCE ? SPELL_ZANGA_TOWER_TOKEN_ALLIANCE : SPELL_ZANGA_TOWER_TOKEN_HORDE, true);
 
@@ -216,9 +216,9 @@ void WorldPvPZM::ProcessEvent(uint32 uiEventId, GameObject* pGo)
             {
                 if (aZangaTowerEvents[i][j].uiEventEntry == uiEventId)
                 {
-                    if (aZangaTowerEvents[i][j].faction != m_uiBeaconOwner[i])
+                    if (aZangaTowerEvents[i][j].team != m_uiBeaconOwner[i])
                     {
-                        ProcessCaptureEvent(pGo, i, aZangaTowerEvents[i][j].faction, aZangaTowerEvents[i][j].uiWorldState, aZangaTowerEvents[i][j].uiMapState);
+                        ProcessCaptureEvent(pGo, i, aZangaTowerEvents[i][j].team, aZangaTowerEvents[i][j].uiWorldState, aZangaTowerEvents[i][j].uiMapState);
                         sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(aZangaTowerEvents[i][j].uiZoneText));
                     }
                     return;
@@ -229,9 +229,9 @@ void WorldPvPZM::ProcessEvent(uint32 uiEventId, GameObject* pGo)
     }
 }
 
-void WorldPvPZM::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team faction, uint32 uiNewWorldState, uint32 uiNewMapState)
+void WorldPvPZM::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState, uint32 uiNewMapState)
 {
-    if (faction == ALLIANCE)
+    if (team == ALLIANCE)
     {
         SetBeaconArtKit(pGo, m_BeamBlueGUID[uiTowerId], true);
         ++m_uiTowersAlliance;
@@ -239,7 +239,7 @@ void WorldPvPZM::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team fac
         if (m_uiTowersAlliance == MAX_ZM_TOWERS)
             PrepareFactionScouts(pGo, ALLIANCE);
     }
-    else if (faction == HORDE)
+    else if (team == HORDE)
     {
         SetBeaconArtKit(pGo, m_BeamRedGUID[uiTowerId], true);
         ++m_uiTowersHorde;
@@ -279,12 +279,12 @@ void WorldPvPZM::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team fac
     SendUpdateWorldState(m_uiBeaconMapState[uiTowerId], WORLD_STATE_ADD);;
 
     // update tower owner
-    m_uiBeaconOwner[uiTowerId] = faction;
+    m_uiBeaconOwner[uiTowerId] = team;
 }
 
-void WorldPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team faction)
+void WorldPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team team)
 {
-    if (faction == ALLIANCE)
+    if (team == ALLIANCE)
     {
         if (Creature* pScout = objRef->GetMap()->GetCreature(m_AllianceScoutGUID))
             pScout->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
@@ -293,7 +293,7 @@ void WorldPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team faction)
         m_uiAllianceScoutWorldState = WORLD_STATE_ALLIANCE_FLAG_READY;
         SendUpdateWorldState(m_uiAllianceScoutWorldState, WORLD_STATE_ADD);
     }
-    else if (faction == HORDE)
+    else if (team == HORDE)
     {
         if (Creature* pScout = objRef->GetMap()->GetCreature(m_HorderScoutGUID))
             pScout->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
@@ -304,9 +304,9 @@ void WorldPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team faction)
     }
 }
 
-void WorldPvPZM::ResetScouts(const WorldObject* objRef, Team faction, bool bIncludeWorldStates)
+void WorldPvPZM::ResetScouts(const WorldObject* objRef, Team team, bool bIncludeWorldStates)
 {
-    if (faction == ALLIANCE)
+    if (team == ALLIANCE)
     {
         if (Creature* pScout = objRef->GetMap()->GetCreature(m_AllianceScoutGUID))
             pScout->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
@@ -319,7 +319,7 @@ void WorldPvPZM::ResetScouts(const WorldObject* objRef, Team faction, bool bIncl
             SendUpdateWorldState(m_uiAllianceScoutWorldState, WORLD_STATE_ADD);
         }
     }
-    else if (faction == HORDE)
+    else if (team == HORDE)
     {
         if (Creature* pScout = objRef->GetMap()->GetCreature(m_HorderScoutGUID))
             pScout->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
@@ -352,7 +352,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
             sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOOSE_GY_A));
 
             // remove buff and graveyard
-            DoProcessTeamBuff(ALLIANCE, SPELL_TWIN_SPIRE_BLESSING, true);
+            BuffTeam(ALLIANCE, SPELL_TWIN_SPIRE_BLESSING, true);
             SetGraveyard(ALLIANCE, true);
 
             SendUpdateWorldState(m_uiGraveyardWorldState, WORLD_STATE_REMOVE);
@@ -360,7 +360,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
             SendUpdateWorldState(m_uiGraveyardWorldState, WORLD_STATE_ADD);
 
             // add the buff and the graveyard
-            DoProcessTeamBuff(HORDE, SPELL_TWIN_SPIRE_BLESSING);
+            BuffTeam(HORDE, SPELL_TWIN_SPIRE_BLESSING);
             SetGraveyard(HORDE);
 
             // reset scout and remove player aura
@@ -382,7 +382,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
             sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOOSE_GY_H));
 
             // remove buff and graveyard
-            DoProcessTeamBuff(HORDE, SPELL_TWIN_SPIRE_BLESSING, true);
+            BuffTeam(HORDE, SPELL_TWIN_SPIRE_BLESSING, true);
             SetGraveyard(HORDE, true);
 
             SendUpdateWorldState(m_uiGraveyardWorldState, WORLD_STATE_REMOVE);
@@ -390,7 +390,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
             SendUpdateWorldState(m_uiGraveyardWorldState, WORLD_STATE_ADD);
 
             // add the buff and the graveyard to horde
-            DoProcessTeamBuff(ALLIANCE, SPELL_TWIN_SPIRE_BLESSING);
+            BuffTeam(ALLIANCE, SPELL_TWIN_SPIRE_BLESSING);
             SetGraveyard(ALLIANCE);
 
             // reset scout and remove player aura
@@ -414,7 +414,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 
                 // add the buff and the graveyard to horde
                 m_uiGraveyardWorldState = WORLD_STATE_GRAVEYARD_ALLIANCE;
-                DoProcessTeamBuff(ALLIANCE, SPELL_TWIN_SPIRE_BLESSING);
+                BuffTeam(ALLIANCE, SPELL_TWIN_SPIRE_BLESSING);
                 SetGraveyard(ALLIANCE);
 
                 // reset scout and remove player aura
@@ -432,7 +432,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 
                 // add the buff and the graveyard to horde
                 m_uiGraveyardWorldState = WORLD_STATE_GRAVEYARD_HORDE;
-                DoProcessTeamBuff(HORDE, SPELL_TWIN_SPIRE_BLESSING);
+                BuffTeam(HORDE, SPELL_TWIN_SPIRE_BLESSING);
                 SetGraveyard(HORDE);
 
                 // reset scout and remove player aura
@@ -451,12 +451,12 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
     return false;
 }
 
-void WorldPvPZM::SetGraveyard(Team faction, bool bRemove)
+void WorldPvPZM::SetGraveyard(Team team, bool bRemove)
 {
     if (bRemove)
-        sObjectMgr.RemoveGraveYardLink(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, faction, false);
+        sObjectMgr.RemoveGraveYardLink(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, team, false);
     else
-        sObjectMgr.AddGraveYardLink(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, faction, false);
+        sObjectMgr.AddGraveYardLink(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, team, false);
 }
 
 void WorldPvPZM::SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool bRespawn)

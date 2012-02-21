@@ -110,11 +110,11 @@ void WorldPvP::SetCapturePointSliderValue(uint32 pointEntry, CapturePointSlider 
 }
 
 // apply a team buff for the specific zone
-void WorldPvP::DoProcessTeamBuff(Team faction, uint32 uiSpellId, bool bRemove)
+void WorldPvP::BuffTeam(Team team, uint32 uiSpellId, bool bRemove)
 {
     for (PlayerSet::iterator itr = m_sZonePlayers.begin(); itr != m_sZonePlayers.end(); ++itr)
     {
-        if ((*itr) && (*itr)->GetTeam() == faction)
+        if ((*itr) && (*itr)->GetTeam() == team)
         {
             if (bRemove)
                 (*itr)->RemoveAurasDueToSpell(uiSpellId);
@@ -124,13 +124,13 @@ void WorldPvP::DoProcessTeamBuff(Team faction, uint32 uiSpellId, bool bRemove)
     }
 }
 
-void WorldPvP::SetCapturePointVisual(const WorldObject* objRef, ObjectGuid capturePointGuid, uint32 artKit, uint32 animId)
+void WorldPvP::SetBannerVisual(const WorldObject* objRef, ObjectGuid goGuid, uint32 artKit, uint32 animId)
 {
-    if (GameObject* capturePoint = objRef->GetMap()->GetGameObject(capturePointGuid))
-        SetCapturePointVisual(capturePoint, artKit, animId);
+    if (GameObject* go = objRef->GetMap()->GetGameObject(goGuid))
+        SetBannerVisual(go, artKit, animId);
 }
 
-void WorldPvP::SetCapturePointVisual(GameObject* go, uint32 artKit, uint32 animId)
+void WorldPvP::SetBannerVisual(GameObject* go, uint32 artKit, uint32 animId)
 {
     go->SendGameObjectCustomAnim(go->GetObjectGuid(), animId);
     go->SetGoArtKit(artKit);
