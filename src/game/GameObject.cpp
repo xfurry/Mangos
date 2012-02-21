@@ -1959,6 +1959,7 @@ void GameObject::SetCapturePointSlider(int8 value)
             break;
         default:
             m_captureSlider = value;
+            m_cooldownTime = time(NULL) + 5; // initial tick delay
             SetLootState(GO_ACTIVATED);
             break;
     }
@@ -1978,8 +1979,8 @@ void GameObject::SetCapturePointSlider(int8 value)
 
 void GameObject::TickCapturePoint()
 {
-    // TODO: On retail at HP, NA and ZM: Ticks every 5.2 seconds. slider increase when new player enters on tick
-    m_cooldownTime = time(NULL) + 3;
+    // TODO: On retail: Ticks every 5.2 seconds. slider increase when new player enters on tick
+    m_cooldownTime += 5;
 
     GameObjectInfo const* info = GetGOInfo();
     float radius = info->capturePoint.radius;
@@ -2037,7 +2038,7 @@ void GameObject::TickCapturePoint()
         rangePlayers = -maxSuperiority;
 
     // time to capture from 0% to 100% is maxTime for minSuperiority amount of players and minTime for maxSuperiority amount of players
-    float diffTicks = 300.0f /
+    float diffTicks = 500.0f /
         (float)((maxSuperiority - abs(rangePlayers)) * (info->capturePoint.maxTime - info->capturePoint.minTime) /
         (float)(maxSuperiority - info->capturePoint.minSuperiority) + info->capturePoint.minTime);
 
