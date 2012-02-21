@@ -157,22 +157,22 @@ class WorldPvPZM : public WorldPvP
 
         // handles scout world states and gossip - ToDo: implement gossip based on condition
         void PrepareFactionScouts(const WorldObject* objRef, Team team);
-        void ResetScouts(const WorldObject* objRef, Team team, bool bIncludeWorldStates = true);
+        void ResetScouts(const WorldObject* objRef, Team team, bool includeWorldStates = true);
 
         // link graveyard on central node capture
-        void SetGraveyard(Team team, bool bRemove = false);
+        void SetGraveyard(bool remove = false);
 
         // handle graveyard team banners
-        void SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool bRespawn);
+        void SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn);
 
         // respawn npcs which act as an artkit visual
-        void SetBeaconArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool bRespawn);
+        void SetBeaconArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn);
 
         uint32 m_uiBeaconWorldState[MAX_ZM_TOWERS];
         uint32 m_uiBeaconMapState[MAX_ZM_TOWERS];
 
-        Team m_uiBeaconOwner[MAX_ZM_TOWERS];
-        Team m_uiGraveyardOwner;
+        Team m_capturePointOwner[MAX_ZM_TOWERS];
+        Team m_graveyardOwner;
 
         uint32 m_uiGraveyardWorldState;
         uint32 m_uiAllianceScoutWorldState;
@@ -185,8 +185,8 @@ class WorldPvPZM : public WorldPvP
         ObjectGuid m_TowerBannerCenterHordeGUID;
         ObjectGuid m_TowerBannerCenterNeutralGUID;
 
-        ObjectGuid m_AllianceScoutGUID;
-        ObjectGuid m_HorderScoutGUID;
+        ObjectGuid m_allianceScoutGuid;
+        ObjectGuid m_hordeScoutGuid;
         ObjectGuid m_BeamRedGUID[MAX_ZM_TOWERS];
         ObjectGuid m_BeamBlueGUID[MAX_ZM_TOWERS];
         ObjectGuid m_BeamCenterBlueGUID;

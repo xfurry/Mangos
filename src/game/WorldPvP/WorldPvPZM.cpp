@@ -26,7 +26,7 @@ WorldPvPZM::WorldPvPZM() : WorldPvP(),
     m_uiAllianceScoutWorldState(WORLD_STATE_ALLIANCE_FLAG_NOT_READY),
     m_uiHordeScoutWorldState(WORLD_STATE_HORDE_FLAG_NOT_READY),
 
-    m_uiGraveyardOwner(TEAM_NONE),
+    m_graveyardOwner(TEAM_NONE),
     m_uiTowersAlliance(0),
     m_uiTowersHorde(0)
 {
@@ -37,7 +37,7 @@ WorldPvPZM::WorldPvPZM() : WorldPvP(),
     m_uiBeaconMapState[1] = WORLD_STATE_BEACON_WEST_NEUTRAL;
 
     for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
-        m_uiBeaconOwner[i] = TEAM_NONE;
+        m_capturePointOwner[i] = TEAM_NONE;
 }
 
 bool WorldPvPZM::InitWorldPvPArea()
@@ -102,31 +102,31 @@ void WorldPvPZM::OnCreatureCreate(Creature* pCreature)
     switch (pCreature->GetEntry())
     {
         case NPC_ALLIANCE_FIELD_SCOUT:
-            m_AllianceScoutGUID = pCreature->GetObjectGuid();
+            m_allianceScoutGuid = pCreature->GetObjectGuid();
             break;
         case NPC_HORDE_FIELD_SCOUT:
-            m_HorderScoutGUID = pCreature->GetObjectGuid();
+            m_hordeScoutGuid = pCreature->GetObjectGuid();
             break;
         case NPC_PVP_BEAM_RED:
             // East Beam
             if (pCreature->GetPositionY() < 7000.0f)
             {
                 m_BeamRedGUID[0] = pCreature->GetObjectGuid();
-                if (m_uiBeaconOwner[0] == HORDE)
+                if (m_capturePointOwner[0] == HORDE)
                     return;
             }
             // Center Beam
             else if (pCreature ->GetPositionY() < 7300.0f)
             {
                 m_BeamCenterRedGUID = pCreature->GetObjectGuid();
-                if (m_uiGraveyardOwner == HORDE)
+                if (m_graveyardOwner == HORDE)
                     return;
             }
             // West Beam
             else
             {
                 m_BeamRedGUID[1] = pCreature->GetObjectGuid();
-                if (m_uiBeaconOwner[1] == HORDE)
+                if (m_capturePointOwner[1] == HORDE)
                     return;
             }
 
@@ -138,21 +138,21 @@ void WorldPvPZM::OnCreatureCreate(Creature* pCreature)
             if (pCreature->GetPositionY() < 7000.0f)
             {
                 m_BeamBlueGUID[0] = pCreature->GetObjectGuid();
-                if (m_uiBeaconOwner[0] == ALLIANCE)
+                if (m_capturePointOwner[0] == ALLIANCE)
                     return;
             }
             // Center Beam
             else if (pCreature ->GetPositionY() < 7300.0f)
             {
                 m_BeamCenterBlueGUID = pCreature->GetObjectGuid();
-                if (m_uiGraveyardOwner == ALLIANCE)
+                if (m_graveyardOwner == ALLIANCE)
                     return;
             }
             // West Beam
             else
             {
                 m_BeamBlueGUID[1] = pCreature->GetObjectGuid();
-                if (m_uiBeaconOwner[1] == ALLIANCE)
+                if (m_capturePointOwner[1] == ALLIANCE)
                     return;
             }
 
@@ -196,7 +196,7 @@ void WorldPvPZM::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
             if (info && pPlayer->IsWithinDistInMap(capturePoint, info->capturePoint.radius))
             {
                 // check capture point team
-                if (pPlayer->GetTeam() == m_uiBeaconOwner[i])
+                if (pPlayer->GetTeam() == m_capturePointOwner[i])
                     pPlayer->CastSpell(pPlayer, pPlayer->GetTeam() == ALLIANCE ? SPELL_ZANGA_TOWER_TOKEN_ALLIANCE : SPELL_ZANGA_TOWER_TOKEN_HORDE, true);
 
                 return;
@@ -216,7 +216,7 @@ void WorldPvPZM::ProcessEvent(uint32 uiEventId, GameObject* pGo)
             {
                 if (aZangaTowerEvents[i][j].uiEventEntry == uiEventId)
                 {
-                    if (aZangaTowerEvents[i][j].team != m_uiBeaconOwner[i])
+                    if (aZangaTowerEvents[i][j].team != m_capturePointOwner[i])
                     {
                         ProcessCaptureEvent(pGo, i, aZangaTowerEvents[i][j].team, aZangaTowerEvents[i][j].uiWorldState, aZangaTowerEvents[i][j].uiMapState);
                         sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(aZangaTowerEvents[i][j].uiZoneText));
@@ -249,7 +249,7 @@ void WorldPvPZM::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team tea
     }
     else
     {
-        if (m_uiBeaconOwner[uiTowerId] == ALLIANCE)
+        if (m_capturePointOwner[uiTowerId] == ALLIANCE)
         {
             SetBeaconArtKit(pGo, m_BeamBlueGUID[uiTowerId], false);
 
@@ -278,25 +278,25 @@ void WorldPvPZM::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team tea
     m_uiBeaconMapState[uiTowerId] = uiNewMapState;
     SendUpdateWorldState(m_uiBeaconMapState[uiTowerId], WORLD_STATE_ADD);;
 
-    // update tower owner
-    m_uiBeaconOwner[uiTowerId] = team;
+    // update capture point owner
+    m_capturePointOwner[uiTowerId] = team;
 }
 
 void WorldPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team team)
 {
     if (team == ALLIANCE)
     {
-        if (Creature* pScout = objRef->GetMap()->GetCreature(m_AllianceScoutGUID))
-            pScout->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+        if (Creature* scout = objRef->GetMap()->GetCreature(m_allianceScoutGuid))
+            scout->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
         SendUpdateWorldState(m_uiAllianceScoutWorldState, WORLD_STATE_REMOVE);
         m_uiAllianceScoutWorldState = WORLD_STATE_ALLIANCE_FLAG_READY;
         SendUpdateWorldState(m_uiAllianceScoutWorldState, WORLD_STATE_ADD);
     }
-    else if (team == HORDE)
+    else
     {
-        if (Creature* pScout = objRef->GetMap()->GetCreature(m_HorderScoutGUID))
-            pScout->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+        if (Creature* scout = objRef->GetMap()->GetCreature(m_hordeScoutGuid))
+            scout->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
         SendUpdateWorldState(m_uiHordeScoutWorldState, WORLD_STATE_REMOVE);
         m_uiHordeScoutWorldState = WORLD_STATE_HORDE_FLAG_READY;
@@ -304,28 +304,28 @@ void WorldPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team team)
     }
 }
 
-void WorldPvPZM::ResetScouts(const WorldObject* objRef, Team team, bool bIncludeWorldStates)
+void WorldPvPZM::ResetScouts(const WorldObject* objRef, Team team, bool includeWorldStates)
 {
     if (team == ALLIANCE)
     {
-        if (Creature* pScout = objRef->GetMap()->GetCreature(m_AllianceScoutGUID))
-            pScout->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+        if (Creature* scout = objRef->GetMap()->GetCreature(m_allianceScoutGuid))
+            scout->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
         // reset world states only if requested
-        if (bIncludeWorldStates)
+        if (includeWorldStates)
         {
             SendUpdateWorldState(m_uiAllianceScoutWorldState, WORLD_STATE_REMOVE);
             m_uiAllianceScoutWorldState = WORLD_STATE_ALLIANCE_FLAG_NOT_READY;
             SendUpdateWorldState(m_uiAllianceScoutWorldState, WORLD_STATE_ADD);
         }
     }
-    else if (team == HORDE)
+    else
     {
-        if (Creature* pScout = objRef->GetMap()->GetCreature(m_HorderScoutGUID))
-            pScout->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+        if (Creature* scout = objRef->GetMap()->GetCreature(m_hordeScoutGuid))
+            scout->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
         // reset world states only if requested
-        if (bIncludeWorldStates)
+        if (includeWorldStates)
         {
             SendUpdateWorldState(m_uiHordeScoutWorldState, WORLD_STATE_REMOVE);
             m_uiHordeScoutWorldState = WORLD_STATE_HORDE_FLAG_NOT_READY;
@@ -352,20 +352,22 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
             sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOOSE_GY_A));
 
             // remove buff and graveyard
-            BuffTeam(ALLIANCE, SPELL_TWIN_SPIRE_BLESSING, true);
-            SetGraveyard(ALLIANCE, true);
+            BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING, true);
+            SetGraveyard(true);
+
+            // update graveyard owner
+            m_graveyardOwner = HORDE;
+
+            // add the buff and the graveyard
+            BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING);
+            SetGraveyard();
 
             SendUpdateWorldState(m_uiGraveyardWorldState, WORLD_STATE_REMOVE);
             m_uiGraveyardWorldState = WORLD_STATE_GRAVEYARD_HORDE;
             SendUpdateWorldState(m_uiGraveyardWorldState, WORLD_STATE_ADD);
 
-            // add the buff and the graveyard
-            BuffTeam(HORDE, SPELL_TWIN_SPIRE_BLESSING);
-            SetGraveyard(HORDE);
-
             // reset scout and remove player aura
-            ResetScouts(pGo, HORDE);
-            m_uiGraveyardOwner = HORDE;
+            ResetScouts(pGo, m_graveyardOwner);
             pPlayer->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_HORDE);
             SetBeaconArtKit(pGo, m_BeamCenterRedGUID, true);
             sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_H));
@@ -382,20 +384,22 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
             sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOOSE_GY_H));
 
             // remove buff and graveyard
-            BuffTeam(HORDE, SPELL_TWIN_SPIRE_BLESSING, true);
-            SetGraveyard(HORDE, true);
+            BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING, true);
+            SetGraveyard(true);
+
+            // update graveyard owner
+            m_graveyardOwner = ALLIANCE;
+
+            // add the buff and the graveyard to horde
+            BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING);
+            SetGraveyard();
 
             SendUpdateWorldState(m_uiGraveyardWorldState, WORLD_STATE_REMOVE);
             m_uiGraveyardWorldState = WORLD_STATE_GRAVEYARD_ALLIANCE;
             SendUpdateWorldState(m_uiGraveyardWorldState, WORLD_STATE_ADD);
 
-            // add the buff and the graveyard to horde
-            BuffTeam(ALLIANCE, SPELL_TWIN_SPIRE_BLESSING);
-            SetGraveyard(ALLIANCE);
-
             // reset scout and remove player aura
-            ResetScouts(pGo, ALLIANCE);
-            m_uiGraveyardOwner = ALLIANCE;
+            ResetScouts(pGo, m_graveyardOwner);
             pPlayer->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_ALLIANCE);
             SetBeaconArtKit(pGo, m_BeamCenterBlueGUID, true);
             sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_A));
@@ -408,24 +412,29 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 
             if (pPlayer->GetTeam() == ALLIANCE)
             {
+                // update graveyard owner
+                m_graveyardOwner = ALLIANCE;
+
                 // change banners
                 SetGraveyardArtKit(pGo, m_TowerBannerCenterNeutralGUID, false);
                 SetGraveyardArtKit(pGo, m_TowerBannerCenterAllianceGUID, true);
 
                 // add the buff and the graveyard to horde
                 m_uiGraveyardWorldState = WORLD_STATE_GRAVEYARD_ALLIANCE;
-                BuffTeam(ALLIANCE, SPELL_TWIN_SPIRE_BLESSING);
-                SetGraveyard(ALLIANCE);
+                BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING);
+                SetGraveyard();
 
                 // reset scout and remove player aura
-                ResetScouts(pGo, ALLIANCE);
-                m_uiGraveyardOwner = ALLIANCE;
+                ResetScouts(pGo, m_graveyardOwner);
                 pPlayer->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_ALLIANCE);
                 SetBeaconArtKit(pGo, m_BeamCenterBlueGUID, true);
                 sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_H));
             }
-            else if (pPlayer->GetTeam() == HORDE)
+            else
             {
+                // update graveyard owner
+                m_graveyardOwner = HORDE;
+
                 // change banners
                 SetGraveyardArtKit(pGo, m_TowerBannerCenterNeutralGUID, false);
                 SetGraveyardArtKit(pGo, m_TowerBannerCenterHordeGUID, true);
@@ -433,11 +442,10 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
                 // add the buff and the graveyard to horde
                 m_uiGraveyardWorldState = WORLD_STATE_GRAVEYARD_HORDE;
                 BuffTeam(HORDE, SPELL_TWIN_SPIRE_BLESSING);
-                SetGraveyard(HORDE);
+                SetGraveyard();
 
                 // reset scout and remove player aura
-                ResetScouts(pGo, HORDE);
-                m_uiGraveyardOwner = HORDE;
+                ResetScouts(pGo, m_graveyardOwner);
                 pPlayer->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_HORDE);
                 SetBeaconArtKit(pGo, m_BeamCenterRedGUID, true);
                 sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_H));
@@ -451,19 +459,19 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
     return false;
 }
 
-void WorldPvPZM::SetGraveyard(Team team, bool bRemove)
+void WorldPvPZM::SetGraveyard(bool remove)
 {
-    if (bRemove)
-        sObjectMgr.RemoveGraveYardLink(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, team, false);
+    if (remove)
+        sObjectMgr.RemoveGraveYardLink(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner, false);
     else
-        sObjectMgr.AddGraveYardLink(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, team, false);
+        sObjectMgr.AddGraveYardLink(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner, false);
 }
 
-void WorldPvPZM::SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool bRespawn)
+void WorldPvPZM::SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn)
 {
     if (GameObject* pBanner = objRef->GetMap()->GetGameObject(goGuid))
     {
-        if (bRespawn)
+        if (respawn)
         {
             pBanner->SetRespawnTime(7 * DAY);
             pBanner->Refresh();
@@ -473,11 +481,11 @@ void WorldPvPZM::SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid
     }
 }
 
-void WorldPvPZM::SetBeaconArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool bRespawn)
+void WorldPvPZM::SetBeaconArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn)
 {
     if (Creature* pBeam = objRef->GetMap()->GetCreature(goGuid))
     {
-        if (bRespawn)
+        if (respawn)
             pBeam->Respawn();
         else
             pBeam->ForcedDespawn();

@@ -85,7 +85,7 @@ class WorldPvP : public ZoneScript
         virtual void Update(uint32 diff) {}
 
         // applies buff to a team inside the specific zone
-        void BuffTeam(Team team, uint32 spellId, bool bRemove = false);
+        void BuffTeam(Team team, uint32 spellId, bool remove = false);
 
         // get banner artkit based on controlling team
         uint32 GetBannerArtKit(Team team, uint32 artKitAlliance, uint32 artKitHorde, uint32 artKitNeutral);
@@ -105,7 +105,7 @@ class WorldPvP : public ZoneScript
 
         void RegisterZone(uint32 zoneId);
         bool HasPlayer(Player* pPlayer) const;
-        void SetCapturePointSliderValue(uint32 pointEntry, CapturePointSlider value);
+        void SetCapturePointSliderValue(uint32 entry, CapturePointSlider value);
 
         // store the players inside the area depending on the team
         PlayerSet m_sZonePlayers;

@@ -21,7 +21,7 @@
 
 
 WorldPvPGH::WorldPvPGH() : WorldPvP(),
-    m_uiZoneOwner(TEAM_NONE)
+    m_zoneOwner(TEAM_NONE)
 {
 }
 
@@ -39,7 +39,7 @@ void WorldPvPGH::OnCreatureCreate(Creature* pCreature)
         case NPC_WESTFALL_BRIGADE_DEFENDER:
         case NPC_COMMANDER_HOWSER:
             lAllianceSoldiers.push_back(pCreature->GetObjectGuid());
-            if (m_uiZoneOwner == ALLIANCE)
+            if (m_zoneOwner == ALLIANCE)
                 return;
             break;
         case NPC_BLACKSMITH_JASON_RIGGINS:
@@ -49,13 +49,13 @@ void WorldPvPGH::OnCreatureCreate(Creature* pCreature)
             // check the zone id because the horses can be found in other areas too
             if (pCreature->GetZoneId() == ZONE_ID_GRIZZLY_HILLS)
                 lAllianceVendors.push_back(pCreature->GetObjectGuid());
-            if (m_uiZoneOwner == ALLIANCE)
+            if (m_zoneOwner == ALLIANCE)
                 return;
             break;
         case NPC_CONQUEST_HOLD_DEFENDER:
         case NPC_GENERAL_GORLOK:
             lHordeSoldiers.push_back(pCreature->GetObjectGuid());
-            if (m_uiZoneOwner == HORDE)
+            if (m_zoneOwner == HORDE)
                 return;
             break;
         case NPC_BLACKSMITH_KOLOTH:
@@ -65,7 +65,7 @@ void WorldPvPGH::OnCreatureCreate(Creature* pCreature)
             // check the zone id because the wolfs can be found in other areas too
             if (pCreature->GetZoneId() == ZONE_ID_GRIZZLY_HILLS)
                 lHordeVendors.push_back(pCreature->GetObjectGuid());
-            if (m_uiZoneOwner == HORDE)
+            if (m_zoneOwner == HORDE)
                 return;
             break;
 
@@ -81,10 +81,7 @@ void WorldPvPGH::OnCreatureCreate(Creature* pCreature)
 void WorldPvPGH::OnGameObjectCreate(GameObject* pGo)
 {
     if (pGo->GetEntry() == GO_VENTURE_BAY_LIGHTHOUSE)
-    {
-        m_TowerBannerLighthouseGuid = pGo->GetObjectGuid();
-        pGo->SetGoArtKit(GetBannerArtKit(m_uiZoneOwner, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
-    }
+        pGo->SetGoArtKit(GetBannerArtKit(m_zoneOwner, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
 }
 
 // process the capture events
@@ -98,13 +95,13 @@ void WorldPvPGH::ProcessEvent(uint32 uiEventId, GameObject* pGo)
     {
         case EVENT_LIGHTHOUSE_WIN_ALLIANCE:
             // Spawn the npcs only when the tower is fully controlled
-            RespawnSoldiers(pGo, ALLIANCE);
-            m_uiZoneOwner = ALLIANCE;
+            m_zoneOwner = ALLIANCE;
+            RespawnSoldiers(pGo);
             break;
         case EVENT_LIGHTHOUSE_WIN_HORDE:
             // Spawn the npcs only when the tower is fully controlled
-            RespawnSoldiers(pGo, HORDE);
-            m_uiZoneOwner = HORDE;
+            m_zoneOwner = HORDE;
+            RespawnSoldiers(pGo);
             break;
         case EVENT_LIGHTHOUSE_PROGRESS_ALLIANCE:
             SetBannerVisual(pGo, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
@@ -114,53 +111,53 @@ void WorldPvPGH::ProcessEvent(uint32 uiEventId, GameObject* pGo)
             break;
         case EVENT_LIGHTHOUSE_NEUTRAL_ALLIANCE:
         case EVENT_LIGHTHOUSE_NEUTRAL_HORDE:
+            m_zoneOwner = TEAM_NONE;
             SetBannerVisual(pGo, CAPTURE_ARTKIT_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
-            m_uiZoneOwner = TEAM_NONE;
             break;
     }
 }
 
-void WorldPvPGH::RespawnSoldiers(GameObject* pGoReference, Team team)
+void WorldPvPGH::RespawnSoldiers(const WorldObject* objRef)
 {
-    if (team == ALLIANCE)
+    if (m_zoneOwner == ALLIANCE)
     {
         // despawn all horde vendors
         for (std::list<ObjectGuid>::const_iterator itr = lHordeVendors.begin(); itr != lHordeVendors.end(); ++itr)
         {
-            if (Creature* pSoldier = pGoReference->GetMap()->GetCreature(*itr))
+            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
                 pSoldier->ForcedDespawn();
         }
 
         // spawn all alliance soldiers and vendors
         for (std::list<ObjectGuid>::const_iterator itr = lAllianceSoldiers.begin(); itr != lAllianceSoldiers.end(); ++itr)
         {
-            if (Creature* pSoldier = pGoReference->GetMap()->GetCreature(*itr))
+            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
                 pSoldier->Respawn();
         }
         for (std::list<ObjectGuid>::const_iterator itr = lAllianceVendors.begin(); itr != lAllianceVendors.end(); ++itr)
         {
-            if (Creature* pSoldier = pGoReference->GetMap()->GetCreature(*itr))
+            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
                 pSoldier->Respawn();
         }
     }
-    else if (team == HORDE)
+    else
     {
         // despawn all alliance vendors
         for (std::list<ObjectGuid>::const_iterator itr = lAllianceVendors.begin(); itr != lAllianceVendors.end(); ++itr)
         {
-            if (Creature* pSoldier = pGoReference->GetMap()->GetCreature(*itr))
+            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
                 pSoldier->ForcedDespawn();
         }
 
         // spawn all horde soldiers and vendors
         for (std::list<ObjectGuid>::const_iterator itr = lHordeSoldiers.begin(); itr != lHordeSoldiers.end(); ++itr)
         {
-            if (Creature* pSoldier = pGoReference->GetMap()->GetCreature(*itr))
+            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
                 pSoldier->Respawn();
         }
         for (std::list<ObjectGuid>::const_iterator itr = lHordeVendors.begin(); itr != lHordeVendors.end(); ++itr)
         {
-            if (Creature* pSoldier = pGoReference->GetMap()->GetCreature(*itr))
+            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
                 pSoldier->Respawn();
         }
     }

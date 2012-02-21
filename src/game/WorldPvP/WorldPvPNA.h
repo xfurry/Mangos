@@ -188,24 +188,24 @@ class WorldPvPNA : public WorldPvP
         bool HandlePlayerTaxiDrive(Player* pPlayer, uint8 uiPos);
 
         // Link graveyard on Halaa
-        void SetGraveyard(Team team, bool bRemove = false);
+        void SetGraveyard(bool remove = false);
 
         // set specific team soldiers and objects after capture
-        void RespawnSoldiers(const WorldObject* objRef, Team team);
-        void HandleFactionObjects(const WorldObject* objRef, Team team);
+        void RespawnSoldiers(const WorldObject* objRef);
+        void HandleFactionObjects(const WorldObject* objRef);
 
         // handle a specific game objects
-        void RespawnObjects(const WorldObject* objRef, ObjectGuid goGuid, bool bRespawn);
+        void RespawnGO(const WorldObject* objRef, ObjectGuid goGuid, bool respawn);
         void LockHalaa(const WorldObject* objRef);
         void UnlockHalaa(const WorldObject* objRef);
 
-        Team m_uiZoneOwner;
+        Team m_zoneOwner;
         uint32 m_uiZoneWorldState;
         uint32 m_uiZoneMapState;
         uint32 m_uiRoostWorldState[MAX_NA_ROOSTS];
         uint32 m_uiGuardsLeft;
 
-        ObjectGuid m_HalaaBannerGuid;
+        ObjectGuid m_capturePointGuid;
         ObjectGuid m_AllianceRoost[MAX_NA_ROOSTS];
         ObjectGuid m_HordeRoost[MAX_NA_ROOSTS];
         ObjectGuid m_AllianceBrokenRoost[MAX_NA_ROOSTS];

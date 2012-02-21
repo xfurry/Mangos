@@ -22,7 +22,7 @@
 WorldPvPSI::WorldPvPSI() : WorldPvP(),
     m_uiResourcesAlliance(0),
     m_uiResourcesHorde(0),
-    m_uiZoneOwner(TEAM_NONE)
+    m_zoneOwner(TEAM_NONE)
 {
 }
 
@@ -67,7 +67,7 @@ void WorldPvPSI::HandlePlayerEnterZone(Player* pPlayer)
     pPlayer->RemoveAurasDueToSpell(SPELL_CENARION_FAVOR);
 
     // buff the player if same team is controlling the zone
-    if (pPlayer->GetTeam() == m_uiZoneOwner)
+    if (pPlayer->GetTeam() == m_zoneOwner)
         pPlayer->CastSpell(pPlayer, SPELL_CENARION_FAVOR, true);
 
     WorldPvP::HandlePlayerEnterZone(pPlayer);
@@ -104,7 +104,7 @@ bool WorldPvPSI::HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId)
                 //send zone text and reset stats
                 sWorld.SendZoneText(ZONE_ID_SILITHUS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_SI_CAPTURE_A));
 
-                m_uiZoneOwner = ALLIANCE;
+                m_zoneOwner = ALLIANCE;
                 m_uiResourcesAlliance = 0;
                 m_uiResourcesHorde = 0;
             }
@@ -139,7 +139,7 @@ bool WorldPvPSI::HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId)
 
                 //send zone text and reset stats
                 sWorld.SendZoneText(ZONE_ID_SILITHUS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_SI_CAPTURE_H));
-                m_uiZoneOwner = HORDE;
+                m_zoneOwner = HORDE;
                 m_uiResourcesAlliance = 0;
                 m_uiResourcesHorde = 0;
             }
@@ -171,17 +171,9 @@ bool WorldPvPSI::HandleDropFlag(Player* pPlayer, uint32 uiSpellId)
 
     // don't drop flag at area trigger
     // we are checking distance from the AT hardcoded coords because it's much faster than checking the area trigger store
-    switch (pPlayer->GetTeam())
-    {
-        case ALLIANCE:
-            if (pPlayer->IsWithinDist3d(aSilithusLocs[0].m_fX, aSilithusLocs[0].m_fY, aSilithusLocs[0].m_fZ, 5.0f))
-                return false;
-            break;
-        case HORDE:
-            if (pPlayer->IsWithinDist3d(aSilithusLocs[1].m_fX, aSilithusLocs[1].m_fY, aSilithusLocs[1].m_fZ, 5.0f))
-                return false;
-            break;
-    }
+    if ((pPlayer->GetTeam() == ALLIANCE && pPlayer->IsWithinDist3d(aSilithusLocs[0].m_fX, aSilithusLocs[0].m_fY, aSilithusLocs[0].m_fZ, 5.0f)) ||
+        (pPlayer->GetTeam() == HORDE && pPlayer->IsWithinDist3d(aSilithusLocs[1].m_fX, aSilithusLocs[1].m_fY, aSilithusLocs[1].m_fZ, 5.0f)))
+        return false;
 
     // drop the flag in other case
     pPlayer->CastSpell(pPlayer, SPELL_SILITHYST_FLAG_DROP, true);

@@ -21,7 +21,11 @@
 
 enum
 {
-    MAX_EP_TOWERS                            = 4,
+    TOWER_ID_NORTHPASS                      = 0,
+    TOWER_ID_CROWNGUARD                     = 1,
+    TOWER_ID_EASTWALL                       = 2,
+    TOWER_ID_PLAGUEWOOD                     = 3,
+    TOWER_COUNT                             = 4,
 
     // spells
     // alliance
@@ -163,7 +167,7 @@ struct sTowerBuffs
     uint32 uiSpellIdAlliance, uiSpellIdHorde;
 };
 
-static sTowerBuffs m_aPlaguelandsTowerBuffs[MAX_EP_TOWERS] =
+static sTowerBuffs m_aPlaguelandsTowerBuffs[TOWER_COUNT] =
 {
     {SPELL_ECOES_OF_LORDAERON_ALLIANCE_1, SPELL_ECOES_OF_LORDAERON_HORDE_1},
     {SPELL_ECOES_OF_LORDAERON_ALLIANCE_2, SPELL_ECOES_OF_LORDAERON_HORDE_2},
@@ -189,7 +193,7 @@ static sSpawnLocations m_aPlaguelandSoldiersSpawnLocs[] =
 };
 
 // Capture points coords to sort the banners
-static sSpawnLocations m_aTowersSpawnLocs[MAX_EP_TOWERS] =
+static sSpawnLocations m_aTowersSpawnLocs[TOWER_COUNT] =
 {
     {3181.08f, -4379.36f, 174.123f},       // northpass
     {1860.85f, -3731.23f, 196.716f},       // crownguard
@@ -208,7 +212,7 @@ struct PlaguelandsTowerEvent
     uint32  uiWorldState;
 };
 
-static const PlaguelandsTowerEvent aPlaguelandsTowerEvents[MAX_EP_TOWERS][4] =
+static const PlaguelandsTowerEvent aPlaguelandsTowerEvents[TOWER_COUNT][4] =
 {
     {
         {EVENT_NORTHPASS_PROGRESS_ALLIANCE,     ALLIANCE,   LANG_OPVP_EP_CAPTURE_NPT_A, WORLD_STATE_NORTHPASS_ALLIANCE},
@@ -237,7 +241,7 @@ static const PlaguelandsTowerEvent aPlaguelandsTowerEvents[MAX_EP_TOWERS][4] =
 };
 
 // Order: Northpass, Crownguard, Eastwall, Plaguewood
-static const uint32 aPlaguelandsBanners[MAX_EP_TOWERS] = {GO_BATTLEFIELD_BANNER_PLAGUELANDS_1, GO_BATTLEFIELD_BANNER_PLAGUELANDS_2, GO_BATTLEFIELD_BANNER_PLAGUELANDS_3, GO_BATTLEFIELD_BANNER_PLAGUELANDS_4};
+static const uint32 aPlaguelandsBanners[TOWER_COUNT] = {GO_BATTLEFIELD_BANNER_PLAGUELANDS_1, GO_BATTLEFIELD_BANNER_PLAGUELANDS_2, GO_BATTLEFIELD_BANNER_PLAGUELANDS_3, GO_BATTLEFIELD_BANNER_PLAGUELANDS_4};
 
 class WorldPvPEP : public WorldPvP
 {
@@ -264,21 +268,21 @@ class WorldPvPEP : public WorldPvP
         void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState);
 
         // plaguewood bonus - flightmaster
-        void SummonFlightMaster(WorldObject* objRef, Team team);
+        void SummonFlightMaster(WorldObject* objRef);
         void UnsummonFlightMaster(const WorldObject* objRef);
 
         // eastwall bonus - soldiers
-        void SummonSoldiers(WorldObject* objRef, Team team);
+        void SummonSoldiers(WorldObject* objRef);
         void UnsummonSoldiers(const WorldObject* objRef);
 
         // northpass bonus - shrine
-        void UpdateShrine(const WorldObject* objRef, ObjectGuid uiShrineGuid, bool bRemove = false);
+        void UpdateShrine(const WorldObject* objRef, bool remove = false);
 
         // crownguard bonus - graveyard
-        void SetGraveyard(Team team, bool bRemove = false);
+        void SetGraveyard(bool remove = false);
 
-        Team m_uiTowerOwner[MAX_EP_TOWERS];
-        uint32 m_uiTowerWorldState[MAX_EP_TOWERS];
+        Team m_capturePointOwner[TOWER_COUNT];
+        uint32 m_uiTowerWorldState[TOWER_COUNT];
         uint32 m_uiTowersAlliance;
         uint32 m_uiTowersHorde;
 
@@ -288,7 +292,7 @@ class WorldPvPEP : public WorldPvP
 
         std::list<ObjectGuid> m_lSoldiersGuids;
 
-        std::list<ObjectGuid> m_lTowerBanners[MAX_EP_TOWERS];
+        std::list<ObjectGuid> m_lTowerBanners[TOWER_COUNT];
 };
 
 #endif

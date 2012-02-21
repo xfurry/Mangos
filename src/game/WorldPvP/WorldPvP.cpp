@@ -104,22 +104,22 @@ bool WorldPvP::HasPlayer(Player* pPlayer) const
 }
 
 // set a capture point slider value for when the gameobject is being reloaded the next time
-void WorldPvP::SetCapturePointSliderValue(uint32 pointEntry, CapturePointSlider value)
+void WorldPvP::SetCapturePointSliderValue(uint32 entry, CapturePointSlider value)
 {
-    sWorldPvPMgr.SetCapturePointSlider(pointEntry, value);
+    sWorldPvPMgr.SetCapturePointSlider(entry, value);
 }
 
 // apply a team buff for the specific zone
-void WorldPvP::BuffTeam(Team team, uint32 uiSpellId, bool bRemove)
+void WorldPvP::BuffTeam(Team team, uint32 spellId, bool remove)
 {
     for (PlayerSet::iterator itr = m_sZonePlayers.begin(); itr != m_sZonePlayers.end(); ++itr)
     {
         if ((*itr) && (*itr)->GetTeam() == team)
         {
-            if (bRemove)
-                (*itr)->RemoveAurasDueToSpell(uiSpellId);
+            if (remove)
+                (*itr)->RemoveAurasDueToSpell(spellId);
             else
-                (*itr)->CastSpell(*itr, uiSpellId, true);
+                (*itr)->CastSpell(*itr, spellId, true);
         }
     }
 }

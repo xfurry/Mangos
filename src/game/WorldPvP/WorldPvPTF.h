@@ -191,8 +191,8 @@ class WorldPvPTF : public WorldPvP
         uint32 m_uiTowerWorldState[MAX_TF_TOWERS];
         uint32 m_uiZoneWorldState;
 
-        Team m_uiTowerOwner[MAX_TF_TOWERS];
-        Team m_uiZoneOwner;
+        Team m_capturePointOwner[MAX_TF_TOWERS];
+        Team m_zoneOwner;
 
         uint32 m_uiZoneLockTimer;
         uint32 m_uiZoneUpdateTimer;

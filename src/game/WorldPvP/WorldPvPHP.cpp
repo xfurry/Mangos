@@ -30,7 +30,7 @@ WorldPvPHP::WorldPvPHP() : WorldPvP(),
     m_uiTowerWorldState[2] = WORLD_STATE_BROKEN_HILL_NEUTRAL;
 
     for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
-        m_uiTowerOwner[i] = TEAM_NONE;
+        m_capturePointOwner[i] = TEAM_NONE;
 }
 
 bool WorldPvPHP::InitWorldPvPArea()
@@ -99,28 +99,28 @@ void WorldPvPHP::OnGameObjectCreate(GameObject* pGo)
     switch (pGo->GetEntry())
     {
         case GO_TOWER_BANNER_OVERLOOK:
-            m_HellfireTowerGUID[0] = pGo->GetObjectGuid();
-            pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[0], GO_ARTKIT_OVERLOOK_ALLIANCE, GO_ARTKIT_OVERLOOK_HORDE, GO_ARTKIT_OVERLOOK_NEUTRAL));
+            m_bannersGuid[0] = pGo->GetObjectGuid();
+            pGo->SetGoArtKit(GetBannerArtKit(m_capturePointOwner[0], GO_ARTKIT_OVERLOOK_ALLIANCE, GO_ARTKIT_OVERLOOK_HORDE, GO_ARTKIT_OVERLOOK_NEUTRAL));
             break;
         case GO_TOWER_BANNER_STADIUM:
-            m_HellfireTowerGUID[1] = pGo->GetObjectGuid();
-            pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[1], GO_ARTKIT_STADIUM_ALLIANCE, GO_ARTKIT_STADIUM_HORDE, GO_ARTKIT_STADIUM_NEUTRAL));
+            m_bannersGuid[1] = pGo->GetObjectGuid();
+            pGo->SetGoArtKit(GetBannerArtKit(m_capturePointOwner[1], GO_ARTKIT_STADIUM_ALLIANCE, GO_ARTKIT_STADIUM_HORDE, GO_ARTKIT_STADIUM_NEUTRAL));
             break;
         case GO_TOWER_BANNER_BROKEN_HILL:
-            m_HellfireTowerGUID[2] = pGo->GetObjectGuid();
-            pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[2], GO_ARTKIT_BROKEN_HILL_ALLIANCE, GO_ARTKIT_BROKEN_HILL_HORDE, GO_ARTKIT_BROKEN_HILL_NEUTRAL));
+            m_bannersGuid[2] = pGo->GetObjectGuid();
+            pGo->SetGoArtKit(GetBannerArtKit(m_capturePointOwner[2], GO_ARTKIT_BROKEN_HILL_ALLIANCE, GO_ARTKIT_BROKEN_HILL_HORDE, GO_ARTKIT_BROKEN_HILL_NEUTRAL));
             break;
         case GO_HELLFIRE_BANNER_OVERLOOK:
-            m_HellfireBannerGUID[0] = pGo->GetObjectGuid();
-            pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[0], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            m_capturePointGuid[0] = pGo->GetObjectGuid();
+            pGo->SetGoArtKit(GetBannerArtKit(m_capturePointOwner[0], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
         case GO_HELLFIRE_BANNER_STADIUM:
-            m_HellfireBannerGUID[1] = pGo->GetObjectGuid();
-            pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[1], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            m_capturePointGuid[1] = pGo->GetObjectGuid();
+            pGo->SetGoArtKit(GetBannerArtKit(m_capturePointOwner[1], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
         case GO_HELLFIRE_BANNER_BROKEN_HILL:
-            m_HellfireBannerGUID[2] = pGo->GetObjectGuid();
-            pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[2], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            m_capturePointGuid[2] = pGo->GetObjectGuid();
+            pGo->SetGoArtKit(GetBannerArtKit(m_capturePointOwner[2], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
     }
 }
@@ -163,14 +163,14 @@ void WorldPvPHP::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
 {
     for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
     {
-        if (GameObject* capturePoint = pPlayer->GetMap()->GetGameObject(m_HellfireBannerGUID[i]))
+        if (GameObject* capturePoint = pPlayer->GetMap()->GetGameObject(m_capturePointGuid[i]))
         {
             // check capture point range
             GameObjectInfo const* info = capturePoint->GetGOInfo();
             if (info && pPlayer->IsWithinDistInMap(capturePoint, info->capturePoint.radius))
             {
                 // check capture point team
-                if (pPlayer->GetTeam() == m_uiTowerOwner[i])
+                if (pPlayer->GetTeam() == m_capturePointOwner[i])
                     pPlayer->CastSpell(pPlayer, pPlayer->GetTeam() == ALLIANCE ? SPELL_HELLFIRE_TOWER_TOKEN_ALLIANCE : SPELL_HELLFIRE_TOWER_TOKEN_HORDE, true);
 
                 return;
@@ -190,7 +190,7 @@ void WorldPvPHP::ProcessEvent(uint32 uiEventId, GameObject* pGo)
             {
                 if (aHellfireTowerEvents[i][j].uiEventEntry == uiEventId)
                 {
-                    if (aHellfireTowerEvents[i][j].team != m_uiTowerOwner[i])
+                    if (aHellfireTowerEvents[i][j].team != m_capturePointOwner[i])
                     {
                         ProcessCaptureEvent(pGo, i, aHellfireTowerEvents[i][j].team, aHellfireTowerEvents[i][j].uiWorldState, aHellfireTowerEvents[i][j].uiTowerArtKit, aHellfireTowerEvents[i][j].uiTowerAnim);
                         sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(aHellfireTowerEvents[i][j].uiZoneText));
@@ -226,7 +226,7 @@ void WorldPvPHP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team tea
     {
         SetBannerVisual(pGo, CAPTURE_ARTKIT_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
 
-        if (m_uiTowerOwner[uiTowerId] == ALLIANCE)
+        if (m_capturePointOwner[uiTowerId] == ALLIANCE)
         {
             if (m_uiTowersAlliance == MAX_HP_TOWERS)
                 BuffTeam(ALLIANCE, SPELL_HELLFIRE_SUPERIORITY_ALLIANCE, true);
@@ -242,7 +242,7 @@ void WorldPvPHP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team tea
         }
     }
 
-    SetBannerVisual(pGo, m_HellfireTowerGUID[uiTowerId], uiTowerArtKit, uiTowerAnim);
+    SetBannerVisual(pGo, m_bannersGuid[uiTowerId], uiTowerArtKit, uiTowerAnim);
 
     // update tower state
     SendUpdateWorldState(m_uiTowerWorldState[uiTowerId], WORLD_STATE_REMOVE);
@@ -252,6 +252,6 @@ void WorldPvPHP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team tea
     // update counter state
     UpdateWorldState();
 
-    // update tower owner
-    m_uiTowerOwner[uiTowerId] = team;
+    // update capture point owner
+    m_capturePointOwner[uiTowerId] = team;
 }

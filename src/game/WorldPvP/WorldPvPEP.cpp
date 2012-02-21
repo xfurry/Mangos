@@ -30,8 +30,8 @@ WorldPvPEP::WorldPvPEP() : WorldPvP(),
     m_uiTowerWorldState[2] = WORLD_STATE_EASTWALL_NEUTRAL;
     m_uiTowerWorldState[3] = WORLD_STATE_PLAGUEWOOD_NEUTRAL;
 
-    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
-        m_uiTowerOwner[i] = TEAM_NONE;
+    for (uint8 i = 0; i < TOWER_COUNT; ++i)
+        m_capturePointOwner[i] = TEAM_NONE;
 }
 
 bool WorldPvPEP::InitWorldPvPArea()
@@ -48,7 +48,7 @@ void WorldPvPEP::FillInitialWorldStates(WorldPacket& data, uint32& count)
     FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_ALLIANCE, m_uiTowersAlliance);
     FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_HORDE, m_uiTowersHorde);
 
-    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
+    for (uint8 i = 0; i < TOWER_COUNT; ++i)
         FillInitialWorldState(data, count, m_uiTowerWorldState[i], WORLD_STATE_ADD);
 }
 
@@ -57,7 +57,7 @@ void WorldPvPEP::SendRemoveWorldStates(Player* pPlayer)
     pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_ALLIANCE, WORLD_STATE_REMOVE);
     pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HORDE, WORLD_STATE_REMOVE);
 
-    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
+    for (uint8 i = 0; i < TOWER_COUNT; ++i)
         pPlayer->SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVE);
 }
 
@@ -71,7 +71,7 @@ void WorldPvPEP::UpdateWorldState()
 void WorldPvPEP::HandlePlayerEnterZone(Player* pPlayer)
 {
     // remove the buff from the player first; Sometimes on relog players still have the aura
-    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
+    for (uint8 i = 0; i < TOWER_COUNT; ++i)
         pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlliance : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde);
 
     // buff the player
@@ -93,7 +93,7 @@ void WorldPvPEP::HandlePlayerEnterZone(Player* pPlayer)
 void WorldPvPEP::HandlePlayerLeaveZone(Player* pPlayer)
 {
     // remove the buff from the player
-    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
+    for (uint8 i = 0; i < TOWER_COUNT; ++i)
         pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? m_aPlaguelandsTowerBuffs[i].uiSpellIdAlliance : m_aPlaguelandsTowerBuffs[i].uiSpellIdHorde);
 
     WorldPvP::HandlePlayerLeaveZone(pPlayer);
@@ -112,22 +112,22 @@ void WorldPvPEP::OnGameObjectCreate(GameObject* pGo)
             if (pGo->IsWithinDist2d(m_aTowersSpawnLocs[0].m_fX, m_aTowersSpawnLocs[0].m_fY, 50.0f))
             {
                 m_lTowerBanners[0].push_back(pGo->GetObjectGuid());
-                pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[0], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+                pGo->SetGoArtKit(GetBannerArtKit(m_capturePointOwner[0], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             }
             else if (pGo->IsWithinDist2d(m_aTowersSpawnLocs[1].m_fX, m_aTowersSpawnLocs[1].m_fY, 50.0f))
             {
                 m_lTowerBanners[1].push_back(pGo->GetObjectGuid());
-                pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[1], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+                pGo->SetGoArtKit(GetBannerArtKit(m_capturePointOwner[1], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             }
             else if (pGo->IsWithinDist2d(m_aTowersSpawnLocs[2].m_fX, m_aTowersSpawnLocs[2].m_fY, 50.0f))
             {
                 m_lTowerBanners[2].push_back(pGo->GetObjectGuid());
-                pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[2], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+                pGo->SetGoArtKit(GetBannerArtKit(m_capturePointOwner[2], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             }
             else if (pGo->IsWithinDist2d(m_aTowersSpawnLocs[3].m_fX, m_aTowersSpawnLocs[3].m_fY, 50.0f))
             {
                 m_lTowerBanners[3].push_back(pGo->GetObjectGuid());
-                pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[3], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+                pGo->SetGoArtKit(GetBannerArtKit(m_capturePointOwner[3], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             }
             break;
         case GO_LORDAERON_SHRINE_ALLIANCE:
@@ -179,7 +179,7 @@ void WorldPvPEP::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> pl
 // process the capture events
 void WorldPvPEP::ProcessEvent(uint32 uiEventId, GameObject* pGo)
 {
-    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
+    for (uint8 i = 0; i < TOWER_COUNT; ++i)
     {
         if (aPlaguelandsBanners[i] == pGo->GetEntry())
         {
@@ -187,7 +187,7 @@ void WorldPvPEP::ProcessEvent(uint32 uiEventId, GameObject* pGo)
             {
                 if (aPlaguelandsTowerEvents[i][j].uiEventEntry == uiEventId)
                 {
-                    if (aPlaguelandsTowerEvents[i][j].team != m_uiTowerOwner[i])
+                    if (aPlaguelandsTowerEvents[i][j].team != m_capturePointOwner[i])
                     {
                         ProcessCaptureEvent(pGo, i, aPlaguelandsTowerEvents[i][j].team, aPlaguelandsTowerEvents[i][j].uiWorldState);
                         sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(aPlaguelandsTowerEvents[i][j].uiZoneText));
@@ -202,50 +202,28 @@ void WorldPvPEP::ProcessEvent(uint32 uiEventId, GameObject* pGo)
 
 void WorldPvPEP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState)
 {
-    if (team != TEAM_NONE)
+    if (team == ALLIANCE)
     {
-        if (team == ALLIANCE)
-        {
-            for (std::list<ObjectGuid>::iterator itr = m_lTowerBanners[uiTowerId].begin(); itr != m_lTowerBanners[uiTowerId].end(); ++itr)
-                SetBannerVisual(pGo, (*itr), CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
+        for (std::list<ObjectGuid>::iterator itr = m_lTowerBanners[uiTowerId].begin(); itr != m_lTowerBanners[uiTowerId].end(); ++itr)
+            SetBannerVisual(pGo, (*itr), CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
 
-            ++m_uiTowersAlliance;
-            BuffTeam(ALLIANCE, m_aPlaguelandsTowerBuffs[m_uiTowersAlliance - 1].uiSpellIdAlliance);
-        }
-        else
-        {
-            for (std::list<ObjectGuid>::iterator itr = m_lTowerBanners[uiTowerId].begin(); itr != m_lTowerBanners[uiTowerId].end(); ++itr)
-                SetBannerVisual(pGo, (*itr), CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
+        ++m_uiTowersAlliance;
+        BuffTeam(ALLIANCE, m_aPlaguelandsTowerBuffs[m_uiTowersAlliance - 1].uiSpellIdAlliance);
+    }
+    else if (team == HORDE)
+    {
+        for (std::list<ObjectGuid>::iterator itr = m_lTowerBanners[uiTowerId].begin(); itr != m_lTowerBanners[uiTowerId].end(); ++itr)
+            SetBannerVisual(pGo, (*itr), CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
 
-            ++m_uiTowersHorde;
-            BuffTeam(HORDE, m_aPlaguelandsTowerBuffs[m_uiTowersHorde - 1].uiSpellIdHorde);
-        }
-
-        // handle rewards of each tower
-        switch (uiTowerId)
-        {
-            case 0:     // Northpass
-                UpdateShrine(pGo, team == ALLIANCE ? m_uiLordaeronShrineAllianceGUID : m_uiLordaeronShrineHordeGUID);
-                break;
-            case 1:     // Crownguard
-                SetGraveyard(team);
-                break;
-            case 2:     // Eastwall
-                if (m_uiTowerOwner[0] != team)
-                    SummonSoldiers(pGo, team);
-                break;
-            case 3:     // Plaguewood
-                SummonFlightMaster(pGo, team);
-                break;
-        }
+        ++m_uiTowersHorde;
+        BuffTeam(HORDE, m_aPlaguelandsTowerBuffs[m_uiTowersHorde - 1].uiSpellIdHorde);
     }
     else
     {
         for (std::list<ObjectGuid>::iterator itr = m_lTowerBanners[uiTowerId].begin(); itr != m_lTowerBanners[uiTowerId].end(); ++itr)
             SetBannerVisual(pGo, (*itr), CAPTURE_ARTKIT_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
 
-        Team oldFaction = m_uiTowerOwner[uiTowerId];
-        if (oldFaction == ALLIANCE)
+        if (m_capturePointOwner[uiTowerId] == ALLIANCE)
         {
             if (--m_uiTowersAlliance == 0)
                 BuffTeam(ALLIANCE, m_aPlaguelandsTowerBuffs[0].uiSpellIdAlliance, true);
@@ -255,23 +233,51 @@ void WorldPvPEP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team tea
             if (--m_uiTowersHorde == 0)
                 BuffTeam(HORDE, m_aPlaguelandsTowerBuffs[0].uiSpellIdHorde, true);
         }
+    }
 
-        // undo rewards of each tower
+    // handle rewards of each tower
+    if (team != TEAM_NONE)
+    {
+        // update capture point owner
+        m_capturePointOwner[uiTowerId] = team;
+
         switch (uiTowerId)
         {
-            case 0:     // Northpass
-                UpdateShrine(pGo, oldFaction == ALLIANCE ? m_uiLordaeronShrineAllianceGUID : m_uiLordaeronShrineHordeGUID, true);
+            case TOWER_ID_NORTHPASS:
+                UpdateShrine(pGo);
                 break;
-            case 1:     // Crownguard
-                SetGraveyard(oldFaction, true);
+            case TOWER_ID_CROWNGUARD:
+                SetGraveyard();
                 break;
-            case 2:     // Eastwall
+            case TOWER_ID_EASTWALL:
+                if (m_capturePointOwner[TOWER_ID_NORTHPASS] != team)
+                    SummonSoldiers(pGo);
+                break;
+            case TOWER_ID_PLAGUEWOOD:
+                SummonFlightMaster(pGo);
+                break;
+        }
+    }
+    else
+    {
+        switch (uiTowerId)
+        {
+            case TOWER_ID_NORTHPASS:
+                UpdateShrine(pGo, true);
+                break;
+            case TOWER_ID_CROWNGUARD:
+                SetGraveyard(true);
+                break;
+            case TOWER_ID_EASTWALL:
                 UnsummonSoldiers(pGo);
                 break;
-            case 3:     // Plaguewood
+            case TOWER_ID_PLAGUEWOOD:
                 UnsummonFlightMaster(pGo);
                 break;
         }
+
+        // update capture point owner
+        m_capturePointOwner[uiTowerId] = team;
     }
 
     // update tower state
@@ -281,12 +287,9 @@ void WorldPvPEP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team tea
 
     // update counter state
     UpdateWorldState();
-
-    // update tower owner
-    m_uiTowerOwner[uiTowerId] = team;
 }
 
-void WorldPvPEP::SummonFlightMaster(WorldObject* objRef, Team team)
+void WorldPvPEP::SummonFlightMaster(WorldObject* objRef)
 {
     if (Creature* pFlightMaster = objRef->SummonCreature(NPC_SPECTRAL_FLIGHTMASTER, aFlightmasterSpawnLocs[0], aFlightmasterSpawnLocs[1], aFlightmasterSpawnLocs[2], aFlightmasterSpawnLocs[3], TEMPSUMMON_DEAD_DESPAWN, 0))
         m_uiFlightMasterGUID = pFlightMaster->GetObjectGuid();
@@ -298,9 +301,9 @@ void WorldPvPEP::UnsummonFlightMaster(const WorldObject* objRef)
         pFlightMaster->ForcedDespawn();
 }
 
-void WorldPvPEP::SummonSoldiers(WorldObject* objRef, Team team)
+void WorldPvPEP::SummonSoldiers(WorldObject* objRef)
 {
-    uint32 uiEntry = team == ALLIANCE ? NPC_LORDAERON_COMMANDER : NPC_LORDAERON_VETERAN;
+    uint32 uiEntry = m_capturePointOwner[TOWER_ID_NORTHPASS] == ALLIANCE ? NPC_LORDAERON_COMMANDER : NPC_LORDAERON_VETERAN;
 
     for (uint8 i = 0; i < 5; ++i)
     {
@@ -308,7 +311,7 @@ void WorldPvPEP::SummonSoldiers(WorldObject* objRef, Team team)
             m_lSoldiersGuids.push_back(pSoldier->GetObjectGuid());
 
         if (i == 0)
-            uiEntry = team == ALLIANCE ? NPC_LORDAERON_SOLDIER : NPC_LORDAERON_FIGHTER;
+            uiEntry = uiEntry == NPC_LORDAERON_COMMANDER ? NPC_LORDAERON_SOLDIER : NPC_LORDAERON_FIGHTER;
     }
 }
 
@@ -321,24 +324,25 @@ void WorldPvPEP::UnsummonSoldiers(const WorldObject* objRef)
     }
 }
 
-void WorldPvPEP::SetGraveyard(Team team, bool bRemove)
+void WorldPvPEP::SetGraveyard(bool remove)
 {
-    if (bRemove)
-        sObjectMgr.RemoveGraveYardLink(GRAVEYARD_ID_EASTERN_PLAGUE, GRAVEYARD_ZONE_EASTERN_PLAGUE, team, false);
+    if (remove)
+        sObjectMgr.RemoveGraveYardLink(GRAVEYARD_ID_EASTERN_PLAGUE, GRAVEYARD_ZONE_EASTERN_PLAGUE, m_capturePointOwner[TOWER_ID_CROWNGUARD], false);
     else
-        sObjectMgr.AddGraveYardLink(GRAVEYARD_ID_EASTERN_PLAGUE, GRAVEYARD_ZONE_EASTERN_PLAGUE, team, false);
+        sObjectMgr.AddGraveYardLink(GRAVEYARD_ID_EASTERN_PLAGUE, GRAVEYARD_ZONE_EASTERN_PLAGUE, m_capturePointOwner[TOWER_ID_CROWNGUARD], false);
 }
 
-void WorldPvPEP::UpdateShrine(const WorldObject* objRef, ObjectGuid uiShrineGuid, bool bRemove)
+void WorldPvPEP::UpdateShrine(const WorldObject* objRef, bool remove)
 {
-    if (GameObject* pShrine = objRef->GetMap()->GetGameObject(uiShrineGuid))
+    ObjectGuid shrineGuid = m_capturePointOwner[TOWER_ID_NORTHPASS] == ALLIANCE ? m_uiLordaeronShrineAllianceGUID : m_uiLordaeronShrineHordeGUID;
+    if (GameObject* shrine = objRef->GetMap()->GetGameObject(shrineGuid))
     {
-        if (!bRemove)
+        if (!remove)
         {
-            pShrine->SetRespawnTime(7 * DAY);
-            pShrine->Refresh();
+            shrine->SetRespawnTime(7 * DAY);
+            shrine->Refresh();
         }
-        else if (pShrine->isSpawned())
-            pShrine->Delete();
+        else if (shrine->isSpawned())
+            shrine->Delete();
     }
 }

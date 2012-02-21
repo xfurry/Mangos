@@ -1959,12 +1959,11 @@ void GameObject::SetCapturePointSlider(int8 value)
             break;
         default:
             m_captureSlider = value;
-            m_cooldownTime = time(NULL) + 3; // initial delay for capture points
             SetLootState(GO_ACTIVATED);
             break;
     }
 
-    // set the state of the capture point based on the capture ticks
+    // set the state of the capture point based on the slider value
     if (m_captureSlider == CAPTURE_SLIDER_ALLIANCE)
         m_captureState = CAPTURE_STATE_WIN_ALLIANCE;
     else if (m_captureSlider == CAPTURE_SLIDER_HORDE)

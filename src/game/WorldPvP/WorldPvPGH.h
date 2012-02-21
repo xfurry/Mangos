@@ -68,11 +68,9 @@ class WorldPvPGH : public WorldPvP
 
     private:
         // respawn team soldiers
-        void RespawnSoldiers(GameObject* pGoReference, Team team);
+        void RespawnSoldiers(const WorldObject* objRef);
 
-        ObjectGuid m_TowerBannerLighthouseGuid;
-
-        Team m_uiZoneOwner;
+        Team m_zoneOwner;
 
         std::list<ObjectGuid> lAllianceSoldiers;
         std::list<ObjectGuid> lHordeSoldiers;

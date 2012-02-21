@@ -24,7 +24,7 @@
 WorldPvPNA::WorldPvPNA() : WorldPvP(),
     m_uiZoneMapState(WORLD_STATE_NA_HALAA_NEUTRAL),
     m_uiZoneWorldState(0),
-    m_uiZoneOwner(TEAM_NONE),
+    m_zoneOwner(TEAM_NONE),
     m_uiGuardsLeft(0)
 {
 }
@@ -38,7 +38,7 @@ bool WorldPvPNA::InitWorldPvPArea()
 
 void WorldPvPNA::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
-    if (m_uiZoneOwner != TEAM_NONE)
+    if (m_zoneOwner != TEAM_NONE)
     {
         FillInitialWorldState(data, count, m_uiZoneWorldState, WORLD_STATE_ADD);
         FillInitialWorldState(data, count, WORLD_STATE_NA_GUARDS_MAX, MAX_NA_GUARDS);
@@ -69,7 +69,7 @@ void WorldPvPNA::HandlePlayerEnterZone(Player* pPlayer)
     pPlayer->RemoveAurasDueToSpell(SPELL_STRENGTH_HALAANI);
 
     // buff the player if same team is controlling the zone
-    if (pPlayer->GetTeam() == m_uiZoneOwner)
+    if (pPlayer->GetTeam() == m_zoneOwner)
         pPlayer->CastSpell(pPlayer, SPELL_STRENGTH_HALAANI, true);
 }
 
@@ -96,14 +96,14 @@ void WorldPvPNA::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> pl
 // Cast player spell on opponent kill
 void WorldPvPNA::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
 {
-    if (GameObject* capturePoint = pPlayer->GetMap()->GetGameObject(m_HalaaBannerGuid))
+    if (GameObject* capturePoint = pPlayer->GetMap()->GetGameObject(m_capturePointGuid))
     {
         // check capture point range
         GameObjectInfo const* info = capturePoint->GetGOInfo();
         if (info && pPlayer->IsWithinDistInMap(capturePoint, info->capturePoint.radius))
         {
             // check capture point team
-            if (pPlayer->GetTeam() == m_uiZoneOwner)
+            if (pPlayer->GetTeam() == m_zoneOwner)
                 pPlayer->CastSpell(pPlayer, pPlayer->GetTeam() == ALLIANCE ? SPELL_NAGRAND_TOKEN_ALLIANCE : SPELL_NAGRAND_TOKEN_HORDE, true);
 
             return;
@@ -122,7 +122,7 @@ void WorldPvPNA::OnCreatureCreate(Creature* pCreature)
         case NPC_VENDOR_CENDRII:
         case NPC_AMMUNITIONER_BANRO:
             lAllianceSoldiers.push_back(pCreature->GetObjectGuid());
-            if (m_uiZoneOwner == ALLIANCE)
+            if (m_zoneOwner == ALLIANCE)
                 return;
             break;
         case NPC_HORDE_HALAANI_GUARD:
@@ -132,7 +132,7 @@ void WorldPvPNA::OnCreatureCreate(Creature* pCreature)
         case NPC_VENDOR_EMBELAR:
         case NPC_AMMUNITIONER_TASALDAN:
             lHordeSoldiers.push_back(pCreature->GetObjectGuid());
-            if (m_uiZoneOwner == HORDE)
+            if (m_zoneOwner == HORDE)
                 return;
             break;
 
@@ -160,7 +160,7 @@ void WorldPvPNA::OnCreatureDeath(Creature* pCreature)
 
         // update world state
         SendUpdateWorldState(m_uiZoneMapState, WORLD_STATE_REMOVE);
-        m_uiZoneMapState = m_uiZoneOwner == ALLIANCE ? WORLD_STATE_NA_HALAA_NEUTRAL_A : WORLD_STATE_NA_HALAA_NEUTRAL_H;
+        m_uiZoneMapState = m_zoneOwner == ALLIANCE ? WORLD_STATE_NA_HALAA_NEUTRAL_A : WORLD_STATE_NA_HALAA_NEUTRAL_H;
         SendUpdateWorldState(m_uiZoneMapState, WORLD_STATE_ADD);
     }
 }
@@ -176,7 +176,7 @@ void WorldPvPNA::OnCreatureRespawn(Creature* pCreature)
 
         // update world state
         SendUpdateWorldState(m_uiZoneMapState, WORLD_STATE_REMOVE);
-        m_uiZoneMapState = m_uiZoneOwner == ALLIANCE ? WORLD_STATE_NA_HALAA_ALLIANCE : WORLD_STATE_NA_HALAA_HORDE;
+        m_uiZoneMapState = m_zoneOwner == ALLIANCE ? WORLD_STATE_NA_HALAA_ALLIANCE : WORLD_STATE_NA_HALAA_HORDE;
         SendUpdateWorldState(m_uiZoneMapState, WORLD_STATE_ADD);
     }
 
@@ -189,8 +189,8 @@ void WorldPvPNA::OnGameObjectCreate(GameObject* pGo)
     switch (pGo->GetEntry())
     {
         case GO_HALAA_BANNER:
-            m_HalaaBannerGuid = pGo->GetObjectGuid();
-            pGo->SetGoArtKit(GetBannerArtKit(m_uiZoneOwner, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            m_capturePointGuid = pGo->GetObjectGuid();
+            pGo->SetGoArtKit(GetBannerArtKit(m_zoneOwner, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
 
         case GO_WYVERN_ROOST_ALLIANCE_SOUTH:
@@ -314,18 +314,18 @@ void WorldPvPNA::ProcessEvent(uint32 uiEventId, GameObject* pGo)
 
 void WorldPvPNA::ProcessCaptureEvent(GameObject* pGo, Team team)
 {
-    if (m_uiZoneOwner != TEAM_NONE)
-    {
-        SetGraveyard(m_uiZoneOwner, true);
-        BuffTeam(m_uiZoneOwner, SPELL_STRENGTH_HALAANI, true);
-        sWorld.SendZoneText(ZONE_ID_NAGRAND, sObjectMgr.GetMangosStringForDBCLocale(m_uiZoneOwner == ALLIANCE ? LANG_OPVP_NA_LOOSE_A: LANG_OPVP_NA_LOOSE_H));
-    }
+    SetGraveyard(true);
+    BuffTeam(m_zoneOwner, SPELL_STRENGTH_HALAANI, true);
+    sWorld.SendZoneText(ZONE_ID_NAGRAND, sObjectMgr.GetMangosStringForDBCLocale(m_zoneOwner == ALLIANCE ? LANG_OPVP_NA_LOOSE_A: LANG_OPVP_NA_LOOSE_H));
+
+    // update capture point owner
+    m_zoneOwner = team;
 
     UpdateWorldState(WORLD_STATE_REMOVE);
-    RespawnSoldiers(pGo, team);
-    SetGraveyard(team);
+    RespawnSoldiers(pGo);
+    SetGraveyard();
 
-    if (team == ALLIANCE)
+    if (m_zoneOwner == ALLIANCE)
     {
         m_uiZoneWorldState = WORLD_STATE_NA_GUARDS_ALLIANCE;
         m_uiZoneMapState = WORLD_STATE_NA_HALAA_ALLIANCE;
@@ -340,57 +340,56 @@ void WorldPvPNA::ProcessCaptureEvent(GameObject* pGo, Team team)
         SetBannerVisual(pGo, CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
     }
 
-    HandleFactionObjects(pGo, team);
-    m_uiZoneOwner = team;
+    HandleFactionObjects(pGo);
     UpdateWorldState(WORLD_STATE_ADD);
 
-    BuffTeam(m_uiZoneOwner, SPELL_STRENGTH_HALAANI);
+    BuffTeam(m_zoneOwner, SPELL_STRENGTH_HALAANI);
     sWorld.SendZoneText(ZONE_ID_NAGRAND, sObjectMgr.GetMangosStringForDBCLocale(team == ALLIANCE ? LANG_OPVP_NA_CAPTURE_A: LANG_OPVP_NA_CAPTURE_H));
 }
 
-void WorldPvPNA::SetGraveyard(Team team, bool bRemove)
+void WorldPvPNA::SetGraveyard(bool remove)
 {
-    if (bRemove)
-        sObjectMgr.RemoveGraveYardLink(GRAVEYARD_ID_HALAA, GRAVEYARD_ZONE_ID_HALAA, team, false);
+    if (remove)
+        sObjectMgr.RemoveGraveYardLink(GRAVEYARD_ID_HALAA, GRAVEYARD_ZONE_ID_HALAA, m_zoneOwner, false);
     else
-        sObjectMgr.AddGraveYardLink(GRAVEYARD_ID_HALAA, GRAVEYARD_ZONE_ID_HALAA, team, false);
+        sObjectMgr.AddGraveYardLink(GRAVEYARD_ID_HALAA, GRAVEYARD_ZONE_ID_HALAA, m_zoneOwner, false);
 }
 
-void WorldPvPNA::HandleFactionObjects(const WorldObject* objRef, Team team)
+void WorldPvPNA::HandleFactionObjects(const WorldObject* objRef)
 {
-    if (team == ALLIANCE)
+    if (m_zoneOwner == ALLIANCE)
     {
         for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
         {
-            RespawnObjects(objRef, m_HordeWagons[i], false);
-            RespawnObjects(objRef, m_AllianceBrokenRoost[i], false);
-            RespawnObjects(objRef, m_AllianceRoost[i], false);
+            RespawnGO(objRef, m_HordeWagons[i], false);
+            RespawnGO(objRef, m_AllianceBrokenRoost[i], false);
+            RespawnGO(objRef, m_AllianceRoost[i], false);
 
-            RespawnObjects(objRef, m_AllianceWagons[i], true);
-            RespawnObjects(objRef, m_HordeBrokenRoost[i], true);
+            RespawnGO(objRef, m_AllianceWagons[i], true);
+            RespawnGO(objRef, m_HordeBrokenRoost[i], true);
 
             m_uiRoostWorldState[i] = aHordeNeutralStates[i];
         }
     }
-    else if (team == HORDE)
+    else
     {
         for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
         {
-            RespawnObjects(objRef, m_AllianceWagons[i], false);
-            RespawnObjects(objRef, m_HordeBrokenRoost[i], false);
-            RespawnObjects(objRef, m_HordeRoost[i], false);
+            RespawnGO(objRef, m_AllianceWagons[i], false);
+            RespawnGO(objRef, m_HordeBrokenRoost[i], false);
+            RespawnGO(objRef, m_HordeRoost[i], false);
 
-            RespawnObjects(objRef, m_HordeWagons[i], true);
-            RespawnObjects(objRef, m_AllianceBrokenRoost[i], true);
+            RespawnGO(objRef, m_HordeWagons[i], true);
+            RespawnGO(objRef, m_AllianceBrokenRoost[i], true);
 
             m_uiRoostWorldState[i] = aAllianceNeutralStates[i];
         }
     }
 }
 
-void WorldPvPNA::RespawnSoldiers(const WorldObject* objRef, Team team)
+void WorldPvPNA::RespawnSoldiers(const WorldObject* objRef)
 {
-    if (team == ALLIANCE)
+    if (m_zoneOwner == ALLIANCE)
     {
         // despawn all horde vendors
         for (std::list<ObjectGuid>::const_iterator itr = lHordeSoldiers.begin(); itr != lHordeSoldiers.end(); ++itr)
@@ -414,7 +413,7 @@ void WorldPvPNA::RespawnSoldiers(const WorldObject* objRef, Team team)
             }
         }
     }
-    else if (team == HORDE)
+    else
     {
         // despawn all alliance vendors
         for (std::list<ObjectGuid>::const_iterator itr = lAllianceSoldiers.begin(); itr != lAllianceSoldiers.end(); ++itr)
@@ -452,15 +451,15 @@ bool WorldPvPNA::HandleObjectUse(Player* pPlayer, GameObject* pGo)
             if (pGo->GetEntry() == aAllianceWagons[i])
             {
                 m_uiRoostWorldState[i] = aHordeNeutralStates[i];
-                RespawnObjects(pGo, m_HordeRoost[i], false);
-                RespawnObjects(pGo, m_HordeBrokenRoost[i], true);
+                RespawnGO(pGo, m_HordeRoost[i], false);
+                RespawnGO(pGo, m_HordeBrokenRoost[i], true);
                 bReturnStatus = true;
             }
             else if (pGo->GetEntry() == aAllianceBrokenRoosts[i])
             {
                 m_uiRoostWorldState[i] = aAllianceRoostStates[i];
-                RespawnObjects(pGo, m_AllianceBrokenRoost[i], false);
-                RespawnObjects(pGo, m_AllianceRoost[i], true);
+                RespawnGO(pGo, m_AllianceBrokenRoost[i], false);
+                RespawnGO(pGo, m_AllianceRoost[i], true);
                 bReturnStatus = true;
             }
             else if (pGo->GetEntry() == aAllianceRoosts[i])
@@ -486,15 +485,15 @@ bool WorldPvPNA::HandleObjectUse(Player* pPlayer, GameObject* pGo)
             if (pGo->GetEntry() == aHordeWagons[i])
             {
                 m_uiRoostWorldState[i] = aAllianceNeutralStates[i];
-                RespawnObjects(pGo, m_AllianceRoost[i], false);
-                RespawnObjects(pGo, m_AllianceBrokenRoost[i], true);
+                RespawnGO(pGo, m_AllianceRoost[i], false);
+                RespawnGO(pGo, m_AllianceBrokenRoost[i], true);
                 bReturnStatus = true;
             }
             else if (pGo->GetEntry() == aHordeBrokenRoosts[i])
             {
                 m_uiRoostWorldState[i] = aHordeRoostStates[i];
-                RespawnObjects(pGo, m_HordeBrokenRoost[i], false);
-                RespawnObjects(pGo, m_HordeRoost[i], true);
+                RespawnGO(pGo, m_HordeBrokenRoost[i], false);
+                RespawnGO(pGo, m_HordeRoost[i], true);
                 bReturnStatus = true;
             }
             else if (pGo->GetEntry() == aHordeRoosts[i])
@@ -558,11 +557,11 @@ bool WorldPvPNA::AddBombsToInventory(Player* pPlayer)
     return true;
 }
 
-void WorldPvPNA::RespawnObjects(const WorldObject* objRef, ObjectGuid goGuid, bool bRespawn)
+void WorldPvPNA::RespawnGO(const WorldObject* objRef, ObjectGuid goGuid, bool respawn)
 {
     if (GameObject* pBanner = objRef->GetMap()->GetGameObject(goGuid))
     {
-        if (bRespawn)
+        if (respawn)
         {
             pBanner->SetRespawnTime(7 * DAY);
             pBanner->Refresh();
@@ -574,18 +573,18 @@ void WorldPvPNA::RespawnObjects(const WorldObject* objRef, ObjectGuid goGuid, bo
 
 void WorldPvPNA::LockHalaa(const WorldObject* objRef)
 {
-    if (GameObject* go = objRef->GetMap()->GetGameObject(m_HalaaBannerGuid))
+    if (GameObject* go = objRef->GetMap()->GetGameObject(m_capturePointGuid))
         go->SetLootState(GO_JUST_DEACTIVATED);
 
-    SetCapturePointSliderValue(m_HalaaBannerGuid, m_uiZoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
+    SetCapturePointSliderValue(m_capturePointGuid, m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
 }
 
 void WorldPvPNA::UnlockHalaa(const WorldObject* objRef)
 {
-    if (GameObject* go = objRef->GetMap()->GetGameObject(m_HalaaBannerGuid))
-        go->SetCapturePointSlider(m_uiZoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
+    if (GameObject* go = objRef->GetMap()->GetGameObject(m_capturePointGuid))
+        go->SetCapturePointSlider(m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
         // no banner visual update needed because it already has the correct one
     else
         // if grid is unloaded, resetting the slider value is enough
-        SetCapturePointSliderValue(m_HalaaBannerGuid, m_uiZoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
+        SetCapturePointSliderValue(m_capturePointGuid, m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
 }

@@ -172,13 +172,13 @@ class WorldPvPHP : public WorldPvP
         // process capture events
         void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState, uint32 uiTowerArtKit, uint32 uiTowerAnim);
 
-        Team m_uiTowerOwner[MAX_HP_TOWERS];
+        Team m_capturePointOwner[MAX_HP_TOWERS];
         uint32 m_uiTowerWorldState[MAX_HP_TOWERS];
         uint32 m_uiTowersAlliance;
         uint32 m_uiTowersHorde;
 
-        ObjectGuid m_HellfireBannerGUID[MAX_HP_TOWERS];
-        ObjectGuid m_HellfireTowerGUID[MAX_HP_TOWERS];
+        ObjectGuid m_capturePointGuid[MAX_HP_TOWERS];
+        ObjectGuid m_bannersGuid[MAX_HP_TOWERS];
 };
 
 #endif
