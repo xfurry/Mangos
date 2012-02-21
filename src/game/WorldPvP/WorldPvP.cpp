@@ -124,6 +124,19 @@ void WorldPvP::BuffTeam(Team team, uint32 uiSpellId, bool bRemove)
     }
 }
 
+uint32 WorldPvP::GetBannerArtKit(Team team, uint32 artKitAlliance, uint32 artKitHorde, uint32 artKitNeutral)
+{
+    switch (team)
+    {
+        case ALLIANCE:
+            return artKitAlliance;
+        case HORDE:
+            return artKitHorde;
+        default:
+            return artKitNeutral;
+    }
+}
+
 void WorldPvP::SetBannerVisual(const WorldObject* objRef, ObjectGuid goGuid, uint32 artKit, uint32 animId)
 {
     if (GameObject* go = objRef->GetMap()->GetGameObject(goGuid))

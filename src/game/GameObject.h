@@ -595,7 +595,7 @@ enum LootState
     GO_JUST_DEACTIVATED
 };
 
-// TODO: Move this somewhere else or dont use an enum for that (though makes it easier to read the code)
+// TODO: Move this somewhere else
 enum WorldStateType
 {
     WORLD_STATE_REMOVE              = 0,
@@ -619,17 +619,8 @@ enum CapturePointSlider
     CAPTURE_SLIDER_HORDE            = 0,                    // full horde
     CAPTURE_SLIDER_NEUTRAL          = 50,                   // middle
 
-    CAPTURE_SLIDER_RESET            = -1,                   // used to store additional information
-    CAPTURE_SLIDER_ALLIANCE_LOCKED  = -2,
-    CAPTURE_SLIDER_HORDE_LOCKED     = -3
-};
-
-// TODO: Either only set artkits in gameobject code or outdoor pvp scripts (now we initially set them in gameobject and change them in scripts)
-enum GameObjectArtKits
-{
-    GO_ARTKIT_BANNER_ALLIANCE               = 2,
-    GO_ARTKIT_BANNER_HORDE                  = 1,
-    GO_ARTKIT_BANNER_NEUTRAL                = 21,
+    CAPTURE_SLIDER_ALLIANCE_LOCKED  = -1,                   // used to store additional information
+    CAPTURE_SLIDER_HORDE_LOCKED     = -2
 };
 
 class Unit;

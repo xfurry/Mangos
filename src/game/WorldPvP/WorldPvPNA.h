@@ -196,8 +196,8 @@ class WorldPvPNA : public WorldPvP
 
         // handle a specific game objects
         void RespawnObjects(const WorldObject* objRef, ObjectGuid goGuid, bool bRespawn);
-        void LockHalaa(const WorldObject* objRef, Team team);
-        void UnlockHalaa(const WorldObject* objRef, Team team);
+        void LockHalaa(const WorldObject* objRef);
+        void UnlockHalaa(const WorldObject* objRef);
 
         Team m_uiZoneOwner;
         uint32 m_uiZoneWorldState;

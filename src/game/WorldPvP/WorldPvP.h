@@ -30,11 +30,18 @@
 #include "../GameObject.h"
 #include "../ObjectMgr.h"
 
+enum CapturePointArtKits
+{
+    CAPTURE_ARTKIT_ALLIANCE = 2,
+    CAPTURE_ARTKIT_HORDE    = 1,
+    CAPTURE_ARTKIT_NEUTRAL  = 21
+};
+
 enum CapturePointAnimations
 {
     CAPTURE_ANIM_ALLIANCE   = 1,
     CAPTURE_ANIM_HORDE      = 0,
-    CAPTURE_ANIM_NEUTRAL    = 2,
+    CAPTURE_ANIM_NEUTRAL    = 2
 };
 
 typedef std::set<Player*> PlayerSet;
@@ -80,7 +87,10 @@ class WorldPvP : public ZoneScript
         // applies buff to a team inside the specific zone
         void BuffTeam(Team team, uint32 spellId, bool bRemove = false);
 
-        // set capture point visual
+        // get banner artkit based on controlling team
+        uint32 GetBannerArtKit(Team team, uint32 artKitAlliance, uint32 artKitHorde, uint32 artKitNeutral);
+
+        // set banner visual
         void SetBannerVisual(const WorldObject* objRef, ObjectGuid goGuid, uint32 artKit, uint32 animId);
         void SetBannerVisual(GameObject* go, uint32 artKit, uint32 animId);
 

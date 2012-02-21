@@ -106,44 +106,25 @@ void WorldPvPTF::OnGameObjectCreate(GameObject* pGo)
     {
         case GO_TEROKKAR_BANNER_1:
             m_TowerBannerGUID[0] = pGo->GetObjectGuid();
-            if (m_uiTowerOwner[0] == TEAM_NONE)
-                pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
-            else
-                pGo->SetGoArtKit(m_uiTowerOwner[0] == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+            pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[0], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
         case GO_TEROKKAR_BANNER_2:
             m_TowerBannerGUID[1] = pGo->GetObjectGuid();
-            if (m_uiTowerOwner[1] == TEAM_NONE)
-                pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
-            else
-                pGo->SetGoArtKit(m_uiTowerOwner[1] == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+            pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[1], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
         case GO_TEROKKAR_BANNER_3:
             m_TowerBannerGUID[2] = pGo->GetObjectGuid();
-            if (m_uiTowerOwner[2] == TEAM_NONE)
-                pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
-            else
-                pGo->SetGoArtKit(m_uiTowerOwner[2] == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+            pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[2], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
         case GO_TEROKKAR_BANNER_4:
             m_TowerBannerGUID[3] = pGo->GetObjectGuid();
-            if (m_uiTowerOwner[2] == TEAM_NONE)
-                pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
-            else
-                pGo->SetGoArtKit(m_uiTowerOwner[2] == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+            pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[3], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
         case GO_TEROKKAR_BANNER_5:
             m_TowerBannerGUID[4] = pGo->GetObjectGuid();
-            if (m_uiTowerOwner[2] == TEAM_NONE)
-                pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
-            else
-                pGo->SetGoArtKit(m_uiTowerOwner[2] == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+            pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[4], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
-        default:
-            return;
     }
-
-    pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
 }
 
 void WorldPvPTF::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team)
@@ -195,12 +176,12 @@ void WorldPvPTF::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team tea
     {
         if (team == ALLIANCE)
         {
-            SetBannerVisual(pGo, GO_ARTKIT_BANNER_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
+            SetBannerVisual(pGo, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
             ++m_uiTowersAlliance;
         }
         else
         {
-            SetBannerVisual(pGo, GO_ARTKIT_BANNER_HORDE, CAPTURE_ANIM_HORDE);
+            SetBannerVisual(pGo, CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
             ++m_uiTowersHorde;
         }
 
@@ -218,12 +199,12 @@ void WorldPvPTF::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team tea
             BuffTeam(team, SPELL_AUCHINDOUN_BLESSING);
 
             // lock the towers
-            LockTowers(pGo, team);
+            LockTowers(pGo);
         }
     }
     else
     {
-        SetBannerVisual(pGo, GO_ARTKIT_BANNER_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
+        SetBannerVisual(pGo, CAPTURE_ARTKIT_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
 
         if (m_uiTowerOwner[uiTowerId] == ALLIANCE)
             --m_uiTowersAlliance;
@@ -312,14 +293,14 @@ void WorldPvPTF::UpdateTimerWorldState()
     SendUpdateWorldState(WORLD_STATE_TF_TIME_HOURS, hoursLeft);
 }
 
-void WorldPvPTF::LockTowers(const WorldObject* objRef, Team team)
+void WorldPvPTF::LockTowers(const WorldObject* objRef)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
-        if (GameObject* pBanner = objRef->GetMap()->GetGameObject(m_TowerBannerGUID[i]))
-            pBanner->SetLootState(GO_JUST_DEACTIVATED);
+        if (GameObject* go = objRef->GetMap()->GetGameObject(m_TowerBannerGUID[i]))
+            go->SetLootState(GO_JUST_DEACTIVATED);
 
-        SetCapturePointSliderValue(aTerokkarTowers[i], team == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
+        SetCapturePointSliderValue(aTerokkarTowers[i], m_uiZoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
     }
 }
 
@@ -327,13 +308,13 @@ void WorldPvPTF::ResetTowers(const WorldObject* objRef)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
-        if (GameObject* pBanner = objRef->GetMap()->GetGameObject(m_TowerBannerGUID[i]))
+        if (GameObject* go = objRef->GetMap()->GetGameObject(m_TowerBannerGUID[i]))
         {
-            pBanner->SetCapturePointSlider(CAPTURE_SLIDER_RESET);
-            pBanner->Refresh();
+            go->SetCapturePointSlider(CAPTURE_SLIDER_NEUTRAL);
+            SetBannerVisual(go, CAPTURE_ARTKIT_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
         }
         else
             // if grid is unloaded, resetting the slider value is enough
-            SetCapturePointSliderValue(aTerokkarTowers[i], CAPTURE_SLIDER_RESET);
+            SetCapturePointSliderValue(aTerokkarTowers[i], CAPTURE_SLIDER_NEUTRAL);
     }
 }

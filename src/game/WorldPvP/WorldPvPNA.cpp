@@ -156,7 +156,7 @@ void WorldPvPNA::OnCreatureDeath(Creature* pCreature)
     if (m_uiGuardsLeft == 0)
     {
         // make capturable
-        UnlockHalaa(pCreature, m_uiZoneOwner);
+        UnlockHalaa(pCreature);
 
         // update world state
         SendUpdateWorldState(m_uiZoneMapState, WORLD_STATE_REMOVE);
@@ -172,7 +172,7 @@ void WorldPvPNA::OnCreatureRespawn(Creature* pCreature)
 
     if (m_uiGuardsLeft == 0)
     {
-        LockHalaa(pCreature, m_uiZoneOwner);
+        LockHalaa(pCreature);
 
         // update world state
         SendUpdateWorldState(m_uiZoneMapState, WORLD_STATE_REMOVE);
@@ -190,7 +190,7 @@ void WorldPvPNA::OnGameObjectCreate(GameObject* pGo)
     {
         case GO_HALAA_BANNER:
             m_HalaaBannerGuid = pGo->GetObjectGuid();
-            pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
+            pGo->SetGoArtKit(GetBannerArtKit(m_uiZoneOwner, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
 
         case GO_WYVERN_ROOST_ALLIANCE_SOUTH:
@@ -330,14 +330,14 @@ void WorldPvPNA::ProcessCaptureEvent(GameObject* pGo, Team team)
         m_uiZoneWorldState = WORLD_STATE_NA_GUARDS_ALLIANCE;
         m_uiZoneMapState = WORLD_STATE_NA_HALAA_ALLIANCE;
 
-        SetBannerVisual(pGo, GO_ARTKIT_BANNER_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
+        SetBannerVisual(pGo, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
     }
     else
     {
         m_uiZoneWorldState = WORLD_STATE_NA_GUARDS_HORDE;
         m_uiZoneMapState = WORLD_STATE_NA_HALAA_HORDE;
 
-        SetBannerVisual(pGo, GO_ARTKIT_BANNER_HORDE, CAPTURE_ANIM_HORDE);
+        SetBannerVisual(pGo, CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
     }
 
     HandleFactionObjects(pGo, team);
@@ -572,20 +572,20 @@ void WorldPvPNA::RespawnObjects(const WorldObject* objRef, ObjectGuid goGuid, bo
     }
 }
 
-void WorldPvPNA::LockHalaa(const WorldObject* objRef, Team team)
+void WorldPvPNA::LockHalaa(const WorldObject* objRef)
 {
-    if (GameObject* pBanner = objRef->GetMap()->GetGameObject(m_HalaaBannerGuid))
-        pBanner->SetLootState(GO_JUST_DEACTIVATED);
+    if (GameObject* go = objRef->GetMap()->GetGameObject(m_HalaaBannerGuid))
+        go->SetLootState(GO_JUST_DEACTIVATED);
 
-    SetCapturePointSliderValue(m_HalaaBannerGuid, team == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
+    SetCapturePointSliderValue(m_HalaaBannerGuid, m_uiZoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
 }
 
-void WorldPvPNA::UnlockHalaa(const WorldObject* objRef, Team team)
+void WorldPvPNA::UnlockHalaa(const WorldObject* objRef)
 {
-    if (GameObject* pBanner = objRef->GetMap()->GetGameObject(m_HalaaBannerGuid))
-        pBanner->SetCapturePointSlider(team == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
-        // no banner refresh needed because it already has the correct artkit
+    if (GameObject* go = objRef->GetMap()->GetGameObject(m_HalaaBannerGuid))
+        go->SetCapturePointSlider(m_uiZoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
+        // no banner visual update needed because it already has the correct one
     else
         // if grid is unloaded, resetting the slider value is enough
-        SetCapturePointSliderValue(m_HalaaBannerGuid, team == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
+        SetCapturePointSliderValue(m_HalaaBannerGuid, m_uiZoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
 }

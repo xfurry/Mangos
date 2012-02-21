@@ -185,14 +185,14 @@ class WorldPvPTF : public WorldPvP
         // process capture events
         void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState);
 
-        void LockTowers(const WorldObject* objRef, Team team);
+        void LockTowers(const WorldObject* objRef);
         void ResetTowers(const WorldObject* objRef);
 
         uint32 m_uiTowerWorldState[MAX_TF_TOWERS];
-        uint32 m_uiTowerOwner[MAX_TF_TOWERS];
-
-        Team m_uiZoneOwner;
         uint32 m_uiZoneWorldState;
+
+        Team m_uiTowerOwner[MAX_TF_TOWERS];
+        Team m_uiZoneOwner;
 
         uint32 m_uiZoneLockTimer;
         uint32 m_uiZoneUpdateTimer;

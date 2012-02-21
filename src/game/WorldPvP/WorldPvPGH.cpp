@@ -83,7 +83,7 @@ void WorldPvPGH::OnGameObjectCreate(GameObject* pGo)
     if (pGo->GetEntry() == GO_VENTURE_BAY_LIGHTHOUSE)
     {
         m_TowerBannerLighthouseGuid = pGo->GetObjectGuid();
-        pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
+        pGo->SetGoArtKit(GetBannerArtKit(m_uiZoneOwner, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
     }
 }
 
@@ -107,14 +107,14 @@ void WorldPvPGH::ProcessEvent(uint32 uiEventId, GameObject* pGo)
             m_uiZoneOwner = HORDE;
             break;
         case EVENT_LIGHTHOUSE_PROGRESS_ALLIANCE:
-            SetBannerVisual(pGo, GO_ARTKIT_BANNER_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
+            SetBannerVisual(pGo, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
             break;
         case EVENT_LIGHTHOUSE_PROGRESS_HORDE:
-            SetBannerVisual(pGo, GO_ARTKIT_BANNER_HORDE, CAPTURE_ANIM_HORDE);
+            SetBannerVisual(pGo, CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
             break;
         case EVENT_LIGHTHOUSE_NEUTRAL_ALLIANCE:
         case EVENT_LIGHTHOUSE_NEUTRAL_HORDE:
-            SetBannerVisual(pGo, GO_ARTKIT_BANNER_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
+            SetBannerVisual(pGo, CAPTURE_ARTKIT_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
             m_uiZoneOwner = TEAM_NONE;
             break;
     }

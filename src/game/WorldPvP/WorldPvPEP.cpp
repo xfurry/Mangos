@@ -112,34 +112,22 @@ void WorldPvPEP::OnGameObjectCreate(GameObject* pGo)
             if (pGo->IsWithinDist2d(m_aTowersSpawnLocs[0].m_fX, m_aTowersSpawnLocs[0].m_fY, 50.0f))
             {
                 m_lTowerBanners[0].push_back(pGo->GetObjectGuid());
-                if (m_uiTowerOwner[0] == TEAM_NONE)
-                    pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
-                else
-                    pGo->SetGoArtKit(m_uiTowerOwner[0] == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+                pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[0], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             }
             else if (pGo->IsWithinDist2d(m_aTowersSpawnLocs[1].m_fX, m_aTowersSpawnLocs[1].m_fY, 50.0f))
             {
                 m_lTowerBanners[1].push_back(pGo->GetObjectGuid());
-                if (m_uiTowerOwner[1] == TEAM_NONE)
-                    pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
-                else
-                    pGo->SetGoArtKit(m_uiTowerOwner[1] == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+                pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[1], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             }
             else if (pGo->IsWithinDist2d(m_aTowersSpawnLocs[2].m_fX, m_aTowersSpawnLocs[2].m_fY, 50.0f))
             {
                 m_lTowerBanners[2].push_back(pGo->GetObjectGuid());
-                if (m_uiTowerOwner[2] == TEAM_NONE)
-                    pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
-                else
-                    pGo->SetGoArtKit(m_uiTowerOwner[2] == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+                pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[2], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             }
             else if (pGo->IsWithinDist2d(m_aTowersSpawnLocs[3].m_fX, m_aTowersSpawnLocs[3].m_fY, 50.0f))
             {
                 m_lTowerBanners[3].push_back(pGo->GetObjectGuid());
-                if (m_uiTowerOwner[3] == TEAM_NONE)
-                    pGo->SetGoArtKit(GO_ARTKIT_BANNER_NEUTRAL);
-                else
-                    pGo->SetGoArtKit(m_uiTowerOwner[3] == ALLIANCE ? GO_ARTKIT_BANNER_ALLIANCE : GO_ARTKIT_BANNER_HORDE);
+                pGo->SetGoArtKit(GetBannerArtKit(m_uiTowerOwner[3], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             }
             break;
         case GO_LORDAERON_SHRINE_ALLIANCE:
@@ -219,7 +207,7 @@ void WorldPvPEP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team tea
         if (team == ALLIANCE)
         {
             for (std::list<ObjectGuid>::iterator itr = m_lTowerBanners[uiTowerId].begin(); itr != m_lTowerBanners[uiTowerId].end(); ++itr)
-                SetBannerVisual(pGo, (*itr), GO_ARTKIT_BANNER_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
+                SetBannerVisual(pGo, (*itr), CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
 
             ++m_uiTowersAlliance;
             BuffTeam(ALLIANCE, m_aPlaguelandsTowerBuffs[m_uiTowersAlliance - 1].uiSpellIdAlliance);
@@ -227,7 +215,7 @@ void WorldPvPEP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team tea
         else
         {
             for (std::list<ObjectGuid>::iterator itr = m_lTowerBanners[uiTowerId].begin(); itr != m_lTowerBanners[uiTowerId].end(); ++itr)
-                SetBannerVisual(pGo, (*itr), GO_ARTKIT_BANNER_HORDE, CAPTURE_ANIM_HORDE);
+                SetBannerVisual(pGo, (*itr), CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
 
             ++m_uiTowersHorde;
             BuffTeam(HORDE, m_aPlaguelandsTowerBuffs[m_uiTowersHorde - 1].uiSpellIdHorde);
@@ -254,7 +242,7 @@ void WorldPvPEP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team tea
     else
     {
         for (std::list<ObjectGuid>::iterator itr = m_lTowerBanners[uiTowerId].begin(); itr != m_lTowerBanners[uiTowerId].end(); ++itr)
-            SetBannerVisual(pGo, (*itr), GO_ARTKIT_BANNER_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
+            SetBannerVisual(pGo, (*itr), CAPTURE_ARTKIT_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
 
         Team oldFaction = m_uiTowerOwner[uiTowerId];
         if (oldFaction == ALLIANCE)
