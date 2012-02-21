@@ -44,8 +44,8 @@ WorldPvPMgr::~WorldPvPMgr()
  */
 void WorldPvPMgr::InitWorldPvP()
 {
-    uint8 count = 7;
-    for (uint8 id = 0; id < count; ++id)
+    uint8 count = 0;
+    for (uint8 id = 0; id < 7; ++id)
     {
         WorldPvP* outdoorPvP = NULL;
         switch (id)
@@ -60,11 +60,13 @@ void WorldPvPMgr::InitWorldPvP()
         }
 
         if (outdoorPvP->InitWorldPvPArea())
+        {
             m_WorldPvPSet.push_back(outdoorPvP);
+            ++count;
+        }
         else
         {
             sLog.outDebug("WorldPvP: Outdoor PvP id %u loading failed.", id);
-            --count;
             delete outdoorPvP;
         }
     }
