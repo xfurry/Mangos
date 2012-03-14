@@ -16,11 +16,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
  
-#include "WorldPvP.h"
-#include "WorldPvPTF.h"
+#include "OutdoorPvP.h"
+#include "OutdoorPvPTF.h"
 
 
-WorldPvPTF::WorldPvPTF() : WorldPvP(),
+OutdoorPvPTF::OutdoorPvPTF() : OutdoorPvP(),
     m_uiZoneWorldState(WORLD_STATE_TF_TOWERS_CONTROLLED),
     m_zoneOwner(TEAM_NONE),
     m_uiZoneUpdateTimer(TIMER_TF_UPDATE_TIME),
@@ -38,7 +38,7 @@ WorldPvPTF::WorldPvPTF() : WorldPvP(),
         m_capturePointOwner[i] = TEAM_NONE;
 }
 
-bool WorldPvPTF::InitWorldPvPArea()
+bool OutdoorPvPTF::InitOutdoorPvPArea()
 {
     RegisterZone(ZONE_ID_TEROKKAR);
     RegisterZone(ZONE_ID_SHADOW_LABYRINTH);
@@ -49,7 +49,7 @@ bool WorldPvPTF::InitWorldPvPArea()
     return true;
 }
 
-void WorldPvPTF::FillInitialWorldStates(WorldPacket& data, uint32& count)
+void OutdoorPvPTF::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
     FillInitialWorldState(data, count, m_uiZoneWorldState, WORLD_STATE_ADD);
     if (m_uiZoneWorldState == WORLD_STATE_TF_TOWERS_CONTROLLED)
@@ -64,7 +64,7 @@ void WorldPvPTF::FillInitialWorldStates(WorldPacket& data, uint32& count)
         FillInitialWorldState(data, count, m_uiTowerWorldState[i], WORLD_STATE_ADD);
 }
 
-void WorldPvPTF::SendRemoveWorldStates(Player* pPlayer)
+void OutdoorPvPTF::SendRemoveWorldStates(Player* pPlayer)
 {
     pPlayer->SendUpdateWorldState(m_uiZoneWorldState, WORLD_STATE_REMOVE);
 
@@ -72,7 +72,7 @@ void WorldPvPTF::SendRemoveWorldStates(Player* pPlayer)
         pPlayer->SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVE);
 }
 
-void WorldPvPTF::UpdateWorldState(uint8 uiValue)
+void OutdoorPvPTF::UpdateWorldState(uint8 uiValue)
 {
     // update only tower count; tower states are sent in the process event
     SendUpdateWorldState(m_uiZoneWorldState, uiValue);
@@ -80,9 +80,9 @@ void WorldPvPTF::UpdateWorldState(uint8 uiValue)
         SendUpdateWorldState(m_uiTowerWorldState[i], uiValue);
 }
 
-void WorldPvPTF::HandlePlayerEnterZone(Player* pPlayer)
+void OutdoorPvPTF::HandlePlayerEnterZone(Player* pPlayer)
 {
-    WorldPvP::HandlePlayerEnterZone(pPlayer);
+    OutdoorPvP::HandlePlayerEnterZone(pPlayer);
 
     // remove the buff from the player first because there are some issues at relog
     pPlayer->RemoveAurasDueToSpell(SPELL_AUCHINDOUN_BLESSING);
@@ -92,15 +92,15 @@ void WorldPvPTF::HandlePlayerEnterZone(Player* pPlayer)
         pPlayer->CastSpell(pPlayer, SPELL_AUCHINDOUN_BLESSING, true);
 }
 
-void WorldPvPTF::HandlePlayerLeaveZone(Player* pPlayer)
+void OutdoorPvPTF::HandlePlayerLeaveZone(Player* pPlayer)
 {
     // remove the buff from the player
     pPlayer->RemoveAurasDueToSpell(SPELL_AUCHINDOUN_BLESSING);
 
-    WorldPvP::HandlePlayerLeaveZone(pPlayer);
+    OutdoorPvP::HandlePlayerLeaveZone(pPlayer);
 }
 
-void WorldPvPTF::OnGameObjectCreate(GameObject* pGo)
+void OutdoorPvPTF::OnGameObjectCreate(GameObject* pGo)
 {
     switch (pGo->GetEntry())
     {
@@ -127,7 +127,7 @@ void WorldPvPTF::OnGameObjectCreate(GameObject* pGo)
     }
 }
 
-void WorldPvPTF::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team)
+void OutdoorPvPTF::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
@@ -147,7 +147,7 @@ void WorldPvPTF::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> pl
 }
 
 // process the capture events
-void WorldPvPTF::ProcessEvent(uint32 uiEventId, GameObject* pGo)
+void OutdoorPvPTF::ProcessEvent(uint32 uiEventId, GameObject* pGo)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
@@ -170,7 +170,7 @@ void WorldPvPTF::ProcessEvent(uint32 uiEventId, GameObject* pGo)
     }
 }
 
-void WorldPvPTF::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState)
+void OutdoorPvPTF::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState)
 {
     if (team != TEAM_NONE)
     {
@@ -226,7 +226,7 @@ void WorldPvPTF::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team tea
 
 }
 
-void WorldPvPTF::Update(uint32 diff)
+void OutdoorPvPTF::Update(uint32 diff)
 {
     if (m_uiZoneLockTimer)
     {
@@ -280,7 +280,7 @@ void WorldPvPTF::Update(uint32 diff)
     }
 }
 
-void WorldPvPTF::UpdateTimerWorldState()
+void OutdoorPvPTF::UpdateTimerWorldState()
 {
     // Calculate time
     uint32 minutesLeft = m_uiZoneLockTimer / 60000;
@@ -293,7 +293,7 @@ void WorldPvPTF::UpdateTimerWorldState()
     SendUpdateWorldState(WORLD_STATE_TF_TIME_HOURS, hoursLeft);
 }
 
-void WorldPvPTF::LockTowers(const WorldObject* objRef)
+void OutdoorPvPTF::LockTowers(const WorldObject* objRef)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
@@ -304,7 +304,7 @@ void WorldPvPTF::LockTowers(const WorldObject* objRef)
     }
 }
 
-void WorldPvPTF::ResetTowers(const WorldObject* objRef)
+void OutdoorPvPTF::ResetTowers(const WorldObject* objRef)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {

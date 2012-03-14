@@ -52,8 +52,8 @@
 #include "BattleGround.h"
 #include "BattleGroundAV.h"
 #include "BattleGroundMgr.h"
-#include "WorldPvP/WorldPvP.h"
-#include "WorldPvP/WorldPvPMgr.h"
+#include "OutdoorPvP/OutdoorPvP.h"
+#include "OutdoorPvP/OutdoorPvPMgr.h"
 #include "ArenaTeam.h"
 #include "Chat.h"
 #include "Database/DatabaseImpl.h"
@@ -610,7 +610,7 @@ void Player::CleanupsBeforeDelete()
     }
 
     // notify zone scripts for player logout
-    sWorldPvPMgr.HandlePlayerLeaveZone(this, m_zoneUpdateId);
+    sOutdoorPvPMgr.HandlePlayerLeaveZone(this, m_zoneUpdateId);
 
     Unit::CleanupsBeforeDelete();
 }
@@ -6706,12 +6706,12 @@ void Player::UpdateArea(uint32 newArea)
     UpdateAreaDependentAuras();
 }
 
-WorldPvP* Player::GetWorldPvP() const
+OutdoorPvP* Player::GetOutdoorPvP() const
 {
-    return sWorldPvPMgr.GetWorldPvPToZoneId(GetZoneId());
+    return sOutdoorPvPMgr.GetOutdoorPvPToZoneId(GetZoneId());
 }
 
-bool Player::IsWorldPvPActive()
+bool Player::IsOutdoorPvPActive()
 {
     return CanCaptureTowerPoint() &&
         (IsPvP() || sWorld.IsPvPRealm()) &&
@@ -6729,8 +6729,8 @@ void Player::UpdateZone(uint32 newZone, uint32 newArea)
     if(m_zoneUpdateId != newZone)
     {
         // handle world pvp zones
-        sWorldPvPMgr.HandlePlayerLeaveZone(this, m_zoneUpdateId);
-        sWorldPvPMgr.HandlePlayerEnterZone(this, newZone);
+        sOutdoorPvPMgr.HandlePlayerLeaveZone(this, m_zoneUpdateId);
+        sOutdoorPvPMgr.HandlePlayerEnterZone(this, newZone);
 
         SendInitWorldStates(newZone, newArea);              // only if really enters to new zone, not just area change, works strange...
 
@@ -8704,7 +8704,7 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
     // data depends on zoneid/mapid...
     BattleGround* bg = GetBattleGround();
     uint32 mapid = GetMapId();
-    WorldPvP* outdoorBg = sWorldPvPMgr.GetWorldPvPToZoneId(zoneid);
+    OutdoorPvP* outdoorBg = sOutdoorPvPMgr.GetOutdoorPvPToZoneId(zoneid);
 
     DEBUG_LOG("Sending SMSG_INIT_WORLD_STATES to Map:%u, Zone: %u", mapid, zoneid);
 

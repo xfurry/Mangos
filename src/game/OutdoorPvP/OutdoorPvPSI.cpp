@@ -16,10 +16,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "WorldPvP.h"
-#include "WorldPvPSI.h"
+#include "OutdoorPvP.h"
+#include "OutdoorPvPSI.h"
 
-WorldPvPSI::WorldPvPSI() : WorldPvP(),
+OutdoorPvPSI::OutdoorPvPSI() : OutdoorPvP(),
     m_uiResourcesAlliance(0),
     m_uiResourcesHorde(0),
     m_zoneOwner(TEAM_NONE)
@@ -27,7 +27,7 @@ WorldPvPSI::WorldPvPSI() : WorldPvP(),
 }
 
 // Init outdoor pvp zones
-bool WorldPvPSI::InitWorldPvPArea()
+bool OutdoorPvPSI::InitOutdoorPvPArea()
 {
     RegisterZone(ZONE_ID_SILITHUS);
     RegisterZone(ZONE_ID_GATES_OF_AQ);
@@ -38,7 +38,7 @@ bool WorldPvPSI::InitWorldPvPArea()
 }
 
 // Send initial world states
-void WorldPvPSI::FillInitialWorldStates(WorldPacket& data, uint32& count)
+void OutdoorPvPSI::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
     FillInitialWorldState(data, count, WORLD_STATE_SI_GATHERED_A, m_uiResourcesAlliance);
     FillInitialWorldState(data, count, WORLD_STATE_SI_GATHERED_H, m_uiResourcesHorde);
@@ -46,7 +46,7 @@ void WorldPvPSI::FillInitialWorldStates(WorldPacket& data, uint32& count)
 }
 
 // Remove world states
-void WorldPvPSI::SendRemoveWorldStates(Player* pPlayer)
+void OutdoorPvPSI::SendRemoveWorldStates(Player* pPlayer)
 {
     pPlayer->SendUpdateWorldState(WORLD_STATE_SI_GATHERED_A, WORLD_STATE_REMOVE);
     pPlayer->SendUpdateWorldState(WORLD_STATE_SI_GATHERED_H, WORLD_STATE_REMOVE);
@@ -54,14 +54,14 @@ void WorldPvPSI::SendRemoveWorldStates(Player* pPlayer)
 }
 
 // Update current world states
-void WorldPvPSI::UpdateWorldState()
+void OutdoorPvPSI::UpdateWorldState()
 {
     SendUpdateWorldState(WORLD_STATE_SI_GATHERED_A, m_uiResourcesAlliance);
     SendUpdateWorldState(WORLD_STATE_SI_GATHERED_H, m_uiResourcesHorde);
 }
 
 // Handle buffs when player enters the zone
-void WorldPvPSI::HandlePlayerEnterZone(Player* pPlayer)
+void OutdoorPvPSI::HandlePlayerEnterZone(Player* pPlayer)
 {
     // remove the buff from the player first; Sometimes on relog players still have the aura
     pPlayer->RemoveAurasDueToSpell(SPELL_CENARION_FAVOR);
@@ -70,20 +70,20 @@ void WorldPvPSI::HandlePlayerEnterZone(Player* pPlayer)
     if (pPlayer->GetTeam() == m_zoneOwner)
         pPlayer->CastSpell(pPlayer, SPELL_CENARION_FAVOR, true);
 
-    WorldPvP::HandlePlayerEnterZone(pPlayer);
+    OutdoorPvP::HandlePlayerEnterZone(pPlayer);
 }
 
 // Remove buffs when player leaves zone
-void WorldPvPSI::HandlePlayerLeaveZone(Player* pPlayer)
+void OutdoorPvPSI::HandlePlayerLeaveZone(Player* pPlayer)
 {
     // remove the buff from the player
     pPlayer->RemoveAurasDueToSpell(SPELL_CENARION_FAVOR);
 
-    WorldPvP::HandlePlayerLeaveZone(pPlayer);
+    OutdoorPvP::HandlePlayerLeaveZone(pPlayer);
 }
 
 // Handle case when player returns a silithyst
-bool WorldPvPSI::HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId)
+bool OutdoorPvPSI::HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId)
 {
     if (pPlayer->isGameMaster() || pPlayer->isDead())
         return false;
@@ -164,7 +164,7 @@ bool WorldPvPSI::HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId)
 }
 
 // Handle case when player drops flag
-bool WorldPvPSI::HandleDropFlag(Player* pPlayer, uint32 uiSpellId)
+bool OutdoorPvPSI::HandleDropFlag(Player* pPlayer, uint32 uiSpellId)
 {
     if (uiSpellId != SPELL_SILITHYST)
         return false;
@@ -182,7 +182,7 @@ bool WorldPvPSI::HandleDropFlag(Player* pPlayer, uint32 uiSpellId)
 
 // Handle the case when player picks a silithus mount or geyser
 // This needs to be done because the spells used by these objects are missing
-bool WorldPvPSI::HandleObjectUse(Player* pPlayer, GameObject* pGo)
+bool OutdoorPvPSI::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 {
     if (pGo->GetEntry() == GO_SILITHYST_MOUND || pGo->GetEntry() == GO_SILITHYST_GEYSER)
     {

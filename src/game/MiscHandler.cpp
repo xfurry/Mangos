@@ -38,7 +38,7 @@
 #include "ObjectAccessor.h"
 #include "Object.h"
 #include "BattleGround.h"
-#include "WorldPvP/WorldPvP.h"
+#include "OutdoorPvP/OutdoorPvP.h"
 #include "Pet.h"
 #include "SocialMgr.h"
 #include "DBCEnums.h"
@@ -745,7 +745,7 @@ void WorldSession::HandleAreaTriggerOpcode(WorldPacket & recv_data)
         return;
     }
 
-    if (WorldPvP* outdoorBg = GetPlayer()->GetWorldPvP())
+    if (OutdoorPvP* outdoorBg = GetPlayer()->GetOutdoorPvP())
     {
         if (outdoorBg->HandleAreaTrigger(pl, Trigger_ID))
             return;

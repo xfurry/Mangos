@@ -41,7 +41,7 @@
 #include "GridNotifiersImpl.h"
 #include "ObjectPosSelector.h"
 #include "TemporarySummon.h"
-#include "WorldPvP/WorldPvPMgr.h"
+#include "OutdoorPvP/OutdoorPvPMgr.h"
 #include "movement/packet_builder.h"
 
 Object::Object( )
@@ -1554,7 +1554,7 @@ void WorldObject::SetZoneScript()
     if (Map* map = GetMap())
     {
         if (!map->IsBattleGroundOrArena() && !map->IsDungeon())
-            m_zoneScript = sWorldPvPMgr.GetZoneScript(GetZoneId());
+            m_zoneScript = sOutdoorPvPMgr.GetZoneScript(GetZoneId());
     }
 }
 

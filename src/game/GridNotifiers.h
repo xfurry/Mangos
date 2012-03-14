@@ -1199,7 +1199,7 @@ namespace MaNGOS
             {
                 return u->isAlive() &&
                     i_obj->IsWithinDistInMap(u, i_range) &&
-                    u->IsWorldPvPActive();
+                    u->IsOutdoorPvPActive();
             }
         private:
             WorldObject const* i_obj;

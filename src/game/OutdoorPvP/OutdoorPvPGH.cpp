@@ -16,23 +16,23 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "WorldPvP.h"
-#include "WorldPvPGH.h"
+#include "OutdoorPvP.h"
+#include "OutdoorPvPGH.h"
 
 
-WorldPvPGH::WorldPvPGH() : WorldPvP(),
+OutdoorPvPGH::OutdoorPvPGH() : OutdoorPvP(),
     m_zoneOwner(TEAM_NONE)
 {
 }
 
-bool WorldPvPGH::InitWorldPvPArea()
+bool OutdoorPvPGH::InitOutdoorPvPArea()
 {
     RegisterZone(ZONE_ID_GRIZZLY_HILLS);
 
     return true;
 }
 
-void WorldPvPGH::OnCreatureCreate(Creature* pCreature)
+void OutdoorPvPGH::OnCreatureCreate(Creature* pCreature)
 {
     switch (pCreature->GetEntry())
     {
@@ -78,14 +78,14 @@ void WorldPvPGH::OnCreatureCreate(Creature* pCreature)
     pCreature->ForcedDespawn();
 }
 
-void WorldPvPGH::OnGameObjectCreate(GameObject* pGo)
+void OutdoorPvPGH::OnGameObjectCreate(GameObject* pGo)
 {
     if (pGo->GetEntry() == GO_VENTURE_BAY_LIGHTHOUSE)
         pGo->SetGoArtKit(GetBannerArtKit(m_zoneOwner, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
 }
 
 // process the capture events
-void WorldPvPGH::ProcessEvent(uint32 uiEventId, GameObject* pGo)
+void OutdoorPvPGH::ProcessEvent(uint32 uiEventId, GameObject* pGo)
 {
     // If we are not using the lighthouse return
     if (pGo->GetEntry() != GO_VENTURE_BAY_LIGHTHOUSE)
@@ -117,7 +117,7 @@ void WorldPvPGH::ProcessEvent(uint32 uiEventId, GameObject* pGo)
     }
 }
 
-void WorldPvPGH::RespawnSoldiers(const WorldObject* objRef)
+void OutdoorPvPGH::RespawnSoldiers(const WorldObject* objRef)
 {
     if (m_zoneOwner == ALLIANCE)
     {

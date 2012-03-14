@@ -16,12 +16,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "WorldPvP.h"
-#include "WorldPvPZM.h"
+#include "OutdoorPvP.h"
+#include "OutdoorPvPZM.h"
 #include "../GameObject.h"
 
 
-WorldPvPZM::WorldPvPZM() : WorldPvP(),
+OutdoorPvPZM::OutdoorPvPZM() : OutdoorPvP(),
     m_uiGraveyardWorldState(WORLD_STATE_GRAVEYARD_NEUTRAL),
     m_uiAllianceScoutWorldState(WORLD_STATE_ALLIANCE_FLAG_NOT_READY),
     m_uiHordeScoutWorldState(WORLD_STATE_HORDE_FLAG_NOT_READY),
@@ -40,7 +40,7 @@ WorldPvPZM::WorldPvPZM() : WorldPvP(),
         m_capturePointOwner[i] = TEAM_NONE;
 }
 
-bool WorldPvPZM::InitWorldPvPArea()
+bool OutdoorPvPZM::InitOutdoorPvPArea()
 {
     RegisterZone(ZONE_ID_ZANGARMARSH);
     RegisterZone(ZONE_ID_SERPENTSHRINE_CAVERN);
@@ -51,7 +51,7 @@ bool WorldPvPZM::InitWorldPvPArea()
     return true;
 }
 
-void WorldPvPZM::FillInitialWorldStates(WorldPacket& data, uint32& count)
+void OutdoorPvPZM::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
     FillInitialWorldState(data, count, m_uiAllianceScoutWorldState, WORLD_STATE_ADD);
     FillInitialWorldState(data, count, m_uiHordeScoutWorldState, WORLD_STATE_ADD);
@@ -64,7 +64,7 @@ void WorldPvPZM::FillInitialWorldStates(WorldPacket& data, uint32& count)
     }
 }
 
-void WorldPvPZM::SendRemoveWorldStates(Player* pPlayer)
+void OutdoorPvPZM::SendRemoveWorldStates(Player* pPlayer)
 {
     pPlayer->SendUpdateWorldState(m_uiAllianceScoutWorldState, WORLD_STATE_REMOVE);
     pPlayer->SendUpdateWorldState(m_uiHordeScoutWorldState, WORLD_STATE_REMOVE);
@@ -77,7 +77,7 @@ void WorldPvPZM::SendRemoveWorldStates(Player* pPlayer)
     }
 }
 
-void WorldPvPZM::HandlePlayerEnterZone(Player* pPlayer)
+void OutdoorPvPZM::HandlePlayerEnterZone(Player* pPlayer)
 {
     // remove the buff from the player first; Sometimes on relog players still have the aura
     pPlayer->RemoveAurasDueToSpell(SPELL_TWIN_SPIRE_BLESSING);
@@ -86,18 +86,18 @@ void WorldPvPZM::HandlePlayerEnterZone(Player* pPlayer)
     if ((pPlayer->GetTeam() == ALLIANCE ? m_uiTowersAlliance : m_uiTowersHorde) == MAX_ZM_TOWERS)
         pPlayer->CastSpell(pPlayer, SPELL_TWIN_SPIRE_BLESSING, true);
 
-    WorldPvP::HandlePlayerEnterZone(pPlayer);
+    OutdoorPvP::HandlePlayerEnterZone(pPlayer);
 }
 
-void WorldPvPZM::HandlePlayerLeaveZone(Player* pPlayer)
+void OutdoorPvPZM::HandlePlayerLeaveZone(Player* pPlayer)
 {
     // remove the buff from the player
     pPlayer->RemoveAurasDueToSpell(SPELL_TWIN_SPIRE_BLESSING);
 
-    WorldPvP::HandlePlayerLeaveZone(pPlayer);
+    OutdoorPvP::HandlePlayerLeaveZone(pPlayer);
 }
 
-void WorldPvPZM::OnCreatureCreate(Creature* pCreature)
+void OutdoorPvPZM::OnCreatureCreate(Creature* pCreature)
 {
     switch (pCreature->GetEntry())
     {
@@ -162,7 +162,7 @@ void WorldPvPZM::OnCreatureCreate(Creature* pCreature)
     }
 }
 
-void WorldPvPZM::OnGameObjectCreate(GameObject* pGo)
+void OutdoorPvPZM::OnGameObjectCreate(GameObject* pGo)
 {
     switch (pGo->GetEntry())
     {
@@ -185,7 +185,7 @@ void WorldPvPZM::OnGameObjectCreate(GameObject* pGo)
 }
 
 // Cast player spell on opponent kill
-void WorldPvPZM::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
+void OutdoorPvPZM::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
 {
     for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
     {
@@ -206,7 +206,7 @@ void WorldPvPZM::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
 }
 
 // process the capture events
-void WorldPvPZM::ProcessEvent(uint32 uiEventId, GameObject* pGo)
+void OutdoorPvPZM::ProcessEvent(uint32 uiEventId, GameObject* pGo)
 {
     for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
     {
@@ -229,7 +229,7 @@ void WorldPvPZM::ProcessEvent(uint32 uiEventId, GameObject* pGo)
     }
 }
 
-void WorldPvPZM::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState, uint32 uiNewMapState)
+void OutdoorPvPZM::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState, uint32 uiNewMapState)
 {
     if (team == ALLIANCE)
     {
@@ -282,7 +282,7 @@ void WorldPvPZM::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team tea
     m_capturePointOwner[uiTowerId] = team;
 }
 
-void WorldPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team team)
+void OutdoorPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team team)
 {
     if (team == ALLIANCE)
     {
@@ -304,7 +304,7 @@ void WorldPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team team)
     }
 }
 
-void WorldPvPZM::ResetScouts(const WorldObject* objRef, Team team, bool includeWorldStates)
+void OutdoorPvPZM::ResetScouts(const WorldObject* objRef, Team team, bool includeWorldStates)
 {
     if (team == ALLIANCE)
     {
@@ -334,7 +334,7 @@ void WorldPvPZM::ResetScouts(const WorldObject* objRef, Team team, bool includeW
     }
 }
 
-bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
+bool OutdoorPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 {
     if (!pPlayer->HasAura(pPlayer->GetTeam() == ALLIANCE ? SPELL_BATTLE_STANDARD_ALLIANCE : SPELL_BATTLE_STANDARD_HORDE))
         return false;
@@ -459,7 +459,7 @@ bool WorldPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
     return false;
 }
 
-void WorldPvPZM::SetGraveyard(bool remove)
+void OutdoorPvPZM::SetGraveyard(bool remove)
 {
     if (remove)
         sObjectMgr.RemoveGraveYardLink(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner, false);
@@ -467,7 +467,7 @@ void WorldPvPZM::SetGraveyard(bool remove)
         sObjectMgr.AddGraveYardLink(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner, false);
 }
 
-void WorldPvPZM::SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn)
+void OutdoorPvPZM::SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn)
 {
     if (GameObject* pBanner = objRef->GetMap()->GetGameObject(goGuid))
     {
@@ -481,7 +481,7 @@ void WorldPvPZM::SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid
     }
 }
 
-void WorldPvPZM::SetBeaconArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn)
+void OutdoorPvPZM::SetBeaconArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn)
 {
     if (Creature* pBeam = objRef->GetMap()->GetCreature(goGuid))
     {

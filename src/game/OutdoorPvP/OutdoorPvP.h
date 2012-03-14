@@ -19,7 +19,7 @@
 #ifndef OUTDOOR_PVP_H
 #define OUTDOOR_PVP_H
 
-#include "WorldPvPMgr.h"
+#include "OutdoorPvPMgr.h"
 #include "../Language.h"
 #include "../World.h"
 #include "../ZoneScript.h"
@@ -46,13 +46,13 @@ enum CapturePointAnimations
 
 typedef std::set<Player*> PlayerSet;
 
-class WorldPvP : public ZoneScript
+class OutdoorPvP : public ZoneScript
 {
-    friend class WorldPvPMgr;
+    friend class OutdoorPvPMgr;
 
     public:
-        WorldPvP() {}
-        ~WorldPvP() {}
+        OutdoorPvP() {}
+        ~OutdoorPvP() {}
 
         // called when the zone is initialized
         virtual void FillInitialWorldStates(WorldPacket& /*data*/, uint32& /*count*/) {}
@@ -73,7 +73,7 @@ class WorldPvP : public ZoneScript
         virtual void HandleObjectiveComplete(std::list<Player*> /*players*/, uint32 /*uiEventId*/, Team /*team*/) {}
 
         // init all the outdoor pvp area relates stuff
-        virtual bool InitWorldPvPArea() { return false; }
+        virtual bool InitOutdoorPvPArea() { return false; }
 
         // send world state update to all players present
         void SendUpdateWorldState(uint32 field, uint32 value);
@@ -81,7 +81,7 @@ class WorldPvP : public ZoneScript
         // awards rewards for player kill
         virtual void AwardKillBonus(Player* /*pPlayer*/) {}
 
-        // update - called by the WorldPvPMgr
+        // update - called by the OutdoorPvPMgr
         virtual void Update(uint32 diff) {}
 
         // applies buff to a team inside the specific zone

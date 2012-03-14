@@ -16,14 +16,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "WorldPvP.h"
+#include "OutdoorPvP.h"
 
 /**
    Function that a players to a players set
 
    @param   player to be added to set
  */
-void WorldPvP::HandlePlayerEnterZone(Player* pPlayer)
+void OutdoorPvP::HandlePlayerEnterZone(Player* pPlayer)
 {
     m_sZonePlayers.insert(pPlayer);
 }
@@ -33,7 +33,7 @@ void WorldPvP::HandlePlayerEnterZone(Player* pPlayer)
 
    @param   player to be removed
  */
-void WorldPvP::HandlePlayerLeaveZone(Player* pPlayer)
+void OutdoorPvP::HandlePlayerLeaveZone(Player* pPlayer)
 {
     // remove the world state information from the player
     if (!pPlayer->GetSession()->PlayerLogout())
@@ -50,7 +50,7 @@ void WorldPvP::HandlePlayerLeaveZone(Player* pPlayer)
    @param   world state it to update
    @param   value which should update the world state
  */
-void WorldPvP::SendUpdateWorldState(uint32 uiField, uint32 uiValue)
+void OutdoorPvP::SendUpdateWorldState(uint32 uiField, uint32 uiValue)
 {
     for (PlayerSet::iterator itr = m_sZonePlayers.begin(); itr != m_sZonePlayers.end(); ++itr)
         (*itr)->SendUpdateWorldState(uiField, uiValue);
@@ -62,7 +62,7 @@ void WorldPvP::SendUpdateWorldState(uint32 uiField, uint32 uiValue)
    @param   player which kills another player
    @param   player or unit (pet) which is victim
  */
-void WorldPvP::HandlePlayerKill(Player* pKiller, Unit* pVictim)
+void OutdoorPvP::HandlePlayerKill(Player* pKiller, Unit* pVictim)
 {
     if (Group* pGroup = pKiller->GetGroup())
     {
@@ -79,38 +79,38 @@ void WorldPvP::HandlePlayerKill(Player* pKiller, Unit* pVictim)
 
             // creature kills must be notified, even if not inside objective / not outdoor pvp active
             // player kills only count if active and inside objective
-            if (pGroupGuy->IsWorldPvPActive())
+            if (pGroupGuy->IsOutdoorPvPActive())
                 HandlePlayerKillInsideArea(pGroupGuy, pVictim);
         }
     }
     else
     {
         // creature kills must be notified, even if not inside objective / not outdoor pvp active
-        if (pKiller && pKiller->IsWorldPvPActive())
+        if (pKiller && pKiller->IsOutdoorPvPActive())
             HandlePlayerKillInsideArea(pKiller, pVictim);
     }
 }
 
 // register this zone as an outdoor pvp script
-void WorldPvP::RegisterZone(uint32 uiZoneId)
+void OutdoorPvP::RegisterZone(uint32 uiZoneId)
 {
-    sWorldPvPMgr.AddZone(uiZoneId, this);
+    sOutdoorPvPMgr.AddZone(uiZoneId, this);
 }
 
 // return if has player inside the zone
-bool WorldPvP::HasPlayer(Player* pPlayer) const
+bool OutdoorPvP::HasPlayer(Player* pPlayer) const
 {
     return m_sZonePlayers.find(pPlayer) != m_sZonePlayers.end();
 }
 
 // set a capture point slider value for when the gameobject is being reloaded the next time
-void WorldPvP::SetCapturePointSliderValue(uint32 entry, CapturePointSlider value)
+void OutdoorPvP::SetCapturePointSliderValue(uint32 entry, CapturePointSlider value)
 {
-    sWorldPvPMgr.SetCapturePointSlider(entry, value);
+    sOutdoorPvPMgr.SetCapturePointSlider(entry, value);
 }
 
 // apply a team buff for the specific zone
-void WorldPvP::BuffTeam(Team team, uint32 spellId, bool remove)
+void OutdoorPvP::BuffTeam(Team team, uint32 spellId, bool remove)
 {
     for (PlayerSet::iterator itr = m_sZonePlayers.begin(); itr != m_sZonePlayers.end(); ++itr)
     {
@@ -124,7 +124,7 @@ void WorldPvP::BuffTeam(Team team, uint32 spellId, bool remove)
     }
 }
 
-uint32 WorldPvP::GetBannerArtKit(Team team, uint32 artKitAlliance, uint32 artKitHorde, uint32 artKitNeutral)
+uint32 OutdoorPvP::GetBannerArtKit(Team team, uint32 artKitAlliance, uint32 artKitHorde, uint32 artKitNeutral)
 {
     switch (team)
     {
@@ -137,13 +137,13 @@ uint32 WorldPvP::GetBannerArtKit(Team team, uint32 artKitAlliance, uint32 artKit
     }
 }
 
-void WorldPvP::SetBannerVisual(const WorldObject* objRef, ObjectGuid goGuid, uint32 artKit, uint32 animId)
+void OutdoorPvP::SetBannerVisual(const WorldObject* objRef, ObjectGuid goGuid, uint32 artKit, uint32 animId)
 {
     if (GameObject* go = objRef->GetMap()->GetGameObject(goGuid))
         SetBannerVisual(go, artKit, animId);
 }
 
-void WorldPvP::SetBannerVisual(GameObject* go, uint32 artKit, uint32 animId)
+void OutdoorPvP::SetBannerVisual(GameObject* go, uint32 artKit, uint32 animId)
 {
     go->SendGameObjectCustomAnim(go->GetObjectGuid(), animId);
     go->SetGoArtKit(artKit);

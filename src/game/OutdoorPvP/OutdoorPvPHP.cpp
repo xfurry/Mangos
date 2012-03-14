@@ -16,12 +16,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "WorldPvP.h"
-#include "WorldPvPHP.h"
+#include "OutdoorPvP.h"
+#include "OutdoorPvPHP.h"
 #include "../GameObject.h"
 
 
-WorldPvPHP::WorldPvPHP() : WorldPvP(),
+OutdoorPvPHP::OutdoorPvPHP() : OutdoorPvP(),
     m_uiTowersAlliance(0),
     m_uiTowersHorde(0)
 {
@@ -33,7 +33,7 @@ WorldPvPHP::WorldPvPHP() : WorldPvP(),
         m_capturePointOwner[i] = TEAM_NONE;
 }
 
-bool WorldPvPHP::InitWorldPvPArea()
+bool OutdoorPvPHP::InitOutdoorPvPArea()
 {
     RegisterZone(ZONE_ID_HELLFIRE_PENINSULA);
     RegisterZone(ZONE_ID_HELLFIRE_CITADEL);
@@ -45,7 +45,7 @@ bool WorldPvPHP::InitWorldPvPArea()
     return true;
 }
 
-void WorldPvPHP::FillInitialWorldStates(WorldPacket& data, uint32& count)
+void OutdoorPvPHP::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
     FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_HP_ALLIANCE, m_uiTowersAlliance);
     FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_HP_HORDE, m_uiTowersHorde);
@@ -56,7 +56,7 @@ void WorldPvPHP::FillInitialWorldStates(WorldPacket& data, uint32& count)
         FillInitialWorldState(data, count, m_uiTowerWorldState[i], WORLD_STATE_ADD);
 }
 
-void WorldPvPHP::SendRemoveWorldStates(Player* pPlayer)
+void OutdoorPvPHP::SendRemoveWorldStates(Player* pPlayer)
 {
     pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_DISPLAY_HP_A, WORLD_STATE_REMOVE);
     pPlayer->SendUpdateWorldState(WORLD_STATE_TOWER_DISPLAY_HP_H, WORLD_STATE_REMOVE);
@@ -65,14 +65,14 @@ void WorldPvPHP::SendRemoveWorldStates(Player* pPlayer)
         pPlayer->SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVE);
 }
 
-void WorldPvPHP::UpdateWorldState()
+void OutdoorPvPHP::UpdateWorldState()
 {
     // update only tower count; tower states are sent in the process event
     SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HP_ALLIANCE, m_uiTowersAlliance);
     SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HP_HORDE, m_uiTowersHorde);
 }
 
-void WorldPvPHP::HandlePlayerEnterZone(Player* pPlayer)
+void OutdoorPvPHP::HandlePlayerEnterZone(Player* pPlayer)
 {
     // remove the buff from the player first; Sometimes on relog players still have the aura
     pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? SPELL_HELLFIRE_SUPERIORITY_ALLIANCE : SPELL_HELLFIRE_SUPERIORITY_HORDE);
@@ -83,18 +83,18 @@ void WorldPvPHP::HandlePlayerEnterZone(Player* pPlayer)
     else if (m_uiTowersHorde == MAX_HP_TOWERS && pPlayer->GetTeam() == HORDE)
         pPlayer->CastSpell(pPlayer, SPELL_HELLFIRE_SUPERIORITY_HORDE, true);
 
-    WorldPvP::HandlePlayerEnterZone(pPlayer);
+    OutdoorPvP::HandlePlayerEnterZone(pPlayer);
 }
 
-void WorldPvPHP::HandlePlayerLeaveZone(Player* pPlayer)
+void OutdoorPvPHP::HandlePlayerLeaveZone(Player* pPlayer)
 {
     // remove the buff from the player
     pPlayer->RemoveAurasDueToSpell(pPlayer->GetTeam() == ALLIANCE ? SPELL_HELLFIRE_SUPERIORITY_ALLIANCE : SPELL_HELLFIRE_SUPERIORITY_HORDE);
 
-    WorldPvP::HandlePlayerLeaveZone(pPlayer);
+    OutdoorPvP::HandlePlayerLeaveZone(pPlayer);
 }
 
-void WorldPvPHP::OnGameObjectCreate(GameObject* pGo)
+void OutdoorPvPHP::OnGameObjectCreate(GameObject* pGo)
 {
     switch (pGo->GetEntry())
     {
@@ -125,7 +125,7 @@ void WorldPvPHP::OnGameObjectCreate(GameObject* pGo)
     }
 }
 
-void WorldPvPHP::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team)
+void OutdoorPvPHP::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team)
 {
     uint32 uiCredit = 0;
 
@@ -159,7 +159,7 @@ void WorldPvPHP::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> pl
 }
 
 // Cast player spell on opponent kill
-void WorldPvPHP::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
+void OutdoorPvPHP::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
 {
     for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
     {
@@ -180,7 +180,7 @@ void WorldPvPHP::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
 }
 
 // process the capture events
-void WorldPvPHP::ProcessEvent(uint32 uiEventId, GameObject* pGo)
+void OutdoorPvPHP::ProcessEvent(uint32 uiEventId, GameObject* pGo)
 {
     for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
     {
@@ -203,7 +203,7 @@ void WorldPvPHP::ProcessEvent(uint32 uiEventId, GameObject* pGo)
     }
 }
 
-void WorldPvPHP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState, uint32 uiTowerArtKit, uint32 uiTowerAnim)
+void OutdoorPvPHP::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState, uint32 uiTowerArtKit, uint32 uiTowerAnim)
 {
     // set artkits and process buffs
     if (team == ALLIANCE)
