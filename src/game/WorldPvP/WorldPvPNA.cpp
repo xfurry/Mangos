@@ -309,6 +309,12 @@ void WorldPvPNA::ProcessEvent(uint32 uiEventId, GameObject* pGo)
         case EVENT_HALAA_BANNER_WIN_HORDE:
             ProcessCaptureEvent(pGo, HORDE);
             break;
+        case EVENT_HALAA_BANNER_PROGRESS_ALLIANCE:
+            SetBannerVisual(pGo, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
+            break;
+        case EVENT_HALAA_BANNER_PROGRESS_HORDE:
+            SetBannerVisual(pGo, CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
+            break;
     }
 }
 
@@ -329,15 +335,11 @@ void WorldPvPNA::ProcessCaptureEvent(GameObject* pGo, Team team)
     {
         m_uiZoneWorldState = WORLD_STATE_NA_GUARDS_ALLIANCE;
         m_uiZoneMapState = WORLD_STATE_NA_HALAA_ALLIANCE;
-
-        SetBannerVisual(pGo, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
     }
     else
     {
         m_uiZoneWorldState = WORLD_STATE_NA_GUARDS_HORDE;
         m_uiZoneMapState = WORLD_STATE_NA_HALAA_HORDE;
-
-        SetBannerVisual(pGo, CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
     }
 
     HandleFactionObjects(pGo);

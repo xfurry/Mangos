@@ -307,11 +307,11 @@ void WorldPvPEP::SummonSoldiers(WorldObject* objRef)
 
     for (uint8 i = 0; i < 5; ++i)
     {
-        if (Creature* pSoldier = objRef->SummonCreature(uiEntry, m_aPlaguelandSoldiersSpawnLocs[i].m_fX, m_aPlaguelandSoldiersSpawnLocs[i].m_fY, m_aPlaguelandSoldiersSpawnLocs[i].m_fZ, 2.2f, TEMPSUMMON_DEAD_DESPAWN, 0))
-            m_lSoldiersGuids.push_back(pSoldier->GetObjectGuid());
-
         if (i == 0)
             uiEntry = uiEntry == NPC_LORDAERON_COMMANDER ? NPC_LORDAERON_SOLDIER : NPC_LORDAERON_FIGHTER;
+
+        if (Creature* pSoldier = objRef->SummonCreature(uiEntry, m_aPlaguelandSoldiersSpawnLocs[i].m_fX, m_aPlaguelandSoldiersSpawnLocs[i].m_fY, m_aPlaguelandSoldiersSpawnLocs[i].m_fZ, 2.2f, TEMPSUMMON_DEAD_DESPAWN, 0))
+            m_lSoldiersGuids.push_back(pSoldier->GetObjectGuid());
     }
 }
 
