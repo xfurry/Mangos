@@ -139,7 +139,7 @@ void OutdoorPvPEP::OnGameObjectCreate(GameObject* pGo)
     }
 }
 
-void OutdoorPvPEP::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team)
+void OutdoorPvPEP::HandleObjectiveComplete(std::list<Player*> players, uint32 uiEventId, Team team)
 {
     uint32 uiCredit = 0;
 

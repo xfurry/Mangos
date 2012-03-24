@@ -127,7 +127,7 @@ void OutdoorPvPTF::OnGameObjectCreate(GameObject* pGo)
     }
 }
 
-void OutdoorPvPTF::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team)
+void OutdoorPvPTF::HandleObjectiveComplete(std::list<Player*> players, uint32 uiEventId, Team team)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
