@@ -1981,7 +1981,7 @@ void GameObject::SetCapturePointSlider(int8 value)
 void GameObject::TickCapturePoint()
 {
     // TODO: On retail: Ticks every 5.2 seconds. slider increase when new player enters on tick
-    m_cooldownTime += 5;
+    m_cooldownTime = time(NULL) + 5;
 
     GameObjectInfo const* info = GetGOInfo();
     float radius = info->capturePoint.radius;
