@@ -59,6 +59,8 @@ GameObject::GameObject() : WorldObject(),
     m_spellId = 0;
     m_cooldownTime = 0;
 
+    m_captureTimer = 0;
+
     m_packedRotation = 0;
     m_groupLootTimer = 0;
     m_groupLootId = 0;
@@ -388,8 +390,12 @@ void GameObject::Update(uint32 update_diff, uint32 /*p_time*/)
                     }
                     break;
                 case GAMEOBJECT_TYPE_CAPTURE_POINT:
-                    if (m_cooldownTime < time(NULL))
+                    m_captureTimer += update_diff;
+                    if (m_captureTimer >= 5000)
+                    {
                         TickCapturePoint();
+                        m_captureTimer -= 5000;
+                    }
                     break;
                 default:
                     break;
@@ -1960,7 +1966,6 @@ void GameObject::SetCapturePointSlider(int8 value)
             break;
         default:
             m_captureSlider = value;
-            m_cooldownTime = time(NULL) + 5; // initial tick delay
             SetLootState(GO_ACTIVATED);
             break;
     }
@@ -1981,7 +1986,6 @@ void GameObject::SetCapturePointSlider(int8 value)
 void GameObject::TickCapturePoint()
 {
     // TODO: On retail: Ticks every 5.2 seconds. slider increase when new player enters on tick
-    m_cooldownTime = time(NULL) + 5;
 
     GameObjectInfo const* info = GetGOInfo();
     float radius = info->capturePoint.radius;
