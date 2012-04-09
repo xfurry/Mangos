@@ -179,7 +179,7 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, uint32 phaseMa
     return true;
 }
 
-void GameObject::Update(uint32 update_diff, uint32 /*p_time*/)
+void GameObject::Update(uint32 update_diff, uint32 p_time)
 {
     if (GetObjectGuid().IsMOTransport())
     {
@@ -390,7 +390,7 @@ void GameObject::Update(uint32 update_diff, uint32 /*p_time*/)
                     }
                     break;
                 case GAMEOBJECT_TYPE_CAPTURE_POINT:
-                    m_captureTimer += update_diff;
+                    m_captureTimer += p_time;
                     if (m_captureTimer >= 5000)
                     {
                         TickCapturePoint();
