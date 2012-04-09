@@ -147,7 +147,7 @@ void OutdoorPvPMgr::HandleDropFlag(Player* pPlayer, uint32 uiSpellId)
 void OutdoorPvPMgr::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team)
 {
     for (OutdoorPvPSet::iterator itr = m_OutdoorPvPSet.begin(); itr != m_OutdoorPvPSet.end(); ++itr)
-        (*itr)->HandleObjectiveComplete(players, uiEventId, team);
+        (*itr)->HandleObjectiveComplete(uiEventId, players, team);
 }
 
 /**

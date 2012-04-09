@@ -70,7 +70,7 @@ class OutdoorPvP : public ZoneScript
         virtual void HandlePlayerKillInsideArea(Player* /*pKiller*/, Unit* /*pVictim*/) {}
 
         // handle capture objective complete
-        virtual void HandleObjectiveComplete(std::list<Player*> /*players*/, uint32 /*uiEventId*/, Team /*team*/) {}
+        virtual void HandleObjectiveComplete(uint32 /*uiEventId*/, std::list<Player*> /*players*/, Team /*team*/) {}
 
         // init all the outdoor pvp area relates stuff
         virtual bool InitOutdoorPvPArea() { return false; }

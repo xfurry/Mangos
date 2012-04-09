@@ -159,7 +159,7 @@ class OutdoorPvPHP : public OutdoorPvP
 
         void HandlePlayerEnterZone(Player* pPlayer);
         void HandlePlayerLeaveZone(Player* pPlayer);
-        void HandleObjectiveComplete(std::list<Player*> players, uint32 uiEventId, Team team);
+        void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team);
         void HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim);
 
         void FillInitialWorldStates(WorldPacket& data, uint32& count);

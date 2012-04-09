@@ -125,7 +125,7 @@ void OutdoorPvPHP::OnGameObjectCreate(GameObject* pGo)
     }
 }
 
-void OutdoorPvPHP::HandleObjectiveComplete(std::list<Player*> players, uint32 uiEventId, Team team)
+void OutdoorPvPHP::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team)
 {
     uint32 uiCredit = 0;
 

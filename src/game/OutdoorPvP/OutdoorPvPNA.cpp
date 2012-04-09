@@ -81,7 +81,7 @@ void OutdoorPvPNA::HandlePlayerLeaveZone(Player* pPlayer)
     OutdoorPvP::HandlePlayerLeaveZone(pPlayer);
 }
 
-void OutdoorPvPNA::HandleObjectiveComplete(std::list<Player*> players, uint32 uiEventId, Team team)
+void OutdoorPvPNA::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team)
 {
     if (uiEventId == EVENT_HALAA_BANNER_WIN_ALLIANCE || uiEventId == EVENT_HALAA_BANNER_WIN_HORDE)
     {
