@@ -1985,7 +1985,7 @@ void GameObject::SetCapturePointSlider(int8 value)
 
 void GameObject::TickCapturePoint()
 {
-    // TODO: On retail: Ticks every 5.2 seconds. slider increase when new player enters on tick
+    // TODO: On retail: Ticks every 5.2 seconds. slider value increase when new player enters on tick
 
     GameObjectInfo const* info = GetGOInfo();
     float radius = info->capturePoint.radius;
@@ -2018,6 +2018,7 @@ void GameObject::TickCapturePoint()
             (*itr)->SendUpdateWorldState(info->capturePoint.worldState3, neutralPercent);
             (*itr)->SendUpdateWorldState(info->capturePoint.worldState2, oldValue);
             (*itr)->SendUpdateWorldState(info->capturePoint.worldState1, WORLD_STATE_ADD);
+            (*itr)->SendUpdateWorldState(info->capturePoint.worldState2, oldValue); // also redundantly sent on retail to prevent displaying the initial capture direction on client capture slider incorrectly
         }
     }
 
