@@ -161,7 +161,7 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map *map, uint32 phaseMa
     SetGoArtKit(0);                                         // unknown what this is
     SetGoAnimProgress(animprogress);
 
-    // set saved capture point info if the grid was unloaded (for non visual capture points)
+    // set saved capture point info and activate it (exclude visual capture points used in EoTS)
     if (goinfo->type == GAMEOBJECT_TYPE_CAPTURE_POINT && goinfo->capturePoint.radius)
         SetCapturePointSlider(sOutdoorPvPMgr.GetCapturePointSliderValue(goinfo->id));
 
@@ -2043,23 +2043,28 @@ void GameObject::TickCapturePoint()
     else if (rangePlayers < -maxSuperiority)
         rangePlayers = -maxSuperiority;
 
-    // time to capture from 0% to 100% is maxTime for minSuperiority amount of players and minTime for maxSuperiority amount of players
-    float diffTicks = 500.0f /
-        (float)((maxSuperiority - abs(rangePlayers)) * (info->capturePoint.maxTime - info->capturePoint.minTime) /
-        (float)(maxSuperiority - info->capturePoint.minSuperiority) + info->capturePoint.minTime);
+    // time to capture from 0% to 100% is maxTime for minSuperiority amount of players and minTime for maxSuperiority amount of players (linear function: y = dy/dx*x+d)
+    float deltaSlider = info->capturePoint.minTime;
+
+    float deltaSuperiority = maxSuperiority - info->capturePoint.minSuperiority;
+    if (deltaSuperiority != 0.0f)
+        deltaSlider += (maxSuperiority - abs(rangePlayers)) / deltaSuperiority * (info->capturePoint.maxTime - info->capturePoint.minTime);
+
+    // calculate changed slider value for a duration of 5 seconds (5 * 100%)
+    deltaSlider = 500.0f / deltaSlider;
 
     Team progressFaction;
     if (rangePlayers > 0)
     {
         progressFaction = ALLIANCE;
-        m_captureSlider += diffTicks;
+        m_captureSlider += deltaSlider;
         if (m_captureSlider > CAPTURE_SLIDER_ALLIANCE)
             m_captureSlider = CAPTURE_SLIDER_ALLIANCE;
     }
     else
     {
         progressFaction = HORDE;
-        m_captureSlider -= diffTicks;
+        m_captureSlider -= deltaSlider;
         if (m_captureSlider < CAPTURE_SLIDER_HORDE)
             m_captureSlider = CAPTURE_SLIDER_HORDE;
     }
