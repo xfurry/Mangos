@@ -2046,9 +2046,8 @@ void GameObject::TickCapturePoint()
     // time to capture from 0% to 100% is maxTime for minSuperiority amount of players and minTime for maxSuperiority amount of players (linear function: y = dy/dx*x+d)
     float deltaSlider = info->capturePoint.minTime;
 
-    float deltaSuperiority = maxSuperiority - info->capturePoint.minSuperiority;
-    if (deltaSuperiority != 0.0f)
-        deltaSlider += (maxSuperiority - abs(rangePlayers)) / deltaSuperiority * (info->capturePoint.maxTime - info->capturePoint.minTime);
+    if (int deltaSuperiority = maxSuperiority - info->capturePoint.minSuperiority)
+        deltaSlider += (float)(maxSuperiority - abs(rangePlayers)) / deltaSuperiority * (info->capturePoint.maxTime - info->capturePoint.minTime);
 
     // calculate changed slider value for a duration of 5 seconds (5 * 100%)
     deltaSlider = 500.0f / deltaSlider;
