@@ -46,6 +46,7 @@
 #include "GridNotifiersImpl.h"
 #include "Vehicle.h"
 #include "CellImpl.h"
+#include "Language.h"
 
 #define NULL_AURA_SLOT 0xFF
 
@@ -2148,6 +2149,9 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                     case 54729:                             // Winged Steed of the Ebon Blade
                         Spell::SelectMountByAreaAndSkill(target, GetSpellProto(), 0, 0, 54726, 54727, 0);
                         return;
+                    case 58600:                             // Restricted Flight Area
+                        target->MonsterWhisper(LANG_NO_FLY_ZONE, target, true);
+                        return;
                     case 62061:                             // Festive Holiday Mount
                         if (target->HasAuraType(SPELL_AURA_MOUNTED))
                             // Reindeer Transformation
@@ -2898,7 +2902,6 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                             target->PlayDirectSound(14972, (Player *)target);
                     }
                     return;
-                case 10848:
                 case 27978:
                 case 40131:
                     if (apply)
