@@ -899,10 +899,10 @@ uint32 Unit::DealDamage(Unit *pVictim, uint32 damage, CleanDamage const* cleanDa
         }
 
         // handle player kill in outdoor pvp
-        if (pVictim->GetTypeId() == TYPEID_PLAYER && player_tap && pVictim != this)
+        if (player_tap && pVictim->GetTypeId() == TYPEID_PLAYER && pVictim != this)
         {
-            if (OutdoorPvP* pWorldBg = player_tap->GetOutdoorPvP())
-                pWorldBg->HandlePlayerKill(player_tap, pVictim);
+            if (OutdoorPvP* outdoorPvP = player_tap->GetOutdoorPvP())
+                outdoorPvP->HandlePlayerKill(player_tap, pVictim);
         }
 
         // battleground things (do this at the end, so the death state flag will be properly set to handle in the bg->handlekill)
