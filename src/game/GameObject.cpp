@@ -436,10 +436,11 @@ void GameObject::Update(uint32 update_diff, uint32 p_time)
                     return; // SetLootState and return because go is treated as "burning flag" due to GetGoAnimProgress() being 100 and would be removed on the client
             }
 
-            if (GetOwnerGuid())
+            if (!HasStaticDBSpawnData())                    // Remove wild summoned after use
             {
-                if (Unit* owner = GetOwner())
-                    owner->RemoveGameObject(this, false);
+                if (GetOwnerGuid())
+                    if (Unit* owner = GetOwner())
+                        owner->RemoveGameObject(this, false);
 
                 SetRespawnTime(0);
                 Delete();
@@ -995,6 +996,8 @@ void GameObject::Use(Unit* user)
     }
 
     bool scriptReturnValue = user->GetTypeId() == TYPEID_PLAYER && sScriptMgr.OnGameObjectUse((Player*)user, this);
+    if (!scriptReturnValue)
+        GetMap()->ScriptsStart(sGameObjectTemplateScripts, GetEntry(), spellCaster, this);
 
     switch (GetGoType())
     {
@@ -1204,7 +1207,6 @@ void GameObject::Use(Unit* user)
                 }
 
                 player->RewardPlayerAndGroupAtCast(this);
-
             }
 
             if (scriptReturnValue)
