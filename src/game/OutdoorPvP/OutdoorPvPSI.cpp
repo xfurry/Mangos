@@ -186,7 +186,10 @@ bool OutdoorPvPSI::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 {
     if (pGo->GetEntry() == GO_SILITHYST_MOUND || pGo->GetEntry() == GO_SILITHYST_GEYSER)
     {
+        // Also mark player with PvP on
         pPlayer->CastSpell(pPlayer, SPELL_SILITHYST, true);
+        pPlayer->UpdatePvP(true, true);
+        pPlayer->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP);
         return true;
     }
 

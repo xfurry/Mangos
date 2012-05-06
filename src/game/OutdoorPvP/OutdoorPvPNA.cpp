@@ -366,8 +366,7 @@ void OutdoorPvPNA::HandleFactionObjects(const WorldObject* objRef)
             RespawnGO(objRef, m_HordeWagons[i], false);
             RespawnGO(objRef, m_AllianceBrokenRoost[i], false);
             RespawnGO(objRef, m_AllianceRoost[i], false);
-
-            RespawnGO(objRef, m_AllianceWagons[i], true);
+            RespawnGO(objRef, m_AllianceWagons[i], false);
             RespawnGO(objRef, m_HordeBrokenRoost[i], true);
 
             m_uiRoostWorldState[i] = aHordeNeutralStates[i];
@@ -380,8 +379,7 @@ void OutdoorPvPNA::HandleFactionObjects(const WorldObject* objRef)
             RespawnGO(objRef, m_AllianceWagons[i], false);
             RespawnGO(objRef, m_HordeBrokenRoost[i], false);
             RespawnGO(objRef, m_HordeRoost[i], false);
-
-            RespawnGO(objRef, m_HordeWagons[i], true);
+            RespawnGO(objRef, m_HordeWagons[i], false);
             RespawnGO(objRef, m_AllianceBrokenRoost[i], true);
 
             m_uiRoostWorldState[i] = aAllianceNeutralStates[i];
@@ -443,7 +441,6 @@ void OutdoorPvPNA::RespawnSoldiers(const WorldObject* objRef)
 
 bool OutdoorPvPNA::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 {
-    bool bReturnStatus = false;
     UpdateWyvernsWorldState(WORLD_STATE_REMOVE);
 
     if (pPlayer->GetTeam() == ALLIANCE)
@@ -455,28 +452,18 @@ bool OutdoorPvPNA::HandleObjectUse(Player* pPlayer, GameObject* pGo)
                 m_uiRoostWorldState[i] = aHordeNeutralStates[i];
                 RespawnGO(pGo, m_HordeRoost[i], false);
                 RespawnGO(pGo, m_HordeBrokenRoost[i], true);
-                bReturnStatus = true;
             }
             else if (pGo->GetEntry() == aAllianceBrokenRoosts[i])
             {
                 m_uiRoostWorldState[i] = aAllianceRoostStates[i];
-                RespawnGO(pGo, m_AllianceBrokenRoost[i], false);
-                RespawnGO(pGo, m_AllianceRoost[i], true);
-                bReturnStatus = true;
+                RespawnGO(pGo, m_HordeWagons[i], true);
+                RespawnGO(pGo, m_AllianceRoost[i], true, true);
             }
             else if (pGo->GetEntry() == aAllianceRoosts[i])
             {
-                // ###### This is hacked in Gameobject.cpp because of the missing custom spells support #####
-                // if we can't add any bombs don't do anything
-                if (!AddBombsToInventory(pPlayer))
-                    return false;
-
-                // makr player as pvp first
+                // mark player as pvp
                 pPlayer->UpdatePvP(true, true);
                 pPlayer->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP);
-
-                // Send taxi
-                bReturnStatus = HandlePlayerTaxiDrive(pPlayer, i);
             }
         }
     }
@@ -489,77 +476,28 @@ bool OutdoorPvPNA::HandleObjectUse(Player* pPlayer, GameObject* pGo)
                 m_uiRoostWorldState[i] = aAllianceNeutralStates[i];
                 RespawnGO(pGo, m_AllianceRoost[i], false);
                 RespawnGO(pGo, m_AllianceBrokenRoost[i], true);
-                bReturnStatus = true;
             }
             else if (pGo->GetEntry() == aHordeBrokenRoosts[i])
             {
                 m_uiRoostWorldState[i] = aHordeRoostStates[i];
-                RespawnGO(pGo, m_HordeBrokenRoost[i], false);
-                RespawnGO(pGo, m_HordeRoost[i], true);
-                bReturnStatus = true;
+                RespawnGO(pGo, m_AllianceWagons[i], true);
+                RespawnGO(pGo, m_HordeRoost[i], true, true);
             }
             else if (pGo->GetEntry() == aHordeRoosts[i])
             {
-                // ###### This is hacked in Gameobject.cpp because of the missing custom spells support #####
-                // if we can't add any bombs don't do anything
-                if (!AddBombsToInventory(pPlayer))
-                    return false;
-
-                // makr player as pvp first
+                // mark player as pvp
                 pPlayer->UpdatePvP(true, true);
                 pPlayer->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP);
-
-                // Send taxi
-                bReturnStatus = HandlePlayerTaxiDrive(pPlayer, i);
             }
         }
     }
 
     UpdateWyvernsWorldState(WORLD_STATE_ADD);
 
-    return bReturnStatus;
-}
-
-// Handle Taxi for Halaa bombing run
-bool OutdoorPvPNA::HandlePlayerTaxiDrive(Player* pPlayer, uint8 uiPos)
-{
-    std::vector<uint32> vTaxiNodes;
-    vTaxiNodes.reserve(2);
-
-    vTaxiNodes[0] = aFlightPathStartNodes[uiPos];
-    vTaxiNodes[1] = aFlightPathEndNodes[uiPos];
-
-    // Send taxi
-    if (pPlayer->ActivateTaxiPathTo(vTaxiNodes))
-        return true;
-
     return false;
 }
 
-// Add fire bombs to player inventory
-bool OutdoorPvPNA::AddBombsToInventory(Player* pPlayer)
-{
-    uint32 uiSpaceForItems = 0;
-    ItemPosCountVec m_Destination;
-    uint32 uiBombCount = MAX_FIRE_BOMBS;
-
-    // get the free slots from inventory
-    uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, m_Destination, ITEM_ID_FIRE_BOMB, uiBombCount, &uiSpaceForItems);
-    if (msg != EQUIP_ERR_OK)
-        uiBombCount -= uiSpaceForItems;
-
-    if (uiBombCount == 0 || m_Destination.empty())
-        return false;
-
-    Item* item = pPlayer->StoreNewItem(m_Destination, ITEM_ID_FIRE_BOMB, true);
-
-    if (uiBombCount > 0 && item)
-        pPlayer->SendNewItem(item, uiBombCount, true, false);
-
-    return true;
-}
-
-void OutdoorPvPNA::RespawnGO(const WorldObject* objRef, ObjectGuid goGuid, bool respawn)
+void OutdoorPvPNA::RespawnGO(const WorldObject* objRef, ObjectGuid goGuid, bool respawn, bool resetFlag)
 {
     if (GameObject* pBanner = objRef->GetMap()->GetGameObject(goGuid))
     {
@@ -567,9 +505,18 @@ void OutdoorPvPNA::RespawnGO(const WorldObject* objRef, ObjectGuid goGuid, bool 
         {
             pBanner->SetRespawnTime(7 * DAY);
             pBanner->Refresh();
+
+            // Set NoDespawn flag for the Roosts
+            if (resetFlag)
+                pBanner->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
         }
         else if (pBanner->isSpawned())
-            pBanner->Delete();
+        {
+            if (pBanner->HasFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN))
+                pBanner->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
+
+            pBanner->SetLootState(GO_JUST_DEACTIVATED);
+        }
     }
 }
 

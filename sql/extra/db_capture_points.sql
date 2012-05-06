@@ -56,7 +56,7 @@ UPDATE `creature` SET `MovementType` = 0, `spawndist` = 0 WHERE `id` IN (18757,1
 -- negative spawntimes for Zanga banner
 UPDATE `gameobject` SET `spawntimesecs` = -181 WHERE `id` = 182527;
 -- red aura in c_t_a
-DELETE FROM `creature_template_addon` WHERE (`entry`=18757);
+DELETE FROM `creature_template_addon` WHERE `entry` IN (18757,18759);
 INSERT INTO `creature_template_addon` (`entry`, `mount`, `bytes1`, `b2_0_sheath`, `b2_1_pvp_state`, `emote`, `moveflags`, `auras`) VALUES (18757, 0, 0, 1, 0, 0, 0, 32839);
 /* ################################# */
 
@@ -137,7 +137,9 @@ INSERT INTO `creature_movement_template` (`entry`, `point`, `position_x`, `posit
 UPDATE `creature_template` SET `AIName`='EventAI' WHERE `entry`=18225;
 DELETE FROM `creature_ai_scripts` WHERE `creature_id`=18225;
 INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES 
-('1822501','18225','11','0','100','0','0','0','0','0','11','31961','0','0','0','0','0','0','0','0','0','0','Fire Bomb Target - Cast Fire Bomb on Spawn');
+('1822501','18225','11','0','100','0','0','0','0','0','11','31961','0','0','20','0','0','0','21','0','0','0','Fire Bomb Target - Cast Fire Bomb on Spawn and set Combat Movement and Auto Attack to false');
+-- No random movement for this one - unit flags are guesswork
+UPDATE creature_template SET MovementType= 0, unit_flags=unit_flags|33554432 WHERE entry=18225;
 
 -- spawn npcs and gameobjects on the map
 DELETE FROM `creature` WHERE `id` IN (18817,18822,21485,21487,21488,18256);
@@ -215,4 +217,54 @@ INSERT INTO `gameobject` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`position_x`
 
 UPDATE `gameobject` SET `spawntimesecs` = -180 WHERE `id` IN (182301,182302,182303,182304,182305,182306,182307,182308,182297,182298,182299,182300);
 UPDATE `gameobject` SET `spawntimesecs` = -180 WHERE `id` IN (182267,182280,182281,182282,182222,182272,182273,182274,182266,182275,182276,182277);
+
+-- Gameobject scripts
+-- South (ally & horde)
+-- Script id: 182267
+DELETE FROM gameobject_template_scripts WHERE id=182267;
+INSERT INTO gameobject_template_scripts VALUES
+(182267,0,17,24538,10,0,0,0,0,0,0,0,0,0,0,0,'Add 10 Fire Bombs to inventory'),
+(182267,0,30,520,0,0,0,0,0,0,0,0,0,0,0,0,'Send Taxi path 520');
+-- Script id: 182301
+DELETE FROM gameobject_template_scripts WHERE id=182301;
+INSERT INTO gameobject_template_scripts VALUES
+(182301,0,17,24538,10,0,0,0,0,0,0,0,0,0,0,0,'Add 10 Fire Bombs to inventory'),
+(182301,0,30,520,0,0,0,0,0,0,0,0,0,0,0,0,'Send Taxi path 520');
+
+-- West (ally & horde)
+-- Script id: 182280
+DELETE FROM gameobject_template_scripts WHERE id=182280;
+INSERT INTO gameobject_template_scripts VALUES
+(182280,0,17,24538,10,0,0,0,0,0,0,0,0,0,0,0,'Add 10 Fire Bombs to inventory'),
+(182280,0,30,523,0,0,0,0,0,0,0,0,0,0,0,0,'Send Taxi path 523');
+-- Script id: 182302
+DELETE FROM gameobject_template_scripts WHERE id=182302;
+INSERT INTO gameobject_template_scripts VALUES
+(182302,0,17,24538,10,0,0,0,0,0,0,0,0,0,0,0,'Add 10 Fire Bombs to inventory'),
+(182302,0,30,523,0,0,0,0,0,0,0,0,0,0,0,0,'Send Taxi path 523');
+
+-- North (ally & horde)
+-- Script id: 182281
+DELETE FROM gameobject_template_scripts WHERE id=182281;
+INSERT INTO gameobject_template_scripts VALUES
+(182281,0,17,24538,10,0,0,0,0,0,0,0,0,0,0,0,'Add 10 Fire Bombs to inventory'),
+(182281,0,30,523,0,0,0,0,0,0,0,0,0,0,0,0,'Send Taxi path 523');
+-- Script id: 182303
+DELETE FROM gameobject_template_scripts WHERE id=182303;
+INSERT INTO gameobject_template_scripts VALUES
+(182303,0,17,24538,10,0,0,0,0,0,0,0,0,0,0,0,'Add 10 Fire Bombs to inventory'),
+(182303,0,30,523,0,0,0,0,0,0,0,0,0,0,0,0,'Send Taxi path 523');
+
+-- East (ally & horde)
+-- Script id: 182282
+DELETE FROM gameobject_template_scripts WHERE id=182282;
+INSERT INTO gameobject_template_scripts VALUES
+(182282,0,17,24538,10,0,0,0,0,0,0,0,0,0,0,0,'Add 10 Fire Bombs to inventory'),
+(182282,0,30,524,0,0,0,0,0,0,0,0,0,0,0,0,'Send Taxi path 524');
+-- Script id: 182304
+DELETE FROM gameobject_template_scripts WHERE id=182304;
+INSERT INTO gameobject_template_scripts VALUES
+(182304,0,17,24538,10,0,0,0,0,0,0,0,0,0,0,0,'Add 10 Fire Bombs to inventory'),
+(182304,0,30,524,0,0,0,0,0,0,0,0,0,0,0,0,'Send Taxi path 524');
+
 /* ################################# */

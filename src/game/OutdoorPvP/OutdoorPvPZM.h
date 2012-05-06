@@ -54,6 +54,9 @@ enum
     SPELL_ZANGA_TOWER_TOKEN_ALLIANCE        = 32155,
     SPELL_ZANGA_TOWER_TOKEN_HORDE           = 32158,
 
+    SPELL_BEAM_RED                          = 32839,
+    SPELL_BEAM_BLUE                         = 32840,
+
     // misc
     GRAVEYARD_ID_TWIN_SPIRE                 = 969,
     GRAVEYARD_ZONE_TWIN_SPIRE               = 3521,
@@ -166,7 +169,7 @@ class OutdoorPvPZM : public OutdoorPvP
         void SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn);
 
         // respawn npcs which act as an artkit visual
-        void SetBeaconArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn);
+        void SetBeaconArtKit(const WorldObject* objRef, ObjectGuid creatureGuid, bool reset, uint32 auraId = 0);
 
         uint32 m_uiBeaconWorldState[MAX_ZM_TOWERS];
         uint32 m_uiBeaconMapState[MAX_ZM_TOWERS];

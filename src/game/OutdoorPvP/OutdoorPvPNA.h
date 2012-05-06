@@ -183,10 +183,6 @@ class OutdoorPvPNA : public OutdoorPvP
         // process capture events
         void ProcessCaptureEvent(GameObject* pGo, Team team);
 
-        // Functions to handle some missing spells
-        bool AddBombsToInventory(Player* pPlayer);
-        bool HandlePlayerTaxiDrive(Player* pPlayer, uint8 uiPos);
-
         // Link graveyard on Halaa
         void SetGraveyard(bool remove = false);
 
@@ -195,7 +191,7 @@ class OutdoorPvPNA : public OutdoorPvP
         void HandleFactionObjects(const WorldObject* objRef);
 
         // handle a specific game objects
-        void RespawnGO(const WorldObject* objRef, ObjectGuid goGuid, bool respawn);
+        void RespawnGO(const WorldObject* objRef, ObjectGuid goGuid, bool respawn, bool resetFlag = false);
         void LockHalaa(const WorldObject* objRef);
         void UnlockHalaa(const WorldObject* objRef);
 
