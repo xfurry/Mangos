@@ -55,9 +55,7 @@ UPDATE `creature` SET `id` = 18757, `position_x` = 340.453, `position_y` = 6833.
 UPDATE `creature` SET `MovementType` = 0, `spawndist` = 0 WHERE `id` IN (18757,18759);
 -- negative spawntimes for Zanga banner
 UPDATE `gameobject` SET `spawntimesecs` = -181 WHERE `id` = 182527;
--- red aura in c_t_a
 DELETE FROM `creature_template_addon` WHERE `entry` IN (18757,18759);
-INSERT INTO `creature_template_addon` (`entry`, `mount`, `bytes1`, `b2_0_sheath`, `b2_1_pvp_state`, `emote`, `moveflags`, `auras`) VALUES (18757, 0, 0, 1, 0, 0, 0, 32839);
 /* ################################# */
 
 
