@@ -1220,9 +1220,8 @@ namespace MaNGOS
             WorldObject const& GetFocusObject() const { return *i_obj; }
             bool operator()(Player* u)
             {
-                return u->isAlive() &&
-                    i_obj->IsWithinDistInMap(u, i_range) &&
-                    u->IsOutdoorPvPActive();
+                return u->IsOutdoorPvPActive() &&
+                    i_obj->IsWithinDistInMap(u, i_range);
             }
         private:
             WorldObject const* i_obj;

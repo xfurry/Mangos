@@ -21617,24 +21617,19 @@ bool Player::CanUseBattleGroundObject()
     // TODO : some spells gives player ForceReaction to one faction (ReputationMgr::ApplyForceReaction)
     // maybe gameobject code should handle that ForceReaction usage
     // BUG: sometimes when player clicks on flag in AB - client won't send gameobject_use, only gameobject_report_use packet
-    return ( //InBattleGround() &&                          // in battleground - not need, check in other cases
-             //!IsMounted() && - not correct, player is dismounted when he clicks on flag
-             //player cannot use object when he is invulnerable (immune)
-             !isTotalImmune() &&                            // not totally immune
-             //i'm not sure if these two are correct, because invisible players should get visible when they click on flag
-             !HasStealthAura() &&                           // not stealthed
-             !HasInvisibilityAura() &&                      // not invisible
-             !HasAura(SPELL_RECENTLY_DROPPED_FLAG, EFFECT_INDEX_0) &&// can't pickup
-             isAlive()                                      // live player
-           );
+    return (isAlive() &&                                    // living
+            // the following two are incorrect, because invisible/stealthed players should get visible when they click on flag
+            !HasStealthAura() &&                            // not stealthed
+            !HasInvisibilityAura() &&                       // visible
+            !isTotalImmune() &&                             // vulnerable (not immune)
+            !HasAura(SPELL_RECENTLY_DROPPED_FLAG, EFFECT_INDEX_0));
 }
 
 bool Player::CanCaptureTowerPoint()
 {
-    return ( !HasStealthAura() &&                           // not stealthed
-             !HasInvisibilityAura() &&                      // not invisible
-             isAlive()                                      // live player
-           );
+    return (isAlive() &&                                    // living
+            !HasStealthAura() &&                            // not stealthed
+            !HasInvisibilityAura());                        // visible
 }
 
 uint32 Player::GetBarberShopCost(uint8 newhairstyle, uint8 newhaircolor, uint8 newfacialhair)
