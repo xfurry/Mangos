@@ -49,10 +49,10 @@ class OutdoorPvPMgr
         void HandlePlayerLeaveZone(Player* pPlayer, uint32 uiZoneId);
 
         // return assigned world pvp
-        OutdoorPvP* GetOutdoorPvPToZoneId(uint32 uiZoneId);
+        OutdoorPvP* GetOutdoorPvP(uint32 zoneId);
 
         // return assigned zone script
-        ZoneScript* GetZoneScript(uint32 uiZoneId);
+        ZoneScript* GetZoneScript(uint32 zoneId);
 
         // add zone id to world pvp handler
         void AddZone(uint32 uiZoneId, OutdoorPvP* pScriptHandler);
@@ -66,7 +66,7 @@ class OutdoorPvPMgr
         //bool HandleObjectUse(Player* pPlayer, GameObject* pGo);
 
         // Handle the complete credit for capture point win events
-        void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team);
+        //void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team);
 
         // Handle the kill event inside the area
         //void HandlePlayerKill(Player* pPlayer, Unit* pVictim);

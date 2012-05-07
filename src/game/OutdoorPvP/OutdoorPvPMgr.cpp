@@ -144,11 +144,11 @@ void OutdoorPvPMgr::HandlePlayerLeaveZone(Player* pPlayer, uint32 uiZoneId)
    @param   player set to which to send the credit
    @param   capture evetn id
  */
-void OutdoorPvPMgr::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team)
+/*void OutdoorPvPMgr::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team)
 {
     for (OutdoorPvPSet::iterator itr = m_OutdoorPvPSet.begin(); itr != m_OutdoorPvPSet.end(); ++itr)
         (*itr)->HandleObjectiveComplete(uiEventId, players, team);
-}
+}*/
 
 /**
    Function that handles the player kill inside a capture point
@@ -183,15 +183,14 @@ void OutdoorPvPMgr::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*>
 
    @param   zone id used for the current world pvp script
  */
-OutdoorPvP* OutdoorPvPMgr::GetOutdoorPvPToZoneId(uint32 uiZoneId)
+OutdoorPvP* OutdoorPvPMgr::GetOutdoorPvP(uint32 zoneId)
 {
-    OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(uiZoneId);
+    OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(zoneId);
 
-    // no handle for this zone, return
-    if (itr == m_OutdoorPvPMap.end())
-        return NULL;
+    if (itr != m_OutdoorPvPMap.end())
+        return itr->second;
 
-    return itr->second;
+    return NULL;
 }
 
 /**
@@ -199,14 +198,14 @@ OutdoorPvP* OutdoorPvPMgr::GetOutdoorPvPToZoneId(uint32 uiZoneId)
 
    @param   zone id used for the current world pvp script
  */
-ZoneScript* OutdoorPvPMgr::GetZoneScript(uint32 uiZoneId)
+ZoneScript* OutdoorPvPMgr::GetZoneScript(uint32 zoneId)
 {
-    OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(uiZoneId);
+    OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(zoneId);
 
     if (itr != m_OutdoorPvPMap.end())
         return itr->second;
-    else
-        return NULL;
+
+    return NULL;
 }
 
 void OutdoorPvPMgr::Update(uint32 diff)
