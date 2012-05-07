@@ -227,7 +227,7 @@ void OutdoorPvPZM::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team t
 {
     if (team == ALLIANCE)
     {
-        SetBeaconArtKit(pGo, m_BeamBlueGUID[uiTowerId], false, SPELL_BEAM_BLUE);
+        SetBeaconArtKit(pGo, m_BeamBlueGUID[uiTowerId], SPELL_BEAM_BLUE);
         ++m_uiTowersAlliance;
 
         if (m_uiTowersAlliance == MAX_ZM_TOWERS)
@@ -235,7 +235,7 @@ void OutdoorPvPZM::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team t
     }
     else if (team == HORDE)
     {
-        SetBeaconArtKit(pGo, m_BeamRedGUID[uiTowerId], false, SPELL_BEAM_RED);
+        SetBeaconArtKit(pGo, m_BeamRedGUID[uiTowerId], SPELL_BEAM_RED);
         ++m_uiTowersHorde;
 
         if (m_uiTowersHorde == MAX_ZM_TOWERS)
@@ -245,7 +245,7 @@ void OutdoorPvPZM::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team t
     {
         if (m_capturePointOwner[uiTowerId] == ALLIANCE)
         {
-            SetBeaconArtKit(pGo, m_BeamBlueGUID[uiTowerId], true);
+            SetBeaconArtKit(pGo, m_BeamBlueGUID[uiTowerId], 0);
 
             if (m_uiTowersAlliance == MAX_ZM_TOWERS)
                 ResetScouts(pGo, ALLIANCE);
@@ -254,7 +254,7 @@ void OutdoorPvPZM::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team t
         }
         else
         {
-            SetBeaconArtKit(pGo, m_BeamRedGUID[uiTowerId], true);
+            SetBeaconArtKit(pGo, m_BeamRedGUID[uiTowerId], 0);
 
             if (m_uiTowersHorde == MAX_ZM_TOWERS)
                 ResetScouts(pGo, HORDE);
@@ -342,7 +342,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
             // change banners
             SetGraveyardArtKit(pGo, m_TowerBannerCenterAllianceGUID, false);
             SetGraveyardArtKit(pGo, m_TowerBannerCenterHordeGUID, true);
-            SetBeaconArtKit(pGo, m_BeamCenterBlueGUID, true);
+            SetBeaconArtKit(pGo, m_BeamCenterBlueGUID, 0);
             sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOOSE_GY_A));
 
             // remove buff and graveyard
@@ -363,7 +363,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
             // reset scout and remove player aura
             ResetScouts(pGo, m_graveyardOwner);
             pPlayer->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_HORDE);
-            SetBeaconArtKit(pGo, m_BeamCenterRedGUID, false, SPELL_BEAM_RED);
+            SetBeaconArtKit(pGo, m_BeamCenterRedGUID, SPELL_BEAM_RED);
             sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_H));
 
             return true;
@@ -374,7 +374,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
             // change banners
             SetGraveyardArtKit(pGo, m_TowerBannerCenterHordeGUID, false);
             SetGraveyardArtKit(pGo, m_TowerBannerCenterAllianceGUID, true);
-            SetBeaconArtKit(pGo, m_BeamCenterRedGUID, true);
+            SetBeaconArtKit(pGo, m_BeamCenterRedGUID, 0);
             sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOOSE_GY_H));
 
             // remove buff and graveyard
@@ -395,7 +395,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
             // reset scout and remove player aura
             ResetScouts(pGo, m_graveyardOwner);
             pPlayer->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_ALLIANCE);
-            SetBeaconArtKit(pGo, m_BeamCenterBlueGUID, false, SPELL_BEAM_BLUE);
+            SetBeaconArtKit(pGo, m_BeamCenterBlueGUID, SPELL_BEAM_BLUE);
             sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_A));
 
             return true;
@@ -421,7 +421,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
                 // reset scout and remove player aura
                 ResetScouts(pGo, m_graveyardOwner);
                 pPlayer->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_ALLIANCE);
-                SetBeaconArtKit(pGo, m_BeamCenterBlueGUID, false, SPELL_BEAM_BLUE);
+                SetBeaconArtKit(pGo, m_BeamCenterBlueGUID, SPELL_BEAM_BLUE);
                 sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_H));
             }
             else
@@ -441,7 +441,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* pPlayer, GameObject* pGo)
                 // reset scout and remove player aura
                 ResetScouts(pGo, m_graveyardOwner);
                 pPlayer->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_HORDE);
-                SetBeaconArtKit(pGo, m_BeamCenterRedGUID, false, SPELL_BEAM_RED);
+                SetBeaconArtKit(pGo, m_BeamCenterRedGUID, SPELL_BEAM_RED);
                 sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_H));
             }
 
@@ -476,13 +476,13 @@ void OutdoorPvPZM::SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGu
     }
 }
 
-void OutdoorPvPZM::SetBeaconArtKit(const WorldObject* objRef, ObjectGuid creatureGuid, bool reset, uint32 auraId)
+void OutdoorPvPZM::SetBeaconArtKit(const WorldObject* objRef, ObjectGuid creatureGuid, uint32 auraId)
 {
     if (Creature* pBeam = objRef->GetMap()->GetCreature(creatureGuid))
     {
-        if (reset)
-            pBeam->RemoveAllAuras();
-        else if (auraId)
+        if (auraId)
             pBeam->CastSpell(pBeam, auraId, true);
+        else
+            pBeam->RemoveAllAuras();
     }
 }

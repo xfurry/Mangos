@@ -2139,7 +2139,6 @@ class MANGOS_DLL_SPEC Player : public Unit
         OutdoorPvP* GetOutdoorPvP() const;
         // returns true if the player is in active state for outdoor pvp objective capturing
         bool IsOutdoorPvPActive();
-        virtual void HandleObjectiveComplete(Player* /*pPlayer*/) {};
 
         /*********************************************************/
         /***                    REST SYSTEM                    ***/

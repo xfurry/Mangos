@@ -169,7 +169,7 @@ class OutdoorPvPZM : public OutdoorPvP
         void SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn);
 
         // respawn npcs which act as an artkit visual
-        void SetBeaconArtKit(const WorldObject* objRef, ObjectGuid creatureGuid, bool reset, uint32 auraId = 0);
+        void SetBeaconArtKit(const WorldObject* objRef, ObjectGuid creatureGuid, uint32 auraId);
 
         uint32 m_uiBeaconWorldState[MAX_ZM_TOWERS];
         uint32 m_uiBeaconMapState[MAX_ZM_TOWERS];
