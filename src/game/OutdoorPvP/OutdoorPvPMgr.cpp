@@ -95,13 +95,8 @@ void OutdoorPvPMgr::AddZone(uint32 uiZoneId, OutdoorPvP* pScriptHandler)
 void OutdoorPvPMgr::HandlePlayerEnterZone(Player* pPlayer, uint32 uiZoneId)
 {
     OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(uiZoneId);
-    if (itr == m_OutdoorPvPMap.end())
-        return;
-
-    if (itr->second->HasPlayer(pPlayer))
-        return;
-
-    itr->second->HandlePlayerEnterZone(pPlayer);
+    if (itr != m_OutdoorPvPMap.end())
+        itr->second->HandlePlayerEnterZone(pPlayer);
 }
 
 /**
@@ -112,15 +107,10 @@ void OutdoorPvPMgr::HandlePlayerEnterZone(Player* pPlayer, uint32 uiZoneId)
  */
 void OutdoorPvPMgr::HandlePlayerLeaveZone(Player* pPlayer, uint32 uiZoneId)
 {
-    OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(uiZoneId);
-    if (itr == m_OutdoorPvPMap.end())
-        return;
-
     // teleport: remove once in removefromworld, once in updatezone
-    if (!itr->second->HasPlayer(pPlayer))
-        return;
-
-    itr->second->HandlePlayerLeaveZone(pPlayer);
+    OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(uiZoneId);
+    if (itr != m_OutdoorPvPMap.end())
+        itr->second->HandlePlayerLeaveZone(pPlayer);
 }
 
 /**

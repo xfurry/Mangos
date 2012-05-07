@@ -23,9 +23,9 @@
 
    @param   player to be added to set
  */
-void OutdoorPvP::HandlePlayerEnterZone(Player* pPlayer)
+void OutdoorPvP::HandlePlayerEnterZone(Player* player)
 {
-    m_sZonePlayers.insert(pPlayer);
+    m_sZonePlayers.insert(player);
 }
 
 /**
@@ -33,15 +33,16 @@ void OutdoorPvP::HandlePlayerEnterZone(Player* pPlayer)
 
    @param   player to be removed
  */
-void OutdoorPvP::HandlePlayerLeaveZone(Player* pPlayer)
+void OutdoorPvP::HandlePlayerLeaveZone(Player* player)
 {
-    // remove the world state information from the player
-    if (!pPlayer->GetSession()->PlayerLogout())
-        SendRemoveWorldStates(pPlayer);
+    if (m_sZonePlayers.erase(player))
+    {
+        // remove the world state information from the player
+        if (!player->GetSession()->PlayerLogout())
+            SendRemoveWorldStates(player);
 
-    m_sZonePlayers.erase(pPlayer);
-
-    sLog.outDebug("Player %s left an outdoorpvp zone", pPlayer->GetName());
+        sLog.outDebug("Player %s left an outdoorpvp zone", player->GetName());
+    }
 }
 
 /**
@@ -95,12 +96,6 @@ void OutdoorPvP::HandlePlayerKill(Player* pKiller, Unit* pVictim)
 void OutdoorPvP::RegisterZone(uint32 uiZoneId)
 {
     sOutdoorPvPMgr.AddZone(uiZoneId, this);
-}
-
-// return if has player inside the zone
-bool OutdoorPvP::HasPlayer(Player* pPlayer) const
-{
-    return m_sZonePlayers.find(pPlayer) != m_sZonePlayers.end();
 }
 
 // set a capture point slider value for when the gameobject is being reloaded the next time

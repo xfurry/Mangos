@@ -97,14 +97,13 @@ class OutdoorPvP : public ZoneScript
 
     protected:
         // Player related stuff
-        virtual void HandlePlayerEnterZone(Player* pPlayer);
-        virtual void HandlePlayerLeaveZone(Player* pPlayer);
+        virtual void HandlePlayerEnterZone(Player* player);
+        virtual void HandlePlayerLeaveZone(Player* player);
 
         // remove world states
         virtual void SendRemoveWorldStates(Player* pPlayer) {}
 
         void RegisterZone(uint32 zoneId);
-        bool HasPlayer(Player* pPlayer) const;
         void SetCapturePointSliderValue(uint32 entry, CapturePointSlider value);
 
         // store the players inside the area depending on the team
