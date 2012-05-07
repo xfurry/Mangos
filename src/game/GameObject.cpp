@@ -2102,7 +2102,7 @@ void GameObject::TickCapturePoint()
 
         // handle objective complete
         if (m_captureState == CAPTURE_STATE_NEUTRAL)
-            if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP(GetZoneId()))
+            if (OutdoorPvP* outdoorPvP = (*capturingPlayers.begin())->GetOutdoorPvP())
                 outdoorPvP->HandleObjectiveComplete(eventId, capturingPlayers, progressFaction);
 
         // set capture state to alliance
@@ -2115,7 +2115,7 @@ void GameObject::TickCapturePoint()
 
         // handle objective complete
         if (m_captureState == CAPTURE_STATE_NEUTRAL)
-            if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP(GetZoneId()))
+            if (OutdoorPvP* outdoorPvP = (*capturingPlayers.begin())->GetOutdoorPvP())
                 outdoorPvP->HandleObjectiveComplete(eventId, capturingPlayers, progressFaction);
 
         // set capture state to horde

@@ -6709,7 +6709,7 @@ void Player::UpdateArea(uint32 newArea)
 
 OutdoorPvP* Player::GetOutdoorPvP() const
 {
-    return sOutdoorPvPMgr.GetOutdoorPvP(GetZoneId());
+    return sOutdoorPvPMgr.GetOutdoorPvP(m_zoneUpdateId);
 }
 
 bool Player::IsOutdoorPvPActive()
