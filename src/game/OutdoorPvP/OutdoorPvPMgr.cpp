@@ -129,14 +129,14 @@ void OutdoorPvPMgr::HandlePlayerLeaveZone(Player* pPlayer, uint32 uiZoneId)
    @param   player which executes the event
    @param   spell id which acts as the flag
  */
-void OutdoorPvPMgr::HandleDropFlag(Player* pPlayer, uint32 uiSpellId)
+/*void OutdoorPvPMgr::HandleDropFlag(Player* pPlayer, uint32 uiSpellId)
 {
     for (OutdoorPvPSet::iterator itr = m_OutdoorPvPSet.begin(); itr != m_OutdoorPvPSet.end(); ++itr)
     {
         if ((*itr)->HandleDropFlag(pPlayer, uiSpellId))
             return;
     }
-}
+}*/
 
 /**
    Function that handles the objective complete of a capture point
@@ -156,11 +156,11 @@ void OutdoorPvPMgr::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*>
    @param   player
    @param   victim
  */
-void OutdoorPvPMgr::HandlePlayerKill(Player* pPlayer, Unit* pVictim)
+/*void OutdoorPvPMgr::HandlePlayerKill(Player* pPlayer, Unit* pVictim)
 {
     for (OutdoorPvPSet::iterator itr = m_OutdoorPvPSet.begin(); itr != m_OutdoorPvPSet.end(); ++itr)
         (*itr)->HandlePlayerKill(pPlayer, pVictim);
-}
+}*/
 
 /**
    Function that handles when a player uses a world pvp gameobject
@@ -168,7 +168,7 @@ void OutdoorPvPMgr::HandlePlayerKill(Player* pPlayer, Unit* pVictim)
    @param   player which executes the event
    @param   gameobject used
  */
-bool OutdoorPvPMgr::HandleObjectUse(Player* pPlayer, GameObject* pGo)
+/*bool OutdoorPvPMgr::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 {
     for (OutdoorPvPSet::iterator itr = m_OutdoorPvPSet.begin(); itr != m_OutdoorPvPSet.end(); ++itr)
     {
@@ -176,7 +176,7 @@ bool OutdoorPvPMgr::HandleObjectUse(Player* pPlayer, GameObject* pGo)
             return true;
     }
     return false;
-}
+}*/
 
 /**
    Function that returns a specific world pvp script for a given zone id

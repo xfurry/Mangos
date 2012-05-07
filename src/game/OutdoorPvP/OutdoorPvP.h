@@ -68,6 +68,7 @@ class OutdoorPvP : public ZoneScript
 
         // handle npc/player kill
         virtual void HandlePlayerKillInsideArea(Player* /*pKiller*/, Unit* /*pVictim*/) {}
+        virtual void HandlePlayerKill(Player* pKiller, Unit* pVictim);
 
         // handle capture objective complete
         virtual void HandleObjectiveComplete(uint32 /*uiEventId*/, std::list<Player*> /*players*/, Team /*team*/) {}
@@ -98,7 +99,6 @@ class OutdoorPvP : public ZoneScript
         // Player related stuff
         virtual void HandlePlayerEnterZone(Player* pPlayer);
         virtual void HandlePlayerLeaveZone(Player* pPlayer);
-        virtual void HandlePlayerKill(Player* pKiller, Unit* pVictim);
 
         // remove world states
         virtual void SendRemoveWorldStates(Player* pPlayer) {}

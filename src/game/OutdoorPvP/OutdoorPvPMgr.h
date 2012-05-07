@@ -57,22 +57,19 @@ class OutdoorPvPMgr
         // add zone id to world pvp handler
         void AddZone(uint32 uiZoneId, OutdoorPvP* pScriptHandler);
 
-        // add capture poit id to pvp handler
-        void AddCapturePoint(uint32 uiPointId, OutdoorPvP* pScriptHandler);
-
         void Update(uint32);
 
         // Handle cases when a player drops a flag
-        void HandleDropFlag(Player* pPlayer, uint32 uiSpellId);
+        //void HandleDropFlag(Player* pPlayer, uint32 uiSpellId);
 
         // Handle cases when a gameobject is used
-        bool HandleObjectUse(Player* pPlayer, GameObject* pGo);
+        //bool HandleObjectUse(Player* pPlayer, GameObject* pGo);
 
         // Handle the complete credit for capture point win events
         void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team);
 
         // Handle the kill event inside the area
-        void HandlePlayerKill(Player* pPlayer, Unit* pVictim);
+        //void HandlePlayerKill(Player* pPlayer, Unit* pVictim);
 
         // Handle capture point stuff
         int8 GetCapturePointSliderValue(uint32 uiEntry);
