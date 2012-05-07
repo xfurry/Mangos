@@ -6712,9 +6712,9 @@ OutdoorPvP* Player::GetOutdoorPvP() const
     return sOutdoorPvPMgr.GetOutdoorPvP(m_zoneUpdateId);
 }
 
-bool Player::IsOutdoorPvPActive()
+bool Player::CanUseOutdoorCapturePoint()
 {
-    return CanCaptureTowerPoint() &&
+    return CanUseCapturePoint() &&
         (IsPvP() || sWorld.IsPvPRealm()) &&
         !HasMovementFlag(MOVEFLAG_FLYING) &&
         !IsTaxiFlying() &&
@@ -21625,7 +21625,7 @@ bool Player::CanUseBattleGroundObject()
             !HasAura(SPELL_RECENTLY_DROPPED_FLAG, EFFECT_INDEX_0));
 }
 
-bool Player::CanCaptureTowerPoint()
+bool Player::CanUseCapturePoint()
 {
     return (isAlive() &&                                    // living
             !HasStealthAura() &&                            // not stealthed

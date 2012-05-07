@@ -1993,8 +1993,8 @@ void GameObject::TickCapturePoint()
 
     // search for players in radius
     std::list<Player*> capturingPlayers;
-    MaNGOS::AnyPlayerInObjectRangeWithPvPCheck u_check(this, radius);
-    MaNGOS::PlayerListSearcher<MaNGOS::AnyPlayerInObjectRangeWithPvPCheck> checker(capturingPlayers, u_check);
+    MaNGOS::AnyPlayerInObjectRangeWithOutdoorPvPCheck u_check(this, radius);
+    MaNGOS::PlayerListSearcher<MaNGOS::AnyPlayerInObjectRangeWithOutdoorPvPCheck> checker(capturingPlayers, u_check);
     Cell::VisitWorldObjects(this, checker, radius);
 
     GuidsSet tempUsers(m_UniqueUsers);

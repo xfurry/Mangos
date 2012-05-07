@@ -79,14 +79,14 @@ void OutdoorPvP::HandlePlayerKill(Player* pKiller, Unit* pVictim)
 
             // creature kills must be notified, even if not inside objective / not outdoor pvp active
             // player kills only count if active and inside objective
-            if (pGroupGuy->IsOutdoorPvPActive())
+            if (pGroupGuy->CanUseOutdoorCapturePoint())
                 HandlePlayerKillInsideArea(pGroupGuy, pVictim);
         }
     }
     else
     {
         // creature kills must be notified, even if not inside objective / not outdoor pvp active
-        if (pKiller && pKiller->IsOutdoorPvPActive())
+        if (pKiller && pKiller->CanUseOutdoorCapturePoint())
             HandlePlayerKillInsideArea(pKiller, pVictim);
     }
 }
