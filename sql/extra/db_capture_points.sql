@@ -246,12 +246,12 @@ INSERT INTO gameobject_template_scripts VALUES
 DELETE FROM gameobject_template_scripts WHERE id=182281;
 INSERT INTO gameobject_template_scripts VALUES
 (182281,0,17,24538,10,0,0,0,0,0,0,0,0,0,0,0,'Add 10 Fire Bombs to inventory'),
-(182281,0,30,523,0,0,0,0,0,0,0,0,0,0,0,0,'Send Taxi path 523');
+(182281,0,30,522,0,0,0,0,0,0,0,0,0,0,0,0,'Send Taxi path 522');
 -- Script id: 182303
 DELETE FROM gameobject_template_scripts WHERE id=182303;
 INSERT INTO gameobject_template_scripts VALUES
 (182303,0,17,24538,10,0,0,0,0,0,0,0,0,0,0,0,'Add 10 Fire Bombs to inventory'),
-(182303,0,30,523,0,0,0,0,0,0,0,0,0,0,0,0,'Send Taxi path 523');
+(182303,0,30,522,0,0,0,0,0,0,0,0,0,0,0,0,'Send Taxi path 522');
 
 -- East (ally & horde)
 -- Script id: 182282
