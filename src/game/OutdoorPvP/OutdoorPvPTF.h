@@ -115,13 +115,13 @@ enum
 
 struct TerokkarTowerEvent
 {
-    uint32  uiEventEntry;
+    uint32  eventEntry;
     Team    team;
-    uint32  uiZoneText;
-    uint32  uiWorldState;
+    uint32  zoneText;
+    uint32  worldState;
 };
 
-static const TerokkarTowerEvent aTerokkarTowerEvents[MAX_TF_TOWERS][4] =
+static const TerokkarTowerEvent TEROKKAR_TOWER_EVENTS[MAX_TF_TOWERS][4] =
 {
     {
         {EVENT_TOWER_1_PROGRESS_ALLIANCE,   ALLIANCE,   LANG_OPVP_TF_CAPTURE_A, WORLD_STATE_TOWER_1_ALLIANCE},
@@ -155,7 +155,7 @@ static const TerokkarTowerEvent aTerokkarTowerEvents[MAX_TF_TOWERS][4] =
     },
 };
 
-static const uint32 aTerokkarTowers[MAX_TF_TOWERS] = {GO_TEROKKAR_BANNER_1, GO_TEROKKAR_BANNER_2, GO_TEROKKAR_BANNER_3, GO_TEROKKAR_BANNER_4, GO_TEROKKAR_BANNER_5};
+static const uint32 TEROKKAR_TOWERS[MAX_TF_TOWERS] = {GO_TEROKKAR_BANNER_1, GO_TEROKKAR_BANNER_2, GO_TEROKKAR_BANNER_3, GO_TEROKKAR_BANNER_4, GO_TEROKKAR_BANNER_5};
 
 class OutdoorPvPTF : public OutdoorPvP
 {

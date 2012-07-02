@@ -171,8 +171,8 @@ bool OutdoorPvPSI::HandleDropFlag(Player* player, uint32 spellId)
 
     // don't drop flag at area trigger
     // we are checking distance from the AT hardcoded coords because it's much faster than checking the area trigger store
-    if ((player->GetTeam() == ALLIANCE && player->IsWithinDist3d(aSilithusLocs[0].m_fX, aSilithusLocs[0].m_fY, aSilithusLocs[0].m_fZ, 5.0f)) ||
-        (player->GetTeam() == HORDE && player->IsWithinDist3d(aSilithusLocs[1].m_fX, aSilithusLocs[1].m_fY, aSilithusLocs[1].m_fZ, 5.0f)))
+    if ((player->GetTeam() == ALLIANCE && player->IsWithinDist3d(SILITHUS_FLAG_DROP_LOCATIONS[0].x, SILITHUS_FLAG_DROP_LOCATIONS[0].y, SILITHUS_FLAG_DROP_LOCATIONS[0].z, 5.0f)) ||
+        (player->GetTeam() == HORDE && player->IsWithinDist3d(SILITHUS_FLAG_DROP_LOCATIONS[1].x, SILITHUS_FLAG_DROP_LOCATIONS[1].y, SILITHUS_FLAG_DROP_LOCATIONS[1].z, 5.0f)))
         return false;
 
     // drop the flag in other case

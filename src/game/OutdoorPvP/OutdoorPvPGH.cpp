@@ -124,20 +124,20 @@ void OutdoorPvPGH::RespawnSoldiers(const WorldObject* objRef)
         // despawn all horde vendors
         for (std::list<ObjectGuid>::const_iterator itr = m_hordeVendors.begin(); itr != m_hordeVendors.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
-                pSoldier->ForcedDespawn();
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
+                soldier->ForcedDespawn();
         }
 
         // spawn all alliance soldiers and vendors
         for (std::list<ObjectGuid>::const_iterator itr = m_allianceSoldiers.begin(); itr != m_allianceSoldiers.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
-                pSoldier->Respawn();
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
+                soldier->Respawn();
         }
         for (std::list<ObjectGuid>::const_iterator itr = m_allianceVendors.begin(); itr != m_allianceVendors.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
-                pSoldier->Respawn();
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
+                soldier->Respawn();
         }
     }
     else
@@ -145,20 +145,20 @@ void OutdoorPvPGH::RespawnSoldiers(const WorldObject* objRef)
         // despawn all alliance vendors
         for (std::list<ObjectGuid>::const_iterator itr = m_allianceVendors.begin(); itr != m_allianceVendors.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
-                pSoldier->ForcedDespawn();
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
+                soldier->ForcedDespawn();
         }
 
         // spawn all horde soldiers and vendors
         for (std::list<ObjectGuid>::const_iterator itr = m_hordeSoldiers.begin(); itr != m_hordeSoldiers.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
-                pSoldier->Respawn();
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
+                soldier->Respawn();
         }
         for (std::list<ObjectGuid>::const_iterator itr = m_hordeVendors.begin(); itr != m_hordeVendors.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
-                pSoldier->Respawn();
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
+                soldier->Respawn();
         }
     }
 }

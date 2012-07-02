@@ -111,15 +111,15 @@ void OutdoorPvPHP::OnGameObjectCreate(GameObject* go)
             go->SetGoArtKit(GetBannerArtKit(m_towerOwner[2], GO_ARTKIT_BROKEN_HILL_ALLIANCE, GO_ARTKIT_BROKEN_HILL_HORDE, GO_ARTKIT_BROKEN_HILL_NEUTRAL));
             break;
         case GO_HELLFIRE_BANNER_OVERLOOK:
-            m_capturePoints[0] = go->GetObjectGuid();
+            m_towers[0] = go->GetObjectGuid();
             go->SetGoArtKit(GetBannerArtKit(m_towerOwner[0], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
         case GO_HELLFIRE_BANNER_STADIUM:
-            m_capturePoints[1] = go->GetObjectGuid();
+            m_towers[1] = go->GetObjectGuid();
             go->SetGoArtKit(GetBannerArtKit(m_towerOwner[1], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
         case GO_HELLFIRE_BANNER_BROKEN_HILL:
-            m_capturePoints[2] = go->GetObjectGuid();
+            m_towers[2] = go->GetObjectGuid();
             go->SetGoArtKit(GetBannerArtKit(m_towerOwner[2], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
     }
@@ -127,32 +127,31 @@ void OutdoorPvPHP::OnGameObjectCreate(GameObject* go)
 
 void OutdoorPvPHP::HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team)
 {
-    uint32 uiCredit = 0;
+    uint32 credit = 0;
 
     switch (eventId)
     {
         case EVENT_OVERLOOK_PROGRESS_ALLIANCE:
         case EVENT_OVERLOOK_PROGRESS_HORDE:
-            uiCredit = NPC_CAPTURE_CREDIT_OVERLOOK;
+            credit = NPC_CAPTURE_CREDIT_OVERLOOK;
             break;
         case EVENT_STADIUM_PROGRESS_ALLIANCE:
         case EVENT_STADIUM_PROGRESS_HORDE:
-            uiCredit = NPC_CAPTURE_CREDIT_STADIUM;
+            credit = NPC_CAPTURE_CREDIT_STADIUM;
             break;
         case EVENT_BROKEN_HILL_PROGRESS_ALLIANCE:
         case EVENT_BROKEN_HILL_PROGRESS_HORDE:
-            uiCredit = NPC_CAPTURE_CREDIT_BROKEN_HILL;
+            credit = NPC_CAPTURE_CREDIT_BROKEN_HILL;
             break;
+        default:
+            return;
     }
-
-    if (!uiCredit)
-        return;
 
     for (std::list<Player*>::iterator itr = players.begin(); itr != players.end(); ++itr)
     {
         if ((*itr) && (*itr)->GetTeam() == team)
         {
-            (*itr)->KilledMonsterCredit(uiCredit);
+            (*itr)->KilledMonsterCredit(credit);
             (*itr)->RewardHonor(NULL, 1, HONOR_REWARD_HELLFIRE);
         }
     }
@@ -163,7 +162,7 @@ void OutdoorPvPHP::HandlePlayerKillInsideArea(Player* player, Unit* victim)
 {
     for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
     {
-        if (GameObject* capturePoint = player->GetMap()->GetGameObject(m_capturePoints[i]))
+        if (GameObject* capturePoint = player->GetMap()->GetGameObject(m_towers[i]))
         {
             // check capture point range
             GameObjectInfo const* info = capturePoint->GetGOInfo();
@@ -184,16 +183,16 @@ void OutdoorPvPHP::ProcessEvent(uint32 eventId, GameObject* go)
 {
     for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
     {
-        if (aHellfireBanners[i] == go->GetEntry())
+        if (HELLFIRE_BANNERS[i] == go->GetEntry())
         {
             for (uint8 j = 0; j < 4; ++j)
             {
-                if (aHellfireTowerEvents[i][j].uiEventEntry == eventId)
+                if (HELLFIRE_TOWER_EVENTS[i][j].eventEntry == eventId)
                 {
-                    if (aHellfireTowerEvents[i][j].team != m_towerOwner[i])
+                    if (HELLFIRE_TOWER_EVENTS[i][j].team != m_towerOwner[i])
                     {
-                        ProcessCaptureEvent(go, i, aHellfireTowerEvents[i][j].team, aHellfireTowerEvents[i][j].uiWorldState, aHellfireTowerEvents[i][j].towerArtKit, aHellfireTowerEvents[i][j].towerAnim);
-                        sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(aHellfireTowerEvents[i][j].uiZoneText));
+                        ProcessCaptureEvent(go, i, HELLFIRE_TOWER_EVENTS[i][j].team, HELLFIRE_TOWER_EVENTS[i][j].worldState, HELLFIRE_TOWER_EVENTS[i][j].towerArtKit, HELLFIRE_TOWER_EVENTS[i][j].towerAnim);
+                        sWorld.SendZoneText(ZONE_ID_HELLFIRE_PENINSULA, sObjectMgr.GetMangosStringForDBCLocale(HELLFIRE_TOWER_EVENTS[i][j].zoneText));
                     }
                     return;
                 }

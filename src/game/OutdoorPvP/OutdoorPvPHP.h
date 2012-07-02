@@ -115,15 +115,15 @@ enum
 
 struct HellfireTowerEvent
 {
-    uint32  uiEventEntry;
+    uint32  eventEntry;
     Team    team;
-    uint32  uiZoneText;
-    uint32  uiWorldState;
+    uint32  zoneText;
+    uint32  worldState;
     uint32  towerArtKit;
     uint32  towerAnim;
 };
 
-static const HellfireTowerEvent aHellfireTowerEvents[MAX_HP_TOWERS][4] =
+static const HellfireTowerEvent HELLFIRE_TOWER_EVENTS[MAX_HP_TOWERS][4] =
 {
     {
         {EVENT_OVERLOOK_PROGRESS_ALLIANCE,      ALLIANCE,   LANG_OPVP_HP_CAPTURE_OVERLOOK_A,    WORLD_STATE_OVERLOOK_ALLIANCE,      GO_ARTKIT_OVERLOOK_ALLIANCE,    CAPTURE_ANIM_ALLIANCE},
@@ -145,7 +145,7 @@ static const HellfireTowerEvent aHellfireTowerEvents[MAX_HP_TOWERS][4] =
     },
 };
 
-static const uint32 aHellfireBanners[MAX_HP_TOWERS] = {GO_HELLFIRE_BANNER_OVERLOOK, GO_HELLFIRE_BANNER_STADIUM, GO_HELLFIRE_BANNER_BROKEN_HILL};
+static const uint32 HELLFIRE_BANNERS[MAX_HP_TOWERS] = {GO_HELLFIRE_BANNER_OVERLOOK, GO_HELLFIRE_BANNER_STADIUM, GO_HELLFIRE_BANNER_BROKEN_HILL};
 
 class OutdoorPvPHP : public OutdoorPvP
 {
@@ -177,7 +177,7 @@ class OutdoorPvPHP : public OutdoorPvP
         uint8 m_towersAlliance;
         uint8 m_towersHorde;
 
-        ObjectGuid m_capturePoints[MAX_HP_TOWERS];
+        ObjectGuid m_towers[MAX_HP_TOWERS];
         ObjectGuid m_banners[MAX_HP_TOWERS];
 };
 

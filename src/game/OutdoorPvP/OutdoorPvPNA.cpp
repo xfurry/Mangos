@@ -96,7 +96,7 @@ void OutdoorPvPNA::HandleObjectiveComplete(uint32 eventId, std::list<Player*> pl
 // Cast player spell on opponent kill
 void OutdoorPvPNA::HandlePlayerKillInsideArea(Player* player, Unit* victim)
 {
-    if (GameObject* capturePoint = player->GetMap()->GetGameObject(m_capturePoints))
+    if (GameObject* capturePoint = player->GetMap()->GetGameObject(m_capturePoint))
     {
         // check capture point range
         GameObjectInfo const* info = capturePoint->GetGOInfo();
@@ -189,7 +189,7 @@ void OutdoorPvPNA::OnGameObjectCreate(GameObject* go)
     switch (go->GetEntry())
     {
         case GO_HALAA_BANNER:
-            m_capturePoints = go->GetObjectGuid();
+            m_capturePoint = go->GetObjectGuid();
             go->SetGoArtKit(GetBannerArtKit(m_zoneOwner, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
 
@@ -369,7 +369,7 @@ void OutdoorPvPNA::HandleFactionObjects(const WorldObject* objRef)
             RespawnGO(objRef, m_allianceWagons[i], false);
             RespawnGO(objRef, m_hordeBrokenRoost[i], true);
 
-            m_roostWorldState[i] = aHordeNeutralStates[i];
+            m_roostWorldState[i] = HORDE_NEUTRAL_ROOST_STATES[i];
         }
     }
     else
@@ -382,7 +382,7 @@ void OutdoorPvPNA::HandleFactionObjects(const WorldObject* objRef)
             RespawnGO(objRef, m_hordeWagons[i], false);
             RespawnGO(objRef, m_allianceBrokenRoost[i], true);
 
-            m_roostWorldState[i] = aAllianceNeutralStates[i];
+            m_roostWorldState[i] = ALLIANCE_NEUTRAL_ROOST_STATES[i];
         }
     }
 }
@@ -394,22 +394,22 @@ void OutdoorPvPNA::RespawnSoldiers(const WorldObject* objRef)
         // despawn all horde vendors
         for (std::list<ObjectGuid>::const_iterator itr = m_hordeSoldiers.begin(); itr != m_hordeSoldiers.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
             {
                 // reset respawn time
-                pSoldier->SetRespawnDelay(7 * DAY);
-                pSoldier->ForcedDespawn();
+                soldier->SetRespawnDelay(7 * DAY);
+                soldier->ForcedDespawn();
             }
         }
 
         // spawn all alliance soldiers and vendors
         for (std::list<ObjectGuid>::const_iterator itr = m_allianceSoldiers.begin(); itr != m_allianceSoldiers.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
             {
                 // lower respawn time
-                pSoldier->SetRespawnDelay(HOUR);
-                pSoldier->Respawn();
+                soldier->SetRespawnDelay(HOUR);
+                soldier->Respawn();
             }
         }
     }
@@ -418,22 +418,22 @@ void OutdoorPvPNA::RespawnSoldiers(const WorldObject* objRef)
         // despawn all alliance vendors
         for (std::list<ObjectGuid>::const_iterator itr = m_allianceSoldiers.begin(); itr != m_allianceSoldiers.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
             {
                 // reset respawn time
-                pSoldier->SetRespawnDelay(7 * DAY);
-                pSoldier->ForcedDespawn();
+                soldier->SetRespawnDelay(7 * DAY);
+                soldier->ForcedDespawn();
             }
         }
 
         // spawn all horde soldiers and vendors
         for (std::list<ObjectGuid>::const_iterator itr = m_hordeSoldiers.begin(); itr != m_hordeSoldiers.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
             {
                 // lower respawn time
-                pSoldier->SetRespawnDelay(HOUR);
-                pSoldier->Respawn();
+                soldier->SetRespawnDelay(HOUR);
+                soldier->Respawn();
             }
         }
     }
@@ -447,19 +447,19 @@ bool OutdoorPvPNA::HandleObjectUse(Player* player, GameObject* go)
     {
         for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
         {
-            if (go->GetEntry() == aAllianceWagons[i])
+            if (go->GetEntry() == ALLIANCE_WAGONS[i])
             {
-                m_roostWorldState[i] = aHordeNeutralStates[i];
+                m_roostWorldState[i] = HORDE_NEUTRAL_ROOST_STATES[i];
                 RespawnGO(go, m_hordeRoost[i], false);
                 RespawnGO(go, m_hordeBrokenRoost[i], true);
             }
-            else if (go->GetEntry() == aAllianceBrokenRoosts[i])
+            else if (go->GetEntry() == ALLIANCE_BROKEN_ROOSTS[i])
             {
-                m_roostWorldState[i] = aAllianceRoostStates[i];
+                m_roostWorldState[i] = ALLIANCE_ROOST_STATES[i];
                 RespawnGO(go, m_hordeWagons[i], true);
                 RespawnGO(go, m_allianceRoost[i], true, true);
             }
-            else if (go->GetEntry() == aAllianceRoosts[i])
+            else if (go->GetEntry() == ALLIANCE_ROOSTS[i])
             {
                 // mark player as pvp
                 player->UpdatePvP(true, true);
@@ -471,19 +471,19 @@ bool OutdoorPvPNA::HandleObjectUse(Player* player, GameObject* go)
     {
         for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
         {
-            if (go->GetEntry() == aHordeWagons[i])
+            if (go->GetEntry() == HORDE_WAGONS[i])
             {
-                m_roostWorldState[i] = aAllianceNeutralStates[i];
+                m_roostWorldState[i] = ALLIANCE_NEUTRAL_ROOST_STATES[i];
                 RespawnGO(go, m_allianceRoost[i], false);
                 RespawnGO(go, m_allianceBrokenRoost[i], true);
             }
-            else if (go->GetEntry() == aHordeBrokenRoosts[i])
+            else if (go->GetEntry() == HORDE_BROKEN_ROOSTS[i])
             {
-                m_roostWorldState[i] = aHordeRoostStates[i];
+                m_roostWorldState[i] = HORDE_ROOST_STATES[i];
                 RespawnGO(go, m_allianceWagons[i], true);
                 RespawnGO(go, m_hordeRoost[i], true, true);
             }
-            else if (go->GetEntry() == aHordeRoosts[i])
+            else if (go->GetEntry() == HORDE_ROOSTS[i])
             {
                 // mark player as pvp
                 player->UpdatePvP(true, true);
@@ -499,41 +499,41 @@ bool OutdoorPvPNA::HandleObjectUse(Player* player, GameObject* go)
 
 void OutdoorPvPNA::RespawnGO(const WorldObject* objRef, ObjectGuid goGuid, bool respawn, bool resetFlag)
 {
-    if (GameObject* pBanner = objRef->GetMap()->GetGameObject(goGuid))
+    if (GameObject* banner = objRef->GetMap()->GetGameObject(goGuid))
     {
         if (respawn)
         {
-            pBanner->SetRespawnTime(7 * DAY);
-            pBanner->Refresh();
+            banner->SetRespawnTime(7 * DAY);
+            banner->Refresh();
 
             // Set NoDespawn flag for the Roosts
             if (resetFlag)
-                pBanner->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
+                banner->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
         }
-        else if (pBanner->isSpawned())
+        else if (banner->isSpawned())
         {
-            if (pBanner->HasFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN))
-                pBanner->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
+            if (banner->HasFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN))
+                banner->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
 
-            pBanner->SetLootState(GO_JUST_DEACTIVATED);
+            banner->SetLootState(GO_JUST_DEACTIVATED);
         }
     }
 }
 
 void OutdoorPvPNA::LockHalaa(const WorldObject* objRef)
 {
-    if (GameObject* go = objRef->GetMap()->GetGameObject(m_capturePoints))
+    if (GameObject* go = objRef->GetMap()->GetGameObject(m_capturePoint))
         go->SetLootState(GO_JUST_DEACTIVATED);
 
-    SetCapturePointSliderValue(m_capturePoints, m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
+    SetCapturePointSliderValue(m_capturePoint, m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
 }
 
 void OutdoorPvPNA::UnlockHalaa(const WorldObject* objRef)
 {
-    if (GameObject* go = objRef->GetMap()->GetGameObject(m_capturePoints))
+    if (GameObject* go = objRef->GetMap()->GetGameObject(m_capturePoint))
         go->SetCapturePointSlider(m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
         // no banner visual update needed because it already has the correct one
     else
         // if grid is unloaded, resetting the slider value is enough
-        SetCapturePointSliderValue(m_capturePoints, m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
+        SetCapturePointSliderValue(m_capturePoint, m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
 }

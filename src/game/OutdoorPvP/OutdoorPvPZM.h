@@ -108,14 +108,14 @@ enum
 
 struct ZangaTowerEvent
 {
-    uint32  uiEventEntry;
+    uint32  eventEntry;
     Team    team;
-    uint32  uiZoneText;
-    uint32  uiWorldState;
-    uint32  uiMapState;
+    uint32  zoneText;
+    uint32  worldState;
+    uint32  mapState;
 };
 
-static const ZangaTowerEvent aZangaTowerEvents[MAX_ZM_TOWERS][4] =
+static const ZangaTowerEvent ZANGA_TOWER_EVENTS[MAX_ZM_TOWERS][4] =
 {
     {
         {EVENT_EAST_BEACON_PROGRESS_ALLIANCE,   ALLIANCE,   LANG_OPVP_ZM_CAPTURE_EAST_A,    WORLD_STATE_TOWER_EAST_ALLIANCE,    WORLD_STATE_BEACON_EAST_ALLIANCE},
@@ -131,8 +131,7 @@ static const ZangaTowerEvent aZangaTowerEvents[MAX_ZM_TOWERS][4] =
     },
 };
 
-static const uint32 aZangaTowers[MAX_ZM_TOWERS] = {GO_ZANGA_BANNER_EAST, GO_ZANGA_BANNER_WEST};
-
+static const uint32 ZANGA_TOWERS[MAX_ZM_TOWERS] = {GO_ZANGA_BANNER_EAST, GO_ZANGA_BANNER_WEST};
 
 class OutdoorPvPZM : public OutdoorPvP
 {
@@ -156,7 +155,7 @@ class OutdoorPvPZM : public OutdoorPvP
 
     private:
         // process capture events
-        void ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 uiNewMapState);
+        void ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 newMapState);
 
         // handles scout world states and gossip - ToDo: implement gossip based on condition
         void PrepareFactionScouts(const WorldObject* objRef, Team team);
@@ -171,10 +170,10 @@ class OutdoorPvPZM : public OutdoorPvP
         // respawn npcs which act as an artkit visual
         void SetBeaconArtKit(const WorldObject* objRef, ObjectGuid creatureGuid, uint32 auraId);
 
-        uint32 m_beaconWorldState[MAX_ZM_TOWERS];
-        uint32 m_beaconMapState[MAX_ZM_TOWERS];
+        uint32 m_towerWorldState[MAX_ZM_TOWERS];
+        uint32 m_towerMapState[MAX_ZM_TOWERS];
 
-        Team m_beaconOwner[MAX_ZM_TOWERS];
+        Team m_towerOwner[MAX_ZM_TOWERS];
         Team m_graveyardOwner;
 
         uint32 m_graveyardWorldState;
@@ -184,14 +183,14 @@ class OutdoorPvPZM : public OutdoorPvP
         uint8 m_towersHorde;
 
         ObjectGuid m_towerBanners[MAX_ZM_TOWERS];
-        ObjectGuid m_towerBannerGraveyardAlliance;
-        ObjectGuid m_towerBannerGraveyardHorde;
-        ObjectGuid m_towerBannerGraveyardNeutral;
+        ObjectGuid m_graveyardBannerAlliance;
+        ObjectGuid m_graveyardBannerHorde;
+        ObjectGuid m_graveyardBannerNeutral;
 
         ObjectGuid m_allianceScout;
         ObjectGuid m_hordeScout;
-        ObjectGuid m_beamBeaconBlue[MAX_ZM_TOWERS];
-        ObjectGuid m_beamBeaconRed[MAX_ZM_TOWERS];
+        ObjectGuid m_beamTowerBlue[MAX_ZM_TOWERS];
+        ObjectGuid m_beamTowerRed[MAX_ZM_TOWERS];
         ObjectGuid m_beamGraveyardBlue;
         ObjectGuid m_beamGraveyardRed;
 };
