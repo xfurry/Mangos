@@ -141,22 +141,22 @@ class OutdoorPvPZM : public OutdoorPvP
 
         bool InitOutdoorPvPArea();
 
-        void OnCreatureCreate(Creature* pCreature);
-        void OnGameObjectCreate(GameObject* pGo);
-        void ProcessEvent(uint32 uiEventId, GameObject* pGo);
+        void OnCreatureCreate(Creature* creature);
+        void OnGameObjectCreate(GameObject* go);
+        void ProcessEvent(uint32 eventId, GameObject* go);
 
-        void HandlePlayerEnterZone(Player* pPlayer);
-        void HandlePlayerLeaveZone(Player* pPlayer);
-        void HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim);
+        void HandlePlayerEnterZone(Player* player);
+        void HandlePlayerLeaveZone(Player* player);
+        void HandlePlayerKillInsideArea(Player* player, Unit* victim);
 
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
-        void SendRemoveWorldStates(Player* pPlayer);
+        void SendRemoveWorldStates(Player* player);
 
-        bool HandleObjectUse(Player* pPlayer, GameObject* pGo);
+        bool HandleObjectUse(Player* player, GameObject* go);
 
     private:
         // process capture events
-        void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState, uint32 uiNewMapState);
+        void ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 uiNewMapState);
 
         // handles scout world states and gossip - ToDo: implement gossip based on condition
         void PrepareFactionScouts(const WorldObject* objRef, Team team);
@@ -171,29 +171,29 @@ class OutdoorPvPZM : public OutdoorPvP
         // respawn npcs which act as an artkit visual
         void SetBeaconArtKit(const WorldObject* objRef, ObjectGuid creatureGuid, uint32 auraId);
 
-        uint32 m_uiBeaconWorldState[MAX_ZM_TOWERS];
-        uint32 m_uiBeaconMapState[MAX_ZM_TOWERS];
+        uint32 m_beaconWorldState[MAX_ZM_TOWERS];
+        uint32 m_beaconMapState[MAX_ZM_TOWERS];
 
-        Team m_capturePointOwner[MAX_ZM_TOWERS];
+        Team m_beaconOwner[MAX_ZM_TOWERS];
         Team m_graveyardOwner;
 
-        uint32 m_uiGraveyardWorldState;
-        uint32 m_uiAllianceScoutWorldState;
-        uint32 m_uiHordeScoutWorldState;
-        uint8 m_uiTowersAlliance;
-        uint8 m_uiTowersHorde;
+        uint32 m_graveyardWorldState;
+        uint32 m_scoutWorldStateAlliance;
+        uint32 m_scoutWorldStateHorde;
+        uint8 m_towersAlliance;
+        uint8 m_towersHorde;
 
-        ObjectGuid m_TowerBannerGUID[MAX_ZM_TOWERS];
-        ObjectGuid m_TowerBannerCenterAllianceGUID;
-        ObjectGuid m_TowerBannerCenterHordeGUID;
-        ObjectGuid m_TowerBannerCenterNeutralGUID;
+        ObjectGuid m_towerBanners[MAX_ZM_TOWERS];
+        ObjectGuid m_towerBannerGraveyardAlliance;
+        ObjectGuid m_towerBannerGraveyardHorde;
+        ObjectGuid m_towerBannerGraveyardNeutral;
 
-        ObjectGuid m_allianceScoutGuid;
-        ObjectGuid m_hordeScoutGuid;
-        ObjectGuid m_BeamRedGUID[MAX_ZM_TOWERS];
-        ObjectGuid m_BeamBlueGUID[MAX_ZM_TOWERS];
-        ObjectGuid m_BeamCenterBlueGUID;
-        ObjectGuid m_BeamCenterRedGUID;
+        ObjectGuid m_allianceScout;
+        ObjectGuid m_hordeScout;
+        ObjectGuid m_beamBeaconBlue[MAX_ZM_TOWERS];
+        ObjectGuid m_beamBeaconRed[MAX_ZM_TOWERS];
+        ObjectGuid m_beamGraveyardBlue;
+        ObjectGuid m_beamGraveyardRed;
 };
 
 #endif

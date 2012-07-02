@@ -250,22 +250,22 @@ class OutdoorPvPEP : public OutdoorPvP
 
         bool InitOutdoorPvPArea();
 
-        void OnGameObjectCreate(GameObject* pGo);
-        void ProcessEvent(uint32 uiEventId, GameObject* pGo);
+        void OnGameObjectCreate(GameObject* go);
+        void ProcessEvent(uint32 eventId, GameObject* go);
 
-        void HandlePlayerEnterZone(Player* pPlayer);
-        void HandlePlayerLeaveZone(Player* pPlayer);
-        void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team);
+        void HandlePlayerEnterZone(Player* player);
+        void HandlePlayerLeaveZone(Player* player);
+        void HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team);
 
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
-        void SendRemoveWorldStates(Player* pPlayer);
+        void SendRemoveWorldStates(Player* player);
 
     private:
         // update world state
         void UpdateWorldState();
 
         // process capture events
-        void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState);
+        void ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState);
 
         // plaguewood bonus - flightmaster
         void SummonFlightMaster(WorldObject* objRef);
@@ -281,18 +281,18 @@ class OutdoorPvPEP : public OutdoorPvP
         // crownguard bonus - graveyard
         void SetGraveyard(bool remove = false);
 
-        Team m_capturePointOwner[TOWER_COUNT];
-        uint32 m_uiTowerWorldState[TOWER_COUNT];
-        uint32 m_uiTowersAlliance;
-        uint32 m_uiTowersHorde;
+        Team m_towerOwner[TOWER_COUNT];
+        uint32 m_towerWorldState[TOWER_COUNT];
+        uint8 m_towersAlliance;
+        uint8 m_towersHorde;
 
         ObjectGuid m_uiFlightMasterGUID;
         ObjectGuid m_uiLordaeronShrineAllianceGUID;
         ObjectGuid m_uiLordaeronShrineHordeGUID;
 
-        std::list<ObjectGuid> m_lSoldiersGuids;
+        std::list<ObjectGuid> m_soldiers;
 
-        std::list<ObjectGuid> m_lTowerBanners[TOWER_COUNT];
+        std::list<ObjectGuid> m_towerBanners[TOWER_COUNT];
 };
 
 #endif

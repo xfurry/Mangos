@@ -19,23 +19,23 @@
 #include "OutdoorPvP.h"
 
 /**
-   Function that a players to a players set
+   Function that adds a player to the players of the affected outdoor pvp zones
 
-   @param   player to be added to set
+   @param   player to add
  */
 void OutdoorPvP::HandlePlayerEnterZone(Player* player)
 {
-    m_sZonePlayers.insert(player);
+    m_zonePlayers.insert(player);
 }
 
 /**
-   Function that a players to a players set
+   Function that removes a player from the players of the affected outdoor pvp zones
 
-   @param   player to be removed
+   @param   player to remove
  */
 void OutdoorPvP::HandlePlayerLeaveZone(Player* player)
 {
-    if (m_sZonePlayers.erase(player))
+    if (m_zonePlayers.erase(player))
     {
         // remove the world state information from the player
         if (!player->GetSession()->PlayerLogout())
@@ -46,56 +46,56 @@ void OutdoorPvP::HandlePlayerLeaveZone(Player* player)
 }
 
 /**
-   Function that updates world state for all the players in an outdoor pvp area
+   Function that updates the world state for all the players of the affected outdoor pvp zones
 
-   @param   world state it to update
-   @param   value which should update the world state
+   @param   world state to update
+   @param   new world state value
  */
-void OutdoorPvP::SendUpdateWorldState(uint32 uiField, uint32 uiValue)
+void OutdoorPvP::SendUpdateWorldState(uint32 field, uint32 value)
 {
-    for (PlayerSet::iterator itr = m_sZonePlayers.begin(); itr != m_sZonePlayers.end(); ++itr)
-        (*itr)->SendUpdateWorldState(uiField, uiValue);
+    for (PlayerSet::iterator itr = m_zonePlayers.begin(); itr != m_zonePlayers.end(); ++itr)
+        (*itr)->SendUpdateWorldState(field, value);
 }
 
 /**
-   Function that handles the player kill in outdoor pvp
+   Function that handles player kills in outdoor pvp zones
 
-   @param   player which kills another player
-   @param   player or unit (pet) which is victim
+   @param   player who killed another player
+   @param   victim who was killed
  */
-void OutdoorPvP::HandlePlayerKill(Player* pKiller, Unit* pVictim)
+void OutdoorPvP::HandlePlayerKill(Player* killer, Unit* victim)
 {
-    if (Group* pGroup = pKiller->GetGroup())
+    if (Group* group = killer->GetGroup())
     {
-        for (GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
+        for (GroupReference* itr = group->GetFirstMember(); itr != NULL; itr = itr->next())
         {
-            Player* pGroupGuy = itr->getSource();
+            Player* groupMember = itr->getSource();
 
-            if (!pGroupGuy)
+            if (!groupMember)
                 continue;
 
             // skip if too far away
-            if (!pGroupGuy->IsAtGroupRewardDistance(pVictim))
+            if (!groupMember->IsAtGroupRewardDistance(victim))
                 continue;
 
             // creature kills must be notified, even if not inside objective / not outdoor pvp active
             // player kills only count if active and inside objective
-            if (pGroupGuy->CanUseOutdoorCapturePoint())
-                HandlePlayerKillInsideArea(pGroupGuy, pVictim);
+            if (groupMember->CanUseOutdoorCapturePoint())
+                HandlePlayerKillInsideArea(groupMember, victim);
         }
     }
     else
     {
         // creature kills must be notified, even if not inside objective / not outdoor pvp active
-        if (pKiller && pKiller->CanUseOutdoorCapturePoint())
-            HandlePlayerKillInsideArea(pKiller, pVictim);
+        if (killer && killer->CanUseOutdoorCapturePoint())
+            HandlePlayerKillInsideArea(killer, victim);
     }
 }
 
-// register this zone as an outdoor pvp script
-void OutdoorPvP::RegisterZone(uint32 uiZoneId)
+// register this zone as an outdoor pvp zone
+void OutdoorPvP::RegisterZone(uint32 zoneId)
 {
-    sOutdoorPvPMgr.AddZone(uiZoneId, this);
+    sOutdoorPvPMgr.AddZone(zoneId, this);
 }
 
 // set a capture point slider value for when the gameobject is being reloaded the next time
@@ -107,7 +107,7 @@ void OutdoorPvP::SetCapturePointSliderValue(uint32 entry, CapturePointSlider val
 // apply a team buff for the specific zone
 void OutdoorPvP::BuffTeam(Team team, uint32 spellId, bool remove)
 {
-    for (PlayerSet::iterator itr = m_sZonePlayers.begin(); itr != m_sZonePlayers.end(); ++itr)
+    for (PlayerSet::iterator itr = m_zonePlayers.begin(); itr != m_zonePlayers.end(); ++itr)
     {
         if ((*itr) && (*itr)->GetTeam() == team)
         {

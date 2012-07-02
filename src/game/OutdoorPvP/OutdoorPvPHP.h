@@ -119,8 +119,8 @@ struct HellfireTowerEvent
     Team    team;
     uint32  uiZoneText;
     uint32  uiWorldState;
-    uint32  uiTowerArtKit;
-    uint32  uiTowerAnim;
+    uint32  towerArtKit;
+    uint32  towerAnim;
 };
 
 static const HellfireTowerEvent aHellfireTowerEvents[MAX_HP_TOWERS][4] =
@@ -154,31 +154,31 @@ class OutdoorPvPHP : public OutdoorPvP
 
         bool InitOutdoorPvPArea();
 
-        void OnGameObjectCreate(GameObject* pGo);
-        void ProcessEvent(uint32 uiEventId, GameObject* pGo);
+        void OnGameObjectCreate(GameObject* go);
+        void ProcessEvent(uint32 eventId, GameObject* go);
 
-        void HandlePlayerEnterZone(Player* pPlayer);
-        void HandlePlayerLeaveZone(Player* pPlayer);
-        void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team);
-        void HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim);
+        void HandlePlayerEnterZone(Player* player);
+        void HandlePlayerLeaveZone(Player* player);
+        void HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team);
+        void HandlePlayerKillInsideArea(Player* player, Unit* victim);
 
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
-        void SendRemoveWorldStates(Player* pPlayer);
+        void SendRemoveWorldStates(Player* player);
 
     private:
         // world state update
         void UpdateWorldState();
 
         // process capture events
-        void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState, uint32 uiTowerArtKit, uint32 uiTowerAnim);
+        void ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 towerArtKit, uint32 towerAnim);
 
-        Team m_capturePointOwner[MAX_HP_TOWERS];
-        uint32 m_uiTowerWorldState[MAX_HP_TOWERS];
-        uint32 m_uiTowersAlliance;
-        uint32 m_uiTowersHorde;
+        Team m_towerOwner[MAX_HP_TOWERS];
+        uint32 m_towerWorldState[MAX_HP_TOWERS];
+        uint8 m_towersAlliance;
+        uint8 m_towersHorde;
 
-        ObjectGuid m_capturePointGuid[MAX_HP_TOWERS];
-        ObjectGuid m_bannersGuid[MAX_HP_TOWERS];
+        ObjectGuid m_capturePoints[MAX_HP_TOWERS];
+        ObjectGuid m_banners[MAX_HP_TOWERS];
 };
 
 #endif

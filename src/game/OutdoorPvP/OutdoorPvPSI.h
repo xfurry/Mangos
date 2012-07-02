@@ -80,21 +80,21 @@ class OutdoorPvPSI : public OutdoorPvP
 
         bool InitOutdoorPvPArea();
 
-        void HandlePlayerEnterZone(Player* pPlayer);
-        void HandlePlayerLeaveZone(Player* pPlayer);
+        void HandlePlayerEnterZone(Player* player);
+        void HandlePlayerLeaveZone(Player* player);
 
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
-        void SendRemoveWorldStates(Player* pPlayer);
+        void SendRemoveWorldStates(Player* player);
         void UpdateWorldState();
 
-        bool HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId);
-        bool HandleObjectUse(Player* pPlayer, GameObject* pGo);
-        bool HandleDropFlag(Player* pPlayer, uint32 uiSpellId);
+        bool HandleAreaTrigger(Player* player, uint32 triggerId);
+        bool HandleObjectUse(Player* player, GameObject* go);
+        bool HandleDropFlag(Player* player, uint32 spellId);
 
     private:
-        uint32 m_uiResourcesAlliance;
-        uint32 m_uiResourcesHorde;
-        uint32 m_zoneOwner;
+        uint8 m_resourcesAlliance;
+        uint8 m_resourcesHorde;
+        Team m_zoneOwner;
 };
 
 #endif

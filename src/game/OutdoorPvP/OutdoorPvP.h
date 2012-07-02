@@ -58,29 +58,26 @@ class OutdoorPvP : public ZoneScript
         virtual void FillInitialWorldStates(WorldPacket& /*data*/, uint32& /*count*/) {}
 
         // called when a player triggers an areatrigger
-        virtual bool HandleAreaTrigger(Player* /*pPlayer*/, uint32 /*uiTriggerId*/) { return false; }
+        virtual bool HandleAreaTrigger(Player* /*player*/, uint32 /*triggerId*/) { return false; }
 
         // called when a playerd drops a flag
-        virtual bool HandleDropFlag(Player* /*pPlayer*/, uint32 /*uiSpellId*/) { return false; }
+        virtual bool HandleDropFlag(Player* /*player*/, uint32 /*spellId*/) { return false; }
 
         // called when a playerd uses a gameobject related to world pvp events
-        virtual bool HandleObjectUse(Player* /*pPlayer*/, GameObject* /*pGo*/) { return false; }
+        virtual bool HandleObjectUse(Player* /*player*/, GameObject* /*go*/) { return false; }
 
         // handle npc/player kill
-        virtual void HandlePlayerKillInsideArea(Player* /*pKiller*/, Unit* /*pVictim*/) {}
-        virtual void HandlePlayerKill(Player* pKiller, Unit* pVictim);
+        virtual void HandlePlayerKillInsideArea(Player* /*killer*/, Unit* /*victim*/) {}
+        virtual void HandlePlayerKill(Player* killer, Unit* victim);
 
         // handle capture objective complete
-        virtual void HandleObjectiveComplete(uint32 /*uiEventId*/, std::list<Player*> /*players*/, Team /*team*/) {}
+        virtual void HandleObjectiveComplete(uint32 /*eventId*/, std::list<Player*> /*players*/, Team /*team*/) {}
 
         // init all the outdoor pvp area relates stuff
         virtual bool InitOutdoorPvPArea() { return false; }
 
         // send world state update to all players present
         void SendUpdateWorldState(uint32 field, uint32 value);
-
-        // awards rewards for player kill
-        virtual void AwardKillBonus(Player* /*pPlayer*/) {}
 
         // update - called by the OutdoorPvPMgr
         virtual void Update(uint32 diff) {}
@@ -101,13 +98,13 @@ class OutdoorPvP : public ZoneScript
         virtual void HandlePlayerLeaveZone(Player* player);
 
         // remove world states
-        virtual void SendRemoveWorldStates(Player* pPlayer) {}
+        virtual void SendRemoveWorldStates(Player* player) {}
 
         void RegisterZone(uint32 zoneId);
         void SetCapturePointSliderValue(uint32 entry, CapturePointSlider value);
 
         // store the players inside the area depending on the team
-        PlayerSet m_sZonePlayers;
+        PlayerSet m_zonePlayers;
 };
 
 #endif

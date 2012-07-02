@@ -20,8 +20,8 @@
 #include "OutdoorPvPSI.h"
 
 OutdoorPvPSI::OutdoorPvPSI() : OutdoorPvP(),
-    m_uiResourcesAlliance(0),
-    m_uiResourcesHorde(0),
+    m_resourcesAlliance(0),
+    m_resourcesHorde(0),
     m_zoneOwner(TEAM_NONE)
 {
 }
@@ -40,63 +40,63 @@ bool OutdoorPvPSI::InitOutdoorPvPArea()
 // Send initial world states
 void OutdoorPvPSI::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
-    FillInitialWorldState(data, count, WORLD_STATE_SI_GATHERED_A, m_uiResourcesAlliance);
-    FillInitialWorldState(data, count, WORLD_STATE_SI_GATHERED_H, m_uiResourcesHorde);
+    FillInitialWorldState(data, count, WORLD_STATE_SI_GATHERED_A, m_resourcesAlliance);
+    FillInitialWorldState(data, count, WORLD_STATE_SI_GATHERED_H, m_resourcesHorde);
     FillInitialWorldState(data, count, WORLD_STATE_SI_SILITHYST_MAX, MAX_SILITHYST);
 }
 
 // Remove world states
-void OutdoorPvPSI::SendRemoveWorldStates(Player* pPlayer)
+void OutdoorPvPSI::SendRemoveWorldStates(Player* player)
 {
-    pPlayer->SendUpdateWorldState(WORLD_STATE_SI_GATHERED_A, WORLD_STATE_REMOVE);
-    pPlayer->SendUpdateWorldState(WORLD_STATE_SI_GATHERED_H, WORLD_STATE_REMOVE);
-    pPlayer->SendUpdateWorldState(WORLD_STATE_SI_SILITHYST_MAX, WORLD_STATE_REMOVE);
+    player->SendUpdateWorldState(WORLD_STATE_SI_GATHERED_A, WORLD_STATE_REMOVE);
+    player->SendUpdateWorldState(WORLD_STATE_SI_GATHERED_H, WORLD_STATE_REMOVE);
+    player->SendUpdateWorldState(WORLD_STATE_SI_SILITHYST_MAX, WORLD_STATE_REMOVE);
 }
 
 // Update current world states
 void OutdoorPvPSI::UpdateWorldState()
 {
-    SendUpdateWorldState(WORLD_STATE_SI_GATHERED_A, m_uiResourcesAlliance);
-    SendUpdateWorldState(WORLD_STATE_SI_GATHERED_H, m_uiResourcesHorde);
+    SendUpdateWorldState(WORLD_STATE_SI_GATHERED_A, m_resourcesAlliance);
+    SendUpdateWorldState(WORLD_STATE_SI_GATHERED_H, m_resourcesHorde);
 }
 
 // Handle buffs when player enters the zone
-void OutdoorPvPSI::HandlePlayerEnterZone(Player* pPlayer)
+void OutdoorPvPSI::HandlePlayerEnterZone(Player* player)
 {
     // remove the buff from the player first; Sometimes on relog players still have the aura
-    pPlayer->RemoveAurasDueToSpell(SPELL_CENARION_FAVOR);
+    player->RemoveAurasDueToSpell(SPELL_CENARION_FAVOR);
 
     // buff the player if same team is controlling the zone
-    if (pPlayer->GetTeam() == m_zoneOwner)
-        pPlayer->CastSpell(pPlayer, SPELL_CENARION_FAVOR, true);
+    if (player->GetTeam() == m_zoneOwner)
+        player->CastSpell(player, SPELL_CENARION_FAVOR, true);
 
-    OutdoorPvP::HandlePlayerEnterZone(pPlayer);
+    OutdoorPvP::HandlePlayerEnterZone(player);
 }
 
 // Remove buffs when player leaves zone
-void OutdoorPvPSI::HandlePlayerLeaveZone(Player* pPlayer)
+void OutdoorPvPSI::HandlePlayerLeaveZone(Player* player)
 {
     // remove the buff from the player
-    pPlayer->RemoveAurasDueToSpell(SPELL_CENARION_FAVOR);
+    player->RemoveAurasDueToSpell(SPELL_CENARION_FAVOR);
 
-    OutdoorPvP::HandlePlayerLeaveZone(pPlayer);
+    OutdoorPvP::HandlePlayerLeaveZone(player);
 }
 
 // Handle case when player returns a silithyst
-bool OutdoorPvPSI::HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId)
+bool OutdoorPvPSI::HandleAreaTrigger(Player* player, uint32 triggerId)
 {
-    if (pPlayer->isGameMaster() || pPlayer->isDead())
+    if (player->isGameMaster() || player->isDead())
         return false;
 
-    if (uiTriggerId == AREATRIGGER_SILITHUS_ALLIANCE)
+    if (triggerId == AREATRIGGER_SILITHUS_ALLIANCE)
     {
-        if (pPlayer->GetTeam() == ALLIANCE && pPlayer->HasAura(SPELL_SILITHYST))
+        if (player->GetTeam() == ALLIANCE && player->HasAura(SPELL_SILITHYST))
         {
             // remove aura
-            pPlayer->RemoveAurasDueToSpell(SPELL_SILITHYST);
+            player->RemoveAurasDueToSpell(SPELL_SILITHYST);
 
-            ++m_uiResourcesAlliance;
-            if (m_uiResourcesAlliance == MAX_SILITHYST)
+            ++m_resourcesAlliance;
+            if (m_resourcesAlliance == MAX_SILITHYST)
             {
                 // apply buff to owner team
                 BuffTeam(ALLIANCE, SPELL_CENARION_FAVOR);
@@ -105,34 +105,34 @@ bool OutdoorPvPSI::HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId)
                 sWorld.SendZoneText(ZONE_ID_SILITHUS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_SI_CAPTURE_A));
 
                 m_zoneOwner = ALLIANCE;
-                m_uiResourcesAlliance = 0;
-                m_uiResourcesHorde = 0;
+                m_resourcesAlliance = 0;
+                m_resourcesHorde = 0;
             }
 
             // update the world states
             UpdateWorldState();
 
             // reward the player
-            pPlayer->CastSpell(pPlayer, SPELL_TRACES_OF_SILITHYST, true);
-            pPlayer->RewardHonor(NULL, 1, HONOR_REWARD_SILITHYST);
-            pPlayer->GetReputationMgr().ModifyReputation(sFactionStore.LookupEntry(FACTION_CENARION_CIRCLE), REPUTATION_REWARD_SILITHYST);
+            player->CastSpell(player, SPELL_TRACES_OF_SILITHYST, true);
+            player->RewardHonor(NULL, 1, HONOR_REWARD_SILITHYST);
+            player->GetReputationMgr().ModifyReputation(sFactionStore.LookupEntry(FACTION_CENARION_CIRCLE), REPUTATION_REWARD_SILITHYST);
 
             // complete quest
-            if (pPlayer->GetQuestStatus(QUEST_SCOURING_DESERT_ALLIANCE) == QUEST_STATUS_INCOMPLETE)
-                pPlayer->KilledMonsterCredit(NPC_SILITHUS_DUST_QUEST_ALLIANCE);
+            if (player->GetQuestStatus(QUEST_SCOURING_DESERT_ALLIANCE) == QUEST_STATUS_INCOMPLETE)
+                player->KilledMonsterCredit(NPC_SILITHUS_DUST_QUEST_ALLIANCE);
 
             return true;
         }
     }
-    else if (uiTriggerId == AREATRIGGER_SILITHUS_HORDE)
+    else if (triggerId == AREATRIGGER_SILITHUS_HORDE)
     {
-        if (pPlayer->GetTeam() == HORDE && pPlayer->HasAura(SPELL_SILITHYST))
+        if (player->GetTeam() == HORDE && player->HasAura(SPELL_SILITHYST))
         {
             // remove aura
-            pPlayer->RemoveAurasDueToSpell(SPELL_SILITHYST);
+            player->RemoveAurasDueToSpell(SPELL_SILITHYST);
 
-            ++ m_uiResourcesHorde;
-            if (m_uiResourcesHorde == MAX_SILITHYST)
+            ++ m_resourcesHorde;
+            if (m_resourcesHorde == MAX_SILITHYST)
             {
                 // apply buff to owner team
                 BuffTeam(HORDE, SPELL_CENARION_FAVOR);
@@ -140,21 +140,21 @@ bool OutdoorPvPSI::HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId)
                 //send zone text and reset stats
                 sWorld.SendZoneText(ZONE_ID_SILITHUS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_SI_CAPTURE_H));
                 m_zoneOwner = HORDE;
-                m_uiResourcesAlliance = 0;
-                m_uiResourcesHorde = 0;
+                m_resourcesAlliance = 0;
+                m_resourcesHorde = 0;
             }
 
             // update world states
             UpdateWorldState();
 
             // reward the player
-            pPlayer->CastSpell(pPlayer, SPELL_TRACES_OF_SILITHYST, true);
-            pPlayer->RewardHonor(NULL, 1, HONOR_REWARD_SILITHYST);
-            pPlayer->GetReputationMgr().ModifyReputation(sFactionStore.LookupEntry(FACTION_CENARION_CIRCLE), REPUTATION_REWARD_SILITHYST);
+            player->CastSpell(player, SPELL_TRACES_OF_SILITHYST, true);
+            player->RewardHonor(NULL, 1, HONOR_REWARD_SILITHYST);
+            player->GetReputationMgr().ModifyReputation(sFactionStore.LookupEntry(FACTION_CENARION_CIRCLE), REPUTATION_REWARD_SILITHYST);
 
             // complete quest
-            if (pPlayer->GetQuestStatus(QUEST_SCOURING_DESERT_HORDE) == QUEST_STATUS_INCOMPLETE)
-                pPlayer->KilledMonsterCredit(NPC_SILITHUS_DUST_QUEST_HORDE);
+            if (player->GetQuestStatus(QUEST_SCOURING_DESERT_HORDE) == QUEST_STATUS_INCOMPLETE)
+                player->KilledMonsterCredit(NPC_SILITHUS_DUST_QUEST_HORDE);
 
             return true;
         }
@@ -164,32 +164,32 @@ bool OutdoorPvPSI::HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId)
 }
 
 // Handle case when player drops flag
-bool OutdoorPvPSI::HandleDropFlag(Player* pPlayer, uint32 uiSpellId)
+bool OutdoorPvPSI::HandleDropFlag(Player* player, uint32 spellId)
 {
-    if (uiSpellId != SPELL_SILITHYST)
+    if (spellId != SPELL_SILITHYST)
         return false;
 
     // don't drop flag at area trigger
     // we are checking distance from the AT hardcoded coords because it's much faster than checking the area trigger store
-    if ((pPlayer->GetTeam() == ALLIANCE && pPlayer->IsWithinDist3d(aSilithusLocs[0].m_fX, aSilithusLocs[0].m_fY, aSilithusLocs[0].m_fZ, 5.0f)) ||
-        (pPlayer->GetTeam() == HORDE && pPlayer->IsWithinDist3d(aSilithusLocs[1].m_fX, aSilithusLocs[1].m_fY, aSilithusLocs[1].m_fZ, 5.0f)))
+    if ((player->GetTeam() == ALLIANCE && player->IsWithinDist3d(aSilithusLocs[0].m_fX, aSilithusLocs[0].m_fY, aSilithusLocs[0].m_fZ, 5.0f)) ||
+        (player->GetTeam() == HORDE && player->IsWithinDist3d(aSilithusLocs[1].m_fX, aSilithusLocs[1].m_fY, aSilithusLocs[1].m_fZ, 5.0f)))
         return false;
 
     // drop the flag in other case
-    pPlayer->CastSpell(pPlayer, SPELL_SILITHYST_FLAG_DROP, true);
+    player->CastSpell(player, SPELL_SILITHYST_FLAG_DROP, true);
     return true;
 }
 
 // Handle the case when player picks a silithus mount or geyser
 // This needs to be done because the spells used by these objects are missing
-bool OutdoorPvPSI::HandleObjectUse(Player* pPlayer, GameObject* pGo)
+bool OutdoorPvPSI::HandleObjectUse(Player* player, GameObject* go)
 {
-    if (pGo->GetEntry() == GO_SILITHYST_MOUND || pGo->GetEntry() == GO_SILITHYST_GEYSER)
+    if (go->GetEntry() == GO_SILITHYST_MOUND || go->GetEntry() == GO_SILITHYST_GEYSER)
     {
         // Also mark player with PvP on
-        pPlayer->CastSpell(pPlayer, SPELL_SILITHYST, true);
-        pPlayer->UpdatePvP(true, true);
-        pPlayer->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP);
+        player->CastSpell(player, SPELL_SILITHYST, true);
+        player->UpdatePvP(true, true);
+        player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP);
         return true;
     }
 

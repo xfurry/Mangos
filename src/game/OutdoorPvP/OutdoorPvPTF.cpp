@@ -21,21 +21,21 @@
 
 
 OutdoorPvPTF::OutdoorPvPTF() : OutdoorPvP(),
-    m_uiZoneWorldState(WORLD_STATE_TF_TOWERS_CONTROLLED),
+    m_zoneWorldState(WORLD_STATE_TF_TOWERS_CONTROLLED),
     m_zoneOwner(TEAM_NONE),
-    m_uiZoneUpdateTimer(TIMER_TF_UPDATE_TIME),
-    m_uiZoneLockTimer(0),
-    m_uiTowersAlliance(0),
-    m_uiTowersHorde(0)
+    m_zoneUpdateTimer(TIMER_TF_UPDATE_TIME),
+    m_zoneLockTimer(0),
+    m_towersAlliance(0),
+    m_towersHorde(0)
 {
-    m_uiTowerWorldState[0] = WORLD_STATE_TOWER_1_NEUTRAL;
-    m_uiTowerWorldState[1] = WORLD_STATE_TOWER_2_NEUTRAL;
-    m_uiTowerWorldState[2] = WORLD_STATE_TOWER_3_NEUTRAL;
-    m_uiTowerWorldState[3] = WORLD_STATE_TOWER_4_NEUTRAL;
-    m_uiTowerWorldState[4] = WORLD_STATE_TOWER_5_NEUTRAL;
+    m_towerWorldState[0] = WORLD_STATE_TOWER_1_NEUTRAL;
+    m_towerWorldState[1] = WORLD_STATE_TOWER_2_NEUTRAL;
+    m_towerWorldState[2] = WORLD_STATE_TOWER_3_NEUTRAL;
+    m_towerWorldState[3] = WORLD_STATE_TOWER_4_NEUTRAL;
+    m_towerWorldState[4] = WORLD_STATE_TOWER_5_NEUTRAL;
 
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
-        m_capturePointOwner[i] = TEAM_NONE;
+        m_towerOwner[i] = TEAM_NONE;
 }
 
 bool OutdoorPvPTF::InitOutdoorPvPArea()
@@ -51,89 +51,89 @@ bool OutdoorPvPTF::InitOutdoorPvPArea()
 
 void OutdoorPvPTF::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
-    FillInitialWorldState(data, count, m_uiZoneWorldState, WORLD_STATE_ADD);
-    if (m_uiZoneWorldState == WORLD_STATE_TF_TOWERS_CONTROLLED)
+    FillInitialWorldState(data, count, m_zoneWorldState, WORLD_STATE_ADD);
+    if (m_zoneWorldState == WORLD_STATE_TF_TOWERS_CONTROLLED)
     {
-        FillInitialWorldState(data, count, WORLD_STATE_TF_TOWER_COUNT_H, m_uiTowersHorde);
-        FillInitialWorldState(data, count, WORLD_STATE_TF_TOWER_COUNT_A, m_uiTowersAlliance);
+        FillInitialWorldState(data, count, WORLD_STATE_TF_TOWER_COUNT_H, m_towersHorde);
+        FillInitialWorldState(data, count, WORLD_STATE_TF_TOWER_COUNT_A, m_towersAlliance);
     }
     else
         UpdateTimerWorldState();
 
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
-        FillInitialWorldState(data, count, m_uiTowerWorldState[i], WORLD_STATE_ADD);
+        FillInitialWorldState(data, count, m_towerWorldState[i], WORLD_STATE_ADD);
 }
 
-void OutdoorPvPTF::SendRemoveWorldStates(Player* pPlayer)
+void OutdoorPvPTF::SendRemoveWorldStates(Player* player)
 {
-    pPlayer->SendUpdateWorldState(m_uiZoneWorldState, WORLD_STATE_REMOVE);
+    player->SendUpdateWorldState(m_zoneWorldState, WORLD_STATE_REMOVE);
 
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
-        pPlayer->SendUpdateWorldState(m_uiTowerWorldState[i], WORLD_STATE_REMOVE);
+        player->SendUpdateWorldState(m_towerWorldState[i], WORLD_STATE_REMOVE);
 }
 
-void OutdoorPvPTF::UpdateWorldState(uint8 uiValue)
+void OutdoorPvPTF::UpdateWorldState(uint32 value)
 {
     // update only tower count; tower states are sent in the process event
-    SendUpdateWorldState(m_uiZoneWorldState, uiValue);
+    SendUpdateWorldState(m_zoneWorldState, value);
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
-        SendUpdateWorldState(m_uiTowerWorldState[i], uiValue);
+        SendUpdateWorldState(m_towerWorldState[i], value);
 }
 
-void OutdoorPvPTF::HandlePlayerEnterZone(Player* pPlayer)
+void OutdoorPvPTF::HandlePlayerEnterZone(Player* player)
 {
-    OutdoorPvP::HandlePlayerEnterZone(pPlayer);
+    OutdoorPvP::HandlePlayerEnterZone(player);
 
     // remove the buff from the player first because there are some issues at relog
-    pPlayer->RemoveAurasDueToSpell(SPELL_AUCHINDOUN_BLESSING);
+    player->RemoveAurasDueToSpell(SPELL_AUCHINDOUN_BLESSING);
 
     // Handle the buffs
-    if (m_zoneOwner == pPlayer->GetTeam())
-        pPlayer->CastSpell(pPlayer, SPELL_AUCHINDOUN_BLESSING, true);
+    if (m_zoneOwner == player->GetTeam())
+        player->CastSpell(player, SPELL_AUCHINDOUN_BLESSING, true);
 }
 
-void OutdoorPvPTF::HandlePlayerLeaveZone(Player* pPlayer)
+void OutdoorPvPTF::HandlePlayerLeaveZone(Player* player)
 {
     // remove the buff from the player
-    pPlayer->RemoveAurasDueToSpell(SPELL_AUCHINDOUN_BLESSING);
+    player->RemoveAurasDueToSpell(SPELL_AUCHINDOUN_BLESSING);
 
-    OutdoorPvP::HandlePlayerLeaveZone(pPlayer);
+    OutdoorPvP::HandlePlayerLeaveZone(player);
 }
 
-void OutdoorPvPTF::OnGameObjectCreate(GameObject* pGo)
+void OutdoorPvPTF::OnGameObjectCreate(GameObject* go)
 {
-    switch (pGo->GetEntry())
+    switch (go->GetEntry())
     {
         case GO_TEROKKAR_BANNER_1:
-            m_TowerBannerGUID[0] = pGo->GetObjectGuid();
-            pGo->SetGoArtKit(GetBannerArtKit(m_capturePointOwner[0], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            m_towerBanners[0] = go->GetObjectGuid();
+            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[0], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
         case GO_TEROKKAR_BANNER_2:
-            m_TowerBannerGUID[1] = pGo->GetObjectGuid();
-            pGo->SetGoArtKit(GetBannerArtKit(m_capturePointOwner[1], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            m_towerBanners[1] = go->GetObjectGuid();
+            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[1], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
         case GO_TEROKKAR_BANNER_3:
-            m_TowerBannerGUID[2] = pGo->GetObjectGuid();
-            pGo->SetGoArtKit(GetBannerArtKit(m_capturePointOwner[2], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            m_towerBanners[2] = go->GetObjectGuid();
+            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[2], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
         case GO_TEROKKAR_BANNER_4:
-            m_TowerBannerGUID[3] = pGo->GetObjectGuid();
-            pGo->SetGoArtKit(GetBannerArtKit(m_capturePointOwner[3], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            m_towerBanners[3] = go->GetObjectGuid();
+            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[3], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
         case GO_TEROKKAR_BANNER_5:
-            m_TowerBannerGUID[4] = pGo->GetObjectGuid();
-            pGo->SetGoArtKit(GetBannerArtKit(m_capturePointOwner[4], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            m_towerBanners[4] = go->GetObjectGuid();
+            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[4], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
     }
 }
 
-void OutdoorPvPTF::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team)
+void OutdoorPvPTF::HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
         for (uint8 j = 0; j < 4; ++j)
         {
-            if (aTerokkarTowerEvents[i][j].uiEventEntry == uiEventId)
+            if (aTerokkarTowerEvents[i][j].uiEventEntry == eventId)
             {
                 for (std::list<Player*>::iterator itr = players.begin(); itr != players.end(); ++itr)
                 {
@@ -147,19 +147,19 @@ void OutdoorPvPTF::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> 
 }
 
 // process the capture events
-void OutdoorPvPTF::ProcessEvent(uint32 uiEventId, GameObject* pGo)
+void OutdoorPvPTF::ProcessEvent(uint32 eventId, GameObject* go)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
-        if (aTerokkarTowers[i] == pGo->GetEntry())
+        if (aTerokkarTowers[i] == go->GetEntry())
         {
             for (uint8 j = 0; j < 4; ++j)
             {
-                if (aTerokkarTowerEvents[i][j].uiEventEntry == uiEventId)
+                if (aTerokkarTowerEvents[i][j].uiEventEntry == eventId)
                 {
-                    if (aTerokkarTowerEvents[i][j].team != m_capturePointOwner[i])
+                    if (aTerokkarTowerEvents[i][j].team != m_towerOwner[i])
                     {
-                        ProcessCaptureEvent(pGo, i, aTerokkarTowerEvents[i][j].team, aTerokkarTowerEvents[i][j].uiWorldState);
+                        ProcessCaptureEvent(go, i, aTerokkarTowerEvents[i][j].team, aTerokkarTowerEvents[i][j].uiWorldState);
                         sWorld.SendZoneText(ZONE_ID_TEROKKAR, sObjectMgr.GetMangosStringForDBCLocale(aTerokkarTowerEvents[i][j].uiZoneText));
                     }
                     return;
@@ -170,67 +170,67 @@ void OutdoorPvPTF::ProcessEvent(uint32 uiEventId, GameObject* pGo)
     }
 }
 
-void OutdoorPvPTF::ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState)
+void OutdoorPvPTF::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState)
 {
     if (team != TEAM_NONE)
     {
         if (team == ALLIANCE)
         {
-            SetBannerVisual(pGo, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
-            ++m_uiTowersAlliance;
+            SetBannerVisual(go, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
+            ++m_towersAlliance;
         }
         else
         {
-            SetBannerVisual(pGo, CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
-            ++m_uiTowersHorde;
+            SetBannerVisual(go, CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
+            ++m_towersHorde;
         }
 
         // if all towers are captured then process event
-        if (m_uiTowersAlliance == MAX_TF_TOWERS || m_uiTowersHorde == MAX_TF_TOWERS)
+        if (m_towersAlliance == MAX_TF_TOWERS || m_towersHorde == MAX_TF_TOWERS)
         {
-            SendUpdateWorldState(m_uiZoneWorldState, WORLD_STATE_REMOVE);
-            m_uiZoneWorldState = team == ALLIANCE ? WORLD_STATE_TF_LOCKED_ALLIANCE : WORLD_STATE_TF_LOCKED_HORDE;
-            SendUpdateWorldState(m_uiZoneWorldState, WORLD_STATE_ADD);
+            SendUpdateWorldState(m_zoneWorldState, WORLD_STATE_REMOVE);
+            m_zoneWorldState = team == ALLIANCE ? WORLD_STATE_TF_LOCKED_ALLIANCE : WORLD_STATE_TF_LOCKED_HORDE;
+            SendUpdateWorldState(m_zoneWorldState, WORLD_STATE_ADD);
 
-            m_uiZoneLockTimer = TIMER_TF_LOCK_TIME;
+            m_zoneLockTimer = TIMER_TF_LOCK_TIME;
             UpdateTimerWorldState();
 
             m_zoneOwner = team;
             BuffTeam(team, SPELL_AUCHINDOUN_BLESSING);
 
             // lock the towers
-            LockTowers(pGo);
+            LockTowers(go);
         }
     }
     else
     {
-        SetBannerVisual(pGo, CAPTURE_ARTKIT_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
+        SetBannerVisual(go, CAPTURE_ARTKIT_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
 
-        if (m_capturePointOwner[uiTowerId] == ALLIANCE)
-            --m_uiTowersAlliance;
+        if (m_towerOwner[towerId] == ALLIANCE)
+            --m_towersAlliance;
         else
-            --m_uiTowersHorde;
+            --m_towersHorde;
     }
 
     // update tower state
-    SendUpdateWorldState(m_uiTowerWorldState[uiTowerId], WORLD_STATE_REMOVE);
-    m_uiTowerWorldState[uiTowerId] = uiNewWorldState;
-    SendUpdateWorldState(m_uiTowerWorldState[uiTowerId], WORLD_STATE_ADD);
+    SendUpdateWorldState(m_towerWorldState[towerId], WORLD_STATE_REMOVE);
+    m_towerWorldState[towerId] = newWorldState;
+    SendUpdateWorldState(m_towerWorldState[towerId], WORLD_STATE_ADD);
 
     // update tower count
-    SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_A, m_uiTowersAlliance);
-    SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_H, m_uiTowersHorde);
+    SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_A, m_towersAlliance);
+    SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_H, m_towersHorde);
 
     // update capture point owner
-    m_capturePointOwner[uiTowerId] = team;
+    m_towerOwner[towerId] = team;
 
 }
 
 void OutdoorPvPTF::Update(uint32 diff)
 {
-    if (m_uiZoneLockTimer)
+    if (m_zoneLockTimer)
     {
-        if (m_uiZoneLockTimer < diff)
+        if (m_zoneLockTimer < diff)
         {
             // remove buffs
             BuffTeam(m_zoneOwner, SPELL_AUCHINDOUN_BLESSING, true);
@@ -238,21 +238,21 @@ void OutdoorPvPTF::Update(uint32 diff)
             // reset world states and towers
             UpdateWorldState(WORLD_STATE_REMOVE);
             m_zoneOwner = TEAM_NONE;
-            m_uiZoneWorldState = WORLD_STATE_TF_TOWERS_CONTROLLED;
-            m_uiTowersAlliance = 0;
-            m_uiTowersHorde = 0;
-            m_uiTowerWorldState[0] = WORLD_STATE_TOWER_1_NEUTRAL;
-            m_uiTowerWorldState[1] = WORLD_STATE_TOWER_2_NEUTRAL;
-            m_uiTowerWorldState[2] = WORLD_STATE_TOWER_3_NEUTRAL;
-            m_uiTowerWorldState[3] = WORLD_STATE_TOWER_4_NEUTRAL;
-            m_uiTowerWorldState[4] = WORLD_STATE_TOWER_5_NEUTRAL;
+            m_zoneWorldState = WORLD_STATE_TF_TOWERS_CONTROLLED;
+            m_towersAlliance = 0;
+            m_towersHorde = 0;
+            m_towerWorldState[0] = WORLD_STATE_TOWER_1_NEUTRAL;
+            m_towerWorldState[1] = WORLD_STATE_TOWER_2_NEUTRAL;
+            m_towerWorldState[2] = WORLD_STATE_TOWER_3_NEUTRAL;
+            m_towerWorldState[3] = WORLD_STATE_TOWER_4_NEUTRAL;
+            m_towerWorldState[4] = WORLD_STATE_TOWER_5_NEUTRAL;
             UpdateWorldState(WORLD_STATE_ADD);
 
             // update tower count
-            SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_A, m_uiTowersAlliance);
-            SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_H, m_uiTowersHorde);
+            SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_A, m_towersAlliance);
+            SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_H, m_towersHorde);
 
-            for (PlayerSet::iterator itr = m_sZonePlayers.begin(); itr != m_sZonePlayers.end(); ++itr)
+            for (PlayerSet::iterator itr = m_zonePlayers.begin(); itr != m_zonePlayers.end(); ++itr)
             {
                 if ((*itr) && (*itr)->isAlive())
                 {
@@ -261,21 +261,21 @@ void OutdoorPvPTF::Update(uint32 diff)
                 }
             }
 
-            m_uiZoneLockTimer = 0;
+            m_zoneLockTimer = 0;
         }
         else
         {
-            if (m_uiZoneUpdateTimer < diff)
+            if (m_zoneUpdateTimer < diff)
             {
                 // update timer
                 UpdateTimerWorldState();
 
-                m_uiZoneUpdateTimer = TIMER_TF_UPDATE_TIME;
+                m_zoneUpdateTimer = TIMER_TF_UPDATE_TIME;
             }
             else
-                m_uiZoneUpdateTimer -= diff;
+                m_zoneUpdateTimer -= diff;
 
-            m_uiZoneLockTimer -= diff;
+            m_zoneLockTimer -= diff;
         }
     }
 }
@@ -283,7 +283,7 @@ void OutdoorPvPTF::Update(uint32 diff)
 void OutdoorPvPTF::UpdateTimerWorldState()
 {
     // Calculate time
-    uint32 minutesLeft = m_uiZoneLockTimer / 60000;
+    uint32 minutesLeft = m_zoneLockTimer / 60000;
     uint32 hoursLeft = minutesLeft / 60;
     minutesLeft -= hoursLeft * 60;
     uint32 firstDigit = minutesLeft / 10;
@@ -297,7 +297,7 @@ void OutdoorPvPTF::LockTowers(const WorldObject* objRef)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
-        if (GameObject* go = objRef->GetMap()->GetGameObject(m_TowerBannerGUID[i]))
+        if (GameObject* go = objRef->GetMap()->GetGameObject(m_towerBanners[i]))
             go->SetLootState(GO_JUST_DEACTIVATED);
 
         SetCapturePointSliderValue(aTerokkarTowers[i], m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
@@ -308,7 +308,7 @@ void OutdoorPvPTF::ResetTowers(const WorldObject* objRef)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
-        if (GameObject* go = objRef->GetMap()->GetGameObject(m_TowerBannerGUID[i]))
+        if (GameObject* go = objRef->GetMap()->GetGameObject(m_towerBanners[i]))
         {
             go->SetCapturePointSlider(CAPTURE_SLIDER_NEUTRAL);
             SetBannerVisual(go, CAPTURE_ARTKIT_NEUTRAL, CAPTURE_ANIM_NEUTRAL);

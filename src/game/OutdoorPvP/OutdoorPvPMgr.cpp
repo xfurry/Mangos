@@ -30,12 +30,12 @@ INSTANTIATE_SINGLETON_1(OutdoorPvPMgr);
 
 OutdoorPvPMgr::OutdoorPvPMgr()
 {
-    m_UpdateTimer.SetInterval(sWorld.getConfig(CONFIG_UINT32_INTERVAL_MAPUPDATE));
+    m_updateTimer.SetInterval(sWorld.getConfig(CONFIG_UINT32_INTERVAL_MAPUPDATE));
 }
 
 OutdoorPvPMgr::~OutdoorPvPMgr()
 {
-    for (OutdoorPvPSet::iterator itr = m_OutdoorPvPSet.begin(); itr != m_OutdoorPvPSet.end(); ++itr)
+    for (OutdoorPvPSet::iterator itr = m_outdoorPvPSet.begin(); itr != m_outdoorPvPSet.end(); ++itr)
         delete *itr;
 }
 
@@ -61,7 +61,7 @@ void OutdoorPvPMgr::InitOutdoorPvP()
 
         if (outdoorPvP->InitOutdoorPvPArea())
         {
-            m_OutdoorPvPSet.push_back(outdoorPvP);
+            m_outdoorPvPSet.push_back(outdoorPvP);
             ++count;
         }
         else
@@ -81,9 +81,9 @@ void OutdoorPvPMgr::InitOutdoorPvP()
    @param   zone id used for the current outdoor pvp script
    @param   outdoor pvp script object
  */
-void OutdoorPvPMgr::AddZone(uint32 uiZoneId, OutdoorPvP* pScriptHandler)
+void OutdoorPvPMgr::AddZone(uint32 zoneId, OutdoorPvP* scriptHandler)
 {
-    m_OutdoorPvPMap[uiZoneId] = pScriptHandler;
+    m_outdoorPvPMap[zoneId] = scriptHandler;
 }
 
 /**
@@ -92,11 +92,11 @@ void OutdoorPvPMgr::AddZone(uint32 uiZoneId, OutdoorPvP* pScriptHandler)
    @param   player to be handled in the event
    @param   zone id used for the current world pvp script
  */
-void OutdoorPvPMgr::HandlePlayerEnterZone(Player* pPlayer, uint32 uiZoneId)
+void OutdoorPvPMgr::HandlePlayerEnterZone(Player* player, uint32 zoneId)
 {
-    OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(uiZoneId);
-    if (itr != m_OutdoorPvPMap.end())
-        itr->second->HandlePlayerEnterZone(pPlayer);
+    OutdoorPvPMap::iterator itr = m_outdoorPvPMap.find(zoneId);
+    if (itr != m_outdoorPvPMap.end())
+        itr->second->HandlePlayerEnterZone(player);
 }
 
 /**
@@ -105,12 +105,12 @@ void OutdoorPvPMgr::HandlePlayerEnterZone(Player* pPlayer, uint32 uiZoneId)
    @param   player to be handled in the event
    @param   zone id used for the current outdoor pvp script
  */
-void OutdoorPvPMgr::HandlePlayerLeaveZone(Player* pPlayer, uint32 uiZoneId)
+void OutdoorPvPMgr::HandlePlayerLeaveZone(Player* player, uint32 zoneId)
 {
     // teleport: remove once in removefromworld, once in updatezone
-    OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(uiZoneId);
-    if (itr != m_OutdoorPvPMap.end())
-        itr->second->HandlePlayerLeaveZone(pPlayer);
+    OutdoorPvPMap::iterator itr = m_outdoorPvPMap.find(zoneId);
+    if (itr != m_outdoorPvPMap.end())
+        itr->second->HandlePlayerLeaveZone(player);
 }
 
 /**
@@ -119,11 +119,11 @@ void OutdoorPvPMgr::HandlePlayerLeaveZone(Player* pPlayer, uint32 uiZoneId)
    @param   player which executes the event
    @param   spell id which acts as the flag
  */
-/*void OutdoorPvPMgr::HandleDropFlag(Player* pPlayer, uint32 uiSpellId)
+/*void OutdoorPvPMgr::HandleDropFlag(Player* player, uint32 spellId)
 {
-    for (OutdoorPvPSet::iterator itr = m_OutdoorPvPSet.begin(); itr != m_OutdoorPvPSet.end(); ++itr)
+    for (OutdoorPvPSet::iterator itr = m_outdoorPvPSet.begin(); itr != m_outdoorPvPSet.end(); ++itr)
     {
-        if ((*itr)->HandleDropFlag(pPlayer, uiSpellId))
+        if ((*itr)->HandleDropFlag(player, spellId))
             return;
     }
 }*/
@@ -134,10 +134,10 @@ void OutdoorPvPMgr::HandlePlayerLeaveZone(Player* pPlayer, uint32 uiZoneId)
    @param   player set to which to send the credit
    @param   capture evetn id
  */
-/*void OutdoorPvPMgr::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team)
+/*void OutdoorPvPMgr::HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team)
 {
-    for (OutdoorPvPSet::iterator itr = m_OutdoorPvPSet.begin(); itr != m_OutdoorPvPSet.end(); ++itr)
-        (*itr)->HandleObjectiveComplete(uiEventId, players, team);
+    for (OutdoorPvPSet::iterator itr = m_outdoorPvPSet.begin(); itr != m_outdoorPvPSet.end(); ++itr)
+        (*itr)->HandleObjectiveComplete(eventId, players, team);
 }*/
 
 /**
@@ -146,10 +146,10 @@ void OutdoorPvPMgr::HandlePlayerLeaveZone(Player* pPlayer, uint32 uiZoneId)
    @param   player
    @param   victim
  */
-/*void OutdoorPvPMgr::HandlePlayerKill(Player* pPlayer, Unit* pVictim)
+/*void OutdoorPvPMgr::HandlePlayerKill(Player* player, Unit* victim)
 {
-    for (OutdoorPvPSet::iterator itr = m_OutdoorPvPSet.begin(); itr != m_OutdoorPvPSet.end(); ++itr)
-        (*itr)->HandlePlayerKill(pPlayer, pVictim);
+    for (OutdoorPvPSet::iterator itr = m_outdoorPvPSet.begin(); itr != m_outdoorPvPSet.end(); ++itr)
+        (*itr)->HandlePlayerKill(player, victim);
 }*/
 
 /**
@@ -158,11 +158,11 @@ void OutdoorPvPMgr::HandlePlayerLeaveZone(Player* pPlayer, uint32 uiZoneId)
    @param   player which executes the event
    @param   gameobject used
  */
-/*bool OutdoorPvPMgr::HandleObjectUse(Player* pPlayer, GameObject* pGo)
+/*bool OutdoorPvPMgr::HandleObjectUse(Player* player, GameObject* go)
 {
-    for (OutdoorPvPSet::iterator itr = m_OutdoorPvPSet.begin(); itr != m_OutdoorPvPSet.end(); ++itr)
+    for (OutdoorPvPSet::iterator itr = m_outdoorPvPSet.begin(); itr != m_outdoorPvPSet.end(); ++itr)
     {
-        if ((*itr)->HandleObjectUse(pPlayer, pGo))
+        if ((*itr)->HandleObjectUse(player, go))
             return true;
     }
     return false;
@@ -175,9 +175,9 @@ void OutdoorPvPMgr::HandlePlayerLeaveZone(Player* pPlayer, uint32 uiZoneId)
  */
 OutdoorPvP* OutdoorPvPMgr::GetOutdoorPvP(uint32 zoneId)
 {
-    OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(zoneId);
+    OutdoorPvPMap::iterator itr = m_outdoorPvPMap.find(zoneId);
 
-    if (itr != m_OutdoorPvPMap.end())
+    if (itr != m_outdoorPvPMap.end())
         return itr->second;
 
     return NULL;
@@ -190,9 +190,9 @@ OutdoorPvP* OutdoorPvPMgr::GetOutdoorPvP(uint32 zoneId)
  */
 ZoneScript* OutdoorPvPMgr::GetZoneScript(uint32 zoneId)
 {
-    OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(zoneId);
+    OutdoorPvPMap::iterator itr = m_outdoorPvPMap.find(zoneId);
 
-    if (itr != m_OutdoorPvPMap.end())
+    if (itr != m_outdoorPvPMap.end())
         return itr->second;
 
     return NULL;
@@ -200,14 +200,14 @@ ZoneScript* OutdoorPvPMgr::GetZoneScript(uint32 zoneId)
 
 void OutdoorPvPMgr::Update(uint32 diff)
 {
-    m_UpdateTimer.Update(diff);
-    if (!m_UpdateTimer.Passed())
+    m_updateTimer.Update(diff);
+    if (!m_updateTimer.Passed())
         return;
 
-    for (OutdoorPvPSet::iterator itr = m_OutdoorPvPSet.begin(); itr != m_OutdoorPvPSet.end(); ++itr)
-        (*itr)->Update((uint32)m_UpdateTimer.GetCurrent());
+    for (OutdoorPvPSet::iterator itr = m_outdoorPvPSet.begin(); itr != m_outdoorPvPSet.end(); ++itr)
+        (*itr)->Update((uint32)m_updateTimer.GetCurrent());
 
-    m_UpdateTimer.SetCurrent(0);
+    m_updateTimer.SetCurrent(0);
 }
 
 /**
@@ -215,11 +215,12 @@ void OutdoorPvPMgr::Update(uint32 diff)
 
    @param   capture point entry
  */
-int8 OutdoorPvPMgr::GetCapturePointSliderValue(uint32 uiEntry)
+int8 OutdoorPvPMgr::GetCapturePointSliderValue(uint32 entry)
 {
-    std::map<uint32, int8>::iterator find = m_CapturePointSlider.find(uiEntry);
-    if (find != m_CapturePointSlider.end())
-        return find->second;
+    std::map<uint32, int8>::iterator itr = m_CapturePointSlider.find(entry);
+
+    if (itr != m_CapturePointSlider.end())
+        return itr->second;
 
     // return default value if we can't find any
     return CAPTURE_SLIDER_NEUTRAL;

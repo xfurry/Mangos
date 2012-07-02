@@ -159,29 +159,29 @@ class OutdoorPvPNA : public OutdoorPvP
         bool InitOutdoorPvPArea();
 
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
-        void SendRemoveWorldStates(Player* pPlayer);
+        void SendRemoveWorldStates(Player* player);
 
-        void HandlePlayerEnterZone(Player* pPlayer);
-        void HandlePlayerLeaveZone(Player* pPlayer);
-        void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team);
-        void HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim);
+        void HandlePlayerEnterZone(Player* player);
+        void HandlePlayerLeaveZone(Player* player);
+        void HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team);
+        void HandlePlayerKillInsideArea(Player* player, Unit* victim);
 
-        void OnCreatureCreate(Creature* pCreature);
-        void OnCreatureDeath(Creature* pCreature);
-        void OnCreatureRespawn(Creature* pCreature);
-        void OnGameObjectCreate(GameObject* pGo);
+        void OnCreatureCreate(Creature* creature);
+        void OnCreatureDeath(Creature* creature);
+        void OnCreatureRespawn(Creature* creature);
+        void OnGameObjectCreate(GameObject* go);
 
-        void ProcessEvent(uint32 uiEventId, GameObject* pGo);
+        void ProcessEvent(uint32 eventId, GameObject* go);
 
-        bool HandleObjectUse(Player* pPlayer, GameObject* pGo);
+        bool HandleObjectUse(Player* player, GameObject* go);
 
     private:
         // world states handling
-        void UpdateWorldState(uint8 uiValue);
-        void UpdateWyvernsWorldState(uint8 uiValue);
+        void UpdateWorldState(uint32 value);
+        void UpdateWyvernsWorldState(uint32 value);
 
         // process capture events
-        void ProcessCaptureEvent(GameObject* pGo, Team team);
+        void ProcessCaptureEvent(GameObject* go, Team team);
 
         // Link graveyard on Halaa
         void SetGraveyard(bool remove = false);
@@ -196,21 +196,21 @@ class OutdoorPvPNA : public OutdoorPvP
         void UnlockHalaa(const WorldObject* objRef);
 
         Team m_zoneOwner;
-        uint32 m_uiZoneWorldState;
-        uint32 m_uiZoneMapState;
-        uint32 m_uiRoostWorldState[MAX_NA_ROOSTS];
-        uint32 m_uiGuardsLeft;
+        uint32 m_zoneWorldState;
+        uint32 m_zoneMapState;
+        uint32 m_roostWorldState[MAX_NA_ROOSTS];
+        uint8 m_guardsLeft;
 
-        ObjectGuid m_capturePointGuid;
-        ObjectGuid m_AllianceRoost[MAX_NA_ROOSTS];
-        ObjectGuid m_HordeRoost[MAX_NA_ROOSTS];
-        ObjectGuid m_AllianceBrokenRoost[MAX_NA_ROOSTS];
-        ObjectGuid m_HordeBrokenRoost[MAX_NA_ROOSTS];
-        ObjectGuid m_AllianceWagons[MAX_NA_ROOSTS];
-        ObjectGuid m_HordeWagons[MAX_NA_ROOSTS];
+        ObjectGuid m_capturePoints;
+        ObjectGuid m_allianceRoost[MAX_NA_ROOSTS];
+        ObjectGuid m_hordeRoost[MAX_NA_ROOSTS];
+        ObjectGuid m_allianceBrokenRoost[MAX_NA_ROOSTS];
+        ObjectGuid m_hordeBrokenRoost[MAX_NA_ROOSTS];
+        ObjectGuid m_allianceWagons[MAX_NA_ROOSTS];
+        ObjectGuid m_hordeWagons[MAX_NA_ROOSTS];
 
-        std::list<ObjectGuid> lAllianceSoldiers;
-        std::list<ObjectGuid> lHordeSoldiers;
+        std::list<ObjectGuid> m_allianceSoldiers;
+        std::list<ObjectGuid> m_hordeSoldiers;
 };
 
 #endif
