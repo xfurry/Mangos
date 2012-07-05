@@ -790,19 +790,17 @@ class MANGOS_DLL_SPEC GameObject : public WorldObject
         time_t      m_cooldownTime;                         // used as internal reaction delay time store (not state change reaction).
                                                             // For traps/goober this: spell casting cooldown, for doors/buttons: reset time.
 
-        uint32      m_captureTimer;                         // (msecs)timer used for captue points
+        uint32      m_captureTimer;                         // (msecs) timer used for capture points
         float       m_captureSlider;
         CapturePointState m_captureState;
 
-        typedef std::set<ObjectGuid> GuidsSet;
-
-        GuidsSet m_SkillupSet;                              // players that already have skill-up at GO use
+        GuidSet m_SkillupSet;                               // players that already have skill-up at GO use
 
         uint32 m_useTimes;                                  // amount uses/charges triggered
 
         // collected only for GAMEOBJECT_TYPE_SUMMONING_RITUAL
         ObjectGuid m_firstUser;                             // first GO user, in most used cases owner, but in some cases no, for example non-summoned multi-use GAMEOBJECT_TYPE_SUMMONING_RITUAL
-        GuidsSet m_UniqueUsers;                             // all players who use item, some items activated after specific amount unique uses
+        GuidSet m_UniqueUsers;                              // all players who use item, some items activated after specific amount unique uses
 
         GameObjectInfo const* m_goInfo;
         GameObjectDisplayInfoEntry const* m_displayInfo;

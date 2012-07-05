@@ -410,7 +410,7 @@ void GameObject::Update(uint32 update_diff, uint32 p_time)
                     // if gameobject should cast spell, then this, but some GOs (type = 10) should be destroyed
                     if (uint32 spellId = GetGOInfo()->goober.spellId)
                     {
-                        for (GuidsSet::const_iterator itr = m_UniqueUsers.begin(); itr != m_UniqueUsers.end(); ++itr)
+                        for (GuidSet::const_iterator itr = m_UniqueUsers.begin(); itr != m_UniqueUsers.end(); ++itr)
                         {
                             if (Player* owner = GetMap()->GetPlayer(*itr))
                                 owner->CastSpell(owner, spellId, false, NULL, NULL, GetObjectGuid());
@@ -429,7 +429,7 @@ void GameObject::Update(uint32 update_diff, uint32 p_time)
                     break;
                 case GAMEOBJECT_TYPE_CAPTURE_POINT:
                     // remove capturing players because slider wont be displayed if capture point is being locked
-                    for (GuidsSet::const_iterator itr = m_UniqueUsers.begin(); itr != m_UniqueUsers.end(); ++itr)
+                    for (GuidSet::const_iterator itr = m_UniqueUsers.begin(); itr != m_UniqueUsers.end(); ++itr)
                     {
                         if (Player* owner = GetMap()->GetPlayer(*itr))
                             owner->SendUpdateWorldState(GetGOInfo()->capturePoint.worldState1, WORLD_STATE_REMOVE);
@@ -1997,7 +1997,7 @@ void GameObject::TickCapturePoint()
     MaNGOS::PlayerListSearcher<MaNGOS::AnyPlayerInObjectRangeWithOutdoorPvPCheck> checker(capturingPlayers, u_check);
     Cell::VisitWorldObjects(this, checker, radius);
 
-    GuidsSet tempUsers(m_UniqueUsers);
+    GuidSet tempUsers(m_UniqueUsers);
     uint32 neutralPercent = info->capturePoint.neutralPercent;
     uint32 oldValue = m_captureSlider;
     int rangePlayers = 0;
@@ -2023,7 +2023,7 @@ void GameObject::TickCapturePoint()
         }
     }
 
-    for (GuidsSet::iterator itr = tempUsers.begin(); itr != tempUsers.end(); ++itr)
+    for (GuidSet::iterator itr = tempUsers.begin(); itr != tempUsers.end(); ++itr)
     {
         // send capture point leave packet
         if (Player* owner = GetMap()->GetPlayer(*itr))
