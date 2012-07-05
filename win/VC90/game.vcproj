@@ -1054,6 +1054,10 @@
 				RelativePath="..\..\src\game\World.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\game\ZoneScript.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Motion generators"
@@ -1792,6 +1796,82 @@
 			</File>
 			<File
 				RelativePath="..\..\src\game\movement\util.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="OutdoorPvP"
+			>
+			<File
+				RelativePath="..\..\src\game\OutdoorPvP\OutdoorPvP.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\OutdoorPvP\OutdoorPvP.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\OutdoorPvP\OutdoorPvPEP.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\OutdoorPvP\OutdoorPvPEP.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\OutdoorPvP\OutdoorPvPGH.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\OutdoorPvP\OutdoorPvPGH.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\OutdoorPvP\OutdoorPvPHP.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\OutdoorPvP\OutdoorPvPHP.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\OutdoorPvP\OutdoorPvPMgr.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\OutdoorPvP\OutdoorPvPMgr.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\OutdoorPvP\OutdoorPvPNA.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\OutdoorPvP\OutdoorPvPNA.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\OutdoorPvP\OutdoorPvPSI.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\OutdoorPvP\OutdoorPvPSI.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\OutdoorPvP\OutdoorPvPTF.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\OutdoorPvP\OutdoorPvPTF.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\OutdoorPvP\OutdoorPvPZM.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\OutdoorPvP\OutdoorPvPZM.h"
 				>
 			</File>
 		</Filter>
