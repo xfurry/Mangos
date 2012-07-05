@@ -95,13 +95,13 @@ void OutdoorPvP::HandlePlayerKill(Player* killer, Unit* victim)
 // register this zone as an outdoor pvp zone
 void OutdoorPvP::RegisterZone(uint32 zoneId)
 {
-    //sOutdoorPvPMgr.AddZone(zoneId, this);
+    sOutdoorPvPMgr.AddZone(zoneId, this);
 }
 
 // set a capture point slider value for when the gameobject is being reloaded the next time
 void OutdoorPvP::SetCapturePointSliderValue(uint32 entry, CapturePointSlider value)
 {
-    //sOutdoorPvPMgr.SetCapturePointSlider(entry, value);
+    sOutdoorPvPMgr.SetCapturePointSlider(entry, value);
 }
 
 // apply a team buff for the specific zone

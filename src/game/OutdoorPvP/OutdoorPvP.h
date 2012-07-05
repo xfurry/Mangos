@@ -19,6 +19,7 @@
 #ifndef OUTDOOR_PVP_H
 #define OUTDOOR_PVP_H
 
+#include "OutdoorPvPMgr.h"
 #include "../Language.h"
 #include "../World.h"
 #include "../ZoneScript.h"
