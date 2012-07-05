@@ -19,4 +19,26 @@
 #ifndef ZONE_SCRIPT_H
 #define ZONE_SCRIPT_H
 
+#include "Common.h"
+#include "SharedDefines.h"
+
+class Creature;
+class GameObject;
+
+class ZoneScript
+{
+    public:
+        explicit ZoneScript() {}
+
+        // Called when a creature or gameobject is created
+        virtual void OnCreatureCreate(Creature* ) {}
+        virtual void OnGameObjectCreate(GameObject* ) {}
+        //called on creature death and respawn
+        virtual void OnCreatureDeath(Creature* /*creature*/) {}
+        virtual void OnCreatureRespawn(Creature* /*creature*/) {}
+
+        // Process Capture event
+        virtual void ProcessEvent(uint32 uiEventId, GameObject* pGo) {}
+};
+
 #endif
