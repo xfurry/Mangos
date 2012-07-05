@@ -44,7 +44,6 @@ OutdoorPvPMgr::~OutdoorPvPMgr()
  */
 void OutdoorPvPMgr::InitOutdoorPvP()
 {
-/*
     uint8 count = 0;
     for (uint8 id = 0; id < 7; ++id)
     {
@@ -74,7 +73,6 @@ void OutdoorPvPMgr::InitOutdoorPvP()
 
     sLog.outString();
     sLog.outString(">> Loaded %u World PvP zones", count);
-*/
 }
 
 /**
