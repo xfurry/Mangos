@@ -417,6 +417,10 @@ void GameObject::Update(uint32 update_diff, uint32 p_time)
                         }
 
                         ClearAllUsesData();
+
+                        // Don't despawn objects with nodespawn flag
+                        if (HasFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN))
+                            return;
                     }
 
                     SetGoState(GO_STATE_READY);
