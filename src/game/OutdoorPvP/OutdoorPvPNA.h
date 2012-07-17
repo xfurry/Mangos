@@ -184,7 +184,7 @@ class OutdoorPvPNA : public OutdoorPvP
         void ProcessCaptureEvent(GameObject* go, Team team);
 
         // Link graveyard on Halaa
-        void SetGraveyard(bool remove = false);
+        void SetGraveyard(bool remove, Team team);
 
         // set specific team soldiers and objects after capture
         void RespawnSoldiers(const WorldObject* objRef);

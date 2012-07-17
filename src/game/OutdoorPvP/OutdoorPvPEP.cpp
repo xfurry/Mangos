@@ -246,7 +246,7 @@ void OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
                 UpdateShrine(go);
                 break;
             case TOWER_ID_CROWNGUARD:
-                SetGraveyard();
+                SetGraveyard(false, team);
                 break;
             case TOWER_ID_EASTWALL:
                 if (m_towerOwner[TOWER_ID_NORTHPASS] != team)
@@ -265,7 +265,7 @@ void OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
                 UpdateShrine(go, true);
                 break;
             case TOWER_ID_CROWNGUARD:
-                SetGraveyard(true);
+                SetGraveyard(true, team);
                 break;
             case TOWER_ID_EASTWALL:
                 UnsummonSoldiers(go);
@@ -324,12 +324,12 @@ void OutdoorPvPEP::UnsummonSoldiers(const WorldObject* objRef)
     }
 }
 
-void OutdoorPvPEP::SetGraveyard(bool remove)
+void OutdoorPvPEP::SetGraveyard(bool remove, Team team)
 {
     if (remove)
-        sObjectMgr.RemoveGraveYardLink(GRAVEYARD_ID_EASTERN_PLAGUE, GRAVEYARD_ZONE_EASTERN_PLAGUE, m_towerOwner[TOWER_ID_CROWNGUARD], false);
+        sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_EASTERN_PLAGUE, GRAVEYARD_ZONE_EASTERN_PLAGUE, TEAM_INVALID);
     else
-        sObjectMgr.AddGraveYardLink(GRAVEYARD_ID_EASTERN_PLAGUE, GRAVEYARD_ZONE_EASTERN_PLAGUE, m_towerOwner[TOWER_ID_CROWNGUARD], false);
+        sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_EASTERN_PLAGUE, GRAVEYARD_ZONE_EASTERN_PLAGUE, team);
 }
 
 void OutdoorPvPEP::UpdateShrine(const WorldObject* objRef, bool remove)

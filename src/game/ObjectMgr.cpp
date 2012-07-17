@@ -5449,41 +5449,6 @@ void ObjectMgr::SetGraveYardLinkTeam(uint32 id, uint32 zoneId, Team team)
     AddGraveYardLink(id, zoneId, team);                     // Add to prevent further error message and correct mechanismn
 }
 
-void ObjectMgr::RemoveGraveYardLink(uint32 id, uint32 zoneId, Team team, bool inDB)
-{
-    GraveYardMap::iterator graveLow = mGraveYardMap.lower_bound(zoneId);
-    GraveYardMap::iterator graveUp = mGraveYardMap.upper_bound(zoneId);
-    if (graveLow == graveUp)
-    {
-        //sLog.outErrorDb("Table `game_graveyard_zone` incomplete: Zone %u Team %u does not have a linked graveyard.", zoneId, team);
-        return;
-    }
-
-    GraveYardMap::iterator itr;
-    for (itr = graveLow; itr != graveUp; ++itr)
-    {
-        GraveYardData& data = itr->second;
-
-        // skip not matching safezone id
-        if (data.safeLocId == id)
-        {
-            // skip enemy faction graveyard at same map (normal area, city, or battleground)
-            // team == 0 case can be at call from .neargrave
-            if (!data.team || !team || data.team == team)
-            {
-                // remove from links
-                mGraveYardMap.erase(itr);
-
-                // remove link from DB
-                if (inDB)
-                    WorldDatabase.PExecute("DELETE FROM game_graveyard_zone WHERE id = '%u' AND ghost_zone = '%u' AND faction = '%u'", id, zoneId, team);
-
-                return;
-            }
-        }
-    }
-}
-
 void ObjectMgr::LoadAreaTriggerTeleports()
 {
     mAreaTriggers.clear();                                  // need for reload case

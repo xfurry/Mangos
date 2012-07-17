@@ -347,14 +347,14 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
 
             // remove buff and graveyard
             BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING, true);
-            SetGraveyard(true);
+            SetGraveyard(true, player->GetTeam());
 
             // update graveyard owner
             m_graveyardOwner = HORDE;
 
             // add the buff and the graveyard
             BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING);
-            SetGraveyard();
+            SetGraveyard(0, TEAM_INVALID);
 
             SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_REMOVE);
             m_graveyardWorldState = WORLD_STATE_GRAVEYARD_HORDE;
@@ -379,14 +379,14 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
 
             // remove buff and graveyard
             BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING, true);
-            SetGraveyard(true);
+            SetGraveyard(true, player->GetTeam());
 
             // update graveyard owner
             m_graveyardOwner = ALLIANCE;
 
             // add the buff and the graveyard to horde
             BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING);
-            SetGraveyard();
+            SetGraveyard(0, TEAM_INVALID);
 
             SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_REMOVE);
             m_graveyardWorldState = WORLD_STATE_GRAVEYARD_ALLIANCE;
@@ -416,7 +416,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
                 // add the buff and the graveyard to horde
                 m_graveyardWorldState = WORLD_STATE_GRAVEYARD_ALLIANCE;
                 BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING);
-                SetGraveyard();
+                SetGraveyard(false, TEAM_INVALID);
 
                 // reset scout and remove player aura
                 ResetScouts(go, m_graveyardOwner);
@@ -436,7 +436,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
                 // add the buff and the graveyard to horde
                 m_graveyardWorldState = WORLD_STATE_GRAVEYARD_HORDE;
                 BuffTeam(HORDE, SPELL_TWIN_SPIRE_BLESSING);
-                SetGraveyard();
+                SetGraveyard(0, TEAM_INVALID);
 
                 // reset scout and remove player aura
                 ResetScouts(go, m_graveyardOwner);
@@ -453,12 +453,12 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
     return false;
 }
 
-void OutdoorPvPZM::SetGraveyard(bool remove)
+void OutdoorPvPZM::SetGraveyard(bool remove, Team team)
 {
     if (remove)
-        sObjectMgr.RemoveGraveYardLink(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner, false);
+        sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, TEAM_INVALID);
     else
-        sObjectMgr.AddGraveYardLink(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner, false);
+        sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, team);
 }
 
 void OutdoorPvPZM::SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn)

@@ -1054,7 +1054,7 @@ void Unit::JustKilledCreature(Creature* victim)
 
     // Inform Outdoor PvP
     if (m_zoneScript = sOutdoorPvPMgr.GetZoneScript(GetZoneId()))
-        m_zoneScript->OnCreatureDeath(((Creature*)cVictim));
+        m_zoneScript->OnCreatureDeath(victim);
 
     // Inform Instance Data and Linking
     if (InstanceData* mapInstance = victim->GetInstanceData())
