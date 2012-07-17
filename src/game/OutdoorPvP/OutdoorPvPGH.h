@@ -62,9 +62,9 @@ class OutdoorPvPGH : public OutdoorPvP
 
         bool InitOutdoorPvPArea();
 
-        void OnCreatureCreate(Creature* pCreature);
-        void OnGameObjectCreate(GameObject* pGo);
-        void ProcessEvent(uint32 uiEventId, GameObject* pGo);
+        void OnCreatureCreate(Creature* creature);
+        void OnGameObjectCreate(GameObject* go);
+        void ProcessEvent(uint32 eventId, GameObject* go);
 
     private:
         // respawn team soldiers
@@ -72,10 +72,10 @@ class OutdoorPvPGH : public OutdoorPvP
 
         Team m_zoneOwner;
 
-        std::list<ObjectGuid> lAllianceSoldiers;
-        std::list<ObjectGuid> lHordeSoldiers;
-        std::list<ObjectGuid> lAllianceVendors;
-        std::list<ObjectGuid> lHordeVendors;
+        std::list<ObjectGuid> m_allianceSoldiers;
+        std::list<ObjectGuid> m_hordeSoldiers;
+        std::list<ObjectGuid> m_allianceVendors;
+        std::list<ObjectGuid> m_hordeVendors;
 };
 
 #endif

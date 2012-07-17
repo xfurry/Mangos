@@ -32,13 +32,13 @@ bool OutdoorPvPGH::InitOutdoorPvPArea()
     return true;
 }
 
-void OutdoorPvPGH::OnCreatureCreate(Creature* pCreature)
+void OutdoorPvPGH::OnCreatureCreate(Creature* creature)
 {
-    switch (pCreature->GetEntry())
+    switch (creature->GetEntry())
     {
         case NPC_WESTFALL_BRIGADE_DEFENDER:
         case NPC_COMMANDER_HOWSER:
-            lAllianceSoldiers.push_back(pCreature->GetObjectGuid());
+            m_allianceSoldiers.push_back(creature->GetObjectGuid());
             if (m_zoneOwner == ALLIANCE)
                 return;
             break;
@@ -47,14 +47,14 @@ void OutdoorPvPGH::OnCreatureCreate(Creature* pCreature)
         case NPC_VENDOR_ADAMS:
         case NPC_HORSE:
             // check the zone id because the horses can be found in other areas too
-            if (pCreature->GetZoneId() == ZONE_ID_GRIZZLY_HILLS)
-                lAllianceVendors.push_back(pCreature->GetObjectGuid());
+            if (creature->GetZoneId() == ZONE_ID_GRIZZLY_HILLS)
+                m_allianceVendors.push_back(creature->GetObjectGuid());
             if (m_zoneOwner == ALLIANCE)
                 return;
             break;
         case NPC_CONQUEST_HOLD_DEFENDER:
         case NPC_GENERAL_GORLOK:
-            lHordeSoldiers.push_back(pCreature->GetObjectGuid());
+            m_hordeSoldiers.push_back(creature->GetObjectGuid());
             if (m_zoneOwner == HORDE)
                 return;
             break;
@@ -63,8 +63,8 @@ void OutdoorPvPGH::OnCreatureCreate(Creature* pCreature)
         case NPC_VENDOR_PURKOM:
         case NPC_RIDING_WOLF:
             // check the zone id because the wolfs can be found in other areas too
-            if (pCreature->GetZoneId() == ZONE_ID_GRIZZLY_HILLS)
-                lHordeVendors.push_back(pCreature->GetObjectGuid());
+            if (creature->GetZoneId() == ZONE_ID_GRIZZLY_HILLS)
+                m_hordeVendors.push_back(creature->GetObjectGuid());
             if (m_zoneOwner == HORDE)
                 return;
             break;
@@ -74,45 +74,45 @@ void OutdoorPvPGH::OnCreatureCreate(Creature* pCreature)
     }
 
     // Despawn creatures on create - will be spawned later in script
-    pCreature->SetRespawnDelay(7 * DAY);
-    pCreature->ForcedDespawn();
+    creature->SetRespawnDelay(7 * DAY);
+    creature->ForcedDespawn();
 }
 
-void OutdoorPvPGH::OnGameObjectCreate(GameObject* pGo)
+void OutdoorPvPGH::OnGameObjectCreate(GameObject* go)
 {
-    if (pGo->GetEntry() == GO_VENTURE_BAY_LIGHTHOUSE)
-        pGo->SetGoArtKit(GetBannerArtKit(m_zoneOwner, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+    if (go->GetEntry() == GO_VENTURE_BAY_LIGHTHOUSE)
+        go->SetGoArtKit(GetBannerArtKit(m_zoneOwner, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
 }
 
 // process the capture events
-void OutdoorPvPGH::ProcessEvent(uint32 uiEventId, GameObject* pGo)
+void OutdoorPvPGH::ProcessEvent(uint32 eventId, GameObject* go)
 {
     // If we are not using the lighthouse return
-    if (pGo->GetEntry() != GO_VENTURE_BAY_LIGHTHOUSE)
+    if (go->GetEntry() != GO_VENTURE_BAY_LIGHTHOUSE)
         return;
 
-    switch (uiEventId)
+    switch (eventId)
     {
         case EVENT_LIGHTHOUSE_WIN_ALLIANCE:
             // Spawn the npcs only when the tower is fully controlled
             m_zoneOwner = ALLIANCE;
-            RespawnSoldiers(pGo);
+            RespawnSoldiers(go);
             break;
         case EVENT_LIGHTHOUSE_WIN_HORDE:
             // Spawn the npcs only when the tower is fully controlled
             m_zoneOwner = HORDE;
-            RespawnSoldiers(pGo);
+            RespawnSoldiers(go);
             break;
         case EVENT_LIGHTHOUSE_PROGRESS_ALLIANCE:
-            SetBannerVisual(pGo, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
+            SetBannerVisual(go, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
             break;
         case EVENT_LIGHTHOUSE_PROGRESS_HORDE:
-            SetBannerVisual(pGo, CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
+            SetBannerVisual(go, CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
             break;
         case EVENT_LIGHTHOUSE_NEUTRAL_ALLIANCE:
         case EVENT_LIGHTHOUSE_NEUTRAL_HORDE:
             m_zoneOwner = TEAM_NONE;
-            SetBannerVisual(pGo, CAPTURE_ARTKIT_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
+            SetBannerVisual(go, CAPTURE_ARTKIT_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
             break;
     }
 }
@@ -122,43 +122,43 @@ void OutdoorPvPGH::RespawnSoldiers(const WorldObject* objRef)
     if (m_zoneOwner == ALLIANCE)
     {
         // despawn all horde vendors
-        for (std::list<ObjectGuid>::const_iterator itr = lHordeVendors.begin(); itr != lHordeVendors.end(); ++itr)
+        for (std::list<ObjectGuid>::const_iterator itr = m_hordeVendors.begin(); itr != m_hordeVendors.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
-                pSoldier->ForcedDespawn();
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
+                soldier->ForcedDespawn();
         }
 
         // spawn all alliance soldiers and vendors
-        for (std::list<ObjectGuid>::const_iterator itr = lAllianceSoldiers.begin(); itr != lAllianceSoldiers.end(); ++itr)
+        for (std::list<ObjectGuid>::const_iterator itr = m_allianceSoldiers.begin(); itr != m_allianceSoldiers.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
-                pSoldier->Respawn();
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
+                soldier->Respawn();
         }
-        for (std::list<ObjectGuid>::const_iterator itr = lAllianceVendors.begin(); itr != lAllianceVendors.end(); ++itr)
+        for (std::list<ObjectGuid>::const_iterator itr = m_allianceVendors.begin(); itr != m_allianceVendors.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
-                pSoldier->Respawn();
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
+                soldier->Respawn();
         }
     }
     else
     {
         // despawn all alliance vendors
-        for (std::list<ObjectGuid>::const_iterator itr = lAllianceVendors.begin(); itr != lAllianceVendors.end(); ++itr)
+        for (std::list<ObjectGuid>::const_iterator itr = m_allianceVendors.begin(); itr != m_allianceVendors.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
-                pSoldier->ForcedDespawn();
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
+                soldier->ForcedDespawn();
         }
 
         // spawn all horde soldiers and vendors
-        for (std::list<ObjectGuid>::const_iterator itr = lHordeSoldiers.begin(); itr != lHordeSoldiers.end(); ++itr)
+        for (std::list<ObjectGuid>::const_iterator itr = m_hordeSoldiers.begin(); itr != m_hordeSoldiers.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
-                pSoldier->Respawn();
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
+                soldier->Respawn();
         }
-        for (std::list<ObjectGuid>::const_iterator itr = lHordeVendors.begin(); itr != lHordeVendors.end(); ++itr)
+        for (std::list<ObjectGuid>::const_iterator itr = m_hordeVendors.begin(); itr != m_hordeVendors.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
-                pSoldier->Respawn();
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
+                soldier->Respawn();
         }
     }
 }

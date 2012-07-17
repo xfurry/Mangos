@@ -21,7 +21,6 @@
 
 #include "Common.h"
 #include "SharedDefines.h"
-#include "Creature.h"
 
 class Creature;
 class GameObject;
@@ -32,19 +31,11 @@ class ZoneScript
         explicit ZoneScript() {}
 
         // Called when a creature or gameobject is created
-        virtual void OnCreatureCreate(Creature *) {}
-        virtual void OnGameObjectCreate(GameObject *) {}
+        virtual void OnCreatureCreate(Creature* ) {}
+        virtual void OnGameObjectCreate(GameObject* ) {}
         //called on creature death and respawn
-        virtual void OnCreatureDeath(Creature * /*creature*/) {}
-        virtual void OnCreatureRespawn(Creature * /*creature*/) {}
-
-        // All-purpose data storage 64 bit
-        //virtual uint64 GetData64(uint32 /*DataId*/) { return 0; }
-        //virtual void SetData64(uint32 /*DataId*/, uint64 /*Value*/) {}
-
-        // All-purpose data storage 32 bit
-        //virtual uint32 GetData(uint32 /*DataId*/) { return 0; }
-        //virtual void SetData(uint32 /*DataId*/, uint32 /*Value*/) {}
+        virtual void OnCreatureDeath(Creature* /*creature*/) {}
+        virtual void OnCreatureRespawn(Creature* /*creature*/) {}
 
         // Process Capture event
         virtual void ProcessEvent(uint32 uiEventId, GameObject* pGo) {}

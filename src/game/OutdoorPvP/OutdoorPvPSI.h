@@ -61,13 +61,13 @@ enum
     WORLD_STATE_SI_SILITHYST_MAX        = 2317,
 };
 
-struct SilithusLocations
+struct SilithusSpawnLocation
 {
-    float m_fX, m_fY, m_fZ;
+    float x, y, z;
 };
 
 // Area trigger location - workaround to check the flag drop handling
-static SilithusLocations aSilithusLocs[2] =
+static SilithusSpawnLocation SILITHUS_FLAG_DROP_LOCATIONS[2] =
 {
     {-7142.04f, 1397.92f, 4.327f},      // alliance
     {-7588.48f, 756.806f, -16.425f}     // horde
@@ -80,21 +80,21 @@ class OutdoorPvPSI : public OutdoorPvP
 
         bool InitOutdoorPvPArea();
 
-        void HandlePlayerEnterZone(Player* pPlayer);
-        void HandlePlayerLeaveZone(Player* pPlayer);
+        void HandlePlayerEnterZone(Player* player);
+        void HandlePlayerLeaveZone(Player* player);
 
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
-        void SendRemoveWorldStates(Player* pPlayer);
+        void SendRemoveWorldStates(Player* player);
         void UpdateWorldState();
 
-        bool HandleAreaTrigger(Player* pPlayer, uint32 uiTriggerId);
-        bool HandleObjectUse(Player* pPlayer, GameObject* pGo);
-        bool HandleDropFlag(Player* pPlayer, uint32 uiSpellId);
+        bool HandleAreaTrigger(Player* player, uint32 triggerId);
+        bool HandleObjectUse(Player* player, GameObject* go);
+        bool HandleDropFlag(Player* player, uint32 spellId);
 
     private:
-        uint32 m_uiResourcesAlliance;
-        uint32 m_uiResourcesHorde;
-        uint32 m_zoneOwner;
+        uint8 m_resourcesAlliance;
+        uint8 m_resourcesHorde;
+        Team m_zoneOwner;
 };
 
 #endif

@@ -95,46 +95,46 @@ UPDATE `creature_template` SET `MovementType` = 0 WHERE `entry` IN (17647,17996)
 UPDATE `creature_template` SET `MovementType` = 2 WHERE `entry` in (17635,17995);
 DELETE FROM `creature_movement_template` WHERE `entry` in (17635, 17995);
 INSERT INTO `creature_movement_template` (`entry`, `point`, `position_x`, `position_y`, `position_z`) VALUES
- (17635, 1, 2501.349, -4725.994, 90.974),
- (17635, 2, 2491.211, -4693.162, 82.363),
- (17635, 3, 2493.059, -4655.492, 75.194),
- (17635, 4, 2562.227, -4646.404, 79.003),
- (17635, 5, 2699.748, -4567.377, 87.460),
- (17635, 6, 2757.274, -4527.591, 89.080),
- (17635, 7, 2850.868, -4417.565, 89.421),
- (17635, 8, 2888.340, -4328.486, 90.562),
- (17635, 9, 2913.271, -4167.140, 93.919),
- (17635, 10, 3035.656, -4260.176, 96.141),
- (17635, 11, 3088.544, -4250.208, 97.769),
- (17635, 12, 3147.302, -4318.796, 130.410),
- (17635, 13, 3166.813, -4349.198, 137.569),
- 
- (17995, 1, 2501.349, -4725.994, 90.974),
- (17995, 2, 2491.211, -4693.162, 82.363),
- (17995, 3, 2493.059, -4655.492, 75.194),
- (17995, 4, 2562.227, -4646.404, 79.003),
- (17995, 5, 2699.748, -4567.377, 87.460),
- (17995, 6, 2757.274, -4527.591, 89.080),
- (17995, 7, 2850.868, -4417.565, 89.421),
- (17995, 8, 2888.340, -4328.486, 90.562),
- (17995, 9, 2913.271, -4167.140, 93.919),
- (17995, 10, 3035.656, -4260.176, 96.141),
- (17995, 11, 3088.544, -4250.208, 97.769),
- (17995, 12, 3147.302, -4318.796, 130.410),
- (17995, 13, 3166.813, -4349.198, 137.569);
- 
- -- creature linking for EP soldiers
- INSERT IGNORE INTO creature_linking_template VALUES
- (17647, 0, 17635, 515),
- (17996, 0, 17995, 515);
- /* ################################# */
- 
- -- Halaa fixes
+(17635, 1, 2501.349, -4725.994, 90.974),
+(17635, 2, 2491.211, -4693.162, 82.363),
+(17635, 3, 2493.059, -4655.492, 75.194),
+(17635, 4, 2562.227, -4646.404, 79.003),
+(17635, 5, 2699.748, -4567.377, 87.460),
+(17635, 6, 2757.274, -4527.591, 89.080),
+(17635, 7, 2850.868, -4417.565, 89.421),
+(17635, 8, 2888.340, -4328.486, 90.562),
+(17635, 9, 2913.271, -4167.140, 93.919),
+(17635, 10, 3035.656, -4260.176, 96.141),
+(17635, 11, 3088.544, -4250.208, 97.769),
+(17635, 12, 3147.302, -4318.796, 130.410),
+(17635, 13, 3166.813, -4349.198, 137.569),
+
+(17995, 1, 2501.349, -4725.994, 90.974),
+(17995, 2, 2491.211, -4693.162, 82.363),
+(17995, 3, 2493.059, -4655.492, 75.194),
+(17995, 4, 2562.227, -4646.404, 79.003),
+(17995, 5, 2699.748, -4567.377, 87.460),
+(17995, 6, 2757.274, -4527.591, 89.080),
+(17995, 7, 2850.868, -4417.565, 89.421),
+(17995, 8, 2888.340, -4328.486, 90.562),
+(17995, 9, 2913.271, -4167.140, 93.919),
+(17995, 10, 3035.656, -4260.176, 96.141),
+(17995, 11, 3088.544, -4250.208, 97.769),
+(17995, 12, 3147.302, -4318.796, 130.410),
+(17995, 13, 3166.813, -4349.198, 137.569);
+
+-- creature linking for EP soldiers
+INSERT IGNORE INTO creature_linking_template VALUES
+(17647, 0, 17635, 515),
+(17996, 0, 17995, 515);
+/* ################################# */
+
+-- Halaa fixes
 /* ################################# */
 -- fire bomb target
 UPDATE `creature_template` SET `AIName`='EventAI' WHERE `entry`=18225;
 DELETE FROM `creature_ai_scripts` WHERE `creature_id`=18225;
-INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES 
+INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES
 ('1822501','18225','11','0','100','0','0','0','0','0','11','31961','0','0','20','0','0','0','21','0','0','0','Fire Bomb Target - Cast Fire Bomb on Spawn and set Combat Movement and Auto Attack to false');
 -- No random movement for this one - unit flags are guesswork
 UPDATE creature_template SET MovementType= 0, unit_flags=unit_flags|33554432 WHERE entry=18225;

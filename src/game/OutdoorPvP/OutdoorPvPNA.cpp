@@ -22,10 +22,10 @@
 
 
 OutdoorPvPNA::OutdoorPvPNA() : OutdoorPvP(),
-    m_uiZoneMapState(WORLD_STATE_NA_HALAA_NEUTRAL),
-    m_uiZoneWorldState(0),
+    m_zoneMapState(WORLD_STATE_NA_HALAA_NEUTRAL),
+    m_zoneWorldState(0),
     m_zoneOwner(TEAM_NONE),
-    m_uiGuardsLeft(0)
+    m_guardsLeft(0)
 {
 }
 
@@ -40,50 +40,50 @@ void OutdoorPvPNA::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
     if (m_zoneOwner != TEAM_NONE)
     {
-        FillInitialWorldState(data, count, m_uiZoneWorldState, WORLD_STATE_ADD);
+        FillInitialWorldState(data, count, m_zoneWorldState, WORLD_STATE_ADD);
         FillInitialWorldState(data, count, WORLD_STATE_NA_GUARDS_MAX, MAX_NA_GUARDS);
-        FillInitialWorldState(data, count, WORLD_STATE_NA_GUARDS_LEFT, m_uiGuardsLeft);
+        FillInitialWorldState(data, count, WORLD_STATE_NA_GUARDS_LEFT, m_guardsLeft);
 
         // map states
         for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
-            FillInitialWorldState(data, count, m_uiRoostWorldState[i], WORLD_STATE_ADD);
+            FillInitialWorldState(data, count, m_roostWorldState[i], WORLD_STATE_ADD);
     }
 
-    FillInitialWorldState(data, count, m_uiZoneMapState, WORLD_STATE_ADD);
+    FillInitialWorldState(data, count, m_zoneMapState, WORLD_STATE_ADD);
 }
 
-void OutdoorPvPNA::SendRemoveWorldStates(Player* pPlayer)
+void OutdoorPvPNA::SendRemoveWorldStates(Player* player)
 {
-    pPlayer->SendUpdateWorldState(m_uiZoneWorldState, WORLD_STATE_REMOVE);
-    pPlayer->SendUpdateWorldState(m_uiZoneMapState, WORLD_STATE_REMOVE);
+    player->SendUpdateWorldState(m_zoneWorldState, WORLD_STATE_REMOVE);
+    player->SendUpdateWorldState(m_zoneMapState, WORLD_STATE_REMOVE);
 
     for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
-        pPlayer->SendUpdateWorldState(m_uiRoostWorldState[i], WORLD_STATE_REMOVE);
+        player->SendUpdateWorldState(m_roostWorldState[i], WORLD_STATE_REMOVE);
 }
 
-void OutdoorPvPNA::HandlePlayerEnterZone(Player* pPlayer)
+void OutdoorPvPNA::HandlePlayerEnterZone(Player* player)
 {
-    OutdoorPvP::HandlePlayerEnterZone(pPlayer);
+    OutdoorPvP::HandlePlayerEnterZone(player);
 
     // remove the buff from the player first because there are some issues at relog
-    pPlayer->RemoveAurasDueToSpell(SPELL_STRENGTH_HALAANI);
+    player->RemoveAurasDueToSpell(SPELL_STRENGTH_HALAANI);
 
     // buff the player if same team is controlling the zone
-    if (pPlayer->GetTeam() == m_zoneOwner)
-        pPlayer->CastSpell(pPlayer, SPELL_STRENGTH_HALAANI, true);
+    if (player->GetTeam() == m_zoneOwner)
+        player->CastSpell(player, SPELL_STRENGTH_HALAANI, true);
 }
 
-void OutdoorPvPNA::HandlePlayerLeaveZone(Player* pPlayer)
+void OutdoorPvPNA::HandlePlayerLeaveZone(Player* player)
 {
     // remove the buff from the player
-    pPlayer->RemoveAurasDueToSpell(SPELL_STRENGTH_HALAANI);
+    player->RemoveAurasDueToSpell(SPELL_STRENGTH_HALAANI);
 
-    OutdoorPvP::HandlePlayerLeaveZone(pPlayer);
+    OutdoorPvP::HandlePlayerLeaveZone(player);
 }
 
-void OutdoorPvPNA::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team)
+void OutdoorPvPNA::HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team)
 {
-    if (uiEventId == EVENT_HALAA_BANNER_WIN_ALLIANCE || uiEventId == EVENT_HALAA_BANNER_WIN_HORDE)
+    if (eventId == EVENT_HALAA_BANNER_WIN_ALLIANCE || eventId == EVENT_HALAA_BANNER_WIN_HORDE)
     {
         for (std::list<Player*>::iterator itr = players.begin(); itr != players.end(); ++itr)
         {
@@ -94,26 +94,26 @@ void OutdoorPvPNA::HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> 
 }
 
 // Cast player spell on opponent kill
-void OutdoorPvPNA::HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim)
+void OutdoorPvPNA::HandlePlayerKillInsideArea(Player* player, Unit* victim)
 {
-    if (GameObject* capturePoint = pPlayer->GetMap()->GetGameObject(m_capturePointGuid))
+    if (GameObject* capturePoint = player->GetMap()->GetGameObject(m_capturePoint))
     {
         // check capture point range
         GameObjectInfo const* info = capturePoint->GetGOInfo();
-        if (info && pPlayer->IsWithinDistInMap(capturePoint, info->capturePoint.radius))
+        if (info && player->IsWithinDistInMap(capturePoint, info->capturePoint.radius))
         {
             // check capture point team
-            if (pPlayer->GetTeam() == m_zoneOwner)
-                pPlayer->CastSpell(pPlayer, pPlayer->GetTeam() == ALLIANCE ? SPELL_NAGRAND_TOKEN_ALLIANCE : SPELL_NAGRAND_TOKEN_HORDE, true);
+            if (player->GetTeam() == m_zoneOwner)
+                player->CastSpell(player, player->GetTeam() == ALLIANCE ? SPELL_NAGRAND_TOKEN_ALLIANCE : SPELL_NAGRAND_TOKEN_HORDE, true);
 
             return;
         }
     }
 }
 
-void OutdoorPvPNA::OnCreatureCreate(Creature* pCreature)
+void OutdoorPvPNA::OnCreatureCreate(Creature* creature)
 {
-    switch (pCreature->GetEntry())
+    switch (creature->GetEntry())
     {
         case NPC_ALLIANCE_HANAANI_GUARD:
         case NPC_RESEARCHER_KARTOS:
@@ -121,7 +121,7 @@ void OutdoorPvPNA::OnCreatureCreate(Creature* pCreature)
         case NPC_MERCHANT_ALDRAAN:
         case NPC_VENDOR_CENDRII:
         case NPC_AMMUNITIONER_BANRO:
-            lAllianceSoldiers.push_back(pCreature->GetObjectGuid());
+            m_allianceSoldiers.push_back(creature->GetObjectGuid());
             if (m_zoneOwner == ALLIANCE)
                 return;
             break;
@@ -131,7 +131,7 @@ void OutdoorPvPNA::OnCreatureCreate(Creature* pCreature)
         case NPC_MERCHANT_COREIEL:
         case NPC_VENDOR_EMBELAR:
         case NPC_AMMUNITIONER_TASALDAN:
-            lHordeSoldiers.push_back(pCreature->GetObjectGuid());
+            m_hordeSoldiers.push_back(creature->GetObjectGuid());
             if (m_zoneOwner == HORDE)
                 return;
             break;
@@ -141,184 +141,184 @@ void OutdoorPvPNA::OnCreatureCreate(Creature* pCreature)
     }
 
     // Despawn creatures on create - will be spawned later in script
-    pCreature->SetRespawnDelay(7 * DAY);
-    pCreature->ForcedDespawn();
+    creature->SetRespawnDelay(7 * DAY);
+    creature->ForcedDespawn();
 }
 
-void OutdoorPvPNA::OnCreatureDeath(Creature* pCreature)
+void OutdoorPvPNA::OnCreatureDeath(Creature* creature)
 {
-    if (pCreature->GetEntry() != NPC_HORDE_HALAANI_GUARD && pCreature->GetEntry() != NPC_ALLIANCE_HANAANI_GUARD)
+    if (creature->GetEntry() != NPC_HORDE_HALAANI_GUARD && creature->GetEntry() != NPC_ALLIANCE_HANAANI_GUARD)
         return;
 
-    --m_uiGuardsLeft;
-    SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT, m_uiGuardsLeft);
+    --m_guardsLeft;
+    SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT, m_guardsLeft);
 
-    if (m_uiGuardsLeft == 0)
+    if (m_guardsLeft == 0)
     {
         // make capturable
-        UnlockHalaa(pCreature);
+        UnlockHalaa(creature);
 
         // update world state
-        SendUpdateWorldState(m_uiZoneMapState, WORLD_STATE_REMOVE);
-        m_uiZoneMapState = m_zoneOwner == ALLIANCE ? WORLD_STATE_NA_HALAA_NEUTRAL_A : WORLD_STATE_NA_HALAA_NEUTRAL_H;
-        SendUpdateWorldState(m_uiZoneMapState, WORLD_STATE_ADD);
+        SendUpdateWorldState(m_zoneMapState, WORLD_STATE_REMOVE);
+        m_zoneMapState = m_zoneOwner == ALLIANCE ? WORLD_STATE_NA_HALAA_NEUTRAL_A : WORLD_STATE_NA_HALAA_NEUTRAL_H;
+        SendUpdateWorldState(m_zoneMapState, WORLD_STATE_ADD);
     }
 }
 
-void OutdoorPvPNA::OnCreatureRespawn(Creature* pCreature)
+void OutdoorPvPNA::OnCreatureRespawn(Creature* creature)
 {
-    if (pCreature->GetEntry() != NPC_HORDE_HALAANI_GUARD && pCreature->GetEntry() != NPC_ALLIANCE_HANAANI_GUARD)
+    if (creature->GetEntry() != NPC_HORDE_HALAANI_GUARD && creature->GetEntry() != NPC_ALLIANCE_HANAANI_GUARD)
         return;
 
-    if (m_uiGuardsLeft == 0)
+    if (m_guardsLeft == 0)
     {
-        LockHalaa(pCreature);
+        LockHalaa(creature);
 
         // update world state
-        SendUpdateWorldState(m_uiZoneMapState, WORLD_STATE_REMOVE);
-        m_uiZoneMapState = m_zoneOwner == ALLIANCE ? WORLD_STATE_NA_HALAA_ALLIANCE : WORLD_STATE_NA_HALAA_HORDE;
-        SendUpdateWorldState(m_uiZoneMapState, WORLD_STATE_ADD);
+        SendUpdateWorldState(m_zoneMapState, WORLD_STATE_REMOVE);
+        m_zoneMapState = m_zoneOwner == ALLIANCE ? WORLD_STATE_NA_HALAA_ALLIANCE : WORLD_STATE_NA_HALAA_HORDE;
+        SendUpdateWorldState(m_zoneMapState, WORLD_STATE_ADD);
     }
 
-    ++m_uiGuardsLeft;
-    SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT, m_uiGuardsLeft);
+    ++m_guardsLeft;
+    SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT, m_guardsLeft);
 }
 
-void OutdoorPvPNA::OnGameObjectCreate(GameObject* pGo)
+void OutdoorPvPNA::OnGameObjectCreate(GameObject* go)
 {
-    switch (pGo->GetEntry())
+    switch (go->GetEntry())
     {
         case GO_HALAA_BANNER:
-            m_capturePointGuid = pGo->GetObjectGuid();
-            pGo->SetGoArtKit(GetBannerArtKit(m_zoneOwner, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            m_capturePoint = go->GetObjectGuid();
+            go->SetGoArtKit(GetBannerArtKit(m_zoneOwner, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
 
         case GO_WYVERN_ROOST_ALLIANCE_SOUTH:
-            m_AllianceRoost[0] = pGo->GetObjectGuid();
+            m_allianceRoost[0] = go->GetObjectGuid();
             break;
         case GO_WYVERN_ROOST_ALLIANCE_NORTH:
-            m_AllianceRoost[1] = pGo->GetObjectGuid();
+            m_allianceRoost[1] = go->GetObjectGuid();
             break;
         case GO_WYVERN_ROOST_ALLIANCE_EAST:
-            m_AllianceRoost[2] = pGo->GetObjectGuid();
+            m_allianceRoost[2] = go->GetObjectGuid();
             break;
         case GO_WYVERN_ROOST_ALLIANCE_WEST:
-            m_AllianceRoost[3] = pGo->GetObjectGuid();
+            m_allianceRoost[3] = go->GetObjectGuid();
             break;
 
         case GO_BOMB_WAGON_HORDE_SOUTH:
-            m_HordeWagons[0] = pGo->GetObjectGuid();
+            m_hordeWagons[0] = go->GetObjectGuid();
             break;
         case GO_BOMB_WAGON_HORDE_NORTH:
-            m_HordeWagons[1] = pGo->GetObjectGuid();
+            m_hordeWagons[1] = go->GetObjectGuid();
             break;
         case GO_BOMB_WAGON_HORDE_EAST:
-            m_HordeWagons[2] = pGo->GetObjectGuid();
+            m_hordeWagons[2] = go->GetObjectGuid();
             break;
         case GO_BOMB_WAGON_HORDE_WEST:
-            m_HordeWagons[3] = pGo->GetObjectGuid();
+            m_hordeWagons[3] = go->GetObjectGuid();
             break;
 
         case GO_DESTROYED_ROOST_ALLIANCE_SOUTH:
-            m_AllianceBrokenRoost[0] = pGo->GetObjectGuid();
+            m_allianceBrokenRoost[0] = go->GetObjectGuid();
             break;
         case GO_DESTROYED_ROOST_ALLIANCE_NORTH:
-            m_AllianceBrokenRoost[1] = pGo->GetObjectGuid();
+            m_allianceBrokenRoost[1] = go->GetObjectGuid();
             break;
         case GO_DESTROYED_ROOST_ALLIANCE_EAST:
-            m_AllianceBrokenRoost[2] = pGo->GetObjectGuid();
+            m_allianceBrokenRoost[2] = go->GetObjectGuid();
             break;
         case GO_DESTROYED_ROOST_ALLIANCE_WEST:
-            m_AllianceBrokenRoost[3] = pGo->GetObjectGuid();
+            m_allianceBrokenRoost[3] = go->GetObjectGuid();
             break;
 
         case GO_WYVERN_ROOST_HORDE_SOUTH:
-            m_HordeRoost[0] = pGo->GetObjectGuid();
+            m_hordeRoost[0] = go->GetObjectGuid();
             break;
         case GO_WYVERN_ROOST_HORDE_NORTH:
-            m_HordeRoost[1] = pGo->GetObjectGuid();
+            m_hordeRoost[1] = go->GetObjectGuid();
             break;
         case GO_WYVERN_ROOST_HORDE_EAST:
-            m_HordeRoost[2] = pGo->GetObjectGuid();
+            m_hordeRoost[2] = go->GetObjectGuid();
             break;
         case GO_WYVERN_ROOST_HORDE_WEST:
-            m_HordeRoost[3] = pGo->GetObjectGuid();
+            m_hordeRoost[3] = go->GetObjectGuid();
             break;
 
         case GO_BOMB_WAGON_ALLIANCE_SOUTH:
-            m_AllianceWagons[0] = pGo->GetObjectGuid();
+            m_allianceWagons[0] = go->GetObjectGuid();
             break;
         case GO_BOMB_WAGON_ALLIANCE_NORTH:
-            m_AllianceWagons[1] = pGo->GetObjectGuid();
+            m_allianceWagons[1] = go->GetObjectGuid();
             break;
         case GO_BOMB_WAGON_ALLIANCE_EAST:
-            m_AllianceWagons[2] = pGo->GetObjectGuid();
+            m_allianceWagons[2] = go->GetObjectGuid();
             break;
         case GO_BOMB_WAGON_ALLIANCE_WEST:
-            m_AllianceWagons[3] = pGo->GetObjectGuid();
+            m_allianceWagons[3] = go->GetObjectGuid();
             break;
 
         case GO_DESTROYED_ROOST_HORDE_SOUTH:
-            m_HordeBrokenRoost[0] = pGo->GetObjectGuid();
+            m_hordeBrokenRoost[0] = go->GetObjectGuid();
             break;
         case GO_DESTROYED_ROOST_HORDE_NORTH:
-            m_HordeBrokenRoost[1] = pGo->GetObjectGuid();
+            m_hordeBrokenRoost[1] = go->GetObjectGuid();
             break;
         case GO_DESTROYED_ROOST_HORDE_EAST:
-            m_HordeBrokenRoost[2] = pGo->GetObjectGuid();
+            m_hordeBrokenRoost[2] = go->GetObjectGuid();
             break;
         case GO_DESTROYED_ROOST_HORDE_WEST:
-            m_HordeBrokenRoost[3] = pGo->GetObjectGuid();
+            m_hordeBrokenRoost[3] = go->GetObjectGuid();
             break;
     }
 }
 
-void OutdoorPvPNA::UpdateWorldState(uint8 uiValue)
+void OutdoorPvPNA::UpdateWorldState(uint32 value)
 {
-    SendUpdateWorldState(m_uiZoneWorldState, uiValue);
-    SendUpdateWorldState(m_uiZoneMapState, uiValue);
+    SendUpdateWorldState(m_zoneWorldState, value);
+    SendUpdateWorldState(m_zoneMapState, value);
 
     // Update guards only for positive states
-    if (uiValue)
+    if (value)
     {
         SendUpdateWorldState(WORLD_STATE_NA_GUARDS_MAX, MAX_NA_GUARDS);
-        SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT, m_uiGuardsLeft);
+        SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT, m_guardsLeft);
     }
 
-    UpdateWyvernsWorldState(uiValue);
+    UpdateWyvernsWorldState(value);
 }
 
-void OutdoorPvPNA::UpdateWyvernsWorldState(uint8 uiValue)
+void OutdoorPvPNA::UpdateWyvernsWorldState(uint32 value)
 {
     for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
-        SendUpdateWorldState(m_uiRoostWorldState[i], uiValue);
+        SendUpdateWorldState(m_roostWorldState[i], value);
 }
 
 // process the capture events
-void OutdoorPvPNA::ProcessEvent(uint32 uiEventId, GameObject* pGo)
+void OutdoorPvPNA::ProcessEvent(uint32 eventId, GameObject* go)
 {
     // If we are not using the Halaa banner return
-    if (pGo->GetEntry() != GO_HALAA_BANNER)
+    if (go->GetEntry() != GO_HALAA_BANNER)
         return;
 
-    switch (uiEventId)
+    switch (eventId)
     {
         case EVENT_HALAA_BANNER_WIN_ALLIANCE:
-            ProcessCaptureEvent(pGo, ALLIANCE);
+            ProcessCaptureEvent(go, ALLIANCE);
             break;
         case EVENT_HALAA_BANNER_WIN_HORDE:
-            ProcessCaptureEvent(pGo, HORDE);
+            ProcessCaptureEvent(go, HORDE);
             break;
         case EVENT_HALAA_BANNER_PROGRESS_ALLIANCE:
-            SetBannerVisual(pGo, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
+            SetBannerVisual(go, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
             break;
         case EVENT_HALAA_BANNER_PROGRESS_HORDE:
-            SetBannerVisual(pGo, CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
+            SetBannerVisual(go, CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
             break;
     }
 }
 
-void OutdoorPvPNA::ProcessCaptureEvent(GameObject* pGo, Team team)
+void OutdoorPvPNA::ProcessCaptureEvent(GameObject* go, Team team)
 {
     SetGraveyard(true);
     BuffTeam(m_zoneOwner, SPELL_STRENGTH_HALAANI, true);
@@ -328,21 +328,21 @@ void OutdoorPvPNA::ProcessCaptureEvent(GameObject* pGo, Team team)
     m_zoneOwner = team;
 
     UpdateWorldState(WORLD_STATE_REMOVE);
-    RespawnSoldiers(pGo);
+    RespawnSoldiers(go);
     SetGraveyard();
 
     if (m_zoneOwner == ALLIANCE)
     {
-        m_uiZoneWorldState = WORLD_STATE_NA_GUARDS_ALLIANCE;
-        m_uiZoneMapState = WORLD_STATE_NA_HALAA_ALLIANCE;
+        m_zoneWorldState = WORLD_STATE_NA_GUARDS_ALLIANCE;
+        m_zoneMapState = WORLD_STATE_NA_HALAA_ALLIANCE;
     }
     else
     {
-        m_uiZoneWorldState = WORLD_STATE_NA_GUARDS_HORDE;
-        m_uiZoneMapState = WORLD_STATE_NA_HALAA_HORDE;
+        m_zoneWorldState = WORLD_STATE_NA_GUARDS_HORDE;
+        m_zoneMapState = WORLD_STATE_NA_HALAA_HORDE;
     }
 
-    HandleFactionObjects(pGo);
+    HandleFactionObjects(go);
     UpdateWorldState(WORLD_STATE_ADD);
 
     BuffTeam(m_zoneOwner, SPELL_STRENGTH_HALAANI);
@@ -363,26 +363,26 @@ void OutdoorPvPNA::HandleFactionObjects(const WorldObject* objRef)
     {
         for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
         {
-            RespawnGO(objRef, m_HordeWagons[i], false);
-            RespawnGO(objRef, m_AllianceBrokenRoost[i], false);
-            RespawnGO(objRef, m_AllianceRoost[i], false);
-            RespawnGO(objRef, m_AllianceWagons[i], false);
-            RespawnGO(objRef, m_HordeBrokenRoost[i], true);
+            RespawnGO(objRef, m_hordeWagons[i], false);
+            RespawnGO(objRef, m_allianceBrokenRoost[i], false);
+            RespawnGO(objRef, m_allianceRoost[i], false);
+            RespawnGO(objRef, m_allianceWagons[i], false);
+            RespawnGO(objRef, m_hordeBrokenRoost[i], true);
 
-            m_uiRoostWorldState[i] = aHordeNeutralStates[i];
+            m_roostWorldState[i] = HORDE_NEUTRAL_ROOST_STATES[i];
         }
     }
     else
     {
         for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
         {
-            RespawnGO(objRef, m_AllianceWagons[i], false);
-            RespawnGO(objRef, m_HordeBrokenRoost[i], false);
-            RespawnGO(objRef, m_HordeRoost[i], false);
-            RespawnGO(objRef, m_HordeWagons[i], false);
-            RespawnGO(objRef, m_AllianceBrokenRoost[i], true);
+            RespawnGO(objRef, m_allianceWagons[i], false);
+            RespawnGO(objRef, m_hordeBrokenRoost[i], false);
+            RespawnGO(objRef, m_hordeRoost[i], false);
+            RespawnGO(objRef, m_hordeWagons[i], false);
+            RespawnGO(objRef, m_allianceBrokenRoost[i], true);
 
-            m_uiRoostWorldState[i] = aAllianceNeutralStates[i];
+            m_roostWorldState[i] = ALLIANCE_NEUTRAL_ROOST_STATES[i];
         }
     }
 }
@@ -392,102 +392,102 @@ void OutdoorPvPNA::RespawnSoldiers(const WorldObject* objRef)
     if (m_zoneOwner == ALLIANCE)
     {
         // despawn all horde vendors
-        for (std::list<ObjectGuid>::const_iterator itr = lHordeSoldiers.begin(); itr != lHordeSoldiers.end(); ++itr)
+        for (std::list<ObjectGuid>::const_iterator itr = m_hordeSoldiers.begin(); itr != m_hordeSoldiers.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
             {
                 // reset respawn time
-                pSoldier->SetRespawnDelay(7 * DAY);
-                pSoldier->ForcedDespawn();
+                soldier->SetRespawnDelay(7 * DAY);
+                soldier->ForcedDespawn();
             }
         }
 
         // spawn all alliance soldiers and vendors
-        for (std::list<ObjectGuid>::const_iterator itr = lAllianceSoldiers.begin(); itr != lAllianceSoldiers.end(); ++itr)
+        for (std::list<ObjectGuid>::const_iterator itr = m_allianceSoldiers.begin(); itr != m_allianceSoldiers.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
             {
                 // lower respawn time
-                pSoldier->SetRespawnDelay(HOUR);
-                pSoldier->Respawn();
+                soldier->SetRespawnDelay(HOUR);
+                soldier->Respawn();
             }
         }
     }
     else
     {
         // despawn all alliance vendors
-        for (std::list<ObjectGuid>::const_iterator itr = lAllianceSoldiers.begin(); itr != lAllianceSoldiers.end(); ++itr)
+        for (std::list<ObjectGuid>::const_iterator itr = m_allianceSoldiers.begin(); itr != m_allianceSoldiers.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
             {
                 // reset respawn time
-                pSoldier->SetRespawnDelay(7 * DAY);
-                pSoldier->ForcedDespawn();
+                soldier->SetRespawnDelay(7 * DAY);
+                soldier->ForcedDespawn();
             }
         }
 
         // spawn all horde soldiers and vendors
-        for (std::list<ObjectGuid>::const_iterator itr = lHordeSoldiers.begin(); itr != lHordeSoldiers.end(); ++itr)
+        for (std::list<ObjectGuid>::const_iterator itr = m_hordeSoldiers.begin(); itr != m_hordeSoldiers.end(); ++itr)
         {
-            if (Creature* pSoldier = objRef->GetMap()->GetCreature(*itr))
+            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
             {
                 // lower respawn time
-                pSoldier->SetRespawnDelay(HOUR);
-                pSoldier->Respawn();
+                soldier->SetRespawnDelay(HOUR);
+                soldier->Respawn();
             }
         }
     }
 }
 
-bool OutdoorPvPNA::HandleObjectUse(Player* pPlayer, GameObject* pGo)
+bool OutdoorPvPNA::HandleObjectUse(Player* player, GameObject* go)
 {
     UpdateWyvernsWorldState(WORLD_STATE_REMOVE);
 
-    if (pPlayer->GetTeam() == ALLIANCE)
+    if (player->GetTeam() == ALLIANCE)
     {
         for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
         {
-            if (pGo->GetEntry() == aAllianceWagons[i])
+            if (go->GetEntry() == ALLIANCE_WAGONS[i])
             {
-                m_uiRoostWorldState[i] = aHordeNeutralStates[i];
-                RespawnGO(pGo, m_HordeRoost[i], false);
-                RespawnGO(pGo, m_HordeBrokenRoost[i], true);
+                m_roostWorldState[i] = HORDE_NEUTRAL_ROOST_STATES[i];
+                RespawnGO(go, m_hordeRoost[i], false);
+                RespawnGO(go, m_hordeBrokenRoost[i], true);
             }
-            else if (pGo->GetEntry() == aAllianceBrokenRoosts[i])
+            else if (go->GetEntry() == ALLIANCE_BROKEN_ROOSTS[i])
             {
-                m_uiRoostWorldState[i] = aAllianceRoostStates[i];
-                RespawnGO(pGo, m_HordeWagons[i], true);
-                RespawnGO(pGo, m_AllianceRoost[i], true, true);
+                m_roostWorldState[i] = ALLIANCE_ROOST_STATES[i];
+                RespawnGO(go, m_hordeWagons[i], true);
+                RespawnGO(go, m_allianceRoost[i], true, true);
             }
-            else if (pGo->GetEntry() == aAllianceRoosts[i])
+            else if (go->GetEntry() == ALLIANCE_ROOSTS[i])
             {
                 // mark player as pvp
-                pPlayer->UpdatePvP(true, true);
-                pPlayer->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP);
+                player->UpdatePvP(true, true);
+                player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP);
             }
         }
     }
-    else if (pPlayer->GetTeam() == HORDE)
+    else if (player->GetTeam() == HORDE)
     {
         for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
         {
-            if (pGo->GetEntry() == aHordeWagons[i])
+            if (go->GetEntry() == HORDE_WAGONS[i])
             {
-                m_uiRoostWorldState[i] = aAllianceNeutralStates[i];
-                RespawnGO(pGo, m_AllianceRoost[i], false);
-                RespawnGO(pGo, m_AllianceBrokenRoost[i], true);
+                m_roostWorldState[i] = ALLIANCE_NEUTRAL_ROOST_STATES[i];
+                RespawnGO(go, m_allianceRoost[i], false);
+                RespawnGO(go, m_allianceBrokenRoost[i], true);
             }
-            else if (pGo->GetEntry() == aHordeBrokenRoosts[i])
+            else if (go->GetEntry() == HORDE_BROKEN_ROOSTS[i])
             {
-                m_uiRoostWorldState[i] = aHordeRoostStates[i];
-                RespawnGO(pGo, m_AllianceWagons[i], true);
-                RespawnGO(pGo, m_HordeRoost[i], true, true);
+                m_roostWorldState[i] = HORDE_ROOST_STATES[i];
+                RespawnGO(go, m_allianceWagons[i], true);
+                RespawnGO(go, m_hordeRoost[i], true, true);
             }
-            else if (pGo->GetEntry() == aHordeRoosts[i])
+            else if (go->GetEntry() == HORDE_ROOSTS[i])
             {
                 // mark player as pvp
-                pPlayer->UpdatePvP(true, true);
-                pPlayer->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP);
+                player->UpdatePvP(true, true);
+                player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP);
             }
         }
     }
@@ -499,41 +499,41 @@ bool OutdoorPvPNA::HandleObjectUse(Player* pPlayer, GameObject* pGo)
 
 void OutdoorPvPNA::RespawnGO(const WorldObject* objRef, ObjectGuid goGuid, bool respawn, bool resetFlag)
 {
-    if (GameObject* pBanner = objRef->GetMap()->GetGameObject(goGuid))
+    if (GameObject* banner = objRef->GetMap()->GetGameObject(goGuid))
     {
         if (respawn)
         {
-            pBanner->SetRespawnTime(7 * DAY);
-            pBanner->Refresh();
+            banner->SetRespawnTime(7 * DAY);
+            banner->Refresh();
 
             // Set NoDespawn flag for the Roosts
             if (resetFlag)
-                pBanner->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
+                banner->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
         }
-        else if (pBanner->isSpawned())
+        else if (banner->isSpawned())
         {
-            if (pBanner->HasFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN))
-                pBanner->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
+            if (banner->HasFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN))
+                banner->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
 
-            pBanner->SetLootState(GO_JUST_DEACTIVATED);
+            banner->SetLootState(GO_JUST_DEACTIVATED);
         }
     }
 }
 
 void OutdoorPvPNA::LockHalaa(const WorldObject* objRef)
 {
-    if (GameObject* go = objRef->GetMap()->GetGameObject(m_capturePointGuid))
+    if (GameObject* go = objRef->GetMap()->GetGameObject(m_capturePoint))
         go->SetLootState(GO_JUST_DEACTIVATED);
 
-    SetCapturePointSliderValue(m_capturePointGuid, m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
+    SetCapturePointSliderValue(m_capturePoint, m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
 }
 
 void OutdoorPvPNA::UnlockHalaa(const WorldObject* objRef)
 {
-    if (GameObject* go = objRef->GetMap()->GetGameObject(m_capturePointGuid))
+    if (GameObject* go = objRef->GetMap()->GetGameObject(m_capturePoint))
         go->SetCapturePointSlider(m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
         // no banner visual update needed because it already has the correct one
     else
         // if grid is unloaded, resetting the slider value is enough
-        SetCapturePointSliderValue(m_capturePointGuid, m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
+        SetCapturePointSliderValue(m_capturePoint, m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
 }

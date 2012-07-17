@@ -794,8 +794,6 @@ class MANGOS_DLL_SPEC GameObject : public WorldObject
         float       m_captureSlider;
         CapturePointState m_captureState;
 
-        typedef std::set<ObjectGuid> GuidsSet;
-
         GuidSet m_SkillupSet;                              // players that already have skill-up at GO use
 
         uint32 m_useTimes;                                  // amount uses/charges triggered

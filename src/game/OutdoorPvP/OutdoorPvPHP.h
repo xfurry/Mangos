@@ -115,15 +115,15 @@ enum
 
 struct HellfireTowerEvent
 {
-    uint32  uiEventEntry;
+    uint32  eventEntry;
     Team    team;
-    uint32  uiZoneText;
-    uint32  uiWorldState;
-    uint32  uiTowerArtKit;
-    uint32  uiTowerAnim;
+    uint32  zoneText;
+    uint32  worldState;
+    uint32  towerArtKit;
+    uint32  towerAnim;
 };
 
-static const HellfireTowerEvent aHellfireTowerEvents[MAX_HP_TOWERS][4] =
+static const HellfireTowerEvent HELLFIRE_TOWER_EVENTS[MAX_HP_TOWERS][4] =
 {
     {
         {EVENT_OVERLOOK_PROGRESS_ALLIANCE,      ALLIANCE,   LANG_OPVP_HP_CAPTURE_OVERLOOK_A,    WORLD_STATE_OVERLOOK_ALLIANCE,      GO_ARTKIT_OVERLOOK_ALLIANCE,    CAPTURE_ANIM_ALLIANCE},
@@ -145,7 +145,7 @@ static const HellfireTowerEvent aHellfireTowerEvents[MAX_HP_TOWERS][4] =
     },
 };
 
-static const uint32 aHellfireBanners[MAX_HP_TOWERS] = {GO_HELLFIRE_BANNER_OVERLOOK, GO_HELLFIRE_BANNER_STADIUM, GO_HELLFIRE_BANNER_BROKEN_HILL};
+static const uint32 HELLFIRE_BANNERS[MAX_HP_TOWERS] = {GO_HELLFIRE_BANNER_OVERLOOK, GO_HELLFIRE_BANNER_STADIUM, GO_HELLFIRE_BANNER_BROKEN_HILL};
 
 class OutdoorPvPHP : public OutdoorPvP
 {
@@ -154,31 +154,31 @@ class OutdoorPvPHP : public OutdoorPvP
 
         bool InitOutdoorPvPArea();
 
-        void OnGameObjectCreate(GameObject* pGo);
-        void ProcessEvent(uint32 uiEventId, GameObject* pGo);
+        void OnGameObjectCreate(GameObject* go);
+        void ProcessEvent(uint32 eventId, GameObject* go);
 
-        void HandlePlayerEnterZone(Player* pPlayer);
-        void HandlePlayerLeaveZone(Player* pPlayer);
-        void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team);
-        void HandlePlayerKillInsideArea(Player* pPlayer, Unit* pVictim);
+        void HandlePlayerEnterZone(Player* player);
+        void HandlePlayerLeaveZone(Player* player);
+        void HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team);
+        void HandlePlayerKillInsideArea(Player* player, Unit* victim);
 
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
-        void SendRemoveWorldStates(Player* pPlayer);
+        void SendRemoveWorldStates(Player* player);
 
     private:
         // world state update
         void UpdateWorldState();
 
         // process capture events
-        void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState, uint32 uiTowerArtKit, uint32 uiTowerAnim);
+        void ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 towerArtKit, uint32 towerAnim);
 
-        Team m_capturePointOwner[MAX_HP_TOWERS];
-        uint32 m_uiTowerWorldState[MAX_HP_TOWERS];
-        uint32 m_uiTowersAlliance;
-        uint32 m_uiTowersHorde;
+        Team m_towerOwner[MAX_HP_TOWERS];
+        uint32 m_towerWorldState[MAX_HP_TOWERS];
+        uint8 m_towersAlliance;
+        uint8 m_towersHorde;
 
-        ObjectGuid m_capturePointGuid[MAX_HP_TOWERS];
-        ObjectGuid m_bannersGuid[MAX_HP_TOWERS];
+        ObjectGuid m_towers[MAX_HP_TOWERS];
+        ObjectGuid m_banners[MAX_HP_TOWERS];
 };
 
 #endif

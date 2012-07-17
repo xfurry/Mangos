@@ -162,12 +162,12 @@ enum
     WORLD_STATE_CROWNGUARD_NEUTRAL          = 2355,
 };
 
-struct sTowerBuffs
+struct TowerBuffs
 {
-    uint32 uiSpellIdAlliance, uiSpellIdHorde;
+    uint32 spellIdAlliance, spellIdHorde;
 };
 
-static sTowerBuffs m_aPlaguelandsTowerBuffs[TOWER_COUNT] =
+static TowerBuffs PLAGUELANDS_TOWER_BUFFS[TOWER_COUNT] =
 {
     {SPELL_ECOES_OF_LORDAERON_ALLIANCE_1, SPELL_ECOES_OF_LORDAERON_HORDE_1},
     {SPELL_ECOES_OF_LORDAERON_ALLIANCE_2, SPELL_ECOES_OF_LORDAERON_HORDE_2},
@@ -175,15 +175,14 @@ static sTowerBuffs m_aPlaguelandsTowerBuffs[TOWER_COUNT] =
     {SPELL_ECOES_OF_LORDAERON_ALLIANCE_4, SPELL_ECOES_OF_LORDAERON_HORDE_4}
 };
 
-
-// Used to define the various summons
-struct sSpawnLocations
+// used to define the various summons
+struct PlaguelandsSpawnLocation
 {
-    float m_fX, m_fY, m_fZ;
+    float x, y, z;
 };
 
 // summon position at the eastwall tower - guesswork
-static sSpawnLocations m_aPlaguelandSoldiersSpawnLocs[] =
+static PlaguelandsSpawnLocation PLAGUELANDS_SOLDIER_SPAWN_LOCATIONS[] =
 {
     {2526.220f, -4758.520f, 101.056f},
     {2532.452f, -4760.138f, 102.408f},
@@ -192,8 +191,8 @@ static sSpawnLocations m_aPlaguelandSoldiersSpawnLocs[] =
     {2522.425f, -4767.049f, 102.552f}
 };
 
-// Capture points coords to sort the banners
-static sSpawnLocations m_aTowersSpawnLocs[TOWER_COUNT] =
+// capture points coords to sort the banners
+static PlaguelandsSpawnLocation PLAGUELANDS_TOWER_LOCATIONS[TOWER_COUNT] =
 {
     {3181.08f, -4379.36f, 174.123f},       // northpass
     {1860.85f, -3731.23f, 196.716f},       // crownguard
@@ -202,17 +201,17 @@ static sSpawnLocations m_aTowersSpawnLocs[TOWER_COUNT] =
 };
 
 // summon coords for the flightmaster
-static const float aFlightmasterSpawnLocs[4] = {2987.5f, -3049.11f, 120.126f, 5.75959f};
+static const float FLIGHTMASTER_SPAWN_LOCATION[4] = {2987.5f, -3049.11f, 120.126f, 5.75959f};
 
 struct PlaguelandsTowerEvent
 {
-    uint32  uiEventEntry;
+    uint32  eventEntry;
     Team    team;
-    uint32  uiZoneText;
-    uint32  uiWorldState;
+    uint32  zoneText;
+    uint32  worldState;
 };
 
-static const PlaguelandsTowerEvent aPlaguelandsTowerEvents[TOWER_COUNT][4] =
+static const PlaguelandsTowerEvent PLAGUELANDS_TOWER_EVENTS[TOWER_COUNT][4] =
 {
     {
         {EVENT_NORTHPASS_PROGRESS_ALLIANCE,     ALLIANCE,   LANG_OPVP_EP_CAPTURE_NPT_A, WORLD_STATE_NORTHPASS_ALLIANCE},
@@ -240,8 +239,8 @@ static const PlaguelandsTowerEvent aPlaguelandsTowerEvents[TOWER_COUNT][4] =
     },
 };
 
-// Order: Northpass, Crownguard, Eastwall, Plaguewood
-static const uint32 aPlaguelandsBanners[TOWER_COUNT] = {GO_BATTLEFIELD_BANNER_PLAGUELANDS_1, GO_BATTLEFIELD_BANNER_PLAGUELANDS_2, GO_BATTLEFIELD_BANNER_PLAGUELANDS_3, GO_BATTLEFIELD_BANNER_PLAGUELANDS_4};
+// order: Northpass, Crownguard, Eastwall, Plaguewood
+static const uint32 PLAGUELANDS_BANNERS[TOWER_COUNT] = {GO_BATTLEFIELD_BANNER_PLAGUELANDS_1, GO_BATTLEFIELD_BANNER_PLAGUELANDS_2, GO_BATTLEFIELD_BANNER_PLAGUELANDS_3, GO_BATTLEFIELD_BANNER_PLAGUELANDS_4};
 
 class OutdoorPvPEP : public OutdoorPvP
 {
@@ -250,22 +249,22 @@ class OutdoorPvPEP : public OutdoorPvP
 
         bool InitOutdoorPvPArea();
 
-        void OnGameObjectCreate(GameObject* pGo);
-        void ProcessEvent(uint32 uiEventId, GameObject* pGo);
+        void OnGameObjectCreate(GameObject* go);
+        void ProcessEvent(uint32 eventId, GameObject* go);
 
-        void HandlePlayerEnterZone(Player* pPlayer);
-        void HandlePlayerLeaveZone(Player* pPlayer);
-        void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team);
+        void HandlePlayerEnterZone(Player* player);
+        void HandlePlayerLeaveZone(Player* player);
+        void HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team);
 
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
-        void SendRemoveWorldStates(Player* pPlayer);
+        void SendRemoveWorldStates(Player* player);
 
     private:
         // update world state
         void UpdateWorldState();
 
         // process capture events
-        void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState);
+        void ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState);
 
         // plaguewood bonus - flightmaster
         void SummonFlightMaster(WorldObject* objRef);
@@ -281,18 +280,18 @@ class OutdoorPvPEP : public OutdoorPvP
         // crownguard bonus - graveyard
         void SetGraveyard(bool remove = false);
 
-        Team m_capturePointOwner[TOWER_COUNT];
-        uint32 m_uiTowerWorldState[TOWER_COUNT];
-        uint32 m_uiTowersAlliance;
-        uint32 m_uiTowersHorde;
+        Team m_towerOwner[TOWER_COUNT];
+        uint32 m_towerWorldState[TOWER_COUNT];
+        uint8 m_towersAlliance;
+        uint8 m_towersHorde;
 
-        ObjectGuid m_uiFlightMasterGUID;
-        ObjectGuid m_uiLordaeronShrineAllianceGUID;
-        ObjectGuid m_uiLordaeronShrineHordeGUID;
+        ObjectGuid m_flightMaster;
+        ObjectGuid m_lordaeronShrineAlliance;
+        ObjectGuid m_lordaeronShrineHorde;
 
-        std::list<ObjectGuid> m_lSoldiersGuids;
+        std::list<ObjectGuid> m_soldiers;
 
-        std::list<ObjectGuid> m_lTowerBanners[TOWER_COUNT];
+        std::list<ObjectGuid> m_towerBanners[TOWER_COUNT];
 };
 
 #endif

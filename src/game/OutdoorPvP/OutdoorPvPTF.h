@@ -15,7 +15,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
- 
 
 #ifndef WORLD_PVP_TF
 #define WORLD_PVP_TF
@@ -115,13 +114,13 @@ enum
 
 struct TerokkarTowerEvent
 {
-    uint32  uiEventEntry;
+    uint32  eventEntry;
     Team    team;
-    uint32  uiZoneText;
-    uint32  uiWorldState;
+    uint32  zoneText;
+    uint32  worldState;
 };
 
-static const TerokkarTowerEvent aTerokkarTowerEvents[MAX_TF_TOWERS][4] =
+static const TerokkarTowerEvent TEROKKAR_TOWER_EVENTS[MAX_TF_TOWERS][4] =
 {
     {
         {EVENT_TOWER_1_PROGRESS_ALLIANCE,   ALLIANCE,   LANG_OPVP_TF_CAPTURE_A, WORLD_STATE_TOWER_1_ALLIANCE},
@@ -155,7 +154,7 @@ static const TerokkarTowerEvent aTerokkarTowerEvents[MAX_TF_TOWERS][4] =
     },
 };
 
-static const uint32 aTerokkarTowers[MAX_TF_TOWERS] = {GO_TEROKKAR_BANNER_1, GO_TEROKKAR_BANNER_2, GO_TEROKKAR_BANNER_3, GO_TEROKKAR_BANNER_4, GO_TEROKKAR_BANNER_5};
+static const uint32 TEROKKAR_TOWERS[MAX_TF_TOWERS] = {GO_TEROKKAR_BANNER_1, GO_TEROKKAR_BANNER_2, GO_TEROKKAR_BANNER_3, GO_TEROKKAR_BANNER_4, GO_TEROKKAR_BANNER_5};
 
 class OutdoorPvPTF : public OutdoorPvP
 {
@@ -166,41 +165,41 @@ class OutdoorPvPTF : public OutdoorPvP
 
         bool InitOutdoorPvPArea();
 
-        void OnGameObjectCreate(GameObject* pGo);
-        void ProcessEvent(uint32 uiEventId, GameObject* pGo);
+        void OnGameObjectCreate(GameObject* go);
+        void ProcessEvent(uint32 eventId, GameObject* go);
 
-        void HandlePlayerEnterZone(Player* pPlayer);
-        void HandlePlayerLeaveZone(Player* pPlayer);
-        void HandleObjectiveComplete(uint32 uiEventId, std::list<Player*> players, Team team);
+        void HandlePlayerEnterZone(Player* player);
+        void HandlePlayerLeaveZone(Player* player);
+        void HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team);
 
         void Update(uint32 diff);
 
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
-        void SendRemoveWorldStates(Player* pPlayer);
+        void SendRemoveWorldStates(Player* player);
 
     private:
-        void UpdateWorldState(uint8 uiValue);
+        void UpdateWorldState(uint32 value);
         void UpdateTimerWorldState();
 
         // process capture events
-        void ProcessCaptureEvent(GameObject* pGo, uint32 uiTowerId, Team team, uint32 uiNewWorldState);
+        void ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState);
 
         void LockTowers(const WorldObject* objRef);
         void ResetTowers(const WorldObject* objRef);
 
-        uint32 m_uiTowerWorldState[MAX_TF_TOWERS];
-        uint32 m_uiZoneWorldState;
+        uint32 m_towerWorldState[MAX_TF_TOWERS];
+        uint32 m_zoneWorldState;
 
-        Team m_capturePointOwner[MAX_TF_TOWERS];
+        Team m_towerOwner[MAX_TF_TOWERS];
         Team m_zoneOwner;
 
-        uint32 m_uiZoneLockTimer;
-        uint32 m_uiZoneUpdateTimer;
+        uint32 m_zoneLockTimer;
+        uint32 m_zoneUpdateTimer;
 
-        uint8 m_uiTowersAlliance;
-        uint8 m_uiTowersHorde;
+        uint8 m_towersAlliance;
+        uint8 m_towersHorde;
 
-        ObjectGuid m_TowerBannerGUID[MAX_TF_TOWERS];
+        ObjectGuid m_towerBanners[MAX_TF_TOWERS];
 };
 
 #endif
