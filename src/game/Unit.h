@@ -147,6 +147,9 @@ enum UnitStandStateType
 
 #define MAX_UNIT_STAND_STATE             10
 
+// byte flags value (UNIT_FIELD_BYTES_1,1)
+// This corresponds to free talent points (pet case)
+
 // byte flags value (UNIT_FIELD_BYTES_1,2)
 enum UnitStandFlags
 {
@@ -157,9 +160,6 @@ enum UnitStandFlags
     UNIT_STAND_FLAGS_UNK5         = 0x10,
     UNIT_STAND_FLAGS_ALL          = 0xFF
 };
-
-// byte flags value (UNIT_FIELD_BYTES_1,2)
-// This corresponds to free talent points (pet case)
 
 // byte flags value (UNIT_FIELD_BYTES_1,3)
 enum UnitBytes1_Flags
@@ -199,6 +199,8 @@ enum UnitRename
     UNIT_CAN_BE_RENAMED     = 0x01,
     UNIT_CAN_BE_ABANDONED   = 0x02,
 };
+
+// byte flags value (UNIT_FIELD_BYTES_2,3)                  See enum ShapeshiftForm in SharedDefines.h
 
 #define CREATURE_MAX_SPELLS     4
 
@@ -1021,8 +1023,8 @@ struct CharmInfo
         CharmSpellEntry* GetCharmSpell(uint8 index) { return &(m_charmspells[index]); }
 
         GlobalCooldownMgr& GetGlobalCooldownMgr() { return m_GlobalCooldownMgr; }
-    private:
 
+    private:
         Unit* m_unit;
         UnitActionBarEntry PetActionBar[MAX_UNIT_ACTION_BAR_INDEX];
         CharmSpellEntry m_charmspells[CREATURE_MAX_SPELLS];
@@ -1971,6 +1973,8 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
 
         Unit* _GetTotem(TotemSlot slot) const;              // for templated function without include need
         Pet* _GetPet(ObjectGuid guid) const;                // for templated function without include need
+
+        void JustKilledCreature(Creature* victim);          // Wrapper called by DealDamage when a creature is killed
 
         uint32 m_state;                                     // Even derived shouldn't modify
         uint32 m_CombatTimer;

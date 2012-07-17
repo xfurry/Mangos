@@ -38,6 +38,7 @@
 #include "Util.h"
 #include "ArenaTeam.h"
 #include "Language.h"
+#include "SpellMgr.h"
 
 // config option SkipCinematics supported values
 enum CinematicsSkipMode
@@ -792,7 +793,12 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder *holder)
         SendNotification(LANG_GM_ON);
 
     if (!pCurrChar->isGMVisible())
+    {
         SendNotification(LANG_INVISIBLE_INVISIBLE);
+        SpellEntry const* invisibleAuraInfo = sSpellStore.LookupEntry(sWorld.getConfig(CONFIG_UINT32_GM_INVISIBLE_AURA));
+        if (invisibleAuraInfo && IsSpellAppliesAura(invisibleAuraInfo))
+            pCurrChar->CastSpell(pCurrChar, invisibleAuraInfo, true);
+    }
 
     std::string IP_str = GetRemoteAddress();
     sLog.outChar("Account: %d (IP: %s) Login Character:[%s] (guid: %u)",
@@ -1059,8 +1065,17 @@ void WorldSession::HandleAlterAppearanceOpcode( WorldPacket & recv_data )
 {
     DEBUG_LOG("CMSG_ALTER_APPEARANCE");
 
-    uint32 Hair, Color, FacialHair;
-    recv_data >> Hair >> Color >> FacialHair;
+    uint32 Hair, Color, FacialHair, skinTone;
+    recv_data >> Hair >> Color >> FacialHair >> skinTone;
+
+    uint32 skinTone_id = -1;
+    if (_player->getRace() == RACE_TAUREN)
+    {
+        BarberShopStyleEntry const* bs_skinTone = sBarberShopStyleStore.LookupEntry(skinTone);
+        if (!bs_skinTone || bs_skinTone->type != 3 || bs_skinTone->race != _player->getRace() || bs_skinTone->gender != _player->getGender())
+            return;
+        skinTone_id = bs_skinTone->hair_id;
+    }
 
     BarberShopStyleEntry const* bs_hair = sBarberShopStyleStore.LookupEntry(Hair);
 
@@ -1072,7 +1087,7 @@ void WorldSession::HandleAlterAppearanceOpcode( WorldPacket & recv_data )
     if(!bs_facialHair || bs_facialHair->type != 2 || bs_facialHair->race != _player->getRace() || bs_facialHair->gender != _player->getGender())
         return;
 
-    uint32 Cost = _player->GetBarberShopCost(bs_hair->hair_id, Color, bs_facialHair->hair_id);
+    uint32 Cost = _player->GetBarberShopCost(bs_hair->hair_id, Color, bs_facialHair->hair_id, skinTone_id);
 
     // 0 - ok
     // 1,3 - not enough money
@@ -1097,6 +1112,8 @@ void WorldSession::HandleAlterAppearanceOpcode( WorldPacket & recv_data )
     _player->SetByteValue(PLAYER_BYTES, 2, uint8(bs_hair->hair_id));
     _player->SetByteValue(PLAYER_BYTES, 3, uint8(Color));
     _player->SetByteValue(PLAYER_BYTES_2, 0, uint8(bs_facialHair->hair_id));
+    if (_player->getRace() == RACE_TAUREN)
+        _player->SetByteValue(PLAYER_BYTES, 0, uint8(skinTone_id));
 
     _player->GetAchievementMgr().UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_VISIT_BARBER_SHOP, 1);
 
