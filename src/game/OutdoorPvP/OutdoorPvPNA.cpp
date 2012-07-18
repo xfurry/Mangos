@@ -329,7 +329,7 @@ void OutdoorPvPNA::ProcessCaptureEvent(GameObject* go, Team team)
 
     UpdateWorldState(WORLD_STATE_REMOVE);
     RespawnSoldiers(go);
-    SetGraveyard(0, TEAM_INVALID);
+    SetGraveyard(false, TEAM_INVALID);
 
     if (m_zoneOwner == ALLIANCE)
     {
