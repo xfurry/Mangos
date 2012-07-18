@@ -161,9 +161,6 @@ class OutdoorPvPZM : public OutdoorPvP
         void PrepareFactionScouts(const WorldObject* objRef, Team team);
         void ResetScouts(const WorldObject* objRef, Team team, bool includeWorldStates = true);
 
-        // link graveyard on central node capture
-        void SetGraveyard(bool remove, Team team);
-
         // handle graveyard team banners
         void SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn);
 

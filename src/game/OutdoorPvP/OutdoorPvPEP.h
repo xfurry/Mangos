@@ -277,9 +277,6 @@ class OutdoorPvPEP : public OutdoorPvP
         // northpass bonus - shrine
         void UpdateShrine(const WorldObject* objRef, bool remove = false);
 
-        // crownguard bonus - graveyard
-        void SetGraveyard(bool remove, Team team);
-
         Team m_towerOwner[TOWER_COUNT];
         uint32 m_towerWorldState[TOWER_COUNT];
         uint8 m_towersAlliance;

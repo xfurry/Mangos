@@ -345,16 +345,15 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
             SetBeaconArtKit(go, m_beamGraveyardBlue, 0);
             sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOOSE_GY_A));
 
-            // remove buff and graveyard
+            // remove buff
             BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING, true);
-            SetGraveyard(true, player->GetTeam());
 
             // update graveyard owner
             m_graveyardOwner = HORDE;
 
-            // add the buff and the graveyard
+            // add the buff and change the graveyard link
             BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING);
-            SetGraveyard(false, TEAM_INVALID);
+            sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner);
 
             SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_REMOVE);
             m_graveyardWorldState = WORLD_STATE_GRAVEYARD_HORDE;
@@ -377,16 +376,15 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
             SetBeaconArtKit(go, m_beamGraveyardRed, 0);
             sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOOSE_GY_H));
 
-            // remove buff and graveyard
+            // remove buff
             BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING, true);
-            SetGraveyard(true, player->GetTeam());
 
             // update graveyard owner
             m_graveyardOwner = ALLIANCE;
 
-            // add the buff and the graveyard to horde
+            // add the buff and change the graveyard link
             BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING);
-            SetGraveyard(false, TEAM_INVALID);
+            sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner);
 
             SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_REMOVE);
             m_graveyardWorldState = WORLD_STATE_GRAVEYARD_ALLIANCE;
@@ -413,10 +411,10 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
                 SetGraveyardArtKit(go, m_graveyardBannerNeutral, false);
                 SetGraveyardArtKit(go, m_graveyardBannerAlliance, true);
 
-                // add the buff and the graveyard to horde
+                // add the buff and change the graveyard link
                 m_graveyardWorldState = WORLD_STATE_GRAVEYARD_ALLIANCE;
                 BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING);
-                SetGraveyard(false, TEAM_INVALID);
+                sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner);
 
                 // reset scout and remove player aura
                 ResetScouts(go, m_graveyardOwner);
@@ -433,10 +431,10 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
                 SetGraveyardArtKit(go, m_graveyardBannerNeutral, false);
                 SetGraveyardArtKit(go, m_graveyardBannerHorde, true);
 
-                // add the buff and the graveyard to horde
+                // add the buff and change the graveyard link
                 m_graveyardWorldState = WORLD_STATE_GRAVEYARD_HORDE;
                 BuffTeam(HORDE, SPELL_TWIN_SPIRE_BLESSING);
-                SetGraveyard(false, TEAM_INVALID);
+                sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner);
 
                 // reset scout and remove player aura
                 ResetScouts(go, m_graveyardOwner);
@@ -451,14 +449,6 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
     }
 
     return false;
-}
-
-void OutdoorPvPZM::SetGraveyard(bool remove, Team team)
-{
-    if (remove)
-        sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, TEAM_INVALID);
-    else
-        sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, team);
 }
 
 void OutdoorPvPZM::SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn)

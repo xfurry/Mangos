@@ -320,7 +320,6 @@ void OutdoorPvPNA::ProcessEvent(uint32 eventId, GameObject* go)
 
 void OutdoorPvPNA::ProcessCaptureEvent(GameObject* go, Team team)
 {
-    SetGraveyard(true, team);
     BuffTeam(m_zoneOwner, SPELL_STRENGTH_HALAANI, true);
     sWorld.SendZoneText(ZONE_ID_NAGRAND, sObjectMgr.GetMangosStringForDBCLocale(m_zoneOwner == ALLIANCE ? LANG_OPVP_NA_LOOSE_A: LANG_OPVP_NA_LOOSE_H));
 
@@ -329,7 +328,7 @@ void OutdoorPvPNA::ProcessCaptureEvent(GameObject* go, Team team)
 
     UpdateWorldState(WORLD_STATE_REMOVE);
     RespawnSoldiers(go);
-    SetGraveyard(false, TEAM_INVALID);
+    sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_HALAA, GRAVEYARD_ZONE_ID_HALAA, m_zoneOwner);
 
     if (m_zoneOwner == ALLIANCE)
     {
@@ -347,14 +346,6 @@ void OutdoorPvPNA::ProcessCaptureEvent(GameObject* go, Team team)
 
     BuffTeam(m_zoneOwner, SPELL_STRENGTH_HALAANI);
     sWorld.SendZoneText(ZONE_ID_NAGRAND, sObjectMgr.GetMangosStringForDBCLocale(team == ALLIANCE ? LANG_OPVP_NA_CAPTURE_A: LANG_OPVP_NA_CAPTURE_H));
-}
-
-void OutdoorPvPNA::SetGraveyard(bool remove, Team team)
-{
-    if (remove)
-        sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_HALAA, GRAVEYARD_ZONE_ID_HALAA, TEAM_INVALID);
-    else
-        sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_HALAA, GRAVEYARD_ZONE_ID_HALAA, team);
 }
 
 void OutdoorPvPNA::HandleFactionObjects(const WorldObject* objRef)
