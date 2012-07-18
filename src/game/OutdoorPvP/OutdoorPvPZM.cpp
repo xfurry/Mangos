@@ -354,7 +354,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
 
             // add the buff and the graveyard
             BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING);
-            SetGraveyard(0, TEAM_INVALID);
+            SetGraveyard(false, TEAM_INVALID);
 
             SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_REMOVE);
             m_graveyardWorldState = WORLD_STATE_GRAVEYARD_HORDE;
@@ -386,7 +386,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
 
             // add the buff and the graveyard to horde
             BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING);
-            SetGraveyard(0, TEAM_INVALID);
+            SetGraveyard(false, TEAM_INVALID);
 
             SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_REMOVE);
             m_graveyardWorldState = WORLD_STATE_GRAVEYARD_ALLIANCE;
@@ -436,7 +436,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
                 // add the buff and the graveyard to horde
                 m_graveyardWorldState = WORLD_STATE_GRAVEYARD_HORDE;
                 BuffTeam(HORDE, SPELL_TWIN_SPIRE_BLESSING);
-                SetGraveyard(0, TEAM_INVALID);
+                SetGraveyard(false, TEAM_INVALID);
 
                 // reset scout and remove player aura
                 ResetScouts(go, m_graveyardOwner);
