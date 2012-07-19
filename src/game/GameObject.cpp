@@ -39,6 +39,7 @@
 #include "OutdoorPvP/OutdoorPvPMgr.h"
 #include "Util.h"
 #include "ScriptMgr.h"
+#include "SQLStorages.h"
 #include <G3D/Quat.h>
 
 GameObject::GameObject() : WorldObject(),
@@ -419,6 +420,7 @@ void GameObject::Update(uint32 update_diff, uint32 p_time)
                         ClearAllUsesData();
 
                         // Don't despawn objects with nodespawn flag
+                        // Note: this needs better research or better Goober Handling
                         if (HasFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN))
                             return;
                     }
