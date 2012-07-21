@@ -794,11 +794,7 @@ class MANGOS_DLL_SPEC GameObject : public WorldObject
         float       m_captureSlider;
         CapturePointState m_captureState;
 
-        uint32      m_captureTimer;                         // (msecs)timer used for captue points
-        float       m_captureSlider;
-        CapturePointState m_captureState;
-
-        GuidSet m_SkillupSet;                              // players that already have skill-up at GO use
+        GuidSet m_SkillupSet;                               // players that already have skill-up at GO use
 
         uint32 m_useTimes;                                  // amount uses/charges triggered
 
