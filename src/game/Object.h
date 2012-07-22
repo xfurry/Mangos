@@ -95,8 +95,8 @@ struct WorldLocation
 };
 
 
-//use this class to measure time between world update ticks
-//essential for units updating their spells after cells become active
+// use this class to measure time between world update ticks
+// essential for units updating their spells after cells become active
 class WorldUpdateCounter
 {
     public:
@@ -413,8 +413,8 @@ class MANGOS_DLL_SPEC WorldObject : public Object
 
     public:
 
-        //class is used to manipulate with WorldUpdateCounter
-        //it is needed in order to get time diff between two object's Update() calls
+        // class is used to manipulate with WorldUpdateCounter
+        // it is needed in order to get time diff between two object's Update() calls
         class MANGOS_DLL_SPEC UpdateHelper
         {
             public:
@@ -572,18 +572,18 @@ class MANGOS_DLL_SPEC WorldObject : public Object
 
         void SetMap(Map* map);
         Map* GetMap() const { MANGOS_ASSERT(m_currMap); return m_currMap; }
-        //used to check all object's GetMap() calls when object is not in world!
+        // used to check all object's GetMap() calls when object is not in world!
         void ResetMap() { m_currMap = NULL; }
 
-        //obtain terrain data for map where this object belong...
+        // obtain terrain data for map where this object belong...
         TerrainInfo const* GetTerrain() const;
 
         void SetZoneScript();
-        ZoneScript * GetZoneScript() const { return m_zoneScript; }
+        ZoneScript* GetZoneScript() const { return m_zoneScript; }
 
-        void AddToClientUpdateList();
-        void RemoveFromClientUpdateList();
-        void BuildUpdateData(UpdateDataMapType&);
+        void AddToClientUpdateList() override;
+        void RemoveFromClientUpdateList() override;
+        void BuildUpdateData(UpdateDataMapType&) override;
 
         Creature* SummonCreature(uint32 id, float x, float y, float z, float ang, TempSummonType spwtype, uint32 despwtime, bool asActiveObject = false);
 
@@ -600,19 +600,19 @@ class MANGOS_DLL_SPEC WorldObject : public Object
     protected:
         explicit WorldObject();
 
-        //these functions are used mostly for Relocate() and Corpse/Player specific stuff...
-        //use them ONLY in LoadFromDB()/Create() funcs and nowhere else!
-        //mapId/instanceId should be set in SetMap() function!
+        // these functions are used mostly for Relocate() and Corpse/Player specific stuff...
+        // use them ONLY in LoadFromDB()/Create()  funcs and nowhere else!
+        // mapId/instanceId should be set in SetMap() function!
         void SetLocationMapId(uint32 _mapId) { m_mapId = _mapId; }
         void SetLocationInstanceId(uint32 _instanceId) { m_InstanceId = _instanceId; }
 
         virtual void StopGroupLoot() {}
 
-        ZoneScript *m_zoneScript;
+        ZoneScript* m_zoneScript;
         std::string m_name;
 
     private:
-        Map* m_currMap;                                     //current object's Map location
+        Map* m_currMap;                                     // current object's Map location
 
         uint32 m_mapId;                                     // object at map with map_id
         uint32 m_InstanceId;                                // in map copy with instance id
