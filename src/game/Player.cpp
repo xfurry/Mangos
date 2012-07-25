@@ -8693,7 +8693,6 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
     // data depends on zoneid/mapid...
     BattleGround* bg = GetBattleGround();
     uint32 mapid = GetMapId();
-    OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP(zoneid);
 
     DEBUG_LOG("Sending SMSG_INIT_WORLD_STATES to Map:%u, Zone: %u", mapid, zoneid);
 
@@ -8727,27 +8726,28 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
         FillInitialWorldState(data, count, 0x9bd, 0xF);     // 2493
         FillInitialWorldState(data, count, 0x9bb, 0xF);     // 2491
     }
+
     switch (zoneid)
     {
-        case 1:
-        case 11:
-        case 12:
-        case 38:
-        case 40:
-        case 51:
-        case 1519:
-        case 1537:
-        case 2257:
+        case 1:                                             // Dun Morogh
+        case 11:                                            // Wetlands
+        case 12:                                            // Elwynn Forest
+        case 38:                                            // Loch Modan
+        case 40:                                            // Westfall
+        case 51:                                            // Searing Gorge
+        case 1519:                                          // Stormwind City
+        case 1537:                                          // Ironforge
+        case 2257:                                          // Deeprun Tram
         case 3703:                                          // Shattrath City
             break;
         case 139:                                           // Eastern Plaguelands
-            if (outdoorPvP)
+            if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP(zoneid))
                 outdoorPvP->FillInitialWorldStates(data, count);
             else
                 FillInitialWorldState(data, count, EP_world_states);
             break;
         case 1377:                                          // Silithus
-            if (outdoorPvP)
+            if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP(zoneid))
                 outdoorPvP->FillInitialWorldStates(data, count);
             else
                 FillInitialWorldState(data, count, SI_world_states);
@@ -8777,25 +8777,25 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
                 FillInitialWorldState(data, count, EY_world_states);
             break;
         case 3483:                                          // Hellfire Peninsula
-            if (outdoorPvP)
+            if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP(zoneid))
                 outdoorPvP->FillInitialWorldStates(data, count);
             else
                 FillInitialWorldState(data, count, HP_world_states);
             break;
         case 3518:                                          // Nagrand
-            if (outdoorPvP)
+            if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP(zoneid))
                 outdoorPvP->FillInitialWorldStates(data, count);
             else
                 FillInitialWorldState(data, count, NA_world_states);
             break;
         case 3519:                                          // Terokkar Forest
-            if (outdoorPvP)
+            if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP(zoneid))
                 outdoorPvP->FillInitialWorldStates(data, count);
             else
                 FillInitialWorldState(data, count, TF_world_states);
             break;
         case 3521:                                          // Zangarmarsh
-            if (outdoorPvP)
+            if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP(zoneid))
                 outdoorPvP->FillInitialWorldStates(data, count);
             else
                 FillInitialWorldState(data, count, ZM_world_states);
