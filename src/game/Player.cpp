@@ -8536,165 +8536,156 @@ static WorldStatePair EY_world_states[] =
 
 static WorldStatePair SI_world_states[] =                   // Silithus
 {
-    { 2313, 0x0 },                                          // 1 ally silityst gathered
-    { 2314, 0x0 },                                          // 2 horde silityst gathered
-    { 2317, 0x0 }                                           // 3 max silithyst
+    { 2313, 0 },                                            // 7 WORLD_STATE_SI_GATHERED_A
+    { 2314, 0 },                                            // 8 WORLD_STATE_SI_GATHERED_H
+    { 2317, 0 }                                             // 9 WORLD_STATE_SI_SILITHYST_MAX
 };
 
-static WorldStatePair EP_world_states[] =
+static WorldStatePair EP_world_states[] =                   // Eastern Plaguelands
 {
-    { 0x97a, 0x0 },     // 10 2426
-    { 0x917, 0x0 },     // 11 2327
-    { 0x918, 0x0 },     // 12 2328
-    { 0x97b, 0x32 },     // 13 2427
-    { 0x97c, 0x32 },     // 14 2428
-    { 0x933, 0x1 },     // 15 2355
-    { 0x946, 0x0 },     // 16 2374
-    { 0x947, 0x0 },     // 17 2375
-    { 0x948, 0x0 },     // 18 2376
-    { 0x949, 0x0 },     // 19 2377
-    { 0x94a, 0x0 },     // 20 2378
-    { 0x94b, 0x0 },     // 21 2379
-    { 0x932, 0x0 },     // 22 2354
-    { 0x934, 0x0 },     // 23 2356
-    { 0x935, 0x0 },     // 24 2357
-    { 0x936, 0x0 },     // 25 2358
-    { 0x937, 0x0 },     // 26 2359
-    { 0x938, 0x0 },     // 27 2360
-    { 0x939, 0x1 },     // 28 2361
-    { 0x930, 0x1 },     // 29 2352
-    { 0x93a, 0x0 },     // 30 2362
-    { 0x93b, 0x0 },     // 31 2363
-    { 0x93c, 0x0 },     // 32 2364
-    { 0x93d, 0x0 },     // 33 2365
-    { 0x944, 0x0 },     // 34 2372
-    { 0x945, 0x0 },     // 35 2373
-    { 0x931, 0x1 },     // 36 2353
-    { 0x93e, 0x0 },     // 37 2366
-    { 0x931, 0x1 },     // 38 2367 ??  grey horde not in dbc! send for consistency's sake, and to match field count
-    { 0x940, 0x0 },     // 39 2368
-    { 0x941, 0x0 },     // 7 2369
-    { 0x942, 0x0 },     // 8 2370
-    { 0x943, 0x0 }      // 9 2371
+    { 2426, 0x0 },                                          // 10
+    { 2327, 0x0 },                                          // 11
+    { 2328, 0x0 },                                          // 12
+    { 2427, 0x32 },                                         // 13
+    { 2428, 0x32 },                                         // 14
+    { 2355, WORLD_STATE_ADD },                              // 15 WORLD_STATE_CROWNGUARD_NEUTRAL
+    { 2374, WORLD_STATE_REMOVE },                           // 16 WORLD_STATE_CROWNGUARD_CONTEST_ALLIANCE
+    { 2375, WORLD_STATE_REMOVE },                           // 17 WORLD_STATE_CROWNGUARD_CONTEST_HORDE
+    { 2376, WORLD_STATE_REMOVE },                           // 18 WORLD_STATE_CROWNGUARD_PROGRESS_ALLIANCE
+    { 2377, WORLD_STATE_REMOVE },                           // 19 WORLD_STATE_CROWNGUARD_PROGRESS_HORDE
+    { 2378, WORLD_STATE_REMOVE },                           // 20 WORLD_STATE_CROWNGUARD_ALLIANCE
+    { 2379, WORLD_STATE_REMOVE },                           // 21 WORLD_STATE_CROWNGUARD_HORDE
+    { 2354, WORLD_STATE_REMOVE },                           // 22 WORLD_STATE_EASTWALL_ALLIANCE
+    { 2356, WORLD_STATE_REMOVE },                           // 23 WORLD_STATE_EASTWALL_HORDE
+    { 2357, WORLD_STATE_REMOVE },                           // 24 WORLD_STATE_EASTWALL_PROGRESS_ALLIANCE
+    { 2358, WORLD_STATE_REMOVE },                           // 25 WORLD_STATE_EASTWALL_PROGRESS_HORDE
+    { 2359, WORLD_STATE_REMOVE },                           // 26 WORLD_STATE_EASTWALL_CONTEST_ALLIANCE
+    { 2360, WORLD_STATE_REMOVE },                           // 27 WORLD_STATE_EASTWALL_CONTEST_HORDE
+    { 2361, WORLD_STATE_ADD },                              // 28 WORLD_STATE_EASTWALL_NEUTRAL
+    { 2352, WORLD_STATE_ADD },                              // 29 WORLD_STATE_NORTHPASS_NEUTRAL
+    { 2362, WORLD_STATE_REMOVE },                           // 30 WORLD_STATE_NORTHPASS_CONTEST_ALLIANCE
+    { 2363, WORLD_STATE_REMOVE },                           // 31 WORLD_STATE_NORTHPASS_CONTEST_HORDE
+    { 2364, WORLD_STATE_REMOVE },                           // 32 WORLD_STATE_NORTHPASS_PROGRESS_ALLIANCE
+    { 2365, WORLD_STATE_REMOVE },                           // 33 WORLD_STATE_NORTHPASS_PROGRESS_HORDE
+    { 2372, WORLD_STATE_REMOVE },                           // 34 WORLD_STATE_NORTHPASS_ALLIANCE
+    { 2373, WORLD_STATE_REMOVE },                           // 35 WORLD_STATE_NORTHPASS_HORDE
+    { 2353, WORLD_STATE_ADD },                              // 36 WORLD_STATE_PLAGUEWOOD_NEUTRAL
+    { 2366, WORLD_STATE_REMOVE },                           // 37 WORLD_STATE_PLAGUEWOOD_CONTEST_ALLIANCE
+    { 2353, WORLD_STATE_ADD },                              // 38 WORLD_STATE_PLAGUEWOOD_NEUTRAL - actually 2367 but grey horde not in dbc! sent for consistency's sake, and to match field count
+    { 2368, WORLD_STATE_REMOVE },                           // 39 WORLD_STATE_PLAGUEWOOD_PROGRESS_ALLIANCE
+    { 2369, WORLD_STATE_REMOVE },                           // 7 WORLD_STATE_PLAGUEWOOD_PROGRESS_HORDE
+    { 2370, WORLD_STATE_REMOVE },                           // 8 WORLD_STATE_PLAGUEWOOD_ALLIANCE
+    { 2371, WORLD_STATE_REMOVE }                            // 9 WORLD_STATE_PLAGUEWOOD_HORDE
 };
 
 static WorldStatePair HP_world_states[] =                   // Hellfire Peninsula
 {
-    { 0x9ba, 0x1 },                                         // 2490 10
-    { 0x9b9, 0x1 },                                         // 2489 11
-    { 0x9b5, 0x0 },                                         // 2485 12
-    { 0x9b4, 0x1 },                                         // 2484 13
-    { 0x9b3, 0x0 },                                         // 2483 14
-    { 0x9b2, 0x0 },                                         // 2482 15
-    { 0x9b1, 0x1 },                                         // 2481 16
-    { 0x9b0, 0x0 },                                         // 2480 17
-    { 0x9ae, 0x0 },                                         // 2478 18 horde pvp objectives captured
-    { 0x9ac, 0x0 },                                         // 2476 19
-    { 0x9a8, 0x0 },                                         // 2472 20
-    { 0x9a7, 0x0 },                                         // 2471 21
-    { 0x9a6, 0x1 },                                         // 2470 22
-    { 0x0,   0x0 }
+    { 2490, WORLD_STATE_ADD },                              // 10 WORLD_STATE_TOWER_DISPLAY_HP_A
+    { 2489, WORLD_STATE_ADD },                              // 11 WORLD_STATE_TOWER_DISPLAY_HP_H
+    { 2485, WORLD_STATE_REMOVE },                           // 12 WORLD_STATE_BROKEN_HILL_NEUTRAL
+    { 2484, WORLD_STATE_ADD },                              // 13 WORLD_STATE_BROKEN_HILL_HORDE
+    { 2483, WORLD_STATE_REMOVE },                           // 14 WORLD_STATE_BROKEN_HILL_ALLIANCE
+    { 2482, WORLD_STATE_REMOVE },                           // 15 WORLD_STATE_OVERLOOK_NEUTRAL
+    { 2481, WORLD_STATE_ADD },                              // 16 WORLD_STATE_OVERLOOK_HORDE
+    { 2480, WORLD_STATE_REMOVE },                           // 17 WORLD_STATE_OVERLOOK_ALLIANCE
+    { 2478, 0 },                                            // 18 WORLD_STATE_TOWER_COUNT_HP_HORDE
+    { 2476, 0 },                                            // 19 WORLD_STATE_TOWER_COUNT_HP_ALLIANCE
+    { 2472, WORLD_STATE_REMOVE },                           // 20 WORLD_STATE_STADIUM_NEUTRAL
+    { 2471, WORLD_STATE_REMOVE },                           // 21 WORLD_STATE_STADIUM_ALLIANCE
+    { 2470, WORLD_STATE_ADD }                               // 22 WORLD_STATE_STADIUM_HORDE
 };
 
 static WorldStatePair TF_world_states[] =                   // Terokkar Forest
 {
-    { 0xa41, 0x0 },                                         // 2625 10
-    { 0xa40, 0x14 },                                        // 2624 11
-    { 0xa3f, 0x0 },                                         // 2623 12
-    { 0xa3e, 0x0 },                                         // 2622 13
-    { 0xa3d, 0x5 },                                         // 2621 14
-    { 0xa3c, 0x0 },                                         // 2620 15
-    { 0xa87, 0x0 },                                         // 2695 16
-    { 0xa86, 0x0 },                                         // 2694 17
-    { 0xa85, 0x0 },                                         // 2693 18
-    { 0xa84, 0x0 },                                         // 2692 19
-    { 0xa83, 0x0 },                                         // 2691 20
-    { 0xa82, 0x0 },                                         // 2690 21
-    { 0xa81, 0x0 },                                         // 2689 22
-    { 0xa80, 0x0 },                                         // 2688 23
-    { 0xa7e, 0x0 },                                         // 2686 24
-    { 0xa7d, 0x0 },                                         // 2685 25
-    { 0xa7c, 0x0 },                                         // 2684 26
-    { 0xa7b, 0x0 },                                         // 2683 27
-    { 0xa7a, 0x0 },                                         // 2682 28
-    { 0xa79, 0x0 },                                         // 2681 29
-    { 0x9d0, 0x5 },                                         // 2512 30
-    { 0x9ce, 0x0 },                                         // 2510 31
-    { 0x9cd, 0x0 },                                         // 2509 32
-    { 0x9cc, 0x0 },                                         // 2508 33
-    { 0xa88, 0x0 },                                         // 2696 34
-    { 0xad0, 0x0 },                                         // 2768 35
-    { 0xacf, 0x1 },                                         // 2767 36
-    { 0x0,   0x0 }
+    { 2625, 0x0 },                                          // 10
+    { 2624, 0x14 },                                         // 11
+    { 2623, 0x0 },                                          // 12
+    { 2622, 0 },                                            // 13 WORLD_STATE_TF_TOWER_COUNT_H
+    { 2621, 5 },                                            // 14 WORLD_STATE_TF_TOWER_COUNT_A
+    { 2620, 0 },                                            // 15 WORLD_STATE_TF_TOWERS_CONTROLLED
+    { 2695, WORLD_STATE_REMOVE },                           // 16 WORLD_STATE_TOWER_4_HORDE
+    { 2694, WORLD_STATE_REMOVE },                           // 17 WORLD_STATE_TOWER_4_ALLIANCE
+    { 2693, WORLD_STATE_REMOVE },                           // 18 WORLD_STATE_TOWER_5_NEUTRAL
+    { 2692, WORLD_STATE_REMOVE },                           // 19 WORLD_STATE_TOWER_5_HORDE
+    { 2691, WORLD_STATE_REMOVE },                           // 20 WORLD_STATE_TOWER_5_ALLIANCE
+    { 2690, WORLD_STATE_REMOVE },                           // 21 WORLD_STATE_TOWER_3_NEUTRAL
+    { 2689, WORLD_STATE_REMOVE },                           // 22 WORLD_STATE_TOWER_3_HORDE
+    { 2688, WORLD_STATE_REMOVE },                           // 23 WORLD_STATE_TOWER_3_ALLIANCE
+    { 2686, WORLD_STATE_REMOVE },                           // 24 WORLD_STATE_TOWER_2_NEUTRAL
+    { 2685, WORLD_STATE_REMOVE },                           // 25 WORLD_STATE_TOWER_2_HORDE
+    { 2684, WORLD_STATE_REMOVE },                           // 26 WORLD_STATE_TOWER_2_ALLIANCE
+    { 2683, WORLD_STATE_REMOVE },                           // 27 WORLD_STATE_TOWER_1_ALLIANCE
+    { 2682, WORLD_STATE_REMOVE },                           // 28 WORLD_STATE_TOWER_1_HORDE
+    { 2681, WORLD_STATE_REMOVE },                           // 29 WORLD_STATE_TOWER_1_NEUTRAL
+    { 2512, 5 },                                            // 30 WORLD_STATE_TF_TIME_MIN_FIRST_DIGIT
+    { 2510, 0 },                                            // 31 WORLD_STATE_TF_TIME_MIN_SECOND_DIGIT
+    { 2509, 0 },                                            // 32 WORLD_STATE_TF_TIME_HOURS
+    { 2508, WORLD_STATE_REMOVE },                           // 33 WORLD_STATE_TF_LOCKED_NEUTRAL
+    { 2696, WORLD_STATE_REMOVE },                           // 34 WORLD_STATE_TOWER_4_NEUTRAL
+    { 2768, WORLD_STATE_REMOVE },                           // 35 WORLD_STATE_TF_LOCKED_HORDE
+    { 2767, WORLD_STATE_ADD }                               // 36 WORLD_STATE_TF_LOCKED_ALLIANCE
 };
 
 static WorldStatePair ZM_world_states[] =                   // Zangarmarsh
 {
-    { 0x9e1, 0x0 },                                         // 2529 10
-    { 0x9e0, 0x0 },                                         // 2528 11
-    { 0x9df, 0x0 },                                         // 2527 12
-    { 0xa5d, 0x1 },                                         // 2526 13
-    { 0xa5c, 0x0 },                                         // 2525 14
-    { 0xa5b, 0x1 },                                         // 2524 15
-    { 0xa5a, 0x0 },                                         // 2523 16
-    { 0xa59, 0x1 },                                         // 2649 17
-    { 0xa58, 0x0 },                                         // 2648 18
-    { 0xa57, 0x0 },                                         // 2647 19
-    { 0xa56, 0x0 },                                         // 2646 20
-    { 0xa55, 0x1 },                                         // 2645 21
-    { 0xa54, 0x0 },                                         // 2644 22
-    { 0x9e7, 0x0 },                                         // 2535 23
-    { 0x9e6, 0x0 },                                         // 2534 24
-    { 0x9e5, 0x0 },                                         // 2533 25
-    { 0xa00, 0x0 },                                         // 2560 26
-    { 0x9ff, 0x1 },                                         // 2559 27
-    { 0x9fe, 0x0 },                                         // 2558 28
-    { 0x9fd, 0x0 },                                         // 2557 29
-    { 0x9fc, 0x1 },                                         // 2556 30
-    { 0x9fb, 0x0 },                                         // 2555 31
-    { 0xa62, 0x0 },                                         // 2658 32
-    { 0xa61, 0x1 },                                         // 2657 33
-    { 0xa60, 0x1 },                                         // 2656 34
-    { 0xa5f, 0x0 },                                         // 2655 35
-    { 0x0,   0x0 }
+    { 2529, 0x0 },                                          // 10
+    { 2528, 0x0 },                                          // 11
+    { 2527, 0x0 },                                          // 12
+    { 2653, 0x1 },                                          // 13
+    { 2652, WORLD_STATE_REMOVE },                           // 14 WORLD_STATE_TOWER_EAST_NEUTRAL
+    { 2651, WORLD_STATE_ADD },                              // 15 WORLD_STATE_TOWER_EAST_HORDE
+    { 2650, WORLD_STATE_REMOVE },                           // 16 WORLD_STATE_TOWER_EAST_ALLIANCE
+    { 2649, WORLD_STATE_ADD },                              // 17 WORLD_STATE_GRAVEYARD_HORDE
+    { 2648, WORLD_STATE_REMOVE },                           // 18 WORLD_STATE_GRAVEYARD_ALLIANCE
+    { 2647, WORLD_STATE_REMOVE },                           // 19 WORLD_STATE_GRAVEYARD_NEUTRAL
+    { 2646, WORLD_STATE_REMOVE },                           // 20 WORLD_STATE_TOWER_WEST_NEUTRAL
+    { 2645, WORLD_STATE_ADD },                              // 21 WORLD_STATE_TOWER_WEST_HORDE
+    { 2644, WORLD_STATE_REMOVE },                           // 22 WORLD_STATE_TOWER_WEST_ALLIANCE
+    { 2535, 0x0 },                                          // 23
+    { 2534, 0x0 },                                          // 24
+    { 2533, 0x0 },                                          // 25
+    { 2560, WORLD_STATE_REMOVE },                           // 26 WORLD_STATE_BEACON_EAST_NEUTRAL
+    { 2559, WORLD_STATE_ADD },                              // 27 WORLD_STATE_BEACON_EAST_HORDE
+    { 2558, WORLD_STATE_REMOVE },                           // 28 WORLD_STATE_BEACON_EAST_ALLIANCE
+    { 2557, WORLD_STATE_REMOVE },                           // 29 WORLD_STATE_BEACON_WEST_NEUTRAL
+    { 2556, WORLD_STATE_ADD },                              // 30 WORLD_STATE_BEACON_WEST_HORDE
+    { 2555, WORLD_STATE_REMOVE },                           // 31 WORLD_STATE_BEACON_WEST_ALLIANCE
+    { 2658, WORLD_STATE_REMOVE },                           // 32 WORLD_STATE_HORDE_FLAG_READY
+    { 2657, WORLD_STATE_ADD },                              // 33 WORLD_STATE_HORDE_FLAG_NOT_READY
+    { 2656, WORLD_STATE_ADD },                              // 34 WORLD_STATE_ALLIANCE_FLAG_NOT_READY
+    { 2655, WORLD_STATE_REMOVE }                            // 35 WORLD_STATE_ALLIANCE_FLAG_READY
 };
 
 static WorldStatePair NA_world_states[] =
 {
-    { 2503, 0x0 },  // 10
-    { 2502, 0x0 },  // 11
-    { 2493, 0x0 },  // 12
-    { 2491, 0x0 },  // 13
-
-    { 2495, 0x0 },  // 14
-    { 2494, 0x0 },  // 15
-    { 2497, 0x0 },  // 16
-
-    { 2762, 0x0 },  // 17
-    { 2662, 0x0 },  // 18
-    { 2663, 0x0 },  // 19
-    { 2664, 0x0 },  // 20
-
-    { 2760, 0x0 },  // 21
-    { 2670, 0x0 },  // 22
-    { 2668, 0x0 },  // 23
-    { 2669, 0x0 },  // 24
-
-    { 2761, 0x0 },  // 25
-    { 2667, 0x0 },  // 26
-    { 2665, 0x0 },  // 27
-    { 2666, 0x0 },  // 28
-
-    { 2763, 0x0 },  // 29
-    { 2659, 0x0 },  // 30
-    { 2660, 0x0 },  // 31
-    { 2661, 0x0 },  // 32
-
-    { 2671, 0x0 },  // 33
-    { 2676, 0x0 },  // 34
-    { 2677, 0x0 },  // 35
-    { 2672, 0x0 },  // 36
-    { 2673, 0x0 }  // 37
+    { 2503, 0 },                                            // 10 WORLD_STATE_NA_GUARDS_HORDE
+    { 2502, 0 },                                            // 11 WORLD_STATE_NA_GUARDS_ALLIANCE
+    { 2493, 0 },                                            // 12 WORLD_STATE_NA_GUARDS_MAX
+    { 2491, 0 },                                            // 13 WORLD_STATE_NA_GUARDS_LEFT
+    { 2495, 0x0 },                                          // 14
+    { 2494, 0x0 },                                          // 15
+    { 2497, 0x0 },                                          // 16
+    { 2762, WORLD_STATE_REMOVE },                           // 17 WORLD_STATE_NA_WYVERN_NORTH_NEUTRAL_H
+    { 2662, WORLD_STATE_REMOVE },                           // 18 WORLD_STATE_NA_WYVERN_NORTH_NEUTRAL_A
+    { 2663, WORLD_STATE_REMOVE },                           // 19 WORLD_STATE_NA_WYVERN_NORTH_H
+    { 2664, WORLD_STATE_REMOVE },                           // 20 WORLD_STATE_NA_WYVERN_NORTH_A
+    { 2760, WORLD_STATE_REMOVE },                           // 21 WORLD_STATE_NA_WYVERN_SOUTH_NEUTRAL_H
+    { 2670, WORLD_STATE_REMOVE },                           // 22 WORLD_STATE_NA_WYVERN_SOUTH_NEUTRAL_A
+    { 2668, WORLD_STATE_REMOVE },                           // 23 WORLD_STATE_NA_WYVERN_SOUTH_H
+    { 2669, WORLD_STATE_REMOVE },                           // 24 WORLD_STATE_NA_WYVERN_SOUTH_A
+    { 2761, WORLD_STATE_REMOVE },                           // 25 WORLD_STATE_NA_WYVERN_WEST_NEUTRAL_H
+    { 2667, WORLD_STATE_REMOVE },                           // 26 WORLD_STATE_NA_WYVERN_WEST_NEUTRAL_A
+    { 2665, WORLD_STATE_REMOVE },                           // 27 WORLD_STATE_NA_WYVERN_WEST_H
+    { 2666, WORLD_STATE_REMOVE },                           // 28 WORLD_STATE_NA_WYVERN_WEST_A
+    { 2763, WORLD_STATE_REMOVE },                           // 29 WORLD_STATE_NA_WYVERN_EAST_NEUTRAL_H
+    { 2659, WORLD_STATE_REMOVE },                           // 30 WORLD_STATE_NA_WYVERN_EAST_NEUTRAL_A
+    { 2660, WORLD_STATE_REMOVE },                           // 31 WORLD_STATE_NA_WYVERN_EAST_H
+    { 2661, WORLD_STATE_REMOVE },                           // 32 WORLD_STATE_NA_WYVERN_EAST_A
+    { 2671, WORLD_STATE_REMOVE },                           // 33 WORLD_STATE_NA_HALAA_NEUTRAL
+    { 2676, WORLD_STATE_REMOVE },                           // 34 WORLD_STATE_NA_HALAA_NEUTRAL_A
+    { 2677, WORLD_STATE_REMOVE },                           // 35 WORLD_STATE_NA_HALAA_NEUTRAL_H
+    { 2672, WORLD_STATE_REMOVE },                           // 36 WORLD_STATE_NA_HALAA_HORDE
+    { 2673, WORLD_STATE_REMOVE }                            // 37 WORLD_STATE_NA_HALAA_ALLIANCE
 };
 
 void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
@@ -8744,6 +8735,10 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
         case 38:
         case 40:
         case 51:
+        case 1519:
+        case 1537:
+        case 2257:
+        case 3703:                                          // Shattrath City
             break;
         case 139:                                           // Eastern Plaguelands
             if (outdoorPvP)
@@ -8756,10 +8751,6 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
                 outdoorPvP->FillInitialWorldStates(data, count);
             else
                 FillInitialWorldState(data, count, SI_world_states);
-            break;
-        case 1519:
-        case 1537:
-        case 2257:
             break;
         case 2597:                                          // AV
             if (bg && bg->GetTypeID() == BATTLEGROUND_AV)
@@ -8791,7 +8782,7 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
             else
                 FillInitialWorldState(data, count, HP_world_states);
             break;
-        case 3518:                                          // Nagrand - Halaa
+        case 3518:                                          // Nagrand
             if (outdoorPvP)
                 outdoorPvP->FillInitialWorldStates(data, count);
             else
@@ -8838,8 +8829,6 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
                 FillInitialWorldState(data, count, 0xbb9, 0x0); // 3001 8 green
                 FillInitialWorldState(data, count, 0xbba, 0x0); // 3002 9 show
             }
-            break;
-        case 3703:                                          // Shattrath City
             break;
         default:
             FillInitialWorldState(data, count, 0x914, 0x0); // 2324 7
