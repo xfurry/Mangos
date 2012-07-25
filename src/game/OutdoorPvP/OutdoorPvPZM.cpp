@@ -343,7 +343,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
             SetGraveyardArtKit(go, m_graveyardBannerAlliance, false);
             SetGraveyardArtKit(go, m_graveyardBannerHorde, true);
             SetBeaconArtKit(go, m_beamGraveyardBlue, 0);
-            sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOOSE_GY_A));
+            sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOSE_GY_A));
 
             // remove buff
             BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING, true);
@@ -374,7 +374,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
             SetGraveyardArtKit(go, m_graveyardBannerHorde, false);
             SetGraveyardArtKit(go, m_graveyardBannerAlliance, true);
             SetBeaconArtKit(go, m_beamGraveyardRed, 0);
-            sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOOSE_GY_H));
+            sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOSE_GY_H));
 
             // remove buff
             BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING, true);

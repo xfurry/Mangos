@@ -321,7 +321,7 @@ void OutdoorPvPNA::ProcessEvent(uint32 eventId, GameObject* go)
 void OutdoorPvPNA::ProcessCaptureEvent(GameObject* go, Team team)
 {
     BuffTeam(m_zoneOwner, SPELL_STRENGTH_HALAANI, true);
-    sWorld.SendZoneText(ZONE_ID_NAGRAND, sObjectMgr.GetMangosStringForDBCLocale(m_zoneOwner == ALLIANCE ? LANG_OPVP_NA_LOOSE_A: LANG_OPVP_NA_LOOSE_H));
+    sWorld.SendZoneText(ZONE_ID_NAGRAND, sObjectMgr.GetMangosStringForDBCLocale(m_zoneOwner == ALLIANCE ? LANG_OPVP_NA_LOSE_A: LANG_OPVP_NA_LOSE_H));
 
     // update capture point owner
     m_zoneOwner = team;
