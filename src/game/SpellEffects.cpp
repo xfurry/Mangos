@@ -46,6 +46,7 @@
 #include "BattleGround.h"
 #include "BattleGroundEY.h"
 #include "BattleGroundWS.h"
+#include "OutdoorPvP/OutdoorPvPMgr.h"
 #include "Language.h"
 #include "SocialMgr.h"
 #include "VMapFactory.h"
@@ -4643,6 +4644,15 @@ void Spell::EffectOpenLock(SpellEffectIndex eff_idx)
                 return;
             }
         }
+        else if (goInfo->type == GAMEOBJECT_TYPE_GOOBER)
+        {
+            // Check if object is handled by outdoor pvp
+            // GameObject is handling some events related to world battleground events
+            if (OutdoorPvP* outdoorPvP = player->GetOutdoorPvP())
+                if (outdoorPvP->HandleObjectUse(player, gameObjTarget))
+                    return;
+        }
+
         lockId = goInfo->GetLockId();
         guid = gameObjTarget->GetObjectGuid();
     }
