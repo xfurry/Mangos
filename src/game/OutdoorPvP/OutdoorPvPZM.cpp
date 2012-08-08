@@ -108,50 +108,20 @@ void OutdoorPvPZM::OnCreatureCreate(Creature* creature)
             m_hordeScout = creature->GetObjectGuid();
             break;
         case NPC_PVP_BEAM_RED:
-            // East Beam
-            if (creature->GetPositionY() < 7000.0f)
-            {
+            if (creature->GetPositionY() < 7000.0f)                 // East Beam
                 m_beamTowerRed[0] = creature->GetObjectGuid();
-                if (m_towerOwner[0] == HORDE)
-                    return;
-            }
-            // Center Beam
-            else if (creature ->GetPositionY() < 7300.0f)
-            {
+            else if (creature ->GetPositionY() < 7300.0f)           // Center Beam
                 m_beamGraveyardRed = creature->GetObjectGuid();
-                if (m_graveyardOwner == HORDE)
-                    return;
-            }
-            // West Beam
-            else
-            {
+            else                                                    // West Beam
                 m_beamTowerRed[1] = creature->GetObjectGuid();
-                if (m_towerOwner[1] == HORDE)
-                    return;
-            }
             break;
         case NPC_PVP_BEAM_BLUE:
-            // East Beam
-            if (creature->GetPositionY() < 7000.0f)
-            {
+            if (creature->GetPositionY() < 7000.0f)                 // East Beam
                 m_beamTowerBlue[0] = creature->GetObjectGuid();
-                if (m_towerOwner[0] == ALLIANCE)
-                    return;
-            }
-            // Center Beam
-            else if (creature ->GetPositionY() < 7300.0f)
-            {
+            else if (creature ->GetPositionY() < 7300.0f)           // Center Beam
                 m_beamGraveyardBlue = creature->GetObjectGuid();
-                if (m_graveyardOwner == ALLIANCE)
-                    return;
-            }
-            // West Beam
-            else
-            {
+            else                                                    // West Beam
                 m_beamTowerBlue[1] = creature->GetObjectGuid();
-                if (m_towerOwner[1] == ALLIANCE)
-                    return;
-            }
             break;
     }
 }
