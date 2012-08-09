@@ -102,7 +102,7 @@ bool OutdoorPvPSI::HandleAreaTrigger(Player* player, uint32 triggerId)
                 BuffTeam(ALLIANCE, SPELL_CENARION_FAVOR);
 
                 //send zone text and reset stats
-                sWorld.SendZoneText(ZONE_ID_SILITHUS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_SI_CAPTURE_A));
+                player->GetMap()->SendZoneDefenseMessage(LANG_OPVP_SI_CAPTURE_A, ZONE_ID_SILITHUS);
 
                 m_zoneOwner = ALLIANCE;
                 m_resourcesAlliance = 0;
@@ -138,7 +138,7 @@ bool OutdoorPvPSI::HandleAreaTrigger(Player* player, uint32 triggerId)
                 BuffTeam(HORDE, SPELL_CENARION_FAVOR);
 
                 //send zone text and reset stats
-                sWorld.SendZoneText(ZONE_ID_SILITHUS, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_SI_CAPTURE_H));
+                player->GetMap()->SendZoneDefenseMessage(LANG_OPVP_SI_CAPTURE_H, ZONE_ID_SILITHUS);
                 m_zoneOwner = HORDE;
                 m_resourcesAlliance = 0;
                 m_resourcesHorde = 0;

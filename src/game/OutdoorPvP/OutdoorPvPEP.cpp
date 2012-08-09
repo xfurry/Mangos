@@ -189,7 +189,7 @@ void OutdoorPvPEP::ProcessEvent(uint32 eventId, GameObject* go)
                     if (PLAGUELANDS_TOWER_EVENTS[i][j].team != m_towerOwner[i])
                     {
                         ProcessCaptureEvent(go, i, PLAGUELANDS_TOWER_EVENTS[i][j].team, PLAGUELANDS_TOWER_EVENTS[i][j].worldState);
-                        sWorld.SendZoneText(ZONE_ID_EASTERN_PLAGUELANDS, sObjectMgr.GetMangosStringForDBCLocale(PLAGUELANDS_TOWER_EVENTS[i][j].zoneText));
+                        go->GetMap()->SendZoneDefenseMessage(PLAGUELANDS_TOWER_EVENTS[i][j].zoneText, ZONE_ID_EASTERN_PLAGUELANDS);
                     }
                     return;
                 }

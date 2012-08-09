@@ -183,7 +183,7 @@ void OutdoorPvPZM::ProcessEvent(uint32 eventId, GameObject* go)
                     if (ZANGA_TOWER_EVENTS[i][j].team != m_towerOwner[i])
                     {
                         ProcessCaptureEvent(go, i, ZANGA_TOWER_EVENTS[i][j].team, ZANGA_TOWER_EVENTS[i][j].worldState, ZANGA_TOWER_EVENTS[i][j].mapState);
-                        sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(ZANGA_TOWER_EVENTS[i][j].zoneText));
+                        go->GetMap()->SendZoneDefenseMessage(ZANGA_TOWER_EVENTS[i][j].zoneText, ZONE_ID_ZANGARMARSH);
                     }
                     return;
                 }
@@ -313,7 +313,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
             SetGraveyardArtKit(go, m_graveyardBannerAlliance, false);
             SetGraveyardArtKit(go, m_graveyardBannerHorde, true);
             SetBeaconArtKit(go, m_beamGraveyardBlue, 0);
-            sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOSE_GY_A));
+            go->GetMap()->SendZoneDefenseMessage(LANG_OPVP_ZM_LOSE_GY_A, ZONE_ID_ZANGARMARSH);
 
             // remove buff
             BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING, true);
@@ -333,7 +333,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
             ResetScouts(go, m_graveyardOwner);
             player->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_HORDE);
             SetBeaconArtKit(go, m_beamGraveyardRed, SPELL_BEAM_RED);
-            sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_H));
+            go->GetMap()->SendZoneDefenseMessage(LANG_OPVP_ZM_CAPTURE_GY_H, ZONE_ID_ZANGARMARSH);
 
             return true;
         case GO_ZANGA_BANNER_CENTER_HORDE:
@@ -344,7 +344,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
             SetGraveyardArtKit(go, m_graveyardBannerHorde, false);
             SetGraveyardArtKit(go, m_graveyardBannerAlliance, true);
             SetBeaconArtKit(go, m_beamGraveyardRed, 0);
-            sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_LOSE_GY_H));
+            go->GetMap()->SendZoneDefenseMessage(LANG_OPVP_ZM_LOSE_GY_H, ZONE_ID_ZANGARMARSH);
 
             // remove buff
             BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING, true);
@@ -364,7 +364,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
             ResetScouts(go, m_graveyardOwner);
             player->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_ALLIANCE);
             SetBeaconArtKit(go, m_beamGraveyardBlue, SPELL_BEAM_BLUE);
-            sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_A));
+            go->GetMap()->SendZoneDefenseMessage(LANG_OPVP_ZM_CAPTURE_GY_A, ZONE_ID_ZANGARMARSH);
 
             return true;
         case GO_ZANGA_BANNER_CENTER_NEUTRAL:
@@ -390,7 +390,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
                 ResetScouts(go, m_graveyardOwner);
                 player->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_ALLIANCE);
                 SetBeaconArtKit(go, m_beamGraveyardBlue, SPELL_BEAM_BLUE);
-                sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_H));
+                go->GetMap()->SendZoneDefenseMessage(LANG_OPVP_ZM_CAPTURE_GY_A, ZONE_ID_ZANGARMARSH);
             }
             else
             {
@@ -410,7 +410,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
                 ResetScouts(go, m_graveyardOwner);
                 player->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_HORDE);
                 SetBeaconArtKit(go, m_beamGraveyardRed, SPELL_BEAM_RED);
-                sWorld.SendZoneText(ZONE_ID_ZANGARMARSH, sObjectMgr.GetMangosStringForDBCLocale(LANG_OPVP_ZM_CAPTURE_GY_H));
+                go->GetMap()->SendZoneDefenseMessage(LANG_OPVP_ZM_CAPTURE_GY_H, ZONE_ID_ZANGARMARSH);
             }
 
             // add new world state

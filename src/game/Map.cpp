@@ -1935,6 +1935,31 @@ void Map::PlayDirectSoundToMap(uint32 soundId, uint32 zoneId /*=0*/)
 }
 
 /**
+ * Function to send a zone wide defense message
+ *
+ * @param textId Index of the text to send
+ * @param zoneId Index of the zone where the message is sent in
+ */
+void Map::SendZoneDefenseMessage(int32 textId, uint32 zoneId)
+{
+    Map::PlayerList const& players = GetPlayers();
+    for (PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+    {
+        if (itr->getSource()->GetCachedZoneId() == zoneId)
+        {
+            char const* message = sObjectMgr.GetMangosString(textId, itr->getSource()->GetSession()->GetSessionDbLocaleIndex());
+            uint32 messageLength = (message ? strlen(message) : 0) + 1;
+
+            WorldPacket data(SMSG_DEFENSE_MESSAGE, 4 + 4 + messageLength);
+            data << uint32(zoneId);
+            data << uint32(messageLength);
+            data << message;
+            itr->getSource()->SendDirectMessage(&data);
+        }
+    }
+}
+
+/**
  * Function to check if a point is in line of sight from an other point
  */
 bool Map::IsInLineOfSight(float srcX, float srcY, float srcZ, float destX, float destY, float destZ)

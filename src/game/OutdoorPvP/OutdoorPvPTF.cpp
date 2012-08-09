@@ -159,7 +159,7 @@ void OutdoorPvPTF::ProcessEvent(uint32 eventId, GameObject* go)
                     if (TEROKKAR_TOWER_EVENTS[i][j].team != m_towerOwner[i])
                     {
                         ProcessCaptureEvent(go, i, TEROKKAR_TOWER_EVENTS[i][j].team, TEROKKAR_TOWER_EVENTS[i][j].worldState);
-                        sWorld.SendZoneText(ZONE_ID_TEROKKAR, sObjectMgr.GetMangosStringForDBCLocale(TEROKKAR_TOWER_EVENTS[i][j].zoneText));
+                        go->GetMap()->SendZoneDefenseMessage(TEROKKAR_TOWER_EVENTS[i][j].zoneText, ZONE_ID_TEROKKAR);
                     }
                     return;
                 }
