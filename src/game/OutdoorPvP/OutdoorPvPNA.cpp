@@ -162,6 +162,8 @@ void OutdoorPvPNA::OnCreatureDeath(Creature* creature)
         SendUpdateWorldState(m_zoneMapState, WORLD_STATE_REMOVE);
         m_zoneMapState = m_zoneOwner == ALLIANCE ? WORLD_STATE_NA_HALAA_NEUTRAL_A : WORLD_STATE_NA_HALAA_NEUTRAL_H;
         SendUpdateWorldState(m_zoneMapState, WORLD_STATE_ADD);
+
+        creature->GetMap()->SendZoneDefenseMessage(LANG_OPVP_NA_DEFENSELESS, ZONE_ID_NAGRAND);
     }
 }
 
@@ -311,9 +313,11 @@ void OutdoorPvPNA::ProcessEvent(uint32 eventId, GameObject* go)
             break;
         case EVENT_HALAA_BANNER_PROGRESS_ALLIANCE:
             SetBannerVisual(go, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
+            go->GetMap()->SendZoneDefenseMessage(LANG_OPVP_NA_PROGRESS_A, ZONE_ID_NAGRAND);
             break;
         case EVENT_HALAA_BANNER_PROGRESS_HORDE:
             SetBannerVisual(go, CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
+            go->GetMap()->SendZoneDefenseMessage(LANG_OPVP_NA_PROGRESS_H, ZONE_ID_NAGRAND);
             break;
     }
 }
@@ -321,7 +325,6 @@ void OutdoorPvPNA::ProcessEvent(uint32 eventId, GameObject* go)
 void OutdoorPvPNA::ProcessCaptureEvent(GameObject* go, Team team)
 {
     BuffTeam(m_zoneOwner, SPELL_STRENGTH_HALAANI, true);
-    go->GetMap()->SendZoneDefenseMessage(ALLIANCE ? LANG_OPVP_NA_LOSE_A: LANG_OPVP_NA_LOSE_H, ZONE_ID_NAGRAND);
 
     // update capture point owner
     m_zoneOwner = team;
