@@ -346,7 +346,6 @@ void OutdoorPvPNA::ProcessCaptureEvent(GameObject* go, Team team)
 
     BuffTeam(m_zoneOwner, SPELL_STRENGTH_HALAANI);
     go->GetMap()->SendZoneDefenseMessage(ALLIANCE ? LANG_OPVP_NA_CAPTURE_A: LANG_OPVP_NA_CAPTURE_H, ZONE_ID_NAGRAND);
-    sWorld.SendZoneText(ZONE_ID_NAGRAND, sObjectMgr.GetMangosStringForDBCLocale(team == ALLIANCE ? LANG_OPVP_NA_CAPTURE_A: LANG_OPVP_NA_CAPTURE_H));
 }
 
 void OutdoorPvPNA::HandleFactionObjects(const WorldObject* objRef)
