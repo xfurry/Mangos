@@ -304,7 +304,7 @@ void OutdoorPvPEP::UnsummonFlightMaster(const WorldObject* objRef)
 
 void OutdoorPvPEP::SummonSoldiers(WorldObject* objRef)
 {
-    uint32 entry = m_towerOwner[TOWER_ID_NORTHPASS] == ALLIANCE ? NPC_LORDAERON_COMMANDER : NPC_LORDAERON_VETERAN;
+    uint32 entry = m_towerOwner[TOWER_ID_EASTWALL] == ALLIANCE ? NPC_LORDAERON_COMMANDER : NPC_LORDAERON_VETERAN;1
 
     for (uint8 i = 0; i < 5; ++i)
     {
