@@ -4883,7 +4883,7 @@ void Player::UpdateLocalChannels(uint32 newZone)
         if (!ch)
             continue;
 
-        if ((ch->flags & CHANNEL_DBC_FLAG_GLOBAL) == CHANNEL_DBC_FLAG_GLOBAL) // global channel without zone name in pattern
+        if ((ch->flags & 4) == 4)                           // global channel without zone name in pattern
             continue;
 
         //  new channel
