@@ -189,7 +189,7 @@ void OutdoorPvPEP::ProcessEvent(uint32 eventId, GameObject* go)
                     if (PLAGUELANDS_TOWER_EVENTS[i][j].team != m_towerOwner[i])
                     {
                         if (PLAGUELANDS_TOWER_EVENTS[i][j].zoneText)
-                            go->GetMap()->SendZoneDefenseMessage(PLAGUELANDS_TOWER_EVENTS[i][j].zoneText, ZONE_ID_EASTERN_PLAGUELANDS);
+                            sWorld.SendDefenseMessage(ZONE_ID_EASTERN_PLAGUELANDS, PLAGUELANDS_TOWER_EVENTS[i][j].zoneText);
 
                         ProcessCaptureEvent(go, i, PLAGUELANDS_TOWER_EVENTS[i][j].team, PLAGUELANDS_TOWER_EVENTS[i][j].worldState);
                     }

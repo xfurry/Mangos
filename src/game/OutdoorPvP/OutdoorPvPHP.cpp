@@ -192,7 +192,7 @@ void OutdoorPvPHP::ProcessEvent(uint32 eventId, GameObject* go)
                     if (HELLFIRE_TOWER_EVENTS[i][j].team != m_towerOwner[i])
                     {
                         if (HELLFIRE_TOWER_EVENTS[i][j].zoneText)
-                            go->GetMap()->SendZoneDefenseMessage(HELLFIRE_TOWER_EVENTS[i][j].zoneText, ZONE_ID_HELLFIRE_PENINSULA);
+                            sWorld.SendDefenseMessage(ZONE_ID_HELLFIRE_PENINSULA, HELLFIRE_TOWER_EVENTS[i][j].zoneText);
 
                         ProcessCaptureEvent(go, i, HELLFIRE_TOWER_EVENTS[i][j].team, HELLFIRE_TOWER_EVENTS[i][j].worldState, HELLFIRE_TOWER_EVENTS[i][j].towerArtKit, HELLFIRE_TOWER_EVENTS[i][j].towerAnim);
                     }

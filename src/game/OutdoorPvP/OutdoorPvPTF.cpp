@@ -158,7 +158,7 @@ void OutdoorPvPTF::ProcessEvent(uint32 eventId, GameObject* go)
                 {
                     if (TEROKKAR_TOWER_EVENTS[i][j].team != m_towerOwner[i])
                     {
-                        go->GetMap()->SendZoneDefenseMessage(TEROKKAR_TOWER_EVENTS[i][j].zoneText, ZONE_ID_TEROKKAR);
+                        sWorld.SendDefenseMessage(ZONE_ID_TEROKKAR, TEROKKAR_TOWER_EVENTS[i][j].zoneText);
 
                         ProcessCaptureEvent(go, i, TEROKKAR_TOWER_EVENTS[i][j].team, TEROKKAR_TOWER_EVENTS[i][j].worldState);
                     }
@@ -201,7 +201,7 @@ void OutdoorPvPTF::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
             // lock the towers
             LockTowers(go);
 
-            go->GetMap()->SendZoneDefenseMessage(team == ALLIANCE ? LANG_OPVP_TF_CAPTURE_ALL_TOWERS_A : LANG_OPVP_TF_CAPTURE_ALL_TOWERS_H, ZONE_ID_TEROKKAR);
+            sWorld.SendDefenseMessage(ZONE_ID_TEROKKAR, team == ALLIANCE ? LANG_OPVP_TF_CAPTURE_ALL_TOWERS_A : LANG_OPVP_TF_CAPTURE_ALL_TOWERS_H);
         }
     }
     else
