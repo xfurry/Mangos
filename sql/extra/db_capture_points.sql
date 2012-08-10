@@ -59,25 +59,36 @@ DELETE FROM `creature_template_addon` WHERE `entry` IN (18757,18759);
 /* ################################# */
 
 
--- Zangarmarsh gossip - may not be 100% blizzlike
+-- Zangarmarsh Field Scout gossips - TODO: conditions, horde gossip 1 text is guessed, horde text_id 2 is missing
 /* ################################# */
--- Set custom menu id for the horde
-Update creature_template set gossip_menu_id = 7723 where entry = 18564;
--- links the gossip menu with the npc text for the horde npc
-delete from gossip_menu where entry in (7723);
-insert into gossip_menu (entry, text_id) values
-(7723,9431);
--- Alliance & horde - stores the text and the script id
-delete from gossip_menu_option where menu_id in (7723,7724);
-insert into gossip_menu_option (menu_id, id, option_icon, option_text, option_id, npc_option_npcflag, action_script_id) values
-(7724,0,0,'[PH] Zangarmarsh PvP Banner',1,1,3000001),
-(7723,1,1,'I have marks to redeem!',3,128,0),
-(7723,0,0,'[PH] Zangarmarsh PvP Banner',1,1,3000002);
--- Alliance & horde - stores the gossip script
-delete from gossip_scripts where id in (3000001,3000002);
-insert into gossip_scripts(id, delay, command, datalong, datalong2, comments) values
-(3000001,0,15,32430,0,'Cast Battle Standard - Alliance'),
-(3000002,0,15,32431,0,'Cast Battle Standard - Horde');
+-- Alliance Field Scout
+UPDATE creature_template SET gossip_menu_id = 7724 WHERE entry = 18581;
+DELETE FROM gossip_menu WHERE entry = 7724;
+INSERT INTO gossip_menu (entry, text_id) VALUES
+(7724, 9433),
+(7724, 9432);
+DELETE FROM gossip_menu_option WHERE menu_id = 7724;
+INSERT INTO gossip_menu_option (menu_id, id, option_icon, option_text, box_coded, box_money, box_text, option_id, npc_option_npcflag, action_script_id) VALUES
+(7224, 0, 0, 'Give me a battle standard. I will take control of Twin Spire Ruins.', 0, 0, '', 1, 1, 7724),
+(7724, 1, 1, 'I have marks to redeem!', 0, 0, '', 3, 128, 0);
+DELETE FROM gossip_scripts WHERE id = 7724;
+INSERT INTO gossip_scripts (id, delay, command, datalong, datalong2, comments)
+VALUES
+(7724, 0, 15, 32430, 0, 'Cast Battle Standard - Alliance');
+-- Horde Field Scout
+UPDATE creature_template SET gossip_menu_id = 7722 WHERE entry = 18564;
+DELETE FROM gossip_menu WHERE entry = 7722;
+INSERT INTO gossip_menu (entry, text_id) VALUES
+(7722, 9431);
+-- << missing second text_id
+DELETE FROM gossip_menu_option WHERE menu_id = 7722;
+INSERT INTO gossip_menu_option (menu_id, id, option_icon, option_text, box_coded, box_money, box_text, option_id, npc_option_npcflag, action_script_id) VALUES
+(7722, 0, 0, 'Give me a battle standard. I will take control of Twin Spire Ruins.', 0, 0, '', 1, 1, 7722), -- << text guessed
+(7722, 1, 1, 'I have marks to redeem!', 0, 0, '', 3, 128, 0);
+DELETE FROM gossip_scripts WHERE id = 7722;
+INSERT INTO gossip_scripts (id, delay, command, datalong, datalong2, comments)
+VALUES
+(7722, 0, 15, 32431, 0, 'Cast Battle Standard - Horde');
 /* ################################# */
 
 
