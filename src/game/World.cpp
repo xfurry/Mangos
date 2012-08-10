@@ -1733,8 +1733,8 @@ void World::SendDefenseMessage(uint32 zoneId, int32 textId, Team team /*= TEAM_N
                 itr->second->GetPlayer()->IsInWorld() &&
                 (team == TEAM_NONE || itr->second->GetPlayer()->GetTeam() == team))
         {
-            char const* message = sObjectMgr.GetMangosString(textId, itr->second->GetSessionDbLocaleIndex());
-            uint32 messageLength = (message ? strlen(message) : 0) + 1;
+            char const* message = itr->second->GetMangosString(textId);
+            uint32 messageLength = strlen(message) + 1;
 
             WorldPacket data(SMSG_DEFENSE_MESSAGE, 4 + 4 + messageLength);
             data << uint32(zoneId);
