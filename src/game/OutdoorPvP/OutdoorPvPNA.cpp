@@ -41,8 +41,6 @@ void OutdoorPvPNA::FillInitialWorldStates(WorldPacket& data, uint32& count)
     if (m_zoneOwner != TEAM_NONE)
     {
         FillInitialWorldState(data, count, m_zoneWorldState, WORLD_STATE_ADD);
-        FillInitialWorldState(data, count, WORLD_STATE_NA_GUARDS_MAX, MAX_NA_GUARDS);
-        FillInitialWorldState(data, count, WORLD_STATE_NA_GUARDS_LEFT, m_guardsLeft);
 
         // map states
         for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
@@ -50,6 +48,8 @@ void OutdoorPvPNA::FillInitialWorldStates(WorldPacket& data, uint32& count)
     }
 
     FillInitialWorldState(data, count, m_zoneMapState, WORLD_STATE_ADD);
+    FillInitialWorldState(data, count, WORLD_STATE_NA_GUARDS_MAX, MAX_NA_GUARDS);
+    FillInitialWorldState(data, count, WORLD_STATE_NA_GUARDS_LEFT, m_guardsLeft);
 }
 
 void OutdoorPvPNA::SendRemoveWorldStates(Player* player)
@@ -172,6 +172,10 @@ void OutdoorPvPNA::OnCreatureRespawn(Creature* creature)
     if (creature->GetEntry() != NPC_HORDE_HALAANI_GUARD && creature->GetEntry() != NPC_ALLIANCE_HANAANI_GUARD)
         return;
 
+    // prevent updating guard counter on owner take over
+    if (m_guardsLeft == MAX_NA_GUARDS)
+        return;
+
     if (m_guardsLeft == 0)
     {
         LockHalaa(creature);
@@ -280,13 +284,6 @@ void OutdoorPvPNA::UpdateWorldState(uint32 value)
     SendUpdateWorldState(m_zoneWorldState, value);
     SendUpdateWorldState(m_zoneMapState, value);
 
-    // Update guards only for positive states
-    if (value)
-    {
-        SendUpdateWorldState(WORLD_STATE_NA_GUARDS_MAX, MAX_NA_GUARDS);
-        SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT, m_guardsLeft);
-    }
-
     UpdateWyvernsWorldState(value);
 }
 
@@ -329,6 +326,10 @@ void OutdoorPvPNA::ProcessCaptureEvent(GameObject* go, Team team)
     // update capture point owner
     m_zoneOwner = team;
 
+    // don't rely on OnCreatureRespawn to set guard counter / lock halaa as that would send a world state for each spawned guard
+    LockHalaa(go);
+    m_guardsLeft = MAX_NA_GUARDS;
+
     UpdateWorldState(WORLD_STATE_REMOVE);
     RespawnSoldiers(go);
     sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_HALAA, GRAVEYARD_ZONE_ID_HALAA, m_zoneOwner);
@@ -346,6 +347,8 @@ void OutdoorPvPNA::ProcessCaptureEvent(GameObject* go, Team team)
 
     HandleFactionObjects(go);
     UpdateWorldState(WORLD_STATE_ADD);
+
+    SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT, m_guardsLeft);
 
     BuffTeam(m_zoneOwner, SPELL_STRENGTH_HALAANI);
     sWorld.SendDefenseMessage(ZONE_ID_NAGRAND, m_zoneOwner == ALLIANCE ? LANG_OPVP_NA_CAPTURE_A: LANG_OPVP_NA_CAPTURE_H);
