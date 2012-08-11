@@ -260,7 +260,7 @@ void OutdoorPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team team)
         SendUpdateWorldState(m_scoutWorldStateAlliance, WORLD_STATE_ADD);
 
         sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_BOTH_BEACONS_A);
-        sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_SPAWN_FIELD_SCOUT_A, ALLIANCE);
+        sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_SPAWN_FIELD_SCOUT_A);
     }
     else
     {
@@ -272,7 +272,7 @@ void OutdoorPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team team)
         SendUpdateWorldState(m_scoutWorldStateHorde, WORLD_STATE_ADD);
 
         sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_BOTH_BEACONS_H);
-        sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_SPAWN_FIELD_SCOUT_H, HORDE);
+        sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_SPAWN_FIELD_SCOUT_H);
     }
 }
 
