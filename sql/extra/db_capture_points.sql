@@ -1,31 +1,9 @@
--- Missing capture points spawns
-/* ################################# */
--- use guids from 500xxx
-DELETE FROM `gameobject` WHERE `id` in (181899,182096,182097,182098,182174,182173,182175,182522,182523,182528,182529,183104,183411,183412,183413,183414,182210);
-INSERT INTO `gameobject` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`position_x`,`position_y`,`position_z`,`orientation`,`rotation0`,`rotation1`,`rotation2`,`rotation3`,`spawntimesecs`,`animprogress`,`state`) VALUES
--- eastern plaguelads
-(500001, 181899, 0, 1, 1, 3181.08, -4379.36, 174.123, -2.03472, -0.065392, 0.119494, -0.842275, 0.521553, 180, 255, 1),
-(500002, 182096, 0, 1, 1, 1860.85, -3731.23, 196.716, -2.53214, 0.033967, -0.131914, 0.944741, -0.298177, 180, 255, 1),
-(500003, 182097, 0, 1, 1, 2574.51, -4794.89, 144.704, -1.45003, -0.097056, 0.095578, -0.656229, 0.742165, 180, 255, 1),
-(500004, 182098, 0, 1, 1, 2962.71, -3042.31, 154.789, 2.08426, -0.074807, -0.113837, 0.855928, 0.49883, 180, 255, 1),
--- hellfire
-(500005, 182174, 530, 1, 1, -184.889, 3476.93, 38.205, -0.017453, 0, 0, -0.00872639, 0.999962, 180, 255, 1),
-(500006, 182173, 530, 1, 1, -290.016, 3702.42, 56.6729, 0.034907, 0, 0, 0.0174526, 0.999848, 180, 255, 1),
-(500007, 182175, 530, 1, 1, -471.462, 3451.09, 34.6432, 0.174533, 0, 0, 0.0871558, 0.996195, 180, 255, 1),
--- zangamarsh
-(500008, 182522, 530, 1, 1, 336.466, 7340.26, 41.4984, -1.58825, 0, 0, -0.713251, 0.700909, 180, 255, 1),
-(500009, 182523, 530, 1, 1, 303.243, 6841.36, 40.1245, -1.58825, 0, 0, -0.713251, 0.700909, 180, 255, 1),
-(500010, 182528, 530, 1, 1, 253.535, 7083.8, 36.9946, -0.0174535, 0, 0, -0.00872664, 0.999962, 180, 255, 1),
-(500011, 182529, 530, 1, 1, 253.535, 7083.8, 36.9946, -0.0174535, 0, 0, -0.00872664, 0.999962, 180, 255, 1),
--- terokkar
-(500012, 183104, 530, 1, 1, -3081.65, 5335.03, 17.1853, -2.14675, 0, 0, -0.878816, 0.477161, 180, 255, 1),
-(500013, 183411, 530, 1, 1, -2939.9, 4788.73, 18.987, 2.77507, 0, 0, 0.983255, 0.182237, 180, 255, 1),
-(500014, 183412, 530, 1, 1, -3174.94, 4440.97, 16.2281, 1.8675, 0, 0, 0.803856, 0.594824, 180, 255, 1),
-(500015, 183413, 530, 1, 1, -3603.31, 4529.15, 20.9077, 0.994838, 0, 0, 0.477159, 0.878817, 180, 255, 1),
-(500016, 183414, 530, 1, 1, -3812.37, 4899.3, 17.7249, 0.087266, 0, 0, 0.0436192, 0.999048, 180, 255, 1),
--- Halaa
-(500017, 182210, 530, 1, 1, -1572.57, 7945.3, -22.475, 2.05949, 0, 0, 0.857168, 0.515037, 180, 255, 1);
-/* ################################# */
+-- Fix capture point flags (was 48 which means locked and this shouldnt be initially)
+UPDATE gameobject_template SET flags = 32 WHERE entry IN (183412, 183413, 183414, 182210);
+-- Fix a capture point related gameobject flag (was 0)
+UPDATE gameobject_template SET flags = 32 WHERE entry = 182529;
+-- Fix animprogress, spawntimesecs of capture point gameobjects (animprogress was 100 which is TBC value, spawntimesecs was 900, 180, -300)
+UPDATE gameobject SET animprogress = 255, spawntimesecs = 0 WHERE id IN (181899, 182096, 182097, 182098, 182173, 182174, 182175, 182522, 182523, 182528, 182529, 183104, 183411, 183412, 183413, 183414, 182210);
 
 -- Remove graveyard links - they are set in script
 DELETE FROM game_graveyard_zone WHERE id IN (969, 927, 993);
@@ -42,19 +20,8 @@ INSERT INTO `creature` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`modelid`,`equ
 
 -- Zangarmarsh fixes
 /* ################################# */
--- the red and blue lights need some updates - from ytdb
-DELETE FROM `creature` WHERE `id` IN (18759,18757);
-INSERT INTO `creature` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`modelid`,`equipment_id`,`position_x`,`position_y`,`position_z`,`orientation`,`spawntimesecs`,`spawndist`,`currentwaypoint`,`curhealth`,`curmana`,`DeathState`,`MovementType`) VALUES
-(300003, 18759, 530, 1, 1, 0, 0, 273.866, 7082.68, 87.0635, 3.01942, 180, 0, 0, 1, 0, 0, 0),
-(300004, 18759, 530, 1, 1, 0, 0, 375.806, 7332.96, 63.1065, 2.94961, 180, 0, 0, 1, 0, 0, 0),
-(300005, 18759, 530, 1, 1, 0, 0, 340.453, 6833.1, 61.798, 3.01942, 180, 0, 0, 1, 0, 0, 0),
-(300006, 18757, 530, 1, 1, 0, 0, 273.866, 7082.68, 87.0635, 3.01942, 180, 0, 0, 1, 0, 0, 0),
-(300007, 18757, 530, 1, 1, 0, 0, 375.806, 7332.96, 63.1065, 2.94961, 180, 0, 0, 1, 0, 0, 0),
-(300008, 18757, 530, 1, 1, 0, 0, 340.453, 6833.1, 61.798, 3.01942, 180, 0, 0, 1, 0, 0, 0);
 UPDATE `creature` SET `id` = 18757, `position_x` = 340.453, `position_y` = 6833.1, `position_z` = 61.798 WHERE `guid` = 67037;
 UPDATE `creature` SET `MovementType` = 0, `spawndist` = 0 WHERE `id` IN (18757,18759);
--- negative spawntimes for Zanga banner
-UPDATE `gameobject` SET `spawntimesecs` = -181 WHERE `id` = 182527;
 DELETE FROM `creature_template_addon` WHERE `entry` IN (18757,18759);
 /* ################################# */
 
@@ -94,12 +61,8 @@ VALUES
 
 -- Eastern Plaguelands fixes
 /* ################################# */
--- set shrine respawn
-UPDATE `gameobject` SET `spawntimesecs` = -180 WHERE `id` in (181682, 181955);
 -- correct horde faction
 UPDATE `gameobject_template` SET `faction` = 1314 WHERE `entry` = 181955;
--- set flightmaster movement to idle
-UPDATE `creature_template` SET `MovementType` = 0 WHERE `entry` = 17209;
 
 -- set soldiers movement
 UPDATE `creature_template` SET `MovementType` = 0 WHERE `entry` IN (17647,17996);
@@ -199,33 +162,6 @@ INSERT INTO `creature` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`modelid`,`equ
 (300046, 18192, 530, 1, 1, 0, 0, -1550.6, 7944.45, -21.63, 3.559, 600, 0, 0, 1182800, 0, 0, 0),
 (300047, 18192, 530, 1, 1, 0, 0, -1545.57, 7935.83, -21.13, 3.448, 600, 0, 0, 1182800, 0, 0, 0),
 (300048, 18192, 530, 1, 1, 0, 0, -1550.86, 7937.56, -21.7, 3.801, 600, 0, 0, 1182800, 0, 0, 0);
-
--- Gameobjects
--- horde control
-DELETE FROM `gameobject` WHERE `id` IN (182281,182282,182273,182274,182266,182275,182276,182277);
-INSERT INTO `gameobject` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`position_x`,`position_y`,`position_z`,`orientation`,`rotation0`,`rotation1`,`rotation2`,`rotation3`,`spawntimesecs`,`animprogress`,`state`) VALUES
-(500018, 182281, 530, 1, 1, -1385.07, 7779.34, -11.2055, 0.785398, 0, 0, 0.382683, 0.92388, 180, 100, 1),
-(500019, 182282, 530, 1, 1, -1649.99, 7732.57, -15.4506, -2.40855, 0, 0, -0.93358, 0.35837, 180, 100, 1),
-
-(500020, 182273, 530, 1, 1, -1389.53, 7782.51, -11.6257, -1.51844, 0, 0, -0.688356, 0.725373, 180, 100, 1),
-(500021, 182274, 530, 1, 1, -1662.28, 7735, -15.9663, 1.88495, 0, 0, 0.809015, 0.587788, 180, 100, 1),
-
-(500022, 182266, 530, 1, 1, -1815.82, 8036.64, -26.2491, -2.89725, 0, 0, -0.992546, 0.121868, -300, 100, 1),
-(500023, 182275, 530, 1, 1, -1507.9, 8132.11, -19.553, -1.3439, 0, 0, -0.622513, 0.782609, -300, 100, 1),
-(500024, 182276, 530, 1, 1, -1384.53, 7779.4, -11.17, -0.575959, 0, 0, -0.284016, 0.95882, -300, 100, 1),
-(500025, 182277, 530, 1, 1, -1650.28, 7732.19, -15.4418, -2.80998, 0, 0, -0.986286, 0.165048, -300, 100, 1);
-
--- alliance in control
-DELETE FROM `gameobject` WHERE `id` IN (182297,182298,182299,182300);
-INSERT INTO `gameobject` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`position_x`,`position_y`,`position_z`,`orientation`,`rotation0`,`rotation1`,`rotation2`,`rotation3`,`spawntimesecs`,`animprogress`,`state`) VALUES
-
-(500026, 182297, 530, 1, 1, -1815.8, 8036.51, -26.2354, -2.89725, 0, 0, -0.992546, 0.121868, 180, 100, 1),
-(500027, 182298, 530, 1, 1, -1507.95, 8132.1, -19.5585, -1.3439, 0, 0, -0.622513, 0.782609, 180, 100, 1),
-(500028, 182299, 530, 1, 1, -1384.52, 7779.33, -11.1663, -0.575959, 0, 0, -0.284016, 0.95882, 180, 100, 1),
-(500029, 182300, 530, 1, 1, -1650.11, 7732.56, -15.4505, -2.80998, 0, 0, -0.986286, 0.165048, 180, 100, 1);
-
-UPDATE `gameobject` SET `spawntimesecs` = -180 WHERE `id` IN (182301,182302,182303,182304,182305,182306,182307,182308,182297,182298,182299,182300);
-UPDATE `gameobject` SET `spawntimesecs` = -180 WHERE `id` IN (182267,182280,182281,182282,182222,182272,182273,182274,182266,182275,182276,182277);
 
 -- Gameobject scripts
 -- South (ally & horde)
