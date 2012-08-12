@@ -22,7 +22,6 @@
 #include "OutdoorPvPMgr.h"
 #include "../Language.h"
 #include "../World.h"
-#include "../ZoneScript.h"
 #include "../Player.h"
 #include "Common.h"
 #include "Policies/Singleton.h"
@@ -46,13 +45,24 @@ enum CapturePointAnimations
 
 typedef std::set<Player*> PlayerSet;
 
-class OutdoorPvP : public ZoneScript
+class OutdoorPvP
 {
     friend class OutdoorPvPMgr;
 
     public:
         OutdoorPvP() {}
         ~OutdoorPvP() {}
+
+        // Called when a creature or gameobject is created
+        virtual void OnCreatureCreate(Creature* ) {}
+        virtual void OnGameObjectCreate(GameObject* ) {}
+
+        // Called on creature death or respawn
+        virtual void OnCreatureDeath(Creature* /*creature*/) {}
+        virtual void OnCreatureRespawn(Creature* /*creature*/) {}
+
+        // Process Capture event
+        virtual void ProcessEvent(uint32 uiEventId, GameObject* pGo) {}
 
         // called when the zone is initialized
         virtual void FillInitialWorldStates(WorldPacket& /*data*/, uint32& /*count*/) {}
@@ -76,11 +86,11 @@ class OutdoorPvP : public ZoneScript
         // init all the outdoor pvp area relates stuff
         virtual bool InitOutdoorPvPArea() { return false; }
 
-        // send world state update to all players present
-        void SendUpdateWorldState(uint32 field, uint32 value);
-
         // update - called by the OutdoorPvPMgr
         virtual void Update(uint32 diff) {}
+
+        // send world state update to all players present
+        void SendUpdateWorldState(uint32 field, uint32 value);
 
         // applies buff to a team inside the specific zone
         void BuffTeam(Team team, uint32 spellId, bool remove = false);
@@ -93,6 +103,7 @@ class OutdoorPvP : public ZoneScript
         void SetBannerVisual(GameObject* go, uint32 artKit, uint32 animId);
 
     protected:
+
         // Player related stuff
         virtual void HandlePlayerEnterZone(Player* player);
         virtual void HandlePlayerLeaveZone(Player* player);

@@ -30,7 +30,6 @@
 class Player;
 class GameObject;
 class Creature;
-class ZoneScript;
 class OutdoorPvP;
 
 class OutdoorPvPMgr
@@ -50,9 +49,6 @@ class OutdoorPvPMgr
 
         // return assigned world pvp
         OutdoorPvP* GetOutdoorPvP(uint32 zoneId);
-
-        // return assigned zone script
-        ZoneScript* GetZoneScript(uint32 zoneId);
 
         // add zone id to world pvp handler
         void AddZone(uint32 zoneId, OutdoorPvP* scriptHandler);

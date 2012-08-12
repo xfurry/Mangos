@@ -183,21 +183,6 @@ OutdoorPvP* OutdoorPvPMgr::GetOutdoorPvP(uint32 zoneId)
     return NULL;
 }
 
-/**
-   Function that returns the zone script for a specific zone id
-
-   @param   zone id used for the current world pvp script
- */
-ZoneScript* OutdoorPvPMgr::GetZoneScript(uint32 zoneId)
-{
-    OutdoorPvPMap::iterator itr = m_outdoorPvPMap.find(zoneId);
-
-    if (itr != m_outdoorPvPMap.end())
-        return itr->second;
-
-    return NULL;
-}
-
 void OutdoorPvPMgr::Update(uint32 diff)
 {
     m_updateTimer.Update(diff);

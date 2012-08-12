@@ -1052,13 +1052,13 @@ void Unit::JustKilledCreature(Creature* victim)
             ((Creature*)pOwner)->AI()->SummonedCreatureJustDied(victim);
     }
 
-    // Inform Outdoor PvP
-    if (m_zoneScript = sOutdoorPvPMgr.GetZoneScript(GetZoneId()))
-        m_zoneScript->OnCreatureDeath(victim);
-
     // Inform Instance Data and Linking
     if (InstanceData* mapInstance = victim->GetInstanceData())
         mapInstance->OnCreatureDeath(victim);
+
+    // Notify the outdoor pvp script
+    if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP(GetZoneId()))
+        outdoorPvP->OnCreatureDeath(victim);
 
     if (victim->IsLinkingEventTrigger())
         victim->GetMap()->GetCreatureLinkingHolder()->DoCreatureLinkingEvent(LINKING_EVENT_DIE, victim);

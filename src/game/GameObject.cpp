@@ -172,10 +172,9 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map* map, uint32 phaseMa
     if (InstanceData* iData = map->GetInstanceData())
         iData->OnObjectCreate(this);
 
-    // Init and notify the outdoor pvp script
-    SetZoneScript();
-    if (m_zoneScript)
-        m_zoneScript->OnGameObjectCreate(this);
+    // Notify the outdoor pvp script
+    if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP(GetZoneId()))
+        outdoorPvP->OnGameObjectCreate(this);
 
     return true;
 }
@@ -2155,9 +2154,9 @@ void GameObject::TickCapturePoint()
 
     if (eventId)
     {
-        // send zone script
-        if (m_zoneScript)
-            m_zoneScript->ProcessEvent(eventId, this);
+        // Notify the outdoor pvp script
+        if (OutdoorPvP* outdoorPvP = (*capturingPlayers.begin())->GetOutdoorPvP())
+            outdoorPvP->OnGameObjectCreate(this);
 
         // Send script event to SD2 and database as well - this can be used for summoning creatures, casting specific spells or spawning GOs
         if (!sScriptMgr.OnProcessEvent(eventId, this, this, true))
