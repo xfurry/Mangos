@@ -52,7 +52,6 @@
 #include "BattleGround.h"
 #include "BattleGroundAV.h"
 #include "BattleGroundMgr.h"
-#include "OutdoorPvP/OutdoorPvP.h"
 #include "OutdoorPvP/OutdoorPvPMgr.h"
 #include "ArenaTeam.h"
 #include "Chat.h"
@@ -6700,11 +6699,6 @@ void Player::UpdateArea(uint32 newArea)
     }
 
     UpdateAreaDependentAuras();
-}
-
-OutdoorPvP* Player::GetOutdoorPvP() const
-{
-    return sOutdoorPvPMgr.GetOutdoorPvP(m_zoneUpdateId);
 }
 
 bool Player::CanUseOutdoorCapturePoint()

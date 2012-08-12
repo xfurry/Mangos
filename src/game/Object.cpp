@@ -41,7 +41,6 @@
 #include "GridNotifiersImpl.h"
 #include "ObjectPosSelector.h"
 #include "TemporarySummon.h"
-#include "OutdoorPvP/OutdoorPvPMgr.h"
 #include "movement/packet_builder.h"
 
 Object::Object()

@@ -53,7 +53,6 @@ class PlayerSocial;
 class DungeonPersistentState;
 class Spell;
 class Item;
-class OutdoorPvP;
 
 typedef std::deque<Mail*> PlayerMails;
 
@@ -2135,7 +2134,6 @@ class MANGOS_DLL_SPEC Player : public Unit
         /***                OUTDOOR PVP SYSTEM                 ***/
         /*********************************************************/
 
-        OutdoorPvP* GetOutdoorPvP() const;
         // returns true if the player is in active state for outdoor pvp objective capturing
         bool CanUseOutdoorCapturePoint();
 
