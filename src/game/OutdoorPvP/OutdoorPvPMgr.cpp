@@ -40,7 +40,7 @@ OutdoorPvPMgr::~OutdoorPvPMgr()
 }
 
 /**
-   Function which loads the world pvp scripts
+   Function which loads all outdoor pvp scripts
  */
 void OutdoorPvPMgr::InitOutdoorPvP()
 {
@@ -72,7 +72,7 @@ void OutdoorPvPMgr::InitOutdoorPvP()
     }
 
     sLog.outString();
-    sLog.outString(">> Loaded %u World PvP zones", count);
+    sLog.outString(">> Loaded %u Outdoor PvP zones", count);
 }
 
 /**
@@ -90,7 +90,7 @@ void OutdoorPvPMgr::AddZone(uint32 zoneId, OutdoorPvP* scriptHandler)
    Function that handles the players which enters a specific zone
 
    @param   player to be handled in the event
-   @param   zone id used for the current world pvp script
+   @param   zone id used for the current outdoor pvp script
  */
 void OutdoorPvPMgr::HandlePlayerEnterZone(Player* player, uint32 zoneId)
 {
@@ -114,64 +114,9 @@ void OutdoorPvPMgr::HandlePlayerLeaveZone(Player* player, uint32 zoneId)
 }
 
 /**
-   Function that handles when a player drops a flag during an outtdoor pvp event
+   Function that returns a specific outdoor pvp script for a given zone id
 
-   @param   player which executes the event
-   @param   spell id which acts as the flag
- */
-/*void OutdoorPvPMgr::HandleDropFlag(Player* player, uint32 spellId)
-{
-    for (OutdoorPvPSet::iterator itr = m_outdoorPvPSet.begin(); itr != m_outdoorPvPSet.end(); ++itr)
-    {
-        if ((*itr)->HandleDropFlag(player, spellId))
-            return;
-    }
-}*/
-
-/**
-   Function that handles the objective complete of a capture point
-
-   @param   player set to which to send the credit
-   @param   capture evetn id
- */
-/*void OutdoorPvPMgr::HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team)
-{
-    for (OutdoorPvPSet::iterator itr = m_outdoorPvPSet.begin(); itr != m_outdoorPvPSet.end(); ++itr)
-        (*itr)->HandleObjectiveComplete(eventId, players, team);
-}*/
-
-/**
-   Function that handles the player kill inside a capture point
-
-   @param   player
-   @param   victim
- */
-/*void OutdoorPvPMgr::HandlePlayerKill(Player* player, Unit* victim)
-{
-    for (OutdoorPvPSet::iterator itr = m_outdoorPvPSet.begin(); itr != m_outdoorPvPSet.end(); ++itr)
-        (*itr)->HandlePlayerKill(player, victim);
-}*/
-
-/**
-   Function that handles when a player uses a world pvp gameobject
-
-   @param   player which executes the event
-   @param   gameobject used
- */
-/*bool OutdoorPvPMgr::HandleObjectUse(Player* player, GameObject* go)
-{
-    for (OutdoorPvPSet::iterator itr = m_outdoorPvPSet.begin(); itr != m_outdoorPvPSet.end(); ++itr)
-    {
-        if ((*itr)->HandleObjectUse(player, go))
-            return true;
-    }
-    return false;
-}*/
-
-/**
-   Function that returns a specific world pvp script for a given zone id
-
-   @param   zone id used for the current world pvp script
+   @param   zone id used for the current outdoor pvp script
  */
 OutdoorPvP* OutdoorPvPMgr::GetOutdoorPvP(uint32 zoneId)
 {

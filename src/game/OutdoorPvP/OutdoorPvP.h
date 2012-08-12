@@ -73,7 +73,7 @@ class OutdoorPvP
         // called when a playerd drops a flag
         virtual bool HandleDropFlag(Player* /*player*/, uint32 /*spellId*/) { return false; }
 
-        // called when a playerd uses a gameobject related to world pvp events
+        // called when a playerd uses a gameobject related to outdoor pvp events
         virtual bool HandleObjectUse(Player* /*player*/, GameObject* /*go*/) { return false; }
 
         // handle npc/player kill

@@ -38,19 +38,19 @@ class OutdoorPvPMgr
         OutdoorPvPMgr();
         ~OutdoorPvPMgr();
 
-        // create world pvp events
+        // load all outdoor pvp scripts
         void InitOutdoorPvP();
 
-        // called when a player enters an world pvp area
+        // called when a player enters an outdoor pvp area
         void HandlePlayerEnterZone(Player* player, uint32 zoneId);
 
-        // called when player leaves an world pvp area
+        // called when player leaves an outdoor pvp area
         void HandlePlayerLeaveZone(Player* player, uint32 zoneId);
 
-        // return assigned world pvp
+        // return assigned outdoor pvp script
         OutdoorPvP* GetOutdoorPvP(uint32 zoneId);
 
-        // add zone id to world pvp handler
+        // add zone id to outdoor pvp handler
         void AddZone(uint32 zoneId, OutdoorPvP* scriptHandler);
 
         void Update(uint32);
@@ -75,11 +75,11 @@ class OutdoorPvPMgr
         typedef std::map<uint32 /* zoneid */, OutdoorPvP*> OutdoorPvPMap;
 
     private:
-        // contains all initiated world pvp events
+        // contains all initiated outdoor pvp events
         // used when initing / cleaning up
         OutdoorPvPSet m_outdoorPvPSet;
 
-        // maps the zone ids to an world pvp event
+        // maps the zone ids to an outdoor pvp event
         // used in player event handling
         OutdoorPvPMap m_outdoorPvPMap;
 

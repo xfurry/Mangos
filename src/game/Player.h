@@ -2132,7 +2132,7 @@ class MANGOS_DLL_SPEC Player : public Unit
         bool CanUseCapturePoint();
 
         /*********************************************************/
-        /***                 WORLD PVP SYSTEM                  ***/
+        /***                OUTDOOR PVP SYSTEM                 ***/
         /*********************************************************/
 
         OutdoorPvP* GetOutdoorPvP() const;
