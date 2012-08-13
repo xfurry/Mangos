@@ -19,6 +19,10 @@
 #ifndef WORLD_PVP_NA
 #define WORLD_PVP_NA
 
+#include "Common.h"
+#include "OutdoorPvP.h"
+#include "../Language.h"
+
 enum
 {
     MAX_NA_GUARDS                           = 15,

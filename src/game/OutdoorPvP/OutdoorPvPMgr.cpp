@@ -17,6 +17,10 @@
  */
 
 #include "OutdoorPvPMgr.h"
+#include "Policies/SingletonImp.h"
+#include "OutdoorPvP.h"
+#include "../World.h"
+#include "Log.h"
 #include "OutdoorPvPEP.h"
 #include "OutdoorPvPGH.h"
 #include "OutdoorPvPHP.h"
@@ -24,7 +28,6 @@
 #include "OutdoorPvPSI.h"
 #include "OutdoorPvPTF.h"
 #include "OutdoorPvPZM.h"
-#include "Policies/SingletonImp.h"
 
 INSTANTIATE_SINGLETON_1(OutdoorPvPMgr);
 

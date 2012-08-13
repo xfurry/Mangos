@@ -16,10 +16,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "OutdoorPvP.h"
 #include "OutdoorPvPHP.h"
+#include "WorldPacket.h"
+#include "../World.h"
+#include "../Object.h"
+#include "../Creature.h"
 #include "../GameObject.h"
-
+#include "../Player.h"
 
 OutdoorPvPHP::OutdoorPvPHP() : OutdoorPvP(),
     m_towersAlliance(0),

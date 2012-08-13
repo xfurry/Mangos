@@ -19,6 +19,10 @@
 #ifndef WORLD_PVP_HP
 #define WORLD_PVP_HP
 
+#include "Common.h"
+#include "OutdoorPvP.h"
+#include "../Language.h"
+
 enum
 {
     MAX_HP_TOWERS                           = 3,

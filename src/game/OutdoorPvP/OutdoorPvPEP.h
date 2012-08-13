@@ -19,6 +19,10 @@
 #ifndef WORLD_PVP_EP
 #define WORLD_PVP_EP
 
+#include "Common.h"
+#include "OutdoorPvP.h"
+#include "../Language.h"
+
 enum
 {
     TOWER_ID_NORTHPASS                          = 0,

@@ -50,7 +50,7 @@
 #include "CreatureAIRegistry.h"
 #include "Policies/SingletonImp.h"
 #include "BattleGroundMgr.h"
-#include "OutdoorPvP/OutdoorPvPMgr.h"
+#include "OutdoorPvP/OutdoorPvP.h"
 #include "TemporarySummon.h"
 #include "VMapFactory.h"
 #include "MoveMap.h"

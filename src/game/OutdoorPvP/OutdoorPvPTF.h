@@ -19,6 +19,10 @@
 #ifndef WORLD_PVP_TF
 #define WORLD_PVP_TF
 
+#include "Common.h"
+#include "OutdoorPvP.h"
+#include "../Language.h"
+
 enum
 {
     MAX_TF_TOWERS                           = 5,

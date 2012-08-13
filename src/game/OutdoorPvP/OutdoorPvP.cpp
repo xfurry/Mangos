@@ -17,6 +17,11 @@
  */
 
 #include "OutdoorPvP.h"
+#include "../Language.h"
+#include "../World.h"
+#include "../Object.h"
+#include "../Player.h"
+#include "../GameObject.h"
 
 /**
    Function that adds a player to the players of the affected outdoor pvp zones

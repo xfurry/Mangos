@@ -16,8 +16,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "OutdoorPvP.h"
 #include "OutdoorPvPSI.h"
+#include "WorldPacket.h"
+#include "../World.h"
+#include "../ObjectMgr.h"
+#include "../Object.h"
+#include "../Creature.h"
+#include "../GameObject.h"
+#include "../Player.h"
 
 OutdoorPvPSI::OutdoorPvPSI() : OutdoorPvP(),
     m_resourcesAlliance(0),

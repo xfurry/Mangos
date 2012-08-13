@@ -52,7 +52,7 @@
 #include "BattleGround.h"
 #include "BattleGroundAV.h"
 #include "BattleGroundMgr.h"
-#include "OutdoorPvP/OutdoorPvPMgr.h"
+#include "OutdoorPvP/OutdoorPvP.h"
 #include "ArenaTeam.h"
 #include "Chat.h"
 #include "Database/DatabaseImpl.h"

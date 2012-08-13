@@ -46,7 +46,7 @@
 #include "BattleGround.h"
 #include "BattleGroundEY.h"
 #include "BattleGroundWS.h"
-#include "OutdoorPvP/OutdoorPvPMgr.h"
+#include "OutdoorPvP/OutdoorPvP.h"
 #include "Language.h"
 #include "SocialMgr.h"
 #include "VMapFactory.h"

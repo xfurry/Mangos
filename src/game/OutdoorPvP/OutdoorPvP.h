@@ -19,15 +19,17 @@
 #ifndef OUTDOOR_PVP_H
 #define OUTDOOR_PVP_H
 
-#include "OutdoorPvPMgr.h"
-#include "../Language.h"
-#include "../World.h"
-#include "../Player.h"
 #include "Common.h"
-#include "Policies/Singleton.h"
+#include "../ObjectGuid.h"
 #include "../SharedDefines.h"
-#include "../GameObject.h"
-#include "../ObjectMgr.h"
+#include "OutdoorPvPMgr.h"
+
+class WorldPacket;
+class WorldObject;
+class Player;
+class GameObject;
+class Unit;
+class Creature;
 
 enum CapturePointArtKits
 {

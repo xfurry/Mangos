@@ -19,13 +19,9 @@
 #ifndef WORLD_PVP_MGR_H
 #define WORLD_PVP_MGR_H
 
-
-#include "OutdoorPvP.h"
 #include "Common.h"
 #include "Policies/Singleton.h"
-#include "../SharedDefines.h"
-#include "Platform/Define.h"
-#include "../Map.h"
+#include "Timer.h"
 
 class Player;
 class GameObject;

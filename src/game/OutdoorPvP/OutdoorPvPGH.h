@@ -19,6 +19,9 @@
 #ifndef WORLD_PVP_GH
 #define WORLD_PVP_GH
 
+#include "Common.h"
+#include "OutdoorPvP.h"
+
 enum
 {
     // zone ids
