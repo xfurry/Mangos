@@ -307,7 +307,7 @@ void OutdoorPvPTF::LockTowers(const WorldObject* objRef)
         if (GameObject* go = objRef->GetMap()->GetGameObject(m_towerBanners[i]))
             go->SetLootState(GO_JUST_DEACTIVATED);
 
-        SetCapturePointSliderValue(TEROKKAR_TOWERS[i], m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
+        sOutdoorPvPMgr.SetCapturePointSlider(TEROKKAR_TOWERS[i], m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
     }
 }
 
@@ -322,6 +322,6 @@ void OutdoorPvPTF::ResetTowers(const WorldObject* objRef)
         }
         else
             // if grid is unloaded, resetting the slider value is enough
-            SetCapturePointSliderValue(TEROKKAR_TOWERS[i], CAPTURE_SLIDER_NEUTRAL);
+            sOutdoorPvPMgr.SetCapturePointSlider(TEROKKAR_TOWERS[i], CAPTURE_SLIDER_NEUTRAL);
     }
 }

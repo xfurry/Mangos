@@ -526,7 +526,7 @@ void OutdoorPvPNA::LockHalaa(const WorldObject* objRef)
     if (GameObject* go = objRef->GetMap()->GetGameObject(m_capturePoint))
         go->SetLootState(GO_JUST_DEACTIVATED);
 
-    SetCapturePointSliderValue(m_capturePoint, m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
+    sOutdoorPvPMgr.SetCapturePointSlider(m_capturePoint, m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
 }
 
 void OutdoorPvPNA::UnlockHalaa(const WorldObject* objRef)
@@ -536,5 +536,5 @@ void OutdoorPvPNA::UnlockHalaa(const WorldObject* objRef)
         // no banner visual update needed because it already has the correct one
     else
         // if grid is unloaded, resetting the slider value is enough
-        SetCapturePointSliderValue(m_capturePoint, m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
+        sOutdoorPvPMgr.SetCapturePointSlider(m_capturePoint, m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE : CAPTURE_SLIDER_HORDE);
 }
