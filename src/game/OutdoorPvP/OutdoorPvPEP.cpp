@@ -40,9 +40,9 @@ OutdoorPvPEP::OutdoorPvPEP() : OutdoorPvP(),
 
 bool OutdoorPvPEP::InitOutdoorPvPArea()
 {
-    RegisterZone(ZONE_ID_EASTERN_PLAGUELANDS);
-    RegisterZone(ZONE_ID_STRATHOLME);
-    RegisterZone(ZONE_ID_SCHOLOMANCE);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_EASTERN_PLAGUELANDS);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_STRATHOLME);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_SCHOLOMANCE);
 
     return true;
 }

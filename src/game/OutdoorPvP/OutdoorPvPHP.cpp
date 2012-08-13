@@ -38,12 +38,12 @@ OutdoorPvPHP::OutdoorPvPHP() : OutdoorPvP(),
 
 bool OutdoorPvPHP::InitOutdoorPvPArea()
 {
-    RegisterZone(ZONE_ID_HELLFIRE_PENINSULA);
-    RegisterZone(ZONE_ID_HELLFIRE_CITADEL);
-    RegisterZone(ZONE_ID_HELLFIRE_RAMPARTS);
-    RegisterZone(ZONE_ID_BLOOD_FURNACE);
-    RegisterZone(ZONE_ID_SHATTERED_HALLS);
-    RegisterZone(ZONE_ID_MAGTHERIDON_LAIR);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_HELLFIRE_PENINSULA);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_HELLFIRE_RAMPARTS);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_HELLFIRE_CITADEL);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_BLOOD_FURNACE);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_SHATTERED_HALLS);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_MAGTHERIDON_LAIR);
 
     return true;
 }

@@ -35,10 +35,10 @@ OutdoorPvPSI::OutdoorPvPSI() : OutdoorPvP(),
 // Init outdoor pvp zones
 bool OutdoorPvPSI::InitOutdoorPvPArea()
 {
-    RegisterZone(ZONE_ID_SILITHUS);
-    RegisterZone(ZONE_ID_GATES_OF_AQ);
-    RegisterZone(ZONE_ID_TEMPLE_OF_AQ);
-    RegisterZone(ZONE_ID_RUINS_OF_AQ);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_SILITHUS);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_GATES_OF_AQ);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_TEMPLE_OF_AQ);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_RUINS_OF_AQ);
 
     return true;
 }

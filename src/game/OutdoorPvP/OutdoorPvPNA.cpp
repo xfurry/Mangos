@@ -35,7 +35,7 @@ OutdoorPvPNA::OutdoorPvPNA() : OutdoorPvP(),
 
 bool OutdoorPvPNA::InitOutdoorPvPArea()
 {
-    RegisterZone(ZONE_ID_NAGRAND);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_NAGRAND);
 
     return true;
 }

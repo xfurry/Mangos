@@ -81,10 +81,10 @@ void OutdoorPvPMgr::InitOutdoorPvP()
 /**
    Function that adds a specific zone to a outdoor pvp script
 
-   @param   zone id used for the current outdoor pvp script
    @param   outdoor pvp script object
+   @param   zone id used for the current outdoor pvp script
  */
-void OutdoorPvPMgr::AddZone(uint32 zoneId, OutdoorPvP* scriptHandler)
+void OutdoorPvPMgr::AddZone(OutdoorPvP* scriptHandler, uint32 zoneId)
 {
     m_outdoorPvPMap[zoneId] = scriptHandler;
 }

@@ -46,11 +46,11 @@ OutdoorPvPZM::OutdoorPvPZM() : OutdoorPvP(),
 
 bool OutdoorPvPZM::InitOutdoorPvPArea()
 {
-    RegisterZone(ZONE_ID_ZANGARMARSH);
-    RegisterZone(ZONE_ID_SERPENTSHRINE_CAVERN);
-    RegisterZone(ZONE_ID_STREAMVAULT);
-    RegisterZone(ZONE_ID_UNDERBOG);
-    RegisterZone(ZONE_ID_SLAVE_PENS);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_TEROKKAR_FOREST);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_SERPENTSHRINE_CAVERN);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_STREAMVAULT);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_UNDERBOG);
+    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_SLAVE_PENS);
 
     return true;
 }

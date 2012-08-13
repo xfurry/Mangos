@@ -97,12 +97,6 @@ void OutdoorPvP::HandlePlayerKill(Player* killer, Unit* victim)
     }
 }
 
-// register this zone as an outdoor pvp zone
-void OutdoorPvP::RegisterZone(uint32 zoneId)
-{
-    sOutdoorPvPMgr.AddZone(zoneId, this);
-}
-
 // apply a team buff for the specific zone
 void OutdoorPvP::BuffTeam(Team team, uint32 spellId, bool remove)
 {

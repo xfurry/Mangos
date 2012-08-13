@@ -113,8 +113,6 @@ class OutdoorPvP
         // remove world states
         virtual void SendRemoveWorldStates(Player* player) {}
 
-        void RegisterZone(uint32 zoneId);
-
         // store the players inside the area depending on the team
         PlayerSet m_zonePlayers;
 };

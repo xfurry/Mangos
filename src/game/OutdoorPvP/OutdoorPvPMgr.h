@@ -47,7 +47,7 @@ class OutdoorPvPMgr
         OutdoorPvP* GetOutdoorPvP(uint32 zoneId);
 
         // add zone id to outdoor pvp handler
-        void AddZone(uint32 zoneId, OutdoorPvP* scriptHandler);
+        void AddZone(OutdoorPvP* scriptHandler, uint32 zoneId);
 
         void Update(uint32);
 

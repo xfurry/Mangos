@@ -35,8 +35,8 @@ enum
 
     // zone ids
     ZONE_ID_HELLFIRE_PENINSULA              = 3483,
-    ZONE_ID_HELLFIRE_CITADEL                = 3563,
     ZONE_ID_HELLFIRE_RAMPARTS               = 3562,
+    ZONE_ID_HELLFIRE_CITADEL                = 3563,
     ZONE_ID_BLOOD_FURNACE                   = 3713,
     ZONE_ID_SHATTERED_HALLS                 = 3714,
     ZONE_ID_MAGTHERIDON_LAIR                = 3836,
