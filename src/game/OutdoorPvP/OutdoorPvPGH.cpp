@@ -29,7 +29,7 @@ OutdoorPvPGH::OutdoorPvPGH() : OutdoorPvP(),
 
 bool OutdoorPvPGH::InitOutdoorPvPArea()
 {
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_GRIZZLY_HILLS);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_GRIZZLY_HILLS);
 
     return true;
 }

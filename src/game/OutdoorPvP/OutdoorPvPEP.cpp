@@ -40,9 +40,9 @@ OutdoorPvPEP::OutdoorPvPEP() : OutdoorPvP(),
 
 bool OutdoorPvPEP::InitOutdoorPvPArea()
 {
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_EASTERN_PLAGUELANDS);
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_STRATHOLME);
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_SCHOLOMANCE);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_EASTERN_PLAGUELANDS);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_STRATHOLME);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_SCHOLOMANCE);
 
     return true;
 }
@@ -107,32 +107,28 @@ void OutdoorPvPEP::OnGameObjectCreate(GameObject* go)
 {
     switch (go->GetEntry())
     {
-        case GO_BATTLEFIELD_BANNER_PLAGUELANDS_1:
-        case GO_BATTLEFIELD_BANNER_PLAGUELANDS_2:
-        case GO_BATTLEFIELD_BANNER_PLAGUELANDS_3:
-        case GO_BATTLEFIELD_BANNER_PLAGUELANDS_4:
+        case GO_TOWER_BANNER_NORTHPASS:
+            InitBanner(go, TOWER_ID_NORTHPASS);
+            break;
+        case GO_TOWER_BANNER_CROWNGUARD:
+            InitBanner(go, TOWER_ID_CROWNGUARD);
+            break;
+        case GO_TOWER_BANNER_EASTWALL:
+            InitBanner(go, TOWER_ID_EASTWALL);
+            break;
+        case GO_TOWER_BANNER_PLAGUEWOOD:
+            InitBanner(go, TOWER_ID_PLAGUEWOOD);
+            break;
         case GO_TOWER_BANNER:
             // sort banners
-            if (go->IsWithinDist2d(PLAGUELANDS_TOWER_LOCATIONS[0].x, PLAGUELANDS_TOWER_LOCATIONS[0].y, 50.0f))
-            {
-                m_towerBanners[0].push_back(go->GetObjectGuid());
-                go->SetGoArtKit(GetBannerArtKit(m_towerOwner[0], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
-            }
-            else if (go->IsWithinDist2d(PLAGUELANDS_TOWER_LOCATIONS[1].x, PLAGUELANDS_TOWER_LOCATIONS[1].y, 50.0f))
-            {
-                m_towerBanners[1].push_back(go->GetObjectGuid());
-                go->SetGoArtKit(GetBannerArtKit(m_towerOwner[1], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
-            }
-            else if (go->IsWithinDist2d(PLAGUELANDS_TOWER_LOCATIONS[2].x, PLAGUELANDS_TOWER_LOCATIONS[2].y, 50.0f))
-            {
-                m_towerBanners[2].push_back(go->GetObjectGuid());
-                go->SetGoArtKit(GetBannerArtKit(m_towerOwner[2], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
-            }
-            else if (go->IsWithinDist2d(PLAGUELANDS_TOWER_LOCATIONS[3].x, PLAGUELANDS_TOWER_LOCATIONS[3].y, 50.0f))
-            {
-                m_towerBanners[3].push_back(go->GetObjectGuid());
-                go->SetGoArtKit(GetBannerArtKit(m_towerOwner[3], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
-            }
+            if (go->IsWithinDist2d(PLAGUELANDS_TOWER_LOCATIONS[TOWER_ID_NORTHPASS].x, PLAGUELANDS_TOWER_LOCATIONS[TOWER_ID_NORTHPASS].y, 50.0f))
+                InitBanner(go, TOWER_ID_NORTHPASS);
+            else if (go->IsWithinDist2d(PLAGUELANDS_TOWER_LOCATIONS[TOWER_ID_CROWNGUARD].x, PLAGUELANDS_TOWER_LOCATIONS[TOWER_ID_CROWNGUARD].y, 50.0f))
+                InitBanner(go, TOWER_ID_CROWNGUARD);
+            else if (go->IsWithinDist2d(PLAGUELANDS_TOWER_LOCATIONS[TOWER_ID_EASTWALL].x, PLAGUELANDS_TOWER_LOCATIONS[TOWER_ID_EASTWALL].y, 50.0f))
+                InitBanner(go, TOWER_ID_EASTWALL);
+            else if (go->IsWithinDist2d(PLAGUELANDS_TOWER_LOCATIONS[TOWER_ID_PLAGUEWOOD].x, PLAGUELANDS_TOWER_LOCATIONS[TOWER_ID_PLAGUEWOOD].y, 50.0f))
+                InitBanner(go, TOWER_ID_PLAGUEWOOD);
             break;
         case GO_LORDAERON_SHRINE_ALLIANCE:
             m_lordaeronShrineAlliance = go->GetObjectGuid();
@@ -292,6 +288,12 @@ void OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 
     // update counter state
     UpdateWorldState();
+}
+
+void OutdoorPvPEP::InitBanner(GameObject* go, uint32 towerId)
+{
+    m_towerBanners[towerId].push_back(go->GetObjectGuid());
+    go->SetGoArtKit(GetBannerArtKit(m_towerOwner[towerId], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
 }
 
 void OutdoorPvPEP::SummonFlightMaster(WorldObject* objRef)

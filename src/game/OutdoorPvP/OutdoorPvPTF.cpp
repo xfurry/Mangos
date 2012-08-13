@@ -44,11 +44,11 @@ OutdoorPvPTF::OutdoorPvPTF() : OutdoorPvP(),
 
 bool OutdoorPvPTF::InitOutdoorPvPArea()
 {
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_TEROKKAR_FOREST);
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_SHADOW_LABYRINTH);
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_AUCHENAI_CRYPTS);
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_SETHEKK_HALLS);
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_MANA_TOMBS);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_TEROKKAR_FOREST);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_SHADOW_LABYRINTH);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_AUCHENAI_CRYPTS);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_SETHEKK_HALLS);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_MANA_TOMBS);
 
     return true;
 }

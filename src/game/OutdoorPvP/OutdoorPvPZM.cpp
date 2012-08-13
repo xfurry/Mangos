@@ -46,11 +46,11 @@ OutdoorPvPZM::OutdoorPvPZM() : OutdoorPvP(),
 
 bool OutdoorPvPZM::InitOutdoorPvPArea()
 {
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_TEROKKAR_FOREST);
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_SERPENTSHRINE_CAVERN);
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_STREAMVAULT);
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_UNDERBOG);
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_SLAVE_PENS);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_ZANGARMARSH);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_SERPENTSHRINE_CAVERN);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_STREAMVAULT);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_UNDERBOG);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_SLAVE_PENS);
 
     return true;
 }
@@ -440,7 +440,7 @@ void OutdoorPvPZM::SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGu
             banner->SetRespawnTime(7 * DAY);
             banner->Refresh();
         }
-        // Note: this doesn't work fine, becuase the GO doesn't despawn by itself
+        // Note: this does not work fine, because the GO does not despawn by itself
         else if (banner->isSpawned())
             banner->SetLootState(GO_JUST_DEACTIVATED);
     }

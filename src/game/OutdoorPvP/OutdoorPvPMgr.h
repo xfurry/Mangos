@@ -51,18 +51,6 @@ class OutdoorPvPMgr
 
         void Update(uint32);
 
-        // Handle cases when a player drops a flag
-        //void HandleDropFlag(Player* player, uint32 spellId);
-
-        // Handle cases when a gameobject is used
-        //bool HandleObjectUse(Player* player, GameObject* go);
-
-        // Handle the complete credit for capture point win events
-        //void HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team);
-
-        // Handle the kill event inside the area
-        //void HandlePlayerKill(Player* player, Unit* victim);
-
         // Handle capture point stuff
         int8 GetCapturePointSliderValue(uint32 entry);
         void SetCapturePointSlider(uint32 entry, int8 value) { m_CapturePointSlider[entry] = value; }
@@ -72,7 +60,6 @@ class OutdoorPvPMgr
 
     private:
         // contains all initiated outdoor pvp events
-        // used when initing / cleaning up
         OutdoorPvPSet m_outdoorPvPSet;
 
         // maps the zone ids to an outdoor pvp event

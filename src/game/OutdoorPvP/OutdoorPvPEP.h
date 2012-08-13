@@ -32,13 +32,11 @@ enum
     TOWER_COUNT                                 = 4,
 
     // spells
-    // alliance
     SPELL_ECHOES_OF_LORDAERON_ALLIANCE_1        = 11413,
     SPELL_ECHOES_OF_LORDAERON_ALLIANCE_2        = 11414,
     SPELL_ECHOES_OF_LORDAERON_ALLIANCE_3        = 11415,
     SPELL_ECHOES_OF_LORDAERON_ALLIANCE_4        = 1386,
 
-    // horde
     SPELL_ECHOES_OF_LORDAERON_HORDE_1           = 30880,
     SPELL_ECHOES_OF_LORDAERON_HORDE_2           = 30683,
     SPELL_ECHOES_OF_LORDAERON_HORDE_3           = 30682,
@@ -77,15 +75,14 @@ enum
     GO_TOWER_FLAG                               = 182106,
 
     // capture points
-    GO_BATTLEFIELD_BANNER_PLAGUELANDS_1         = 181899,   // northpass
-    GO_BATTLEFIELD_BANNER_PLAGUELANDS_2         = 182096,   // crownguard
-    GO_BATTLEFIELD_BANNER_PLAGUELANDS_3         = 182097,   // eastwall
-    GO_BATTLEFIELD_BANNER_PLAGUELANDS_4         = 182098,   // plaguewood
+    GO_TOWER_BANNER_NORTHPASS                   = 181899,
+    GO_TOWER_BANNER_CROWNGUARD                  = 182096,
+    GO_TOWER_BANNER_EASTWALL                    = 182097,
+    GO_TOWER_BANNER_PLAGUEWOOD                  = 182098,
 
     GO_TOWER_BANNER                             = 182106,   // tower banners around
 
     // events
-    // northpass - banner 1
     //EVENT_NORTHPASS_WIN_ALLIANCE              = 10568,
     //EVENT_NORTHPASS_WIN_HORDE                 = 10556,
     //EVENT_NORTHPASS_CONTEST_ALLIANCE          = 10697,
@@ -95,7 +92,6 @@ enum
     EVENT_NORTHPASS_NEUTRAL_ALLIANCE            = 11151,
     EVENT_NORTHPASS_NEUTRAL_HORDE               = 11150,
 
-    // crownguard - banner 2
     //EVENT_CROWNGUARD_WIN_ALLIANCE             = 10570,
     //EVENT_CROWNGUARD_WIN_HORDE                = 10566,
     //EVENT_CROWNGUARD_CONTEST_ALLIANCE         = 10703,
@@ -105,7 +101,6 @@ enum
     EVENT_CROWNGUARD_NEUTRAL_ALLIANCE           = 11155,
     EVENT_CROWNGUARD_NEUTRAL_HORDE              = 11154,
 
-    // eastwall - banner 3
     //EVENT_EASTWALL_WIN_ALLIANCE               = 10569,
     //EVENT_EASTWALL_WIN_HORDE                  = 10565,
     //EVENT_EASTWALL_CONTEST_ALLIANCE           = 10689,
@@ -115,7 +110,6 @@ enum
     EVENT_EASTWALL_NEUTRAL_ALLIANCE             = 11149,
     EVENT_EASTWALL_NEUTRAL_HORDE                = 11148,
 
-    // plaguewood - banner 4
     //EVENT_PLAGUEWOOD_WIN_ALLIANCE             = 10567,
     //EVENT_PLAGUEWOOD_WIN_HORDE                = 10564,
     //EVENT_PLAGUEWOOD_CONTEST_ALLIANCE         = 10687,
@@ -129,7 +123,6 @@ enum
     WORLD_STATE_TOWER_COUNT_ALLIANCE            = 2327,
     WORLD_STATE_TOWER_COUNT_HORDE               = 2328,
 
-    // plaguewood tower
     //WORLD_STATE_PLAGUEWOOD_CONTEST_ALLIANCE   = 2366, // state similar to neutral state - not used
     //WORLD_STATE_PLAGUEWOOD_CONTEST_HORDE      = 2367,
     //WORLD_STATE_PLAGUEWOOD_PROGRESS_ALLIANCE  = 2368, // state similar to team control state - not used
@@ -138,7 +131,6 @@ enum
     WORLD_STATE_PLAGUEWOOD_HORDE                = 2371,
     WORLD_STATE_PLAGUEWOOD_NEUTRAL              = 2353,
 
-    // northpass tower
     //WORLD_STATE_NORTHPASS_CONTEST_ALLIANCE    = 2362,
     //WORLD_STATE_NORTHPASS_CONTEST_HORDE       = 2363,
     //WORLD_STATE_NORTHPASS_PROGRESS_ALLIANCE   = 2364,
@@ -147,7 +139,6 @@ enum
     WORLD_STATE_NORTHPASS_HORDE                 = 2373,
     WORLD_STATE_NORTHPASS_NEUTRAL               = 2352,
 
-    // eastwall tower
     //WORLD_STATE_EASTWALL_CONTEST_ALLIANCE     = 2359,
     //WORLD_STATE_EASTWALL_CONTEST_HORDE        = 2360,
     //WORLD_STATE_EASTWALL_PROGRESS_ALLIANCE    = 2357,
@@ -156,7 +147,6 @@ enum
     WORLD_STATE_EASTWALL_HORDE                  = 2356,
     WORLD_STATE_EASTWALL_NEUTRAL                = 2361,
 
-    // crownguard tower
     //WORLD_STATE_CROWNGUARD_CONTEST_ALLIANCE   = 2374,
     //WORLD_STATE_CROWNGUARD_CONTEST_HORDE      = 2375,
     //WORLD_STATE_CROWNGUARD_PROGRESS_ALLIANCE  = 2376,
@@ -185,7 +175,7 @@ struct PlaguelandsSpawnLocation
     float x, y, z;
 };
 
-// summon position at the eastwall tower - guesswork
+// summon position at the Eastwall tower - guesswork
 static PlaguelandsSpawnLocation PLAGUELANDS_SOLDIER_SPAWN_LOCATIONS[] =
 {
     {2526.220f, -4758.520f, 101.056f},
@@ -198,13 +188,13 @@ static PlaguelandsSpawnLocation PLAGUELANDS_SOLDIER_SPAWN_LOCATIONS[] =
 // capture points coords to sort the banners
 static PlaguelandsSpawnLocation PLAGUELANDS_TOWER_LOCATIONS[TOWER_COUNT] =
 {
-    {3181.08f, -4379.36f, 174.123f},       // northpass
-    {1860.85f, -3731.23f, 196.716f},       // crownguard
-    {2574.51f, -4794.89f, 144.704f},       // eastwall
-    {2962.71f, -3042.31f, 154.789f}        // plaguewood
+    {3181.08f, -4379.36f, 174.123f},       // Northpass
+    {1860.85f, -3731.23f, 196.716f},       // Crownguard
+    {2574.51f, -4794.89f, 144.704f},       // Eastwall
+    {2962.71f, -3042.31f, 154.789f}        // Plaguewood
 };
 
-// summon coords for the flightmaster
+// summon coords for the flight master
 static const float FLIGHTMASTER_SPAWN_LOCATION[4] = {2987.5f, -3049.11f, 120.126f, 5.75959f};
 
 struct PlaguelandsTowerEvent
@@ -243,8 +233,7 @@ static const PlaguelandsTowerEvent PLAGUELANDS_TOWER_EVENTS[TOWER_COUNT][4] =
     },
 };
 
-// order: Northpass, Crownguard, Eastwall, Plaguewood
-static const uint32 PLAGUELANDS_BANNERS[TOWER_COUNT] = {GO_BATTLEFIELD_BANNER_PLAGUELANDS_1, GO_BATTLEFIELD_BANNER_PLAGUELANDS_2, GO_BATTLEFIELD_BANNER_PLAGUELANDS_3, GO_BATTLEFIELD_BANNER_PLAGUELANDS_4};
+static const uint32 PLAGUELANDS_BANNERS[TOWER_COUNT] = {GO_TOWER_BANNER_NORTHPASS, GO_TOWER_BANNER_CROWNGUARD, GO_TOWER_BANNER_EASTWALL, GO_TOWER_BANNER_PLAGUEWOOD};
 
 class OutdoorPvPEP : public OutdoorPvP
 {
@@ -270,15 +259,17 @@ class OutdoorPvPEP : public OutdoorPvP
         // process capture events
         void ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState);
 
-        // plaguewood bonus - flightmaster
+        void InitBanner(GameObject* go, uint32 towerId);
+
+        // Plaguewood bonus - flight master
         void SummonFlightMaster(WorldObject* objRef);
         void UnsummonFlightMaster(const WorldObject* objRef);
 
-        // eastwall bonus - soldiers
+        // Eastwall bonus - soldiers
         void SummonSoldiers(WorldObject* objRef);
         void UnsummonSoldiers(const WorldObject* objRef);
 
-        // northpass bonus - shrine
+        // Northpass bonus - shrine
         void UpdateShrine(const WorldObject* objRef, bool remove = false);
 
         Team m_towerOwner[TOWER_COUNT];

@@ -32,13 +32,13 @@ OutdoorPvPSI::OutdoorPvPSI() : OutdoorPvP(),
 {
 }
 
-// Init outdoor pvp zones
+// Initialize outdoor pvp zones
 bool OutdoorPvPSI::InitOutdoorPvPArea()
 {
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_SILITHUS);
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_GATES_OF_AQ);
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_TEMPLE_OF_AQ);
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_RUINS_OF_AQ);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_SILITHUS);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_GATES_OF_AQ);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_TEMPLE_OF_AQ);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_RUINS_OF_AQ);
 
     return true;
 }
@@ -186,13 +186,13 @@ bool OutdoorPvPSI::HandleDropFlag(Player* player, uint32 spellId)
     return true;
 }
 
-// Handle the case when player picks a silithus mount or geyser
+// Handle the case when player picks a silithyst mound or geyser
 // This needs to be done because the spells used by these objects are missing
 bool OutdoorPvPSI::HandleObjectUse(Player* player, GameObject* go)
 {
     if (go->GetEntry() == GO_SILITHYST_MOUND || go->GetEntry() == GO_SILITHYST_GEYSER)
     {
-        // Also mark player with PvP on
+        // Also mark player with pvp on
         player->CastSpell(player, SPELL_SILITHYST, true);
         player->UpdatePvP(true, true);
         player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP);

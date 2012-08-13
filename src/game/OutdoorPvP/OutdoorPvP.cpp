@@ -46,7 +46,7 @@ void OutdoorPvP::HandlePlayerLeaveZone(Player* player)
         if (!player->GetSession()->PlayerLogout())
             SendRemoveWorldStates(player);
 
-        sLog.outDebug("Player %s left an outdoorpvp zone", player->GetName());
+        sLog.outDebug("Player %s left an Outdoor PvP zone", player->GetName());
     }
 }
 

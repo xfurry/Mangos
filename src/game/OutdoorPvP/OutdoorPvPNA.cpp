@@ -35,7 +35,7 @@ OutdoorPvPNA::OutdoorPvPNA() : OutdoorPvP(),
 
 bool OutdoorPvPNA::InitOutdoorPvPArea()
 {
-    sOutdoorPvPMgr.RegisterZone(this, ZONE_ID_NAGRAND);
+    sOutdoorPvPMgr.AddZone(this, ZONE_ID_NAGRAND);
 
     return true;
 }
@@ -507,7 +507,7 @@ void OutdoorPvPNA::RespawnGO(const WorldObject* objRef, ObjectGuid goGuid, bool 
             banner->SetRespawnTime(7 * DAY);
             banner->Refresh();
 
-            // Set NoDespawn flag for the Roosts
+            // Set no-despawn flag for the Roosts
             if (resetFlag)
                 banner->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
         }

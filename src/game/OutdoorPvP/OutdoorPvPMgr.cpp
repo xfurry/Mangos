@@ -19,6 +19,7 @@
 #include "OutdoorPvPMgr.h"
 #include "Policies/SingletonImp.h"
 #include "OutdoorPvP.h"
+#include "../GameObject.h"
 #include "../World.h"
 #include "Log.h"
 #include "OutdoorPvPEP.h"
