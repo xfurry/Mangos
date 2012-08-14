@@ -152,7 +152,7 @@ class OutdoorPvPZM : public OutdoorPvP
 
         // handles scout world states and gossip - ToDo: implement gossip based on condition
         void PrepareFactionScouts(const WorldObject* objRef, Team team);
-        void ResetScouts(const WorldObject* objRef, Team team, bool includeWorldStates = true);
+        void ResetScouts(const WorldObject* objRef, Team team);
 
         // handle graveyard team banners
         void SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn);

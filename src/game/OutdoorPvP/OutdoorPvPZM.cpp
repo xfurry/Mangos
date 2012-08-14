@@ -269,155 +269,113 @@ void OutdoorPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team team)
     }
 }
 
-void OutdoorPvPZM::ResetScouts(const WorldObject* objRef, Team team, bool includeWorldStates)
+void OutdoorPvPZM::ResetScouts(const WorldObject* objRef, Team team)
 {
     if (team == ALLIANCE)
     {
         if (Creature* scout = objRef->GetMap()->GetCreature(m_allianceScout))
             scout->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
-        // reset world states only if requested
-        if (includeWorldStates)
-        {
-            SendUpdateWorldState(m_scoutWorldStateAlliance, WORLD_STATE_REMOVE);
-            m_scoutWorldStateAlliance = WORLD_STATE_ZM_FLAG_NOT_READY_ALLIANCE;
-            SendUpdateWorldState(m_scoutWorldStateAlliance, WORLD_STATE_ADD);
-        }
+        // update world states
+        SendUpdateWorldState(m_scoutWorldStateAlliance, WORLD_STATE_REMOVE);
+        m_scoutWorldStateAlliance = WORLD_STATE_ZM_FLAG_NOT_READY_ALLIANCE;
+        SendUpdateWorldState(m_scoutWorldStateAlliance, WORLD_STATE_ADD);
     }
     else
     {
         if (Creature* scout = objRef->GetMap()->GetCreature(m_hordeScout))
             scout->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
-        // reset world states only if requested
-        if (includeWorldStates)
-        {
-            SendUpdateWorldState(m_scoutWorldStateHorde, WORLD_STATE_REMOVE);
-            m_scoutWorldStateHorde = WORLD_STATE_ZM_FLAG_NOT_READY_HORDE;
-            SendUpdateWorldState(m_scoutWorldStateHorde, WORLD_STATE_ADD);
-        }
+        // update world states
+        SendUpdateWorldState(m_scoutWorldStateHorde, WORLD_STATE_REMOVE);
+        m_scoutWorldStateHorde = WORLD_STATE_ZM_FLAG_NOT_READY_HORDE;
+        SendUpdateWorldState(m_scoutWorldStateHorde, WORLD_STATE_ADD);
     }
 }
 
 bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
 {
-    if (!player->HasAura(player->GetTeam() == ALLIANCE ? SPELL_BATTLE_STANDARD_ALLIANCE : SPELL_BATTLE_STANDARD_HORDE))
-        return false;
+    Team team = player->GetTeam();
 
     switch (go->GetEntry())
     {
-        case GO_ZANGA_BANNER_CENTER_ALLIANCE:
-            if (player->GetTeam() == ALLIANCE)
-                return false;
-
-            // change banners
-            SetGraveyardArtKit(go, m_graveyardBannerAlliance, false);
-            SetGraveyardArtKit(go, m_graveyardBannerHorde, true);
-            SetBeaconArtKit(go, m_beamGraveyardBlue, 0);
-
-            // remove buff
-            BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING, true);
-
-            // update graveyard owner
-            m_graveyardOwner = HORDE;
-
-            // add the buff and change the graveyard link
-            BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING);
-            sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner);
-
-            SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_REMOVE);
-            m_graveyardWorldState = WORLD_STATE_ZM_GRAVEYARD_HORDE;
-            SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_ADD);
-
-            // reset scout and remove player aura
-            ResetScouts(go, m_graveyardOwner);
-            player->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_HORDE);
-            SetBeaconArtKit(go, m_beamGraveyardRed, SPELL_BEAM_RED);
-            sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_GRAVEYARD_H);
-
-            return true;
-        case GO_ZANGA_BANNER_CENTER_HORDE:
-            if (player->GetTeam() == HORDE)
-                return false;
-
-            // change banners
-            SetGraveyardArtKit(go, m_graveyardBannerHorde, false);
-            SetGraveyardArtKit(go, m_graveyardBannerAlliance, true);
-            SetBeaconArtKit(go, m_beamGraveyardRed, 0);
-
-            // remove buff
-            BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING, true);
-
-            // update graveyard owner
-            m_graveyardOwner = ALLIANCE;
-
-            // add the buff and change the graveyard link
-            BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING);
-            sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner);
-
-            SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_REMOVE);
-            m_graveyardWorldState = WORLD_STATE_ZM_GRAVEYARD_ALLIANCE;
-            SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_ADD);
-
-            // reset scout and remove player aura
-            ResetScouts(go, m_graveyardOwner);
-            player->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_ALLIANCE);
-            SetBeaconArtKit(go, m_beamGraveyardBlue, SPELL_BEAM_BLUE);
-            sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_GRAVEYARD_A);
-
-            return true;
         case GO_ZANGA_BANNER_CENTER_NEUTRAL:
-
-            // remove old world state
-            SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_REMOVE);
-
-            if (player->GetTeam() == ALLIANCE)
-            {
-                // update graveyard owner
-                m_graveyardOwner = ALLIANCE;
-
-                // change banners
-                SetGraveyardArtKit(go, m_graveyardBannerNeutral, false);
-                SetGraveyardArtKit(go, m_graveyardBannerAlliance, true);
-
-                // add the buff and change the graveyard link
-                m_graveyardWorldState = WORLD_STATE_ZM_GRAVEYARD_ALLIANCE;
-                BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING);
-                sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner);
-
-                // reset scout and remove player aura
-                ResetScouts(go, m_graveyardOwner);
-                player->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_ALLIANCE);
-                SetBeaconArtKit(go, m_beamGraveyardBlue, SPELL_BEAM_BLUE);
-                sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_GRAVEYARD_A);
-            }
-            else
-            {
-                // update graveyard owner
-                m_graveyardOwner = HORDE;
-
-                // change banners
-                SetGraveyardArtKit(go, m_graveyardBannerNeutral, false);
-                SetGraveyardArtKit(go, m_graveyardBannerHorde, true);
-
-                // add the buff and change the graveyard link
-                m_graveyardWorldState = WORLD_STATE_ZM_GRAVEYARD_HORDE;
-                BuffTeam(HORDE, SPELL_TWIN_SPIRE_BLESSING);
-                sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner);
-
-                // reset scout and remove player aura
-                ResetScouts(go, m_graveyardOwner);
-                player->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_HORDE);
-                SetBeaconArtKit(go, m_beamGraveyardRed, SPELL_BEAM_RED);
-                sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_GRAVEYARD_H);
-            }
-
-            // add new world state
-            SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_ADD);
-            return true;
+            break;
+        case GO_ZANGA_BANNER_CENTER_ALLIANCE:
+            if (team == ALLIANCE)
+                return false;
+            break;
+        case GO_ZANGA_BANNER_CENTER_HORDE:
+            if (team == HORDE)
+                return false;
+            break;
+        default:
+            return false;
     }
 
-    return false;
+    if (!player->HasAura(team == ALLIANCE ? SPELL_BATTLE_STANDARD_ALLIANCE : SPELL_BATTLE_STANDARD_HORDE))
+        return false;
+
+    // disable old banners
+    if (m_graveyardOwner == ALLIANCE)
+    {
+        SetGraveyardArtKit(go, m_graveyardBannerAlliance, false);
+        SetBeaconArtKit(go, m_beamGraveyardBlue, 0);
+    }
+    else if (m_graveyardOwner == HORDE)
+    {
+        SetGraveyardArtKit(go, m_graveyardBannerHorde, false);
+        SetBeaconArtKit(go, m_beamGraveyardRed, 0);
+    }
+    else
+        SetGraveyardArtKit(go, m_graveyardBannerNeutral, false);
+
+    // update graveyard owner
+    m_graveyardOwner = team;
+
+    if (m_graveyardOwner == ALLIANCE)
+    {
+        // change banners
+        SetGraveyardArtKit(go, m_graveyardBannerAlliance, true);
+        SetBeaconArtKit(go, m_beamGraveyardBlue, SPELL_BEAM_BLUE);
+
+        // update world state
+        SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_REMOVE);
+        m_graveyardWorldState = WORLD_STATE_ZM_GRAVEYARD_ALLIANCE;
+        SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_ADD);
+
+        // remove player flag aura
+        player->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_ALLIANCE);
+
+        // send defense message
+        sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_GRAVEYARD_A);
+    }
+    else
+    {
+        // change banners
+        SetGraveyardArtKit(go, m_graveyardBannerHorde, true);
+        SetBeaconArtKit(go, m_beamGraveyardRed, SPELL_BEAM_RED);
+
+        // update world state
+        SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_REMOVE);
+        m_graveyardWorldState = WORLD_STATE_ZM_GRAVEYARD_HORDE;
+        SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_ADD);
+
+        // remove player flag aura
+        player->RemoveAurasDueToSpell(SPELL_BATTLE_STANDARD_HORDE);
+
+        // send defense message
+        sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_GRAVEYARD_H);
+    }
+
+    // add the buff and change the graveyard link
+    BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING);
+    sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner);
+
+    // reset scout so that team cannot take flag
+    ResetScouts(go, m_graveyardOwner);
+
+    return true;
 }
 
 void OutdoorPvPZM::SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn)
