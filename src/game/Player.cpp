@@ -8534,11 +8534,8 @@ static WorldStatePair SI_world_states[] =                   // Silithus
 
 static WorldStatePair EP_world_states[] =                   // Eastern Plaguelands
 {
-    { 2426, 0x0 },                                          // 10
     { 2327, 0 },                                            // 11 WORLD_STATE_EP_TOWER_COUNT_ALLIANCE
     { 2328, 0 },                                            // 12 WORLD_STATE_EP_TOWER_COUNT_HORDE
-    { 2427, 0x32 },                                         // 13
-    { 2428, 0x32 },                                         // 14
     { 2355, WORLD_STATE_REMOVE },                           // 15 WORLD_STATE_EP_CROWNGUARD_NEUTRAL
     { 2374, WORLD_STATE_REMOVE },                           // 16 WORLD_STATE_EP_CROWNGUARD_CONTEST_ALLIANCE
     { 2375, WORLD_STATE_REMOVE },                           // 17 WORLD_STATE_EP_CROWNGUARD_CONTEST_HORDE
@@ -8588,9 +8585,6 @@ static WorldStatePair HP_world_states[] =                   // Hellfire Peninsul
 
 static WorldStatePair TF_world_states[] =                   // Terokkar Forest
 {
-    { 2625, 0x0 },                                          // 10
-    { 2624, 0x14 },                                         // 11
-    { 2623, 0x0 },                                          // 12
     { 2622, 0 },                                            // 13 WORLD_STATE_TF_TOWER_COUNT_H
     { 2621, 0 },                                            // 14 WORLD_STATE_TF_TOWER_COUNT_A
     { 2620, WORLD_STATE_REMOVE },                           // 15 WORLD_STATE_TF_TOWERS_CONTROLLED
@@ -8619,10 +8613,7 @@ static WorldStatePair TF_world_states[] =                   // Terokkar Forest
 
 static WorldStatePair ZM_world_states[] =                   // Zangarmarsh
 {
-    { 2529, 0x0 },                                          // 10
-    { 2528, 0x0 },                                          // 11
-    { 2527, 0x0 },                                          // 12
-    { 2653, 0x1 },                                          // 13
+    { 2653, 0x1 },                                          // 13 WORLD_STATE_ZM_UNK
     { 2652, WORLD_STATE_REMOVE },                           // 14 WORLD_STATE_ZM_BEACON_EAST_NEUTRAL
     { 2651, WORLD_STATE_REMOVE },                           // 15 WORLD_STATE_ZM_BEACON_EAST_HORDE
     { 2650, WORLD_STATE_REMOVE },                           // 16 WORLD_STATE_ZM_BEACON_EAST_ALLIANCE
@@ -8632,9 +8623,6 @@ static WorldStatePair ZM_world_states[] =                   // Zangarmarsh
     { 2646, WORLD_STATE_REMOVE },                           // 20 WORLD_STATE_ZM_BEACON_WEST_NEUTRAL
     { 2645, WORLD_STATE_REMOVE },                           // 21 WORLD_STATE_ZM_BEACON_WEST_HORDE
     { 2644, WORLD_STATE_REMOVE },                           // 22 WORLD_STATE_ZM_BEACON_WEST_ALLIANCE
-    { 2535, 0x0 },                                          // 23
-    { 2534, 0x0 },                                          // 24
-    { 2533, 0x0 },                                          // 25
     { 2560, WORLD_STATE_REMOVE },                           // 26 WORLD_STATE_ZM_BEACON_EAST_UI_NEUTRAL
     { 2559, WORLD_STATE_REMOVE },                           // 27 WORLD_STATE_ZM_BEACON_EAST_UI_HORDE
     { 2558, WORLD_STATE_REMOVE },                           // 28 WORLD_STATE_ZM_BEACON_EAST_UI_ALLIANCE
@@ -8653,9 +8641,6 @@ static WorldStatePair NA_world_states[] =
     { 2502, 0 },                                            // 11 WORLD_STATE_NA_GUARDS_ALLIANCE
     { 2493, 0 },                                            // 12 WORLD_STATE_NA_GUARDS_MAX
     { 2491, 0 },                                            // 13 WORLD_STATE_NA_GUARDS_LEFT
-    { 2495, 0x0 },                                          // 14
-    { 2494, 0x0 },                                          // 15
-    { 2497, 0x0 },                                          // 16
     { 2762, WORLD_STATE_REMOVE },                           // 17 WORLD_STATE_NA_WYVERN_NORTH_NEUTRAL_H
     { 2662, WORLD_STATE_REMOVE },                           // 18 WORLD_STATE_NA_WYVERN_NORTH_NEUTRAL_A
     { 2663, WORLD_STATE_REMOVE },                           // 19 WORLD_STATE_NA_WYVERN_NORTH_H
