@@ -83,7 +83,7 @@ OutdoorPvP* OutdoorPvPMgr::GetScript(uint32 zoneId)
     }
 }
 
-OutdoorPvP* OutdoorPvPMgr::GetScriptWithAffectedZones(uint32 zoneId)
+OutdoorPvP* OutdoorPvPMgr::GetScriptOfAffectedZone(uint32 zoneId)
 {
     switch (zoneId)
     {
@@ -111,7 +111,7 @@ OutdoorPvP* OutdoorPvPMgr::GetScriptWithAffectedZones(uint32 zoneId)
         case ZONE_ID_MANA_TOMBS:
             return m_scripts[OPVP_ID_TF];
         default:
-            return GetScript(zoneId);
+            return NULL;
     }
 }
 
@@ -123,8 +123,10 @@ OutdoorPvP* OutdoorPvPMgr::GetScriptWithAffectedZones(uint32 zoneId)
  */
 void OutdoorPvPMgr::HandlePlayerEnterZone(Player* player, uint32 zoneId)
 {
-    if (OutdoorPvP* script = GetScriptWithAffectedZones(zoneId))
-        script->HandlePlayerEnterZone(player);
+    if (OutdoorPvP* script = GetScript(zoneId))
+        script->HandlePlayerEnterZone(player, true);
+    else if (OutdoorPvP* script = GetScriptOfAffectedZone(zoneId))
+        script->HandlePlayerEnterZone(player, false);
 }
 
 /**
@@ -136,8 +138,10 @@ void OutdoorPvPMgr::HandlePlayerEnterZone(Player* player, uint32 zoneId)
 void OutdoorPvPMgr::HandlePlayerLeaveZone(Player* player, uint32 zoneId)
 {
     // teleport: remove once in removefromworld, once in updatezone
-    if (OutdoorPvP* script = GetScriptWithAffectedZones(zoneId))
-        script->HandlePlayerLeaveZone(player);
+    if (OutdoorPvP* script = GetScript(zoneId))
+        script->HandlePlayerLeaveZone(player, true);
+    else if (OutdoorPvP* script = GetScriptOfAffectedZone(zoneId))
+        script->HandlePlayerLeaveZone(player, false);
 }
 
 void OutdoorPvPMgr::Update(uint32 diff)

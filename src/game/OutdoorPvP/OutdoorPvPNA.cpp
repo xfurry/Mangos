@@ -58,9 +58,9 @@ void OutdoorPvPNA::SendRemoveWorldStates(Player* player)
         player->SendUpdateWorldState(m_roostWorldState[i], WORLD_STATE_REMOVE);
 }
 
-void OutdoorPvPNA::HandlePlayerEnterZone(Player* player)
+void OutdoorPvPNA::HandlePlayerEnterZone(Player* player, bool isMainZone)
 {
-    OutdoorPvP::HandlePlayerEnterZone(player);
+    OutdoorPvP::HandlePlayerEnterZone(player, isMainZone);
 
     // remove the buff from the player first because there are some issues at relog
     player->RemoveAurasDueToSpell(SPELL_STRENGTH_HALAANI);
@@ -70,12 +70,12 @@ void OutdoorPvPNA::HandlePlayerEnterZone(Player* player)
         player->CastSpell(player, SPELL_STRENGTH_HALAANI, true);
 }
 
-void OutdoorPvPNA::HandlePlayerLeaveZone(Player* player)
+void OutdoorPvPNA::HandlePlayerLeaveZone(Player* player, bool isMainZone)
 {
     // remove the buff from the player
     player->RemoveAurasDueToSpell(SPELL_STRENGTH_HALAANI);
 
-    OutdoorPvP::HandlePlayerLeaveZone(player);
+    OutdoorPvP::HandlePlayerLeaveZone(player, isMainZone);
 }
 
 void OutdoorPvPNA::HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team)

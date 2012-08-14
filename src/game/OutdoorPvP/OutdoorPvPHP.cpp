@@ -63,8 +63,10 @@ void OutdoorPvPHP::UpdateWorldState()
     SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HP_HORDE, m_towersHorde);
 }
 
-void OutdoorPvPHP::HandlePlayerEnterZone(Player* player)
+void OutdoorPvPHP::HandlePlayerEnterZone(Player* player, bool isMainZone)
 {
+    OutdoorPvP::HandlePlayerEnterZone(player, isMainZone);
+
     // remove the buff from the player first; Sometimes on relog players still have the aura
     player->RemoveAurasDueToSpell(player->GetTeam() == ALLIANCE ? SPELL_HELLFIRE_SUPERIORITY_ALLIANCE : SPELL_HELLFIRE_SUPERIORITY_HORDE);
 
@@ -73,16 +75,14 @@ void OutdoorPvPHP::HandlePlayerEnterZone(Player* player)
         player->CastSpell(player, SPELL_HELLFIRE_SUPERIORITY_ALLIANCE, true);
     else if (m_towersHorde == MAX_HP_TOWERS && player->GetTeam() == HORDE)
         player->CastSpell(player, SPELL_HELLFIRE_SUPERIORITY_HORDE, true);
-
-    OutdoorPvP::HandlePlayerEnterZone(player);
 }
 
-void OutdoorPvPHP::HandlePlayerLeaveZone(Player* player)
+void OutdoorPvPHP::HandlePlayerLeaveZone(Player* player, bool isMainZone)
 {
     // remove the buff from the player
     player->RemoveAurasDueToSpell(player->GetTeam() == ALLIANCE ? SPELL_HELLFIRE_SUPERIORITY_ALLIANCE : SPELL_HELLFIRE_SUPERIORITY_HORDE);
 
-    OutdoorPvP::HandlePlayerLeaveZone(player);
+    OutdoorPvP::HandlePlayerLeaveZone(player, isMainZone);
 }
 
 void OutdoorPvPHP::OnGameObjectCreate(GameObject* go)

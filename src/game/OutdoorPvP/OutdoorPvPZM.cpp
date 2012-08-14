@@ -70,24 +70,24 @@ void OutdoorPvPZM::SendRemoveWorldStates(Player* player)
     }
 }
 
-void OutdoorPvPZM::HandlePlayerEnterZone(Player* player)
+void OutdoorPvPZM::HandlePlayerEnterZone(Player* player, bool isMainZone)
 {
+    OutdoorPvP::HandlePlayerEnterZone(player, isMainZone);
+
     // remove the buff from the player first; Sometimes on relog players still have the aura
     player->RemoveAurasDueToSpell(SPELL_TWIN_SPIRE_BLESSING);
 
     // cast buff the the player which enters the zone
     if ((player->GetTeam() == ALLIANCE ? m_towersAlliance : m_towersHorde) == MAX_ZM_TOWERS)
         player->CastSpell(player, SPELL_TWIN_SPIRE_BLESSING, true);
-
-    OutdoorPvP::HandlePlayerEnterZone(player);
 }
 
-void OutdoorPvPZM::HandlePlayerLeaveZone(Player* player)
+void OutdoorPvPZM::HandlePlayerLeaveZone(Player* player, bool isMainZone)
 {
     // remove the buff from the player
     player->RemoveAurasDueToSpell(SPELL_TWIN_SPIRE_BLESSING);
 
-    OutdoorPvP::HandlePlayerLeaveZone(player);
+    OutdoorPvP::HandlePlayerLeaveZone(player, isMainZone);
 }
 
 void OutdoorPvPZM::OnCreatureCreate(Creature* creature)

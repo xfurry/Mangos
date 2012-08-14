@@ -73,9 +73,9 @@ void OutdoorPvPTF::UpdateWorldState(uint32 value)
         SendUpdateWorldState(m_towerWorldState[i], value);
 }
 
-void OutdoorPvPTF::HandlePlayerEnterZone(Player* player)
+void OutdoorPvPTF::HandlePlayerEnterZone(Player* player, bool isMainZone)
 {
-    OutdoorPvP::HandlePlayerEnterZone(player);
+    OutdoorPvP::HandlePlayerEnterZone(player, isMainZone);
 
     // remove the buff from the player first because there are some issues at relog
     player->RemoveAurasDueToSpell(SPELL_AUCHINDOUN_BLESSING);
@@ -85,12 +85,12 @@ void OutdoorPvPTF::HandlePlayerEnterZone(Player* player)
         player->CastSpell(player, SPELL_AUCHINDOUN_BLESSING, true);
 }
 
-void OutdoorPvPTF::HandlePlayerLeaveZone(Player* player)
+void OutdoorPvPTF::HandlePlayerLeaveZone(Player* player, bool isMainZone)
 {
     // remove the buff from the player
     player->RemoveAurasDueToSpell(SPELL_AUCHINDOUN_BLESSING);
 
-    OutdoorPvP::HandlePlayerLeaveZone(player);
+    OutdoorPvP::HandlePlayerLeaveZone(player, isMainZone);
 }
 
 void OutdoorPvPTF::OnGameObjectCreate(GameObject* go)
@@ -248,11 +248,15 @@ void OutdoorPvPTF::Update(uint32 diff)
             SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_A, m_towersAlliance);
             SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_H, m_towersHorde);
 
-            for (PlayerSet::iterator itr = m_zonePlayers.begin(); itr != m_zonePlayers.end(); ++itr)
+            for (GuidZoneMap::iterator itr = m_zonePlayers.begin(); itr != m_zonePlayers.end(); ++itr)
             {
-                if ((*itr) && (*itr)->isAlive())
+                // Find player who is in main zone (Terokkar Forest) to get correct map reference
+                if (!itr->second)
+                    continue;
+
+                if (Player* player = sObjectMgr.GetPlayer(itr->first))
                 {
-                    ResetTowers((*itr));
+                    ResetTowers(player);
                     break;
                 }
             }

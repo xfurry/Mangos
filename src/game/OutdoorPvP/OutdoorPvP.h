@@ -45,7 +45,7 @@ enum CapturePointAnimations
     CAPTURE_ANIM_NEUTRAL    = 2
 };
 
-typedef std::set<Player*> PlayerSet;
+typedef std::map<ObjectGuid /*playerGuid*/, bool /*isMainZone*/> GuidZoneMap;
 
 class OutdoorPvP
 {
@@ -104,14 +104,14 @@ class OutdoorPvP
     protected:
 
         // Player related stuff
-        virtual void HandlePlayerEnterZone(Player* player);
-        virtual void HandlePlayerLeaveZone(Player* player);
+        virtual void HandlePlayerEnterZone(Player* player, bool isMainZone);
+        virtual void HandlePlayerLeaveZone(Player* player, bool isMainZone);
 
         // remove world states
         virtual void SendRemoveWorldStates(Player* player) {}
 
-        // store the players inside the area depending on the team
-        PlayerSet m_zonePlayers;
+        // store the players inside the area
+        GuidZoneMap m_zonePlayers;
 };
 
 #endif

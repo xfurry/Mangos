@@ -102,7 +102,7 @@ class OutdoorPvPMgr
 
     private:
         // return assigned outdoor pvp script
-        OutdoorPvP* GetScriptWithAffectedZones(uint32 zoneId);
+        OutdoorPvP* GetScriptOfAffectedZone(uint32 zoneId);
 
         // contains all outdoor pvp scripts
         OutdoorPvP* m_scripts[OPVP_ID_MAX];

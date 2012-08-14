@@ -76,8 +76,8 @@ class OutdoorPvPSI : public OutdoorPvP
     public:
         OutdoorPvPSI();
 
-        void HandlePlayerEnterZone(Player* player);
-        void HandlePlayerLeaveZone(Player* player);
+        void HandlePlayerEnterZone(Player* player, bool isMainZone);
+        void HandlePlayerLeaveZone(Player* player, bool isMainZone);
 
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
         void SendRemoveWorldStates(Player* player);

@@ -56,25 +56,25 @@ void OutdoorPvPSI::UpdateWorldState()
 }
 
 // Handle buffs when player enters the zone
-void OutdoorPvPSI::HandlePlayerEnterZone(Player* player)
+void OutdoorPvPSI::HandlePlayerEnterZone(Player* player, bool isMainZone)
 {
+    OutdoorPvP::HandlePlayerEnterZone(player, isMainZone);
+
     // remove the buff from the player first; Sometimes on relog players still have the aura
     player->RemoveAurasDueToSpell(SPELL_CENARION_FAVOR);
 
     // buff the player if same team is controlling the zone
     if (player->GetTeam() == m_zoneOwner)
         player->CastSpell(player, SPELL_CENARION_FAVOR, true);
-
-    OutdoorPvP::HandlePlayerEnterZone(player);
 }
 
 // Remove buffs when player leaves zone
-void OutdoorPvPSI::HandlePlayerLeaveZone(Player* player)
+void OutdoorPvPSI::HandlePlayerLeaveZone(Player* player, bool isMainZone)
 {
     // remove the buff from the player
     player->RemoveAurasDueToSpell(SPELL_CENARION_FAVOR);
 
-    OutdoorPvP::HandlePlayerLeaveZone(player);
+    OutdoorPvP::HandlePlayerLeaveZone(player, isMainZone);
 }
 
 // Handle case when player returns a silithyst

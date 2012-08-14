@@ -63,8 +63,10 @@ void OutdoorPvPEP::UpdateWorldState()
     SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HORDE, m_towersHorde);
 }
 
-void OutdoorPvPEP::HandlePlayerEnterZone(Player* player)
+void OutdoorPvPEP::HandlePlayerEnterZone(Player* player, bool isMainZone)
 {
+    OutdoorPvP::HandlePlayerEnterZone(player, isMainZone);
+
     // remove the buff from the player first; Sometimes on relog players still have the aura
     for (uint8 i = 0; i < TOWER_COUNT; ++i)
         player->RemoveAurasDueToSpell(player->GetTeam() == ALLIANCE ? PLAGUELANDS_TOWER_BUFFS[i].spellIdAlliance : PLAGUELANDS_TOWER_BUFFS[i].spellIdHorde);
@@ -81,17 +83,15 @@ void OutdoorPvPEP::HandlePlayerEnterZone(Player* player)
                 player->CastSpell(player, PLAGUELANDS_TOWER_BUFFS[m_towersHorde - 1].spellIdHorde, true);
             break;
     }
-
-    OutdoorPvP::HandlePlayerEnterZone(player);
 }
 
-void OutdoorPvPEP::HandlePlayerLeaveZone(Player* player)
+void OutdoorPvPEP::HandlePlayerLeaveZone(Player* player, bool isMainZone)
 {
     // remove the buff from the player
     for (uint8 i = 0; i < TOWER_COUNT; ++i)
         player->RemoveAurasDueToSpell(player->GetTeam() == ALLIANCE ? PLAGUELANDS_TOWER_BUFFS[i].spellIdAlliance : PLAGUELANDS_TOWER_BUFFS[i].spellIdHorde);
 
-    OutdoorPvP::HandlePlayerLeaveZone(player);
+    OutdoorPvP::HandlePlayerLeaveZone(player, isMainZone);
 }
 
 void OutdoorPvPEP::OnGameObjectCreate(GameObject* go)

@@ -28,9 +28,9 @@
 
    @param   player to add
  */
-void OutdoorPvP::HandlePlayerEnterZone(Player* player)
+void OutdoorPvP::HandlePlayerEnterZone(Player* player, bool isMainZone)
 {
-    m_zonePlayers.insert(player);
+    m_zonePlayers[player->GetObjectGuid()] = isMainZone;
 }
 
 /**
@@ -38,12 +38,12 @@ void OutdoorPvP::HandlePlayerEnterZone(Player* player)
 
    @param   player to remove
  */
-void OutdoorPvP::HandlePlayerLeaveZone(Player* player)
+void OutdoorPvP::HandlePlayerLeaveZone(Player* player, bool isMainZone)
 {
-    if (m_zonePlayers.erase(player))
+    if (m_zonePlayers.erase(player->GetObjectGuid()))
     {
         // remove the world state information from the player
-        if (!player->GetSession()->PlayerLogout())
+        if (isMainZone && !player->GetSession()->PlayerLogout())
             SendRemoveWorldStates(player);
 
         sLog.outDebug("Player %s left an Outdoor PvP zone", player->GetName());
@@ -51,19 +51,26 @@ void OutdoorPvP::HandlePlayerLeaveZone(Player* player)
 }
 
 /**
-   Function that updates the world state for all the players of the affected outdoor pvp zones
+   Function that updates the world state for all the players of the outdoor pvp zone
 
    @param   world state to update
    @param   new world state value
  */
 void OutdoorPvP::SendUpdateWorldState(uint32 field, uint32 value)
 {
-    for (PlayerSet::iterator itr = m_zonePlayers.begin(); itr != m_zonePlayers.end(); ++itr)
-        (*itr)->SendUpdateWorldState(field, value);
+    for (GuidZoneMap::iterator itr = m_zonePlayers.begin(); itr != m_zonePlayers.end(); ++itr)
+    {
+        // only send world state update to main zone
+        if (!itr->second)
+            continue;
+
+        if (Player* player = sObjectMgr.GetPlayer(itr->first))
+            player->SendUpdateWorldState(field, value);
+    }
 }
 
 /**
-   Function that handles player kills in outdoor pvp zones
+   Function that handles player kills in the main outdoor pvp zones
 
    @param   player who killed another player
    @param   victim who was killed
@@ -97,17 +104,18 @@ void OutdoorPvP::HandlePlayerKill(Player* killer, Unit* victim)
     }
 }
 
-// apply a team buff for the specific zone
-void OutdoorPvP::BuffTeam(Team team, uint32 spellId, bool remove)
+// apply a team buff for the main and affected zones
+void OutdoorPvP::BuffTeam(Team team, uint32 spellId, bool remove /*= false*/)
 {
-    for (PlayerSet::iterator itr = m_zonePlayers.begin(); itr != m_zonePlayers.end(); ++itr)
+    for (GuidZoneMap::iterator itr = m_zonePlayers.begin(); itr != m_zonePlayers.end(); ++itr)
     {
-        if ((*itr) && (*itr)->GetTeam() == team)
+        Player* player = sObjectMgr.GetPlayer(itr->first);
+        if (player && player->GetTeam() == team)
         {
             if (remove)
-                (*itr)->RemoveAurasDueToSpell(spellId);
+                player->RemoveAurasDueToSpell(spellId);
             else
-                (*itr)->CastSpell(*itr, spellId, true);
+                player->CastSpell(player, spellId, true);
         }
     }
 }

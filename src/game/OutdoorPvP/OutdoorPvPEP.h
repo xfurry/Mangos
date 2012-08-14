@@ -238,8 +238,8 @@ class OutdoorPvPEP : public OutdoorPvP
         void OnGameObjectCreate(GameObject* go);
         void ProcessEvent(uint32 eventId, GameObject* go);
 
-        void HandlePlayerEnterZone(Player* player);
-        void HandlePlayerLeaveZone(Player* player);
+        void HandlePlayerEnterZone(Player* player, bool isMainZone);
+        void HandlePlayerLeaveZone(Player* player, bool isMainZone);
         void HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team);
 
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
