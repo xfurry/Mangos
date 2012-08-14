@@ -189,7 +189,7 @@ void OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 {
     if (team == ALLIANCE)
     {
-        for (std::list<ObjectGuid>::iterator itr = m_towerBanners[towerId].begin(); itr != m_towerBanners[towerId].end(); ++itr)
+        for (GuidList::iterator itr = m_towerBanners[towerId].begin(); itr != m_towerBanners[towerId].end(); ++itr)
             SetBannerVisual(go, (*itr), CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
 
         ++m_towersAlliance;
@@ -197,7 +197,7 @@ void OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
     }
     else if (team == HORDE)
     {
-        for (std::list<ObjectGuid>::iterator itr = m_towerBanners[towerId].begin(); itr != m_towerBanners[towerId].end(); ++itr)
+        for (GuidList::iterator itr = m_towerBanners[towerId].begin(); itr != m_towerBanners[towerId].end(); ++itr)
             SetBannerVisual(go, (*itr), CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
 
         ++m_towersHorde;
@@ -205,7 +205,7 @@ void OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
     }
     else
     {
-        for (std::list<ObjectGuid>::iterator itr = m_towerBanners[towerId].begin(); itr != m_towerBanners[towerId].end(); ++itr)
+        for (GuidList::iterator itr = m_towerBanners[towerId].begin(); itr != m_towerBanners[towerId].end(); ++itr)
             SetBannerVisual(go, (*itr), CAPTURE_ARTKIT_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
 
         if (m_towerOwner[towerId] == ALLIANCE)
@@ -310,7 +310,7 @@ void OutdoorPvPEP::SummonSoldiers(WorldObject* objRef)
 
 void OutdoorPvPEP::UnsummonSoldiers(const WorldObject* objRef)
 {
-    for (std::list<ObjectGuid>::iterator itr = m_soldiers.begin(); itr != m_soldiers.end(); ++itr)
+    for (GuidList::iterator itr = m_soldiers.begin(); itr != m_soldiers.end(); ++itr)
     {
         if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
             soldier->ForcedDespawn();

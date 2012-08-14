@@ -205,8 +205,8 @@ class OutdoorPvPNA : public OutdoorPvP
         ObjectGuid m_allianceWagons[MAX_NA_ROOSTS];
         ObjectGuid m_hordeWagons[MAX_NA_ROOSTS];
 
-        std::list<ObjectGuid> m_allianceSoldiers;
-        std::list<ObjectGuid> m_hordeSoldiers;
+        GuidList m_allianceSoldiers;
+        GuidList m_hordeSoldiers;
 };
 
 #endif

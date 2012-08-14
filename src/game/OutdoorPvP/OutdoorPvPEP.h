@@ -273,9 +273,9 @@ class OutdoorPvPEP : public OutdoorPvP
         ObjectGuid m_lordaeronShrineAlliance;
         ObjectGuid m_lordaeronShrineHorde;
 
-        std::list<ObjectGuid> m_soldiers;
+        GuidList m_soldiers;
 
-        std::list<ObjectGuid> m_towerBanners[MAX_EP_TOWERS];
+        GuidList m_towerBanners[MAX_EP_TOWERS];
 };
 
 #endif

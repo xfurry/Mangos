@@ -70,10 +70,10 @@ class OutdoorPvPGH : public OutdoorPvP
 
         Team m_zoneOwner;
 
-        std::list<ObjectGuid> m_allianceSoldiers;
-        std::list<ObjectGuid> m_hordeSoldiers;
-        std::list<ObjectGuid> m_allianceVendors;
-        std::list<ObjectGuid> m_hordeVendors;
+        GuidList m_allianceSoldiers;
+        GuidList m_hordeSoldiers;
+        GuidList m_allianceVendors;
+        GuidList m_hordeVendors;
 };
 
 #endif

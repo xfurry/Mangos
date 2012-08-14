@@ -386,7 +386,7 @@ void OutdoorPvPNA::RespawnSoldiers(const WorldObject* objRef)
     if (m_zoneOwner == ALLIANCE)
     {
         // despawn all horde vendors
-        for (std::list<ObjectGuid>::const_iterator itr = m_hordeSoldiers.begin(); itr != m_hordeSoldiers.end(); ++itr)
+        for (GuidList::const_iterator itr = m_hordeSoldiers.begin(); itr != m_hordeSoldiers.end(); ++itr)
         {
             if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
             {
@@ -397,7 +397,7 @@ void OutdoorPvPNA::RespawnSoldiers(const WorldObject* objRef)
         }
 
         // spawn all alliance soldiers and vendors
-        for (std::list<ObjectGuid>::const_iterator itr = m_allianceSoldiers.begin(); itr != m_allianceSoldiers.end(); ++itr)
+        for (GuidList::const_iterator itr = m_allianceSoldiers.begin(); itr != m_allianceSoldiers.end(); ++itr)
         {
             if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
             {
@@ -410,7 +410,7 @@ void OutdoorPvPNA::RespawnSoldiers(const WorldObject* objRef)
     else
     {
         // despawn all alliance vendors
-        for (std::list<ObjectGuid>::const_iterator itr = m_allianceSoldiers.begin(); itr != m_allianceSoldiers.end(); ++itr)
+        for (GuidList::const_iterator itr = m_allianceSoldiers.begin(); itr != m_allianceSoldiers.end(); ++itr)
         {
             if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
             {
@@ -421,7 +421,7 @@ void OutdoorPvPNA::RespawnSoldiers(const WorldObject* objRef)
         }
 
         // spawn all horde soldiers and vendors
-        for (std::list<ObjectGuid>::const_iterator itr = m_hordeSoldiers.begin(); itr != m_hordeSoldiers.end(); ++itr)
+        for (GuidList::const_iterator itr = m_hordeSoldiers.begin(); itr != m_hordeSoldiers.end(); ++itr)
         {
             if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
             {
