@@ -34,7 +34,7 @@ INSTANTIATE_SINGLETON_1(OutdoorPvPMgr);
 
 OutdoorPvPMgr::OutdoorPvPMgr()
 {
-    m_updateTimer.SetInterval(sWorld.getConfig(CONFIG_UINT32_INTERVAL_MAPUPDATE));
+    m_updateTimer.SetInterval(TIMER_OPVP_MGR_UPDATE);
 }
 
 OutdoorPvPMgr::~OutdoorPvPMgr()
@@ -151,9 +151,9 @@ void OutdoorPvPMgr::Update(uint32 diff)
         return;
 
     for (uint8 i = 0; i < MAX_OPVP_ID; ++i)
-        (*m_scripts[i]).Update((uint32)m_updateTimer.GetCurrent());
+        (*m_scripts[i]).Update(m_updateTimer.GetCurrent());
 
-    m_updateTimer.SetCurrent(0);
+    m_updateTimer.Reset();
 }
 
 /**

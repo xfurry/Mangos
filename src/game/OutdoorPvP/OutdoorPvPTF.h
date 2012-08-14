@@ -39,7 +39,7 @@ enum
 
     // timers
     TIMER_TF_LOCK_TIME                          = 6 * HOUR * IN_MILLISECONDS,
-    TIMER_TF_UPDATE_TIME                        = MINUTE * IN_MILLISECONDS,
+    //TIMER_TF_UPDATE_TIME                        = MINUTE * IN_MILLISECONDS,
 
     // quests
     QUEST_SPIRITS_OF_AUCHINDOUM_ALLIANCE        = 11505,
@@ -49,7 +49,7 @@ enum
     EVENT_WEST_TOWER_PROGRESS_ALLIANCE          = 12226,
     EVENT_WEST_TOWER_PROGRESS_HORDE             = 12225,
     EVENT_WEST_TOWER_NEUTRAL_ALLIANCE           = 12228,
-    EVENT_WEST_TOWER_NEUTRAL_HORDE             = 12227,
+    EVENT_WEST_TOWER_NEUTRAL_HORDE              = 12227,
 
     EVENT_NORTH_TOWER_PROGRESS_ALLIANCE         = 12497,
     EVENT_NORTH_TOWER_PROGRESS_HORDE            = 12496,
@@ -188,7 +188,7 @@ class OutdoorPvPTF : public OutdoorPvP
         Team m_zoneOwner;
 
         uint32 m_zoneLockTimer;
-        uint32 m_zoneUpdateTimer;
+        //uint32 m_zoneUpdateTimer;
 
         uint8 m_towersAlliance;
         uint8 m_towersHorde;

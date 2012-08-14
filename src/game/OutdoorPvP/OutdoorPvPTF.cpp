@@ -28,7 +28,7 @@
 OutdoorPvPTF::OutdoorPvPTF() : OutdoorPvP(),
     m_zoneWorldState(WORLD_STATE_TF_TOWERS_CONTROLLED),
     m_zoneOwner(TEAM_NONE),
-    m_zoneUpdateTimer(TIMER_TF_UPDATE_TIME),
+    //m_zoneUpdateTimer(TIMER_TF_UPDATE_TIME),
     m_zoneLockTimer(0),
     m_towersAlliance(0),
     m_towersHorde(0)
@@ -271,15 +271,14 @@ void OutdoorPvPTF::Update(uint32 diff)
         }
         else
         {
-            if (m_zoneUpdateTimer < diff)
-            {
+            //if (m_zoneUpdateTimer < diff)
+            //{
                 // update timer
                 UpdateTimerWorldState();
-
-                m_zoneUpdateTimer = TIMER_TF_UPDATE_TIME;
-            }
-            else
-                m_zoneUpdateTimer -= diff;
+                //m_zoneUpdateTimer = TIMER_TF_UPDATE_TIME;
+            //}
+            //else
+                //m_zoneUpdateTimer -= diff;
 
             m_zoneLockTimer -= diff;
         }

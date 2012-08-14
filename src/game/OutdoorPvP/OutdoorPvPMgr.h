@@ -23,9 +23,14 @@
 #include "Policies/Singleton.h"
 #include "Timer.h"
 
+enum
+{
+    TIMER_OPVP_MGR_UPDATE           = MINUTE * IN_MILLISECONDS // 1 minute is enough for us but this might change with wintergrasp support
+};
+
 enum OutdoorPvPTypes
 {
-    OPVP_ID_SI  = 0,
+    OPVP_ID_SI = 0,
     OPVP_ID_EP,
     OPVP_ID_HP,
     OPVP_ID_ZM,
@@ -110,7 +115,7 @@ class OutdoorPvPMgr
         std::map<uint32 /*capture point entry*/, int8 /*slider value*/> m_CapturePointSlider;
 
         // update interval
-        IntervalTimer m_updateTimer;
+        ShortIntervalTimer m_updateTimer;
 };
 
 #define sOutdoorPvPMgr MaNGOS::Singleton<OutdoorPvPMgr>::Instance()
