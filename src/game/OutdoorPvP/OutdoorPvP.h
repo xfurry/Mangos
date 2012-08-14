@@ -55,19 +55,19 @@ class OutdoorPvP
         OutdoorPvP() {}
         ~OutdoorPvP() {}
 
-        // Called when a creature or gameobject is created
-        virtual void OnCreatureCreate(Creature* /*creature*/) {}
-        virtual void OnGameObjectCreate(GameObject* /*go*/) {}
-
-        // Called on creature death or respawn
-        virtual void OnCreatureDeath(Creature* /*creature*/) {}
-        virtual void OnCreatureRespawn(Creature* /*creature*/) {}
-
-        // Process Capture event
-        virtual void OnProcessEvent(uint32 /*eventId*/, GameObject* /*go*/) {}
-
         // called when the zone is initialized
         virtual void FillInitialWorldStates(WorldPacket& /*data*/, uint32& /*count*/) {}
+
+        // Called when a creature or gameobject is created
+        virtual void HandleCreatureCreate(Creature* /*creature*/) {}
+        virtual void HandleGameObjectCreate(GameObject* /*go*/) {}
+
+        // Called on creature death or respawn
+        virtual void HandleCreatureDeath(Creature* /*creature*/) {}
+        virtual void HandleCreatureRespawn(Creature* /*creature*/) {}
+
+        // Process Capture event
+        virtual void HandleEvent(uint32 /*eventId*/, GameObject* /*go*/) {}
 
         // called when a player triggers an areatrigger
         virtual bool HandleAreaTrigger(Player* /*player*/, uint32 /*triggerId*/) { return false; }

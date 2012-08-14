@@ -108,7 +108,7 @@ void OutdoorPvPNA::HandlePlayerKillInsideArea(Player* player, Unit* victim)
     }
 }
 
-void OutdoorPvPNA::OnCreatureCreate(Creature* creature)
+void OutdoorPvPNA::HandleCreatureCreate(Creature* creature)
 {
     switch (creature->GetEntry())
     {
@@ -142,7 +142,7 @@ void OutdoorPvPNA::OnCreatureCreate(Creature* creature)
     creature->ForcedDespawn();
 }
 
-void OutdoorPvPNA::OnCreatureDeath(Creature* creature)
+void OutdoorPvPNA::HandleCreatureDeath(Creature* creature)
 {
     if (creature->GetEntry() != NPC_HORDE_HALAANI_GUARD && creature->GetEntry() != NPC_ALLIANCE_HANAANI_GUARD)
         return;
@@ -164,7 +164,7 @@ void OutdoorPvPNA::OnCreatureDeath(Creature* creature)
     }
 }
 
-void OutdoorPvPNA::OnCreatureRespawn(Creature* creature)
+void OutdoorPvPNA::HandleCreatureRespawn(Creature* creature)
 {
     if (creature->GetEntry() != NPC_HORDE_HALAANI_GUARD && creature->GetEntry() != NPC_ALLIANCE_HANAANI_GUARD)
         return;
@@ -187,7 +187,7 @@ void OutdoorPvPNA::OnCreatureRespawn(Creature* creature)
     SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT, m_guardsLeft);
 }
 
-void OutdoorPvPNA::OnGameObjectCreate(GameObject* go)
+void OutdoorPvPNA::HandleGameObjectCreate(GameObject* go)
 {
     switch (go->GetEntry())
     {
@@ -291,7 +291,7 @@ void OutdoorPvPNA::UpdateWyvernsWorldState(uint32 value)
 }
 
 // process the capture events
-void OutdoorPvPNA::OnProcessEvent(uint32 eventId, GameObject* go)
+void OutdoorPvPNA::HandleEvent(uint32 eventId, GameObject* go)
 {
     // If we are not using the Halaa banner return
     if (go->GetEntry() != GO_HALAA_BANNER)

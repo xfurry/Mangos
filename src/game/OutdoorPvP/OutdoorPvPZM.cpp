@@ -90,7 +90,7 @@ void OutdoorPvPZM::HandlePlayerLeaveZone(Player* player, bool isMainZone)
     OutdoorPvP::HandlePlayerLeaveZone(player, isMainZone);
 }
 
-void OutdoorPvPZM::OnCreatureCreate(Creature* creature)
+void OutdoorPvPZM::HandleCreatureCreate(Creature* creature)
 {
     switch (creature->GetEntry())
     {
@@ -119,7 +119,7 @@ void OutdoorPvPZM::OnCreatureCreate(Creature* creature)
     }
 }
 
-void OutdoorPvPZM::OnGameObjectCreate(GameObject* go)
+void OutdoorPvPZM::HandleGameObjectCreate(GameObject* go)
 {
     switch (go->GetEntry())
     {
@@ -163,7 +163,7 @@ void OutdoorPvPZM::HandlePlayerKillInsideArea(Player* player, Unit* victim)
 }
 
 // process the capture events
-void OutdoorPvPZM::OnProcessEvent(uint32 eventId, GameObject* go)
+void OutdoorPvPZM::HandleEvent(uint32 eventId, GameObject* go)
 {
     for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
     {

@@ -86,7 +86,7 @@ void OutdoorPvPTF::HandlePlayerLeaveZone(Player* player, bool isMainZone)
     OutdoorPvP::HandlePlayerLeaveZone(player, isMainZone);
 }
 
-void OutdoorPvPTF::OnGameObjectCreate(GameObject* go)
+void OutdoorPvPTF::HandleGameObjectCreate(GameObject* go)
 {
     switch (go->GetEntry())
     {
@@ -133,7 +133,7 @@ void OutdoorPvPTF::HandleObjectiveComplete(uint32 eventId, std::list<Player*> pl
 }
 
 // process the capture events
-void OutdoorPvPTF::OnProcessEvent(uint32 eventId, GameObject* go)
+void OutdoorPvPTF::HandleEvent(uint32 eventId, GameObject* go)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {

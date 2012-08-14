@@ -162,13 +162,13 @@ class OutdoorPvPNA : public OutdoorPvP
         void FillInitialWorldStates(WorldPacket& data, uint32& count) override;
         void SendRemoveWorldStates(Player* player) override;
 
-        void OnProcessEvent(uint32 eventId, GameObject* go) override;
+        void HandleEvent(uint32 eventId, GameObject* go) override;
         void HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team) override;
 
-        void OnCreatureCreate(Creature* creature) override;
-        void OnGameObjectCreate(GameObject* go) override;
-        void OnCreatureDeath(Creature* creature) override;
-        void OnCreatureRespawn(Creature* creature) override;
+        void HandleCreatureCreate(Creature* creature) override;
+        void HandleGameObjectCreate(GameObject* go) override;
+        void HandleCreatureDeath(Creature* creature) override;
+        void HandleCreatureRespawn(Creature* creature) override;
 
         void HandlePlayerKillInsideArea(Player* player, Unit* victim) override;
         bool HandleObjectUse(Player* player, GameObject* go) override;

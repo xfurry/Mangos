@@ -27,7 +27,7 @@ OutdoorPvPGH::OutdoorPvPGH() : OutdoorPvP(),
 {
 }
 
-void OutdoorPvPGH::OnCreatureCreate(Creature* creature)
+void OutdoorPvPGH::HandleCreatureCreate(Creature* creature)
 {
     switch (creature->GetEntry())
     {
@@ -73,14 +73,14 @@ void OutdoorPvPGH::OnCreatureCreate(Creature* creature)
     creature->ForcedDespawn();
 }
 
-void OutdoorPvPGH::OnGameObjectCreate(GameObject* go)
+void OutdoorPvPGH::HandleGameObjectCreate(GameObject* go)
 {
     if (go->GetEntry() == GO_VENTURE_BAY_LIGHTHOUSE)
         go->SetGoArtKit(GetBannerArtKit(m_zoneOwner, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
 }
 
 // process the capture events
-void OutdoorPvPGH::OnProcessEvent(uint32 eventId, GameObject* go)
+void OutdoorPvPGH::HandleEvent(uint32 eventId, GameObject* go)
 {
     // If we are not using the lighthouse return
     if (go->GetEntry() != GO_VENTURE_BAY_LIGHTHOUSE)
