@@ -19,14 +19,16 @@
 #include "OutdoorPvP.h"
 #include "../Language.h"
 #include "../World.h"
+#include "../ObjectMgr.h"
 #include "../Object.h"
-#include "../Player.h"
 #include "../GameObject.h"
+#include "../Player.h"
 
 /**
    Function that adds a player to the players of the affected outdoor pvp zones
 
    @param   player to add
+   @param   whether zone is main outdoor pvp zone or a affected zone
  */
 void OutdoorPvP::HandlePlayerEnterZone(Player* player, bool isMainZone)
 {
@@ -37,6 +39,7 @@ void OutdoorPvP::HandlePlayerEnterZone(Player* player, bool isMainZone)
    Function that removes a player from the players of the affected outdoor pvp zones
 
    @param   player to remove
+   @param   whether zone is main outdoor pvp zone or a affected zone
  */
 void OutdoorPvP::HandlePlayerLeaveZone(Player* player, bool isMainZone)
 {
