@@ -330,10 +330,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
     else
         SetGraveyardArtKit(go, m_graveyardBannerNeutral, false);
 
-    // update graveyard owner
-    m_graveyardOwner = team;
-
-    if (m_graveyardOwner == ALLIANCE)
+    if (team == ALLIANCE)
     {
         // change banners
         SetGraveyardArtKit(go, m_graveyardBannerAlliance, true);
@@ -368,12 +365,19 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
         sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_GRAVEYARD_H);
     }
 
-    // add the buff and change the graveyard link
-    BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING);
-    sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner);
+    // change the graveyard link
+    sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, team);
+
+    // apply zone buff
+    if (m_graveyardOwner != TEAM_NONE)
+        BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING, true);
+    BuffTeam(team, SPELL_TWIN_SPIRE_BLESSING);
 
     // reset scout so that team cannot take flag
-    ResetScouts(go, m_graveyardOwner);
+    ResetScouts(go, team);
+
+    // update graveyard owner
+    m_graveyardOwner = team;
 
     return true;
 }
