@@ -133,18 +133,18 @@ class OutdoorPvPZM : public OutdoorPvP
     public:
         OutdoorPvPZM();
 
-        void OnCreatureCreate(Creature* creature);
-        void OnGameObjectCreate(GameObject* go);
-        void ProcessEvent(uint32 eventId, GameObject* go);
+        void HandlePlayerEnterZone(Player* player, bool isMainZone) override;
+        void HandlePlayerLeaveZone(Player* player, bool isMainZone) override;
+        void FillInitialWorldStates(WorldPacket& data, uint32& count) override;
+        void SendRemoveWorldStates(Player* player) override;
 
-        void HandlePlayerEnterZone(Player* player, bool isMainZone);
-        void HandlePlayerLeaveZone(Player* player, bool isMainZone);
-        void HandlePlayerKillInsideArea(Player* player, Unit* victim);
+        void OnProcessEvent(uint32 eventId, GameObject* go) override;
 
-        void FillInitialWorldStates(WorldPacket& data, uint32& count);
-        void SendRemoveWorldStates(Player* player);
+        void OnCreatureCreate(Creature* creature) override;
+        void OnGameObjectCreate(GameObject* go) override;
 
-        bool HandleObjectUse(Player* player, GameObject* go);
+        void HandlePlayerKillInsideArea(Player* player, Unit* victim) override;
+        bool HandleObjectUse(Player* player, GameObject* go) override;
 
     private:
         // process capture events

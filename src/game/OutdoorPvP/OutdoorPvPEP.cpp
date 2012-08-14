@@ -160,7 +160,7 @@ void OutdoorPvPEP::HandleObjectiveComplete(uint32 eventId, std::list<Player*> pl
 }
 
 // process the capture events
-void OutdoorPvPEP::ProcessEvent(uint32 eventId, GameObject* go)
+void OutdoorPvPEP::OnProcessEvent(uint32 eventId, GameObject* go)
 {
     for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
     {

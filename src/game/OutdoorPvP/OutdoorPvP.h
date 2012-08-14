@@ -56,15 +56,15 @@ class OutdoorPvP
         ~OutdoorPvP() {}
 
         // Called when a creature or gameobject is created
-        virtual void OnCreatureCreate(Creature* ) {}
-        virtual void OnGameObjectCreate(GameObject* ) {}
+        virtual void OnCreatureCreate(Creature* /*creature*/) {}
+        virtual void OnGameObjectCreate(GameObject* /*go*/) {}
 
         // Called on creature death or respawn
         virtual void OnCreatureDeath(Creature* /*creature*/) {}
         virtual void OnCreatureRespawn(Creature* /*creature*/) {}
 
         // Process Capture event
-        virtual void ProcessEvent(uint32 eventId, GameObject* pGo) {}
+        virtual void OnProcessEvent(uint32 /*eventId*/, GameObject* /*go*/) {}
 
         // called when the zone is initialized
         virtual void FillInitialWorldStates(WorldPacket& /*data*/, uint32& /*count*/) {}
@@ -78,15 +78,26 @@ class OutdoorPvP
         // called when a player uses a gameobject related to outdoor pvp events
         virtual bool HandleObjectUse(Player* /*player*/, GameObject* /*go*/) { return false; }
 
-        // handle npc/player kill
-        virtual void HandlePlayerKillInsideArea(Player* /*killer*/, Unit* /*victim*/) {}
-        virtual void HandlePlayerKill(Player* killer, Unit* victim);
-
         // handle capture objective complete
         virtual void HandleObjectiveComplete(uint32 /*eventId*/, std::list<Player*> /*players*/, Team /*team*/) {}
 
         // update - called by the OutdoorPvPMgr
-        virtual void Update(uint32 diff) {}
+        virtual void Update(uint32 /*diff*/) {}
+
+        // handle npc/player kill
+        void HandlePlayerKill(Player* killer, Unit* victim);
+
+    protected:
+
+        // Player related stuff
+        virtual void HandlePlayerEnterZone(Player* /*player*/, bool /*isMainZone*/);
+        virtual void HandlePlayerLeaveZone(Player* /*player*/, bool /*isMainZone*/);
+
+        // remove world states
+        virtual void SendRemoveWorldStates(Player* /*player*/) {}
+
+        // handle npc/player kill
+        virtual void HandlePlayerKillInsideArea(Player* /*killer*/, Unit* /*victim*/) {}
 
         // send world state update to all players present
         void SendUpdateWorldState(uint32 field, uint32 value);
@@ -100,15 +111,6 @@ class OutdoorPvP
         // set banner visual
         void SetBannerVisual(const WorldObject* objRef, ObjectGuid goGuid, uint32 artKit, uint32 animId);
         void SetBannerVisual(GameObject* go, uint32 artKit, uint32 animId);
-
-    protected:
-
-        // Player related stuff
-        virtual void HandlePlayerEnterZone(Player* player, bool isMainZone);
-        virtual void HandlePlayerLeaveZone(Player* player, bool isMainZone);
-
-        // remove world states
-        virtual void SendRemoveWorldStates(Player* player) {}
 
         // store the players inside the area
         GuidZoneMap m_zonePlayers;

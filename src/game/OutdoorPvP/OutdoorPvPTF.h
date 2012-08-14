@@ -160,17 +160,16 @@ class OutdoorPvPTF : public OutdoorPvP
     public:
         OutdoorPvPTF();
 
-        void OnGameObjectCreate(GameObject* go);
-        void ProcessEvent(uint32 eventId, GameObject* go);
+        void HandlePlayerEnterZone(Player* player, bool isMainZone) override;
+        void HandlePlayerLeaveZone(Player* player, bool isMainZone) override;
+        void FillInitialWorldStates(WorldPacket& data, uint32& count) override;
+        void SendRemoveWorldStates(Player* player) override;
 
-        void HandlePlayerEnterZone(Player* player, bool isMainZone);
-        void HandlePlayerLeaveZone(Player* player, bool isMainZone);
-        void HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team);
+        void OnProcessEvent(uint32 eventId, GameObject* go) override;
+        void HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team) override;
 
-        void Update(uint32 diff);
-
-        void FillInitialWorldStates(WorldPacket& data, uint32& count);
-        void SendRemoveWorldStates(Player* player);
+        void OnGameObjectCreate(GameObject* go) override;
+        void Update(uint32 diff) override;
 
     private:
         void UpdateTimerWorldState();

@@ -60,9 +60,10 @@ class OutdoorPvPGH : public OutdoorPvP
     public:
         OutdoorPvPGH();
 
-        void OnCreatureCreate(Creature* creature);
-        void OnGameObjectCreate(GameObject* go);
-        void ProcessEvent(uint32 eventId, GameObject* go);
+        void OnProcessEvent(uint32 eventId, GameObject* go) override;
+
+        void OnCreatureCreate(Creature* creature) override;
+        void OnGameObjectCreate(GameObject* go) override;
 
     private:
         // respawn team soldiers

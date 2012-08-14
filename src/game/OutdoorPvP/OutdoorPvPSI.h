@@ -77,15 +77,14 @@ class OutdoorPvPSI : public OutdoorPvP
     public:
         OutdoorPvPSI();
 
-        void HandlePlayerEnterZone(Player* player, bool isMainZone);
-        void HandlePlayerLeaveZone(Player* player, bool isMainZone);
+        void HandlePlayerEnterZone(Player* player, bool isMainZone) override;
+        void HandlePlayerLeaveZone(Player* player, bool isMainZone) override;
+        void FillInitialWorldStates(WorldPacket& data, uint32& count) override;
+        void SendRemoveWorldStates(Player* player) override;
 
-        void FillInitialWorldStates(WorldPacket& data, uint32& count);
-        void SendRemoveWorldStates(Player* player);
-
-        bool HandleAreaTrigger(Player* player, uint32 triggerId);
-        bool HandleObjectUse(Player* player, GameObject* go);
-        bool HandleDropFlag(Player* player, uint32 spellId);
+        bool HandleAreaTrigger(Player* player, uint32 triggerId) override;
+        bool HandleObjectUse(Player* player, GameObject* go) override;
+        bool HandleDropFlag(Player* player, uint32 spellId) override;
 
     private:
         uint8 m_resourcesAlliance;

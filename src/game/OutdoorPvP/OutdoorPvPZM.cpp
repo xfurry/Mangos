@@ -163,7 +163,7 @@ void OutdoorPvPZM::HandlePlayerKillInsideArea(Player* player, Unit* victim)
 }
 
 // process the capture events
-void OutdoorPvPZM::ProcessEvent(uint32 eventId, GameObject* go)
+void OutdoorPvPZM::OnProcessEvent(uint32 eventId, GameObject* go)
 {
     for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
     {

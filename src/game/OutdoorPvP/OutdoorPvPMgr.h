@@ -99,7 +99,7 @@ class OutdoorPvPMgr
         // return assigned outdoor pvp script
         OutdoorPvP* GetScript(uint32 zoneId);
 
-        void Update(uint32);
+        void Update(uint32 diff);
 
         // Handle capture point stuff
         int8 GetCapturePointSliderValue(uint32 entry);

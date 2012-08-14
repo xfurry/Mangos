@@ -157,22 +157,21 @@ class OutdoorPvPNA : public OutdoorPvP
     public:
         OutdoorPvPNA();
 
-        void FillInitialWorldStates(WorldPacket& data, uint32& count);
-        void SendRemoveWorldStates(Player* player);
+        void HandlePlayerEnterZone(Player* player, bool isMainZone) override;
+        void HandlePlayerLeaveZone(Player* player, bool isMainZone) override;
+        void FillInitialWorldStates(WorldPacket& data, uint32& count) override;
+        void SendRemoveWorldStates(Player* player) override;
 
-        void HandlePlayerEnterZone(Player* player, bool isMainZone);
-        void HandlePlayerLeaveZone(Player* player, bool isMainZone);
-        void HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team);
-        void HandlePlayerKillInsideArea(Player* player, Unit* victim);
+        void OnProcessEvent(uint32 eventId, GameObject* go) override;
+        void HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team) override;
 
-        void OnCreatureCreate(Creature* creature);
-        void OnCreatureDeath(Creature* creature);
-        void OnCreatureRespawn(Creature* creature);
-        void OnGameObjectCreate(GameObject* go);
+        void OnCreatureCreate(Creature* creature) override;
+        void OnGameObjectCreate(GameObject* go) override;
+        void OnCreatureDeath(Creature* creature) override;
+        void OnCreatureRespawn(Creature* creature) override;
 
-        void ProcessEvent(uint32 eventId, GameObject* go);
-
-        bool HandleObjectUse(Player* player, GameObject* go);
+        void HandlePlayerKillInsideArea(Player* player, Unit* victim) override;
+        bool HandleObjectUse(Player* player, GameObject* go) override;
 
     private:
         // world states handling
