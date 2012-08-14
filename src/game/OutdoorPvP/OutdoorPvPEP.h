@@ -29,7 +29,7 @@ enum
     TOWER_ID_CROWNGUARD                             = 1,
     TOWER_ID_EASTWALL                               = 2,
     TOWER_ID_PLAGUEWOOD                             = 3,
-    TOWER_COUNT                                     = 4,
+    MAX_EP_TOWERS                                   = 4,
 
     // spells
     SPELL_ECHOES_OF_LORDAERON_ALLIANCE_1            = 11413,
@@ -153,12 +153,12 @@ enum
     WORLD_STATE_EP_CROWNGUARD_NEUTRAL               = 2355
 };
 
-struct TowerBuffs
+struct PlaguelandsTowerBuff
 {
     uint32 spellIdAlliance, spellIdHorde;
 };
 
-static TowerBuffs PLAGUELANDS_TOWER_BUFFS[TOWER_COUNT] =
+static const PlaguelandsTowerBuff plaguelandsTowerBuffs[MAX_EP_TOWERS] =
 {
     {SPELL_ECHOES_OF_LORDAERON_ALLIANCE_1, SPELL_ECHOES_OF_LORDAERON_HORDE_1},
     {SPELL_ECHOES_OF_LORDAERON_ALLIANCE_2, SPELL_ECHOES_OF_LORDAERON_HORDE_2},
@@ -173,7 +173,7 @@ struct PlaguelandsSpawnLocation
 };
 
 // summon position at the Eastwall tower - guesswork
-static PlaguelandsSpawnLocation PLAGUELANDS_SOLDIER_SPAWN_LOCATIONS[] =
+static const PlaguelandsSpawnLocation plaguelandsSoldierSpawnLocations[] =
 {
     {2526.220f, -4758.520f, 101.056f},
     {2532.452f, -4760.138f, 102.408f},
@@ -183,7 +183,7 @@ static PlaguelandsSpawnLocation PLAGUELANDS_SOLDIER_SPAWN_LOCATIONS[] =
 };
 
 // capture points coords to sort the banners
-static PlaguelandsSpawnLocation PLAGUELANDS_TOWER_LOCATIONS[TOWER_COUNT] =
+static const PlaguelandsSpawnLocation plaguelandsTowerLocations[MAX_EP_TOWERS] =
 {
     {3181.08f, -4379.36f, 174.123f},       // Northpass
     {1860.85f, -3731.23f, 196.716f},       // Crownguard
@@ -192,7 +192,7 @@ static PlaguelandsSpawnLocation PLAGUELANDS_TOWER_LOCATIONS[TOWER_COUNT] =
 };
 
 // summon coords for the flight master
-static const float FLIGHTMASTER_SPAWN_LOCATION[4] = {2987.5f, -3049.11f, 120.126f, 5.75959f};
+static const float plaguelandsFlightmasterSpawnLocation[4] = {2987.5f, -3049.11f, 120.126f, 5.75959f};
 
 struct PlaguelandsTowerEvent
 {
@@ -202,7 +202,7 @@ struct PlaguelandsTowerEvent
     uint32  worldState;
 };
 
-static const PlaguelandsTowerEvent PLAGUELANDS_TOWER_EVENTS[TOWER_COUNT][4] =
+static const PlaguelandsTowerEvent plaguelandsTowerEvents[MAX_EP_TOWERS][4] =
 {
     {
         {EVENT_NORTHPASS_PROGRESS_ALLIANCE,     ALLIANCE,   LANG_OPVP_EP_CAPTURE_NPT_A, WORLD_STATE_EP_NORTHPASS_ALLIANCE},
@@ -230,7 +230,7 @@ static const PlaguelandsTowerEvent PLAGUELANDS_TOWER_EVENTS[TOWER_COUNT][4] =
     },
 };
 
-static const uint32 PLAGUELANDS_BANNERS[TOWER_COUNT] = {GO_TOWER_BANNER_NORTHPASS, GO_TOWER_BANNER_CROWNGUARD, GO_TOWER_BANNER_EASTWALL, GO_TOWER_BANNER_PLAGUEWOOD};
+static const uint32 plaguelandsBanners[MAX_EP_TOWERS] = {GO_TOWER_BANNER_NORTHPASS, GO_TOWER_BANNER_CROWNGUARD, GO_TOWER_BANNER_EASTWALL, GO_TOWER_BANNER_PLAGUEWOOD};
 
 class OutdoorPvPEP : public OutdoorPvP
 {
@@ -267,8 +267,8 @@ class OutdoorPvPEP : public OutdoorPvP
         // Northpass bonus - shrine
         void UpdateShrine(const WorldObject* objRef, bool remove = false);
 
-        Team m_towerOwner[TOWER_COUNT];
-        uint32 m_towerWorldState[TOWER_COUNT];
+        Team m_towerOwner[MAX_EP_TOWERS];
+        uint32 m_towerWorldState[MAX_EP_TOWERS];
         uint8 m_towersAlliance;
         uint8 m_towersHorde;
 
@@ -278,7 +278,7 @@ class OutdoorPvPEP : public OutdoorPvP
 
         std::list<ObjectGuid> m_soldiers;
 
-        std::list<ObjectGuid> m_towerBanners[TOWER_COUNT];
+        std::list<ObjectGuid> m_towerBanners[MAX_EP_TOWERS];
 };
 
 #endif

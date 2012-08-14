@@ -167,18 +167,18 @@ void OutdoorPvPZM::ProcessEvent(uint32 eventId, GameObject* go)
 {
     for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
     {
-        if (ZANGA_TOWERS[i] == go->GetEntry())
+        if (zangarmarshTowers[i] == go->GetEntry())
         {
             for (uint8 j = 0; j < 4; ++j)
             {
-                if (ZANGA_TOWER_EVENTS[i][j].eventEntry == eventId)
+                if (zangarmarshTowerEvents[i][j].eventEntry == eventId)
                 {
-                    if (ZANGA_TOWER_EVENTS[i][j].team != m_towerOwner[i])
+                    if (zangarmarshTowerEvents[i][j].team != m_towerOwner[i])
                     {
-                        if (ZANGA_TOWER_EVENTS[i][j].zoneText)
-                            sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, ZANGA_TOWER_EVENTS[i][j].zoneText);
+                        if (zangarmarshTowerEvents[i][j].zoneText)
+                            sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, zangarmarshTowerEvents[i][j].zoneText);
 
-                        ProcessCaptureEvent(go, i, ZANGA_TOWER_EVENTS[i][j].team, ZANGA_TOWER_EVENTS[i][j].worldState, ZANGA_TOWER_EVENTS[i][j].mapState);
+                        ProcessCaptureEvent(go, i, zangarmarshTowerEvents[i][j].team, zangarmarshTowerEvents[i][j].worldState, zangarmarshTowerEvents[i][j].mapState);
                     }
                     return;
                 }

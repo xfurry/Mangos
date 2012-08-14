@@ -34,7 +34,7 @@ OutdoorPvPEP::OutdoorPvPEP() : OutdoorPvP(),
     m_towerWorldState[2] = WORLD_STATE_EP_EASTWALL_NEUTRAL;
     m_towerWorldState[3] = WORLD_STATE_EP_PLAGUEWOOD_NEUTRAL;
 
-    for (uint8 i = 0; i < TOWER_COUNT; ++i)
+    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
         m_towerOwner[i] = TEAM_NONE;
 }
 
@@ -43,7 +43,7 @@ void OutdoorPvPEP::FillInitialWorldStates(WorldPacket& data, uint32& count)
     FillInitialWorldState(data, count, WORLD_STATE_EP_TOWER_COUNT_ALLIANCE, m_towersAlliance);
     FillInitialWorldState(data, count, WORLD_STATE_EP_TOWER_COUNT_HORDE, m_towersHorde);
 
-    for (uint8 i = 0; i < TOWER_COUNT; ++i)
+    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
         FillInitialWorldState(data, count, m_towerWorldState[i], WORLD_STATE_ADD);
 }
 
@@ -52,7 +52,7 @@ void OutdoorPvPEP::SendRemoveWorldStates(Player* player)
     player->SendUpdateWorldState(WORLD_STATE_EP_TOWER_COUNT_ALLIANCE, WORLD_STATE_REMOVE);
     player->SendUpdateWorldState(WORLD_STATE_EP_TOWER_COUNT_HORDE, WORLD_STATE_REMOVE);
 
-    for (uint8 i = 0; i < TOWER_COUNT; ++i)
+    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
         player->SendUpdateWorldState(m_towerWorldState[i], WORLD_STATE_REMOVE);
 }
 
@@ -68,19 +68,19 @@ void OutdoorPvPEP::HandlePlayerEnterZone(Player* player, bool isMainZone)
     OutdoorPvP::HandlePlayerEnterZone(player, isMainZone);
 
     // remove the buff from the player first; Sometimes on relog players still have the aura
-    for (uint8 i = 0; i < TOWER_COUNT; ++i)
-        player->RemoveAurasDueToSpell(player->GetTeam() == ALLIANCE ? PLAGUELANDS_TOWER_BUFFS[i].spellIdAlliance : PLAGUELANDS_TOWER_BUFFS[i].spellIdHorde);
+    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
+        player->RemoveAurasDueToSpell(player->GetTeam() == ALLIANCE ? plaguelandsTowerBuffs[i].spellIdAlliance : plaguelandsTowerBuffs[i].spellIdHorde);
 
     // buff the player
     switch (player->GetTeam())
     {
         case ALLIANCE:
             if (m_towersAlliance > 0)
-                player->CastSpell(player, PLAGUELANDS_TOWER_BUFFS[m_towersAlliance - 1].spellIdAlliance, true);
+                player->CastSpell(player, plaguelandsTowerBuffs[m_towersAlliance - 1].spellIdAlliance, true);
             break;
         case HORDE:
             if (m_towersHorde > 0)
-                player->CastSpell(player, PLAGUELANDS_TOWER_BUFFS[m_towersHorde - 1].spellIdHorde, true);
+                player->CastSpell(player, plaguelandsTowerBuffs[m_towersHorde - 1].spellIdHorde, true);
             break;
     }
 }
@@ -88,8 +88,8 @@ void OutdoorPvPEP::HandlePlayerEnterZone(Player* player, bool isMainZone)
 void OutdoorPvPEP::HandlePlayerLeaveZone(Player* player, bool isMainZone)
 {
     // remove the buff from the player
-    for (uint8 i = 0; i < TOWER_COUNT; ++i)
-        player->RemoveAurasDueToSpell(player->GetTeam() == ALLIANCE ? PLAGUELANDS_TOWER_BUFFS[i].spellIdAlliance : PLAGUELANDS_TOWER_BUFFS[i].spellIdHorde);
+    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
+        player->RemoveAurasDueToSpell(player->GetTeam() == ALLIANCE ? plaguelandsTowerBuffs[i].spellIdAlliance : plaguelandsTowerBuffs[i].spellIdHorde);
 
     OutdoorPvP::HandlePlayerLeaveZone(player, isMainZone);
 }
@@ -112,13 +112,13 @@ void OutdoorPvPEP::OnGameObjectCreate(GameObject* go)
             break;
         case GO_TOWER_BANNER:
             // sort banners
-            if (go->IsWithinDist2d(PLAGUELANDS_TOWER_LOCATIONS[TOWER_ID_NORTHPASS].x, PLAGUELANDS_TOWER_LOCATIONS[TOWER_ID_NORTHPASS].y, 50.0f))
+            if (go->IsWithinDist2d(plaguelandsTowerLocations[TOWER_ID_NORTHPASS].x, plaguelandsTowerLocations[TOWER_ID_NORTHPASS].y, 50.0f))
                 InitBanner(go, TOWER_ID_NORTHPASS);
-            else if (go->IsWithinDist2d(PLAGUELANDS_TOWER_LOCATIONS[TOWER_ID_CROWNGUARD].x, PLAGUELANDS_TOWER_LOCATIONS[TOWER_ID_CROWNGUARD].y, 50.0f))
+            else if (go->IsWithinDist2d(plaguelandsTowerLocations[TOWER_ID_CROWNGUARD].x, plaguelandsTowerLocations[TOWER_ID_CROWNGUARD].y, 50.0f))
                 InitBanner(go, TOWER_ID_CROWNGUARD);
-            else if (go->IsWithinDist2d(PLAGUELANDS_TOWER_LOCATIONS[TOWER_ID_EASTWALL].x, PLAGUELANDS_TOWER_LOCATIONS[TOWER_ID_EASTWALL].y, 50.0f))
+            else if (go->IsWithinDist2d(plaguelandsTowerLocations[TOWER_ID_EASTWALL].x, plaguelandsTowerLocations[TOWER_ID_EASTWALL].y, 50.0f))
                 InitBanner(go, TOWER_ID_EASTWALL);
-            else if (go->IsWithinDist2d(PLAGUELANDS_TOWER_LOCATIONS[TOWER_ID_PLAGUEWOOD].x, PLAGUELANDS_TOWER_LOCATIONS[TOWER_ID_PLAGUEWOOD].y, 50.0f))
+            else if (go->IsWithinDist2d(plaguelandsTowerLocations[TOWER_ID_PLAGUEWOOD].x, plaguelandsTowerLocations[TOWER_ID_PLAGUEWOOD].y, 50.0f))
                 InitBanner(go, TOWER_ID_PLAGUEWOOD);
             break;
         case GO_LORDAERON_SHRINE_ALLIANCE:
@@ -169,20 +169,20 @@ void OutdoorPvPEP::HandleObjectiveComplete(uint32 eventId, std::list<Player*> pl
 // process the capture events
 void OutdoorPvPEP::ProcessEvent(uint32 eventId, GameObject* go)
 {
-    for (uint8 i = 0; i < TOWER_COUNT; ++i)
+    for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
     {
-        if (PLAGUELANDS_BANNERS[i] == go->GetEntry())
+        if (plaguelandsBanners[i] == go->GetEntry())
         {
             for (uint8 j = 0; j < 4; ++j)
             {
-                if (PLAGUELANDS_TOWER_EVENTS[i][j].eventEntry == eventId)
+                if (plaguelandsTowerEvents[i][j].eventEntry == eventId)
                 {
-                    if (PLAGUELANDS_TOWER_EVENTS[i][j].team != m_towerOwner[i])
+                    if (plaguelandsTowerEvents[i][j].team != m_towerOwner[i])
                     {
-                        if (PLAGUELANDS_TOWER_EVENTS[i][j].zoneText)
-                            sWorld.SendDefenseMessage(ZONE_ID_EASTERN_PLAGUELANDS, PLAGUELANDS_TOWER_EVENTS[i][j].zoneText);
+                        if (plaguelandsTowerEvents[i][j].zoneText)
+                            sWorld.SendDefenseMessage(ZONE_ID_EASTERN_PLAGUELANDS, plaguelandsTowerEvents[i][j].zoneText);
 
-                        ProcessCaptureEvent(go, i, PLAGUELANDS_TOWER_EVENTS[i][j].team, PLAGUELANDS_TOWER_EVENTS[i][j].worldState);
+                        ProcessCaptureEvent(go, i, plaguelandsTowerEvents[i][j].team, plaguelandsTowerEvents[i][j].worldState);
                     }
                     return;
                 }
@@ -200,7 +200,7 @@ void OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
             SetBannerVisual(go, (*itr), CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
 
         ++m_towersAlliance;
-        BuffTeam(ALLIANCE, PLAGUELANDS_TOWER_BUFFS[m_towersAlliance - 1].spellIdAlliance);
+        BuffTeam(ALLIANCE, plaguelandsTowerBuffs[m_towersAlliance - 1].spellIdAlliance);
     }
     else if (team == HORDE)
     {
@@ -208,7 +208,7 @@ void OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
             SetBannerVisual(go, (*itr), CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
 
         ++m_towersHorde;
-        BuffTeam(HORDE, PLAGUELANDS_TOWER_BUFFS[m_towersHorde - 1].spellIdHorde);
+        BuffTeam(HORDE, plaguelandsTowerBuffs[m_towersHorde - 1].spellIdHorde);
     }
     else
     {
@@ -218,12 +218,12 @@ void OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
         if (m_towerOwner[towerId] == ALLIANCE)
         {
             if (--m_towersAlliance == 0)
-                BuffTeam(ALLIANCE, PLAGUELANDS_TOWER_BUFFS[0].spellIdAlliance, true);
+                BuffTeam(ALLIANCE, plaguelandsTowerBuffs[0].spellIdAlliance, true);
         }
         else
         {
             if (--m_towersHorde == 0)
-                BuffTeam(HORDE, PLAGUELANDS_TOWER_BUFFS[0].spellIdHorde, true);
+                BuffTeam(HORDE, plaguelandsTowerBuffs[0].spellIdHorde, true);
         }
     }
 
@@ -289,7 +289,7 @@ void OutdoorPvPEP::InitBanner(GameObject* go, uint32 towerId)
 
 void OutdoorPvPEP::SummonFlightMaster(WorldObject* objRef)
 {
-    if (Creature* flightMaster = objRef->SummonCreature(NPC_SPECTRAL_FLIGHTMASTER, FLIGHTMASTER_SPAWN_LOCATION[0], FLIGHTMASTER_SPAWN_LOCATION[1], FLIGHTMASTER_SPAWN_LOCATION[2], FLIGHTMASTER_SPAWN_LOCATION[3], TEMPSUMMON_DEAD_DESPAWN, 0))
+    if (Creature* flightMaster = objRef->SummonCreature(NPC_SPECTRAL_FLIGHTMASTER, plaguelandsFlightmasterSpawnLocation[0], plaguelandsFlightmasterSpawnLocation[1], plaguelandsFlightmasterSpawnLocation[2], plaguelandsFlightmasterSpawnLocation[3], TEMPSUMMON_DEAD_DESPAWN, 0))
         m_flightMaster = flightMaster->GetObjectGuid();
 }
 
@@ -305,7 +305,7 @@ void OutdoorPvPEP::SummonSoldiers(WorldObject* objRef)
 
     for (uint8 i = 0; i < 5; ++i)
     {
-        if (Creature* soldier = objRef->SummonCreature(entry, PLAGUELANDS_SOLDIER_SPAWN_LOCATIONS[i].x, PLAGUELANDS_SOLDIER_SPAWN_LOCATIONS[i].y, PLAGUELANDS_SOLDIER_SPAWN_LOCATIONS[i].z, 2.2f, TEMPSUMMON_DEAD_DESPAWN, 0))
+        if (Creature* soldier = objRef->SummonCreature(entry, plaguelandsSoldierSpawnLocations[i].x, plaguelandsSoldierSpawnLocations[i].y, plaguelandsSoldierSpawnLocations[i].z, 2.2f, TEMPSUMMON_DEAD_DESPAWN, 0))
             m_soldiers.push_back(soldier->GetObjectGuid());
 
         // change the entry id to the soldiers for the last 4 iterations

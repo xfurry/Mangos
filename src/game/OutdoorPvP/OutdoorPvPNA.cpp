@@ -363,7 +363,7 @@ void OutdoorPvPNA::HandleFactionObjects(const WorldObject* objRef)
             RespawnGO(objRef, m_allianceWagons[i], false);
             RespawnGO(objRef, m_hordeBrokenRoost[i], true);
 
-            m_roostWorldState[i] = HORDE_NEUTRAL_ROOST_STATES[i];
+            m_roostWorldState[i] = nagrandRoostStatesHordeNeutral[i];
         }
     }
     else
@@ -376,7 +376,7 @@ void OutdoorPvPNA::HandleFactionObjects(const WorldObject* objRef)
             RespawnGO(objRef, m_hordeWagons[i], false);
             RespawnGO(objRef, m_allianceBrokenRoost[i], true);
 
-            m_roostWorldState[i] = ALLIANCE_NEUTRAL_ROOST_STATES[i];
+            m_roostWorldState[i] = nagrandRoostStatesAllianceNeutral[i];
         }
     }
 }
@@ -441,19 +441,19 @@ bool OutdoorPvPNA::HandleObjectUse(Player* player, GameObject* go)
     {
         for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
         {
-            if (go->GetEntry() == ALLIANCE_WAGONS[i])
+            if (go->GetEntry() == nagrandWagonsAlliance[i])
             {
-                m_roostWorldState[i] = HORDE_NEUTRAL_ROOST_STATES[i];
+                m_roostWorldState[i] = nagrandRoostStatesHordeNeutral[i];
                 RespawnGO(go, m_hordeRoost[i], false);
                 RespawnGO(go, m_hordeBrokenRoost[i], true);
             }
-            else if (go->GetEntry() == ALLIANCE_BROKEN_ROOSTS[i])
+            else if (go->GetEntry() == nagrandRoostsBrokenAlliance[i])
             {
-                m_roostWorldState[i] = ALLIANCE_ROOST_STATES[i];
+                m_roostWorldState[i] = nagrandRoostStatesAlliance[i];
                 RespawnGO(go, m_hordeWagons[i], true);
                 RespawnGO(go, m_allianceRoost[i], true, true);
             }
-            else if (go->GetEntry() == ALLIANCE_ROOSTS[i])
+            else if (go->GetEntry() == nagrandRoostsAlliance[i])
             {
                 // mark player as pvp
                 player->UpdatePvP(true, true);
@@ -465,19 +465,19 @@ bool OutdoorPvPNA::HandleObjectUse(Player* player, GameObject* go)
     {
         for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
         {
-            if (go->GetEntry() == HORDE_WAGONS[i])
+            if (go->GetEntry() == nagrandWagonsHorde[i])
             {
-                m_roostWorldState[i] = ALLIANCE_NEUTRAL_ROOST_STATES[i];
+                m_roostWorldState[i] = nagrandRoostStatesAllianceNeutral[i];
                 RespawnGO(go, m_allianceRoost[i], false);
                 RespawnGO(go, m_allianceBrokenRoost[i], true);
             }
-            else if (go->GetEntry() == HORDE_BROKEN_ROOSTS[i])
+            else if (go->GetEntry() == nagrandRoostsBrokenHorde[i])
             {
-                m_roostWorldState[i] = HORDE_ROOST_STATES[i];
+                m_roostWorldState[i] = nagrandRoostStatesHorde[i];
                 RespawnGO(go, m_allianceWagons[i], true);
                 RespawnGO(go, m_hordeRoost[i], true, true);
             }
-            else if (go->GetEntry() == HORDE_ROOSTS[i])
+            else if (go->GetEntry() == nagrandRoostsHorde[i])
             {
                 // mark player as pvp
                 player->UpdatePvP(true, true);

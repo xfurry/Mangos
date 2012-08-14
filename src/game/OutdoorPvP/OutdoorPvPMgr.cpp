@@ -39,7 +39,7 @@ OutdoorPvPMgr::OutdoorPvPMgr()
 
 OutdoorPvPMgr::~OutdoorPvPMgr()
 {
-    for (uint8 i = 0; i < OPVP_ID_MAX; ++i)
+    for (uint8 i = 0; i < MAX_OPVP_ID; ++i)
         delete m_scripts[i];
 }
 
@@ -57,7 +57,7 @@ void OutdoorPvPMgr::InitOutdoorPvP()
     m_scripts[OPVP_ID_GH] = new OutdoorPvPGH();
 
     sLog.outString();
-    sLog.outString(">> Loaded %u Outdoor PvP zones", OPVP_ID_MAX);
+    sLog.outString(">> Loaded %u Outdoor PvP zones", MAX_OPVP_ID);
 }
 
 OutdoorPvP* OutdoorPvPMgr::GetScript(uint32 zoneId)
@@ -150,7 +150,7 @@ void OutdoorPvPMgr::Update(uint32 diff)
     if (!m_updateTimer.Passed())
         return;
 
-    for (uint8 i = 0; i < OPVP_ID_MAX; ++i)
+    for (uint8 i = 0; i < MAX_OPVP_ID; ++i)
         (*m_scripts[i]).Update((uint32)m_updateTimer.GetCurrent());
 
     m_updateTimer.SetCurrent(0);

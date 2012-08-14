@@ -66,7 +66,7 @@ struct SilithusSpawnLocation
 };
 
 // Area trigger location - workaround to check the flag drop handling
-static SilithusSpawnLocation SILITHUS_FLAG_DROP_LOCATIONS[2] =
+static SilithusSpawnLocation silithusFlagDropLocations[2] =
 {
     {-7142.04f, 1397.92f, 4.327f},      // alliance
     {-7588.48f, 756.806f, -16.425f}     // horde

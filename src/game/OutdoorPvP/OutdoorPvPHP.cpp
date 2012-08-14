@@ -174,18 +174,18 @@ void OutdoorPvPHP::ProcessEvent(uint32 eventId, GameObject* go)
 {
     for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
     {
-        if (HELLFIRE_BANNERS[i] == go->GetEntry())
+        if (hellfireBanners[i] == go->GetEntry())
         {
             for (uint8 j = 0; j < 4; ++j)
             {
-                if (HELLFIRE_TOWER_EVENTS[i][j].eventEntry == eventId)
+                if (hellfireTowerEvents[i][j].eventEntry == eventId)
                 {
-                    if (HELLFIRE_TOWER_EVENTS[i][j].team != m_towerOwner[i])
+                    if (hellfireTowerEvents[i][j].team != m_towerOwner[i])
                     {
-                        if (HELLFIRE_TOWER_EVENTS[i][j].zoneText)
-                            sWorld.SendDefenseMessage(ZONE_ID_HELLFIRE_PENINSULA, HELLFIRE_TOWER_EVENTS[i][j].zoneText);
+                        if (hellfireTowerEvents[i][j].zoneText)
+                            sWorld.SendDefenseMessage(ZONE_ID_HELLFIRE_PENINSULA, hellfireTowerEvents[i][j].zoneText);
 
-                        ProcessCaptureEvent(go, i, HELLFIRE_TOWER_EVENTS[i][j].team, HELLFIRE_TOWER_EVENTS[i][j].worldState, HELLFIRE_TOWER_EVENTS[i][j].towerArtKit, HELLFIRE_TOWER_EVENTS[i][j].towerAnim);
+                        ProcessCaptureEvent(go, i, hellfireTowerEvents[i][j].team, hellfireTowerEvents[i][j].worldState, hellfireTowerEvents[i][j].towerArtKit, hellfireTowerEvents[i][j].towerAnim);
                     }
                     return;
                 }

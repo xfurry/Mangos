@@ -127,7 +127,7 @@ void OutdoorPvPTF::HandleObjectiveComplete(uint32 eventId, std::list<Player*> pl
     {
         for (uint8 j = 0; j < 4; ++j)
         {
-            if (TEROKKAR_TOWER_EVENTS[i][j].eventEntry == eventId)
+            if (terokkarTowerEvents[i][j].eventEntry == eventId)
             {
                 for (std::list<Player*>::iterator itr = players.begin(); itr != players.end(); ++itr)
                 {
@@ -145,17 +145,17 @@ void OutdoorPvPTF::ProcessEvent(uint32 eventId, GameObject* go)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
-        if (TEROKKAR_TOWERS[i] == go->GetEntry())
+        if (terokkarTowers[i] == go->GetEntry())
         {
             for (uint8 j = 0; j < 4; ++j)
             {
-                if (TEROKKAR_TOWER_EVENTS[i][j].eventEntry == eventId)
+                if (terokkarTowerEvents[i][j].eventEntry == eventId)
                 {
-                    if (TEROKKAR_TOWER_EVENTS[i][j].team != m_towerOwner[i])
+                    if (terokkarTowerEvents[i][j].team != m_towerOwner[i])
                     {
-                        sWorld.SendDefenseMessage(ZONE_ID_TEROKKAR_FOREST, TEROKKAR_TOWER_EVENTS[i][j].zoneText);
+                        sWorld.SendDefenseMessage(ZONE_ID_TEROKKAR_FOREST, terokkarTowerEvents[i][j].zoneText);
 
-                        ProcessCaptureEvent(go, i, TEROKKAR_TOWER_EVENTS[i][j].team, TEROKKAR_TOWER_EVENTS[i][j].worldState);
+                        ProcessCaptureEvent(go, i, terokkarTowerEvents[i][j].team, terokkarTowerEvents[i][j].worldState);
                     }
                     return;
                 }
@@ -301,7 +301,7 @@ void OutdoorPvPTF::LockTowers(const WorldObject* objRef)
         if (GameObject* go = objRef->GetMap()->GetGameObject(m_towerBanners[i]))
             go->SetLootState(GO_JUST_DEACTIVATED);
 
-        sOutdoorPvPMgr.SetCapturePointSlider(TEROKKAR_TOWERS[i], m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
+        sOutdoorPvPMgr.SetCapturePointSlider(terokkarTowers[i], m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
     }
 }
 
@@ -316,6 +316,6 @@ void OutdoorPvPTF::ResetTowers(const WorldObject* objRef)
         }
         else
             // if grid is unloaded, resetting the slider value is enough
-            sOutdoorPvPMgr.SetCapturePointSlider(TEROKKAR_TOWERS[i], CAPTURE_SLIDER_NEUTRAL);
+            sOutdoorPvPMgr.SetCapturePointSlider(terokkarTowers[i], CAPTURE_SLIDER_NEUTRAL);
     }
 }

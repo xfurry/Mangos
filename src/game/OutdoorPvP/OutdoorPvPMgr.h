@@ -33,7 +33,7 @@ enum OutdoorPvPTypes
     OPVP_ID_NA,
     OPVP_ID_GH,
 
-    OPVP_ID_MAX
+    MAX_OPVP_ID
 };
 
 enum OutdoorPvPZones
@@ -105,7 +105,7 @@ class OutdoorPvPMgr
         OutdoorPvP* GetScriptOfAffectedZone(uint32 zoneId);
 
         // contains all outdoor pvp scripts
-        OutdoorPvP* m_scripts[OPVP_ID_MAX];
+        OutdoorPvP* m_scripts[MAX_OPVP_ID];
 
         std::map<uint32 /*capture point entry*/, int8 /*slider value*/> m_CapturePointSlider;
 

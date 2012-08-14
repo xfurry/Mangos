@@ -117,7 +117,7 @@ struct TerokkarTowerEvent
     uint32  worldState;
 };
 
-static const TerokkarTowerEvent TEROKKAR_TOWER_EVENTS[MAX_TF_TOWERS][4] =
+static const TerokkarTowerEvent terokkarTowerEvents[MAX_TF_TOWERS][4] =
 {
     {
         {EVENT_WEST_TOWER_PROGRESS_ALLIANCE,        ALLIANCE,   LANG_OPVP_TF_CAPTURE_TOWER_A,   WORLD_STATE_TF_WEST_TOWER_ALLIANCE},
@@ -151,7 +151,7 @@ static const TerokkarTowerEvent TEROKKAR_TOWER_EVENTS[MAX_TF_TOWERS][4] =
     },
 };
 
-static const uint32 TEROKKAR_TOWERS[MAX_TF_TOWERS] = {GO_TOWER_BANNER_WEST, GO_TOWER_BANNER_NORTH, GO_TOWER_BANNER_EAST, GO_TOWER_BANNER_SOUTH_EAST, GO_TOWER_BANNER_SOUTH};
+static const uint32 terokkarTowers[MAX_TF_TOWERS] = {GO_TOWER_BANNER_WEST, GO_TOWER_BANNER_NORTH, GO_TOWER_BANNER_EAST, GO_TOWER_BANNER_SOUTH_EAST, GO_TOWER_BANNER_SOUTH};
 
 class OutdoorPvPTF : public OutdoorPvP
 {

@@ -101,7 +101,7 @@ enum
     //WORLD_STATE_UNK                       = 2653
 };
 
-struct ZangaTowerEvent
+struct ZangarmarshTowerEvent
 {
     uint32  eventEntry;
     Team    team;
@@ -110,7 +110,7 @@ struct ZangaTowerEvent
     uint32  mapState;
 };
 
-static const ZangaTowerEvent ZANGA_TOWER_EVENTS[MAX_ZM_TOWERS][4] =
+static const ZangarmarshTowerEvent zangarmarshTowerEvents[MAX_ZM_TOWERS][4] =
 {
     {
         {EVENT_EAST_BEACON_PROGRESS_ALLIANCE,   ALLIANCE,   LANG_OPVP_ZM_CAPTURE_EAST_BEACON_A, WORLD_STATE_ZM_BEACON_EAST_UI_ALLIANCE, WORLD_STATE_ZM_BEACON_EAST_ALLIANCE},
@@ -126,7 +126,7 @@ static const ZangaTowerEvent ZANGA_TOWER_EVENTS[MAX_ZM_TOWERS][4] =
     },
 };
 
-static const uint32 ZANGA_TOWERS[MAX_ZM_TOWERS] = {GO_ZANGA_BANNER_EAST, GO_ZANGA_BANNER_WEST};
+static const uint32 zangarmarshTowers[MAX_ZM_TOWERS] = {GO_ZANGA_BANNER_EAST, GO_ZANGA_BANNER_WEST};
 
 class OutdoorPvPZM : public OutdoorPvP
 {
