@@ -173,7 +173,6 @@ class OutdoorPvPTF : public OutdoorPvP
         void SendRemoveWorldStates(Player* player);
 
     private:
-        void UpdateWorldState(uint32 value);
         void UpdateTimerWorldState();
 
         // process capture events

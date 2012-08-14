@@ -50,12 +50,12 @@ void OutdoorPvPTF::FillInitialWorldStates(WorldPacket& data, uint32& count)
     {
         FillInitialWorldState(data, count, WORLD_STATE_TF_TOWER_COUNT_H, m_towersHorde);
         FillInitialWorldState(data, count, WORLD_STATE_TF_TOWER_COUNT_A, m_towersAlliance);
+
+        for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
+            FillInitialWorldState(data, count, m_towerWorldState[i], WORLD_STATE_ADD);
     }
     else
         UpdateTimerWorldState();
-
-    for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
-        FillInitialWorldState(data, count, m_towerWorldState[i], WORLD_STATE_ADD);
 }
 
 void OutdoorPvPTF::SendRemoveWorldStates(Player* player)
@@ -64,14 +64,6 @@ void OutdoorPvPTF::SendRemoveWorldStates(Player* player)
 
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
         player->SendUpdateWorldState(m_towerWorldState[i], WORLD_STATE_REMOVE);
-}
-
-void OutdoorPvPTF::UpdateWorldState(uint32 value)
-{
-    // update only tower count; tower states are sent in the process event
-    SendUpdateWorldState(m_zoneWorldState, value);
-    for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
-        SendUpdateWorldState(m_towerWorldState[i], value);
 }
 
 void OutdoorPvPTF::HandlePlayerEnterZone(Player* player, bool isMainZone)
@@ -209,10 +201,21 @@ void OutdoorPvPTF::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
             --m_towersHorde;
     }
 
-    // update tower state
-    SendUpdateWorldState(m_towerWorldState[towerId], WORLD_STATE_REMOVE);
-    m_towerWorldState[towerId] = newWorldState;
-    SendUpdateWorldState(m_towerWorldState[towerId], WORLD_STATE_ADD);
+    if (m_zoneOwner != TEAM_NONE)
+    {
+        // remove tower states when zone has been captured and locked
+        for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
+            SendUpdateWorldState(m_towerWorldState[i], WORLD_STATE_REMOVE);
+
+        m_towerWorldState[towerId] = newWorldState;
+    }
+    else
+    {
+        // update tower state
+        SendUpdateWorldState(m_towerWorldState[towerId], WORLD_STATE_REMOVE);
+        m_towerWorldState[towerId] = newWorldState;
+        SendUpdateWorldState(m_towerWorldState[towerId], WORLD_STATE_ADD);
+    }
 
     // update tower count
     SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_A, m_towersAlliance);
@@ -233,7 +236,7 @@ void OutdoorPvPTF::Update(uint32 diff)
             BuffTeam(m_zoneOwner, SPELL_AUCHINDOUN_BLESSING, true);
 
             // reset world states and towers
-            UpdateWorldState(WORLD_STATE_REMOVE);
+            SendUpdateWorldState(m_zoneWorldState, WORLD_STATE_REMOVE);
             m_zoneOwner = TEAM_NONE;
             m_zoneWorldState = WORLD_STATE_TF_TOWERS_CONTROLLED;
             m_towersAlliance = 0;
@@ -243,7 +246,9 @@ void OutdoorPvPTF::Update(uint32 diff)
             m_towerWorldState[2] = WORLD_STATE_TF_EAST_TOWER_NEUTRAL;
             m_towerWorldState[3] = WORLD_STATE_TF_SOUTH_EAST_TOWER_NEUTRAL;
             m_towerWorldState[4] = WORLD_STATE_TF_SOUTH_TOWER_NEUTRAL;
-            UpdateWorldState(WORLD_STATE_ADD);
+            SendUpdateWorldState(m_zoneWorldState, WORLD_STATE_ADD);
+            for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
+                SendUpdateWorldState(m_towerWorldState[i], WORLD_STATE_ADD);
 
             // update tower count
             SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_A, m_towersAlliance);

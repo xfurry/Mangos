@@ -248,9 +248,6 @@ class OutdoorPvPEP : public OutdoorPvP
         void SendRemoveWorldStates(Player* player);
 
     private:
-        // update world state
-        void UpdateWorldState();
-
         // process capture events
         void ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState);
 

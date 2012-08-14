@@ -56,13 +56,6 @@ void OutdoorPvPHP::SendRemoveWorldStates(Player* player)
         player->SendUpdateWorldState(m_towerWorldState[i], WORLD_STATE_REMOVE);
 }
 
-void OutdoorPvPHP::UpdateWorldState()
-{
-    // update only tower count; tower states are sent in the process event
-    SendUpdateWorldState(WORLD_STATE_HP_TOWER_COUNT_ALLIANCE, m_towersAlliance);
-    SendUpdateWorldState(WORLD_STATE_HP_TOWER_COUNT_HORDE, m_towersHorde);
-}
-
 void OutdoorPvPHP::HandlePlayerEnterZone(Player* player, bool isMainZone)
 {
     OutdoorPvP::HandlePlayerEnterZone(player, isMainZone);
@@ -242,7 +235,8 @@ void OutdoorPvPHP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
     SendUpdateWorldState(m_towerWorldState[towerId], WORLD_STATE_ADD);
 
     // update counter state
-    UpdateWorldState();
+    SendUpdateWorldState(WORLD_STATE_HP_TOWER_COUNT_ALLIANCE, m_towersAlliance);
+    SendUpdateWorldState(WORLD_STATE_HP_TOWER_COUNT_HORDE, m_towersHorde);
 
     // update capture point owner
     m_towerOwner[towerId] = team;

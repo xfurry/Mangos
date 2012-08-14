@@ -48,13 +48,6 @@ void OutdoorPvPSI::SendRemoveWorldStates(Player* player)
     player->SendUpdateWorldState(WORLD_STATE_SI_SILITHYST_MAX, WORLD_STATE_REMOVE);
 }
 
-// Update current world states
-void OutdoorPvPSI::UpdateWorldState()
-{
-    SendUpdateWorldState(WORLD_STATE_SI_GATHERED_A, m_resourcesAlliance);
-    SendUpdateWorldState(WORLD_STATE_SI_GATHERED_H, m_resourcesHorde);
-}
-
 // Handle buffs when player enters the zone
 void OutdoorPvPSI::HandlePlayerEnterZone(Player* player, bool isMainZone)
 {
@@ -102,10 +95,13 @@ bool OutdoorPvPSI::HandleAreaTrigger(Player* player, uint32 triggerId)
                 m_zoneOwner = ALLIANCE;
                 m_resourcesAlliance = 0;
                 m_resourcesHorde = 0;
+
+                // update the horde counter if ressources were reset
+                SendUpdateWorldState(WORLD_STATE_SI_GATHERED_H, m_resourcesAlliance);
             }
 
-            // update the world states
-            UpdateWorldState();
+            // always update the alliance counter
+            SendUpdateWorldState(WORLD_STATE_SI_GATHERED_A, m_resourcesAlliance);
 
             // reward the player
             player->CastSpell(player, SPELL_TRACES_OF_SILITHYST, true);
@@ -137,10 +133,13 @@ bool OutdoorPvPSI::HandleAreaTrigger(Player* player, uint32 triggerId)
                 m_zoneOwner = HORDE;
                 m_resourcesAlliance = 0;
                 m_resourcesHorde = 0;
+
+                // update the alliance counter if ressources were reset
+                SendUpdateWorldState(WORLD_STATE_SI_GATHERED_A, m_resourcesAlliance);
             }
 
-            // update world states
-            UpdateWorldState();
+            // always update the horde counter
+            SendUpdateWorldState(WORLD_STATE_SI_GATHERED_H, m_resourcesAlliance);
 
             // reward the player
             player->CastSpell(player, SPELL_TRACES_OF_SILITHYST, true);

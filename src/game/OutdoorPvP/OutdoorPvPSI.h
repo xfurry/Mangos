@@ -82,7 +82,6 @@ class OutdoorPvPSI : public OutdoorPvP
 
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
         void SendRemoveWorldStates(Player* player);
-        void UpdateWorldState();
 
         bool HandleAreaTrigger(Player* player, uint32 triggerId);
         bool HandleObjectUse(Player* player, GameObject* go);

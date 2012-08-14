@@ -162,9 +162,6 @@ class OutdoorPvPHP : public OutdoorPvP
         void SendRemoveWorldStates(Player* player);
 
     private:
-        // world state update
-        void UpdateWorldState();
-
         // process capture events
         void ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 towerArtKit, uint32 towerAnim);
 
