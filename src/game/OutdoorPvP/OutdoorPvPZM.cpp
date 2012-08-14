@@ -196,7 +196,11 @@ void OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
         ++m_towersAlliance;
 
         if (m_towersAlliance == MAX_ZM_TOWERS)
-            PrepareFactionScouts(go, ALLIANCE);
+        {
+            sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_BOTH_BEACONS_A);
+            if (m_graveyardOwner != ALLIANCE)
+                PrepareFactionScouts(go, ALLIANCE);
+        }
     }
     else if (team == HORDE)
     {
@@ -204,7 +208,11 @@ void OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
         ++m_towersHorde;
 
         if (m_towersHorde == MAX_ZM_TOWERS)
-            PrepareFactionScouts(go, HORDE);
+        {
+            sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_BOTH_BEACONS_H);
+            if (m_graveyardOwner != HORDE)
+                PrepareFactionScouts(go, HORDE);
+        }
     }
     else
     {
@@ -212,7 +220,7 @@ void OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
         {
             SetBeaconArtKit(go, m_beamTowerBlue[towerId], 0);
 
-            if (m_towersAlliance == MAX_ZM_TOWERS)
+            if (m_towersAlliance == MAX_ZM_TOWERS && m_graveyardOwner != ALLIANCE)
                 ResetScouts(go, ALLIANCE);
 
             --m_towersAlliance;
@@ -221,7 +229,7 @@ void OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
         {
             SetBeaconArtKit(go, m_beamTowerRed[towerId], 0);
 
-            if (m_towersHorde == MAX_ZM_TOWERS)
+            if (m_towersHorde == MAX_ZM_TOWERS && m_graveyardOwner != HORDE)
                 ResetScouts(go, HORDE);
 
             --m_towersHorde;
@@ -252,7 +260,6 @@ void OutdoorPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team team)
         m_scoutWorldStateAlliance = WORLD_STATE_ZM_FLAG_READY_ALLIANCE;
         SendUpdateWorldState(m_scoutWorldStateAlliance, WORLD_STATE_ADD);
 
-        sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_BOTH_BEACONS_A);
         sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_SPAWN_FIELD_SCOUT_A);
     }
     else
@@ -264,7 +271,6 @@ void OutdoorPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team team)
         m_scoutWorldStateHorde = WORLD_STATE_ZM_FLAG_READY_HORDE;
         SendUpdateWorldState(m_scoutWorldStateHorde, WORLD_STATE_ADD);
 
-        sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_BOTH_BEACONS_H);
         sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_SPAWN_FIELD_SCOUT_H);
     }
 }
