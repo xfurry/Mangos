@@ -29,9 +29,6 @@ enum
     MAX_NA_ROOSTS                           = 4,                // roosts for each type and team
     MAX_FIRE_BOMBS                          = 10,
 
-    // zone ids
-    ZONE_ID_NAGRAND                         = 3518,
-
     // spells
     SPELL_STRENGTH_HALAANI                  = 33795,
     SPELL_NAGRAND_TOKEN_ALLIANCE            = 33005,
@@ -159,8 +156,6 @@ class OutdoorPvPNA : public OutdoorPvP
 {
     public:
         OutdoorPvPNA();
-
-        bool InitOutdoorPvPArea();
 
         void FillInitialWorldStates(WorldPacket& data, uint32& count);
         void SendRemoveWorldStates(Player* player);

@@ -23,6 +23,54 @@
 #include "Policies/Singleton.h"
 #include "Timer.h"
 
+enum OutdoorPvPTypes
+{
+    OPVP_ID_SI  = 0,
+    OPVP_ID_EP,
+    OPVP_ID_HP,
+    OPVP_ID_ZM,
+    OPVP_ID_TF,
+    OPVP_ID_NA,
+    OPVP_ID_GH,
+
+    OPVP_ID_MAX
+};
+
+enum OutdoorPvPZones
+{
+    ZONE_ID_SILITHUS                = 1377,
+    ZONE_ID_TEMPLE_OF_AQ            = 3428,
+    ZONE_ID_RUINS_OF_AQ             = 3429,
+    ZONE_ID_GATES_OF_AQ             = 3478,
+
+    ZONE_ID_EASTERN_PLAGUELANDS     = 139,
+    ZONE_ID_STRATHOLME              = 2017,
+    ZONE_ID_SCHOLOMANCE             = 2057,
+
+    ZONE_ID_HELLFIRE_PENINSULA      = 3483,
+    ZONE_ID_HELLFIRE_RAMPARTS       = 3562,
+    ZONE_ID_HELLFIRE_CITADEL        = 3563,
+    ZONE_ID_BLOOD_FURNACE           = 3713,
+    ZONE_ID_SHATTERED_HALLS         = 3714,
+    ZONE_ID_MAGTHERIDON_LAIR        = 3836,
+
+    ZONE_ID_ZANGARMARSH             = 3521,
+    ZONE_ID_SERPENTSHRINE_CAVERN    = 3607,
+    ZONE_ID_STREAMVAULT             = 3715,
+    ZONE_ID_UNDERBOG                = 3716,
+    ZONE_ID_SLAVE_PENS              = 3717,
+
+    ZONE_ID_TEROKKAR_FOREST         = 3519,
+    ZONE_ID_SHADOW_LABYRINTH        = 3789,
+    ZONE_ID_AUCHENAI_CRYPTS         = 3790,
+    ZONE_ID_SETHEKK_HALLS           = 3791,
+    ZONE_ID_MANA_TOMBS              = 3792,
+
+    ZONE_ID_NAGRAND                 = 3518,
+
+    ZONE_ID_GRIZZLY_HILLS           = 394
+};
+
 class Player;
 class GameObject;
 class Creature;
@@ -44,10 +92,7 @@ class OutdoorPvPMgr
         void HandlePlayerLeaveZone(Player* player, uint32 zoneId);
 
         // return assigned outdoor pvp script
-        OutdoorPvP* GetOutdoorPvP(uint32 zoneId);
-
-        // add zone id to outdoor pvp handler
-        void AddZone(OutdoorPvP* scriptHandler, uint32 zoneId);
+        OutdoorPvP* GetScript(uint32 zoneId);
 
         void Update(uint32);
 
@@ -55,16 +100,12 @@ class OutdoorPvPMgr
         int8 GetCapturePointSliderValue(uint32 entry);
         void SetCapturePointSlider(uint32 entry, int8 value) { m_CapturePointSlider[entry] = value; }
 
-        typedef std::vector<OutdoorPvP*> OutdoorPvPSet;
-        typedef std::map<uint32 /* zoneid */, OutdoorPvP*> OutdoorPvPMap;
-
     private:
-        // contains all initiated outdoor pvp events
-        OutdoorPvPSet m_outdoorPvPSet;
+        // return assigned outdoor pvp script
+        OutdoorPvP* GetScriptWithAffectedZones(uint32 zoneId);
 
-        // maps the zone ids to an outdoor pvp event
-        // used in player event handling
-        OutdoorPvPMap m_outdoorPvPMap;
+        // contains all outdoor pvp scripts
+        OutdoorPvP* m_scripts[OPVP_ID_MAX];
 
         std::map<uint32 /*capture point entry*/, int8 /*slider value*/> m_CapturePointSlider;
 

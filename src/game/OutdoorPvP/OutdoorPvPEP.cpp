@@ -38,15 +38,6 @@ OutdoorPvPEP::OutdoorPvPEP() : OutdoorPvP(),
         m_towerOwner[i] = TEAM_NONE;
 }
 
-bool OutdoorPvPEP::InitOutdoorPvPArea()
-{
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_EASTERN_PLAGUELANDS);
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_STRATHOLME);
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_SCHOLOMANCE);
-
-    return true;
-}
-
 void OutdoorPvPEP::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
     FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_ALLIANCE, m_towersAlliance);

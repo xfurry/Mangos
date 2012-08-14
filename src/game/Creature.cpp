@@ -509,7 +509,7 @@ void Creature::Update(uint32 update_diff, uint32 diff)
                     AI()->JustRespawned();
 
                 // Notify the outdoor pvp script
-                if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP(GetZoneId()))
+                if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetScript(GetZoneId()))
                     outdoorPvP->OnCreatureRespawn(this);
 
                 if (m_isCreatureLinkingTrigger)
@@ -761,7 +761,7 @@ bool Creature::Create(uint32 guidlow, CreatureCreatePos& cPos, CreatureInfo cons
         iData->OnCreatureCreate(this);
 
     // Notify the outdoor pvp script
-    if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP(GetZoneId()))
+    if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetScript(GetZoneId()))
         outdoorPvP->OnCreatureCreate(this);
 
     switch (GetCreatureInfo()->rank)

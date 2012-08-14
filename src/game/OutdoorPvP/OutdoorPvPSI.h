@@ -44,12 +44,6 @@ enum
     QUEST_SCOURING_DESERT_ALLIANCE      = 9419,
     QUEST_SCOURING_DESERT_HORDE         = 9422,
 
-    // zone ids
-    ZONE_ID_SILITHUS                    = 1377,
-    ZONE_ID_TEMPLE_OF_AQ                = 3428,         // ToDo - research
-    ZONE_ID_RUINS_OF_AQ                 = 3429,         // don't know yet how to handle the buff inside the instances
-    ZONE_ID_GATES_OF_AQ                 = 3478,         // not sure if needed
-
     // area triggers
     AREATRIGGER_SILITHUS_ALLIANCE       = 4162,         // areatriggers ids
     AREATRIGGER_SILITHUS_HORDE          = 4168,
@@ -81,8 +75,6 @@ class OutdoorPvPSI : public OutdoorPvP
 {
     public:
         OutdoorPvPSI();
-
-        bool InitOutdoorPvPArea();
 
         void HandlePlayerEnterZone(Player* player);
         void HandlePlayerLeaveZone(Player* player);

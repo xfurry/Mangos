@@ -5095,7 +5095,7 @@ void Aura::HandleAuraModEffectImmunity(bool apply, bool /*Real*/)
         Player* player = (Player*)target;
         if (BattleGround* bg = player->GetBattleGround())
             bg->EventPlayerDroppedFlag(player);
-        else if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP(player->GetCachedZoneId()))
+        else if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetScript(player->GetCachedZoneId()))
             outdoorPvP->HandleDropFlag(player, GetSpellProto()->Id);
     }
 

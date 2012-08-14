@@ -42,17 +42,6 @@ OutdoorPvPTF::OutdoorPvPTF() : OutdoorPvP(),
         m_towerOwner[i] = TEAM_NONE;
 }
 
-bool OutdoorPvPTF::InitOutdoorPvPArea()
-{
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_TEROKKAR_FOREST);
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_SHADOW_LABYRINTH);
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_AUCHENAI_CRYPTS);
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_SETHEKK_HALLS);
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_MANA_TOMBS);
-
-    return true;
-}
-
 void OutdoorPvPTF::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
     FillInitialWorldState(data, count, m_zoneWorldState, WORLD_STATE_ADD);

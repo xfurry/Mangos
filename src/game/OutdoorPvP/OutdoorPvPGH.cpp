@@ -27,13 +27,6 @@ OutdoorPvPGH::OutdoorPvPGH() : OutdoorPvP(),
 {
 }
 
-bool OutdoorPvPGH::InitOutdoorPvPArea()
-{
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_GRIZZLY_HILLS);
-
-    return true;
-}
-
 void OutdoorPvPGH::OnCreatureCreate(Creature* creature)
 {
     switch (creature->GetEntry())

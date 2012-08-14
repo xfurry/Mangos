@@ -173,7 +173,7 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map* map, uint32 phaseMa
         iData->OnObjectCreate(this);
 
     // Notify the outdoor pvp script
-    if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP(GetZoneId()))
+    if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetScript(GetZoneId()))
         outdoorPvP->OnGameObjectCreate(this);
 
     return true;
@@ -1605,7 +1605,7 @@ void GameObject::Use(Unit* user)
         if (user->GetTypeId() == TYPEID_PLAYER)
         {
             Player* player = (Player*)user;
-            if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP(player->GetCachedZoneId()))
+            if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetScript(player->GetCachedZoneId()))
                 outdoorPvP->HandleObjectUse(player, this);
         }
 
@@ -2104,7 +2104,7 @@ void GameObject::TickCapturePoint()
 
         // handle objective complete
         if (m_captureState == CAPTURE_STATE_NEUTRAL)
-            if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP((*capturingPlayers.begin())->GetCachedZoneId()))
+            if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetScript((*capturingPlayers.begin())->GetCachedZoneId()))
                 outdoorPvP->HandleObjectiveComplete(eventId, capturingPlayers, progressFaction);
 
         // set capture state to alliance
@@ -2117,7 +2117,7 @@ void GameObject::TickCapturePoint()
 
         // handle objective complete
         if (m_captureState == CAPTURE_STATE_NEUTRAL)
-            if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP((*capturingPlayers.begin())->GetCachedZoneId()))
+            if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetScript((*capturingPlayers.begin())->GetCachedZoneId()))
                 outdoorPvP->HandleObjectiveComplete(eventId, capturingPlayers, progressFaction);
 
         // set capture state to horde
@@ -2155,7 +2155,7 @@ void GameObject::TickCapturePoint()
     if (eventId)
     {
         // Notify the outdoor pvp script
-        if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP((*capturingPlayers.begin())->GetCachedZoneId()))
+        if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetScript((*capturingPlayers.begin())->GetCachedZoneId()))
             outdoorPvP->OnGameObjectCreate(this);
 
         // Send script event to SD2 and database as well - this can be used for summoning creatures, casting specific spells or spawning GOs

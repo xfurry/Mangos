@@ -42,11 +42,6 @@ enum
     SPELL_ECHOES_OF_LORDAERON_HORDE_3           = 30682,
     SPELL_ECHOES_OF_LORDAERON_HORDE_4           = 29520,
 
-    // zone ids
-    ZONE_ID_EASTERN_PLAGUELANDS                 = 139,
-    ZONE_ID_STRATHOLME                          = 2017,
-    ZONE_ID_SCHOLOMANCE                         = 2057,
-
     // graveyards
     GRAVEYARD_ZONE_EASTERN_PLAGUE               = 139,
     GRAVEYARD_ID_EASTERN_PLAGUE                 = 927,
@@ -239,8 +234,6 @@ class OutdoorPvPEP : public OutdoorPvP
 {
     public:
         OutdoorPvPEP();
-
-        bool InitOutdoorPvPArea();
 
         void OnGameObjectCreate(GameObject* go);
         void ProcessEvent(uint32 eventId, GameObject* go);

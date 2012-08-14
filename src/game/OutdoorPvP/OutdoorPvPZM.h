@@ -27,13 +27,6 @@ enum
 {
     MAX_ZM_TOWERS                           = 2,
 
-    // zone ids
-    ZONE_ID_ZANGARMARSH                     = 3521,
-    ZONE_ID_SERPENTSHRINE_CAVERN            = 3607,
-    ZONE_ID_STREAMVAULT                     = 3715,
-    ZONE_ID_UNDERBOG                        = 3716,
-    ZONE_ID_SLAVE_PENS                      = 3717,
-
     // npcs
     NPC_ALLIANCE_FIELD_SCOUT                = 18581,
     NPC_HORDE_FIELD_SCOUT                   = 18564,
@@ -140,8 +133,6 @@ class OutdoorPvPZM : public OutdoorPvP
 {
     public:
         OutdoorPvPZM();
-
-        bool InitOutdoorPvPArea();
 
         void OnCreatureCreate(Creature* creature);
         void OnGameObjectCreate(GameObject* go);

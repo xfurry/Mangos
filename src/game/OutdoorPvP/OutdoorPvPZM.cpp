@@ -44,17 +44,6 @@ OutdoorPvPZM::OutdoorPvPZM() : OutdoorPvP(),
         m_towerOwner[i] = TEAM_NONE;
 }
 
-bool OutdoorPvPZM::InitOutdoorPvPArea()
-{
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_ZANGARMARSH);
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_SERPENTSHRINE_CAVERN);
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_STREAMVAULT);
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_UNDERBOG);
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_SLAVE_PENS);
-
-    return true;
-}
-
 void OutdoorPvPZM::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
     FillInitialWorldState(data, count, m_scoutWorldStateAlliance, WORLD_STATE_ADD);

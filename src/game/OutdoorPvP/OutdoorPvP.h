@@ -85,9 +85,6 @@ class OutdoorPvP
         // handle capture objective complete
         virtual void HandleObjectiveComplete(uint32 /*eventId*/, std::list<Player*> /*players*/, Team /*team*/) {}
 
-        // initialize all the outdoor pvp area relates stuff
-        virtual bool InitOutdoorPvPArea() { return false; }
-
         // update - called by the OutdoorPvPMgr
         virtual void Update(uint32 diff) {}
 

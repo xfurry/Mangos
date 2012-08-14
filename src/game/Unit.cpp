@@ -821,7 +821,7 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
         // handle player kill in outdoor pvp
         if (player_tap && pVictim->GetTypeId() == TYPEID_PLAYER && pVictim != this)
         {
-            if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP(player_tap->GetCachedZoneId()))
+            if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetScript(player_tap->GetCachedZoneId()))
                 outdoorPvP->HandlePlayerKill(player_tap, pVictim);
         }
 
@@ -1057,7 +1057,7 @@ void Unit::JustKilledCreature(Creature* victim)
         mapInstance->OnCreatureDeath(victim);
 
     // Notify the outdoor pvp script
-    if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetOutdoorPvP(GetZoneId()))
+    if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetScript(GetZoneId()))
         outdoorPvP->OnCreatureDeath(victim);
 
     if (victim->IsLinkingEventTrigger())

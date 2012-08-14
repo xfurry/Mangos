@@ -27,12 +27,7 @@ enum
 {
     MAX_TF_TOWERS                           = 5,
 
-    // zone ids
-    ZONE_ID_TEROKKAR_FOREST                 = 3519,
-    ZONE_ID_SHADOW_LABYRINTH                = 3789,
-    ZONE_ID_AUCHENAI_CRYPTS                 = 3790,
-    ZONE_ID_SETHEKK_HALLS                   = 3791,
-    ZONE_ID_MANA_TOMBS                      = 3792,
+    MAP_ID_OUTLAND                          = 530,
 
     // gameobjects
     GO_TEROKKAR_BANNER_1                    = 183104,           // west tower
@@ -166,8 +161,6 @@ class OutdoorPvPTF : public OutdoorPvP
 
     public:
         OutdoorPvPTF();
-
-        bool InitOutdoorPvPArea();
 
         void OnGameObjectCreate(GameObject* go);
         void ProcessEvent(uint32 eventId, GameObject* go);

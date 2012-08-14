@@ -24,9 +24,6 @@
 
 enum
 {
-    // zone ids
-    ZONE_ID_GRIZZLY_HILLS                   = 394,
-
     // npcs
     // alliance
     NPC_WESTFALL_BRIGADE_DEFENDER           = 27758,
@@ -62,8 +59,6 @@ class OutdoorPvPGH : public OutdoorPvP
 {
     public:
         OutdoorPvPGH();
-
-        bool InitOutdoorPvPArea();
 
         void OnCreatureCreate(Creature* creature);
         void OnGameObjectCreate(GameObject* go);

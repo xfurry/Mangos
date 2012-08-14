@@ -36,18 +36,6 @@ OutdoorPvPHP::OutdoorPvPHP() : OutdoorPvP(),
         m_towerOwner[i] = TEAM_NONE;
 }
 
-bool OutdoorPvPHP::InitOutdoorPvPArea()
-{
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_HELLFIRE_PENINSULA);
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_HELLFIRE_RAMPARTS);
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_HELLFIRE_CITADEL);
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_BLOOD_FURNACE);
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_SHATTERED_HALLS);
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_MAGTHERIDON_LAIR);
-
-    return true;
-}
-
 void OutdoorPvPHP::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
     FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_HP_ALLIANCE, m_towersAlliance);

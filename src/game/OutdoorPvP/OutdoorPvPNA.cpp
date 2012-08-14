@@ -33,13 +33,6 @@ OutdoorPvPNA::OutdoorPvPNA() : OutdoorPvP(),
 {
 }
 
-bool OutdoorPvPNA::InitOutdoorPvPArea()
-{
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_NAGRAND);
-
-    return true;
-}
-
 void OutdoorPvPNA::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
     if (m_zoneOwner != TEAM_NONE)

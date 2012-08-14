@@ -32,17 +32,6 @@ OutdoorPvPSI::OutdoorPvPSI() : OutdoorPvP(),
 {
 }
 
-// Initialize outdoor pvp zones
-bool OutdoorPvPSI::InitOutdoorPvPArea()
-{
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_SILITHUS);
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_GATES_OF_AQ);
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_TEMPLE_OF_AQ);
-    sOutdoorPvPMgr.AddZone(this, ZONE_ID_RUINS_OF_AQ);
-
-    return true;
-}
-
 // Send initial world states
 void OutdoorPvPSI::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
