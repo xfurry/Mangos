@@ -1062,10 +1062,6 @@
 				RelativePath="..\..\src\game\WorldStateMgr.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\game\ZoneScript.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Motion generators"
