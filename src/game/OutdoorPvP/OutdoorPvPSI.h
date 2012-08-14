@@ -45,18 +45,19 @@ enum
     QUEST_SCOURING_DESERT_HORDE         = 9422,
 
     // area triggers
-    AREATRIGGER_SILITHUS_ALLIANCE       = 4162,         // areatriggers ids
+    AREATRIGGER_SILITHUS_ALLIANCE       = 4162,
     AREATRIGGER_SILITHUS_HORDE          = 4168,
 
+    // misc
     FACTION_CENARION_CIRCLE             = 609,
     HONOR_REWARD_SILITHYST              = 19,
     REPUTATION_REWARD_SILITHYST         = 20,
     MAX_SILITHYST                       = 200,
 
     // world states
-    WORLD_STATE_SI_GATHERED_A           = 2313,         // world state ids
+    WORLD_STATE_SI_GATHERED_A           = 2313,
     WORLD_STATE_SI_GATHERED_H           = 2314,
-    WORLD_STATE_SI_SILITHYST_MAX        = 2317,
+    WORLD_STATE_SI_SILITHYST_MAX        = 2317
 };
 
 struct SilithusSpawnLocation

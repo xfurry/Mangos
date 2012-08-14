@@ -26,19 +26,19 @@
 #include "../Player.h"
 
 OutdoorPvPZM::OutdoorPvPZM() : OutdoorPvP(),
-    m_graveyardWorldState(WORLD_STATE_GRAVEYARD_NEUTRAL),
-    m_scoutWorldStateAlliance(WORLD_STATE_ALLIANCE_FLAG_NOT_READY),
-    m_scoutWorldStateHorde(WORLD_STATE_HORDE_FLAG_NOT_READY),
+    m_graveyardWorldState(WORLD_STATE_ZM_GRAVEYARD_NEUTRAL),
+    m_scoutWorldStateAlliance(WORLD_STATE_ZM_FLAG_NOT_READY_ALLIANCE),
+    m_scoutWorldStateHorde(WORLD_STATE_ZM_FLAG_NOT_READY_HORDE),
 
     m_graveyardOwner(TEAM_NONE),
     m_towersAlliance(0),
     m_towersHorde(0)
 {
     // init world states
-    m_towerWorldState[0] = WORLD_STATE_TOWER_EAST_NEUTRAL;
-    m_towerWorldState[1] = WORLD_STATE_TOWER_WEST_NEUTRAL;
-    m_towerMapState[0] = WORLD_STATE_BEACON_EAST_NEUTRAL;
-    m_towerMapState[1] = WORLD_STATE_BEACON_WEST_NEUTRAL;
+    m_towerWorldState[0] = WORLD_STATE_ZM_BEACON_EAST_UI_NEUTRAL;
+    m_towerWorldState[1] = WORLD_STATE_ZM_BEACON_WEST_UI_NEUTRAL;
+    m_towerMapState[0] = WORLD_STATE_ZM_BEACON_EAST_NEUTRAL;
+    m_towerMapState[1] = WORLD_STATE_ZM_BEACON_WEST_NEUTRAL;
 
     for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
         m_towerOwner[i] = TEAM_NONE;
@@ -249,7 +249,7 @@ void OutdoorPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team team)
             scout->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
         SendUpdateWorldState(m_scoutWorldStateAlliance, WORLD_STATE_REMOVE);
-        m_scoutWorldStateAlliance = WORLD_STATE_ALLIANCE_FLAG_READY;
+        m_scoutWorldStateAlliance = WORLD_STATE_ZM_FLAG_READY_ALLIANCE;
         SendUpdateWorldState(m_scoutWorldStateAlliance, WORLD_STATE_ADD);
 
         sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_BOTH_BEACONS_A);
@@ -261,7 +261,7 @@ void OutdoorPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team team)
             scout->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
         SendUpdateWorldState(m_scoutWorldStateHorde, WORLD_STATE_REMOVE);
-        m_scoutWorldStateHorde = WORLD_STATE_HORDE_FLAG_READY;
+        m_scoutWorldStateHorde = WORLD_STATE_ZM_FLAG_READY_HORDE;
         SendUpdateWorldState(m_scoutWorldStateHorde, WORLD_STATE_ADD);
 
         sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_BOTH_BEACONS_H);
@@ -280,7 +280,7 @@ void OutdoorPvPZM::ResetScouts(const WorldObject* objRef, Team team, bool includ
         if (includeWorldStates)
         {
             SendUpdateWorldState(m_scoutWorldStateAlliance, WORLD_STATE_REMOVE);
-            m_scoutWorldStateAlliance = WORLD_STATE_ALLIANCE_FLAG_NOT_READY;
+            m_scoutWorldStateAlliance = WORLD_STATE_ZM_FLAG_NOT_READY_ALLIANCE;
             SendUpdateWorldState(m_scoutWorldStateAlliance, WORLD_STATE_ADD);
         }
     }
@@ -293,7 +293,7 @@ void OutdoorPvPZM::ResetScouts(const WorldObject* objRef, Team team, bool includ
         if (includeWorldStates)
         {
             SendUpdateWorldState(m_scoutWorldStateHorde, WORLD_STATE_REMOVE);
-            m_scoutWorldStateHorde = WORLD_STATE_HORDE_FLAG_NOT_READY;
+            m_scoutWorldStateHorde = WORLD_STATE_ZM_FLAG_NOT_READY_HORDE;
             SendUpdateWorldState(m_scoutWorldStateHorde, WORLD_STATE_ADD);
         }
     }
@@ -326,7 +326,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
             sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner);
 
             SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_REMOVE);
-            m_graveyardWorldState = WORLD_STATE_GRAVEYARD_HORDE;
+            m_graveyardWorldState = WORLD_STATE_ZM_GRAVEYARD_HORDE;
             SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_ADD);
 
             // reset scout and remove player aura
@@ -356,7 +356,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
             sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner);
 
             SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_REMOVE);
-            m_graveyardWorldState = WORLD_STATE_GRAVEYARD_ALLIANCE;
+            m_graveyardWorldState = WORLD_STATE_ZM_GRAVEYARD_ALLIANCE;
             SendUpdateWorldState(m_graveyardWorldState, WORLD_STATE_ADD);
 
             // reset scout and remove player aura
@@ -381,7 +381,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
                 SetGraveyardArtKit(go, m_graveyardBannerAlliance, true);
 
                 // add the buff and change the graveyard link
-                m_graveyardWorldState = WORLD_STATE_GRAVEYARD_ALLIANCE;
+                m_graveyardWorldState = WORLD_STATE_ZM_GRAVEYARD_ALLIANCE;
                 BuffTeam(m_graveyardOwner, SPELL_TWIN_SPIRE_BLESSING);
                 sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner);
 
@@ -401,7 +401,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
                 SetGraveyardArtKit(go, m_graveyardBannerHorde, true);
 
                 // add the buff and change the graveyard link
-                m_graveyardWorldState = WORLD_STATE_GRAVEYARD_HORDE;
+                m_graveyardWorldState = WORLD_STATE_ZM_GRAVEYARD_HORDE;
                 BuffTeam(HORDE, SPELL_TWIN_SPIRE_BLESSING);
                 sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, m_graveyardOwner);
 

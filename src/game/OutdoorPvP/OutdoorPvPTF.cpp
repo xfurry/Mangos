@@ -33,11 +33,11 @@ OutdoorPvPTF::OutdoorPvPTF() : OutdoorPvP(),
     m_towersAlliance(0),
     m_towersHorde(0)
 {
-    m_towerWorldState[0] = WORLD_STATE_TOWER_1_NEUTRAL;
-    m_towerWorldState[1] = WORLD_STATE_TOWER_2_NEUTRAL;
-    m_towerWorldState[2] = WORLD_STATE_TOWER_3_NEUTRAL;
-    m_towerWorldState[3] = WORLD_STATE_TOWER_4_NEUTRAL;
-    m_towerWorldState[4] = WORLD_STATE_TOWER_5_NEUTRAL;
+    m_towerWorldState[0] = WORLD_STATE_TF_WEST_TOWER_NEUTRAL;
+    m_towerWorldState[1] = WORLD_STATE_TF_NORTH_TOWER_NEUTRAL;
+    m_towerWorldState[2] = WORLD_STATE_TF_EAST_TOWER_NEUTRAL;
+    m_towerWorldState[3] = WORLD_STATE_TF_SOUTH_EAST_TOWER_NEUTRAL;
+    m_towerWorldState[4] = WORLD_STATE_TF_SOUTH_TOWER_NEUTRAL;
 
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
         m_towerOwner[i] = TEAM_NONE;
@@ -98,23 +98,23 @@ void OutdoorPvPTF::OnGameObjectCreate(GameObject* go)
 {
     switch (go->GetEntry())
     {
-        case GO_TEROKKAR_BANNER_1:
+        case GO_TOWER_BANNER_WEST:
             m_towerBanners[0] = go->GetObjectGuid();
             go->SetGoArtKit(GetBannerArtKit(m_towerOwner[0], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
-        case GO_TEROKKAR_BANNER_2:
+        case GO_TOWER_BANNER_NORTH:
             m_towerBanners[1] = go->GetObjectGuid();
             go->SetGoArtKit(GetBannerArtKit(m_towerOwner[1], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
-        case GO_TEROKKAR_BANNER_3:
+        case GO_TOWER_BANNER_EAST:
             m_towerBanners[2] = go->GetObjectGuid();
             go->SetGoArtKit(GetBannerArtKit(m_towerOwner[2], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
-        case GO_TEROKKAR_BANNER_4:
+        case GO_TOWER_BANNER_SOUTH_EAST:
             m_towerBanners[3] = go->GetObjectGuid();
             go->SetGoArtKit(GetBannerArtKit(m_towerOwner[3], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
-        case GO_TEROKKAR_BANNER_5:
+        case GO_TOWER_BANNER_SOUTH:
             m_towerBanners[4] = go->GetObjectGuid();
             go->SetGoArtKit(GetBannerArtKit(m_towerOwner[4], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
             break;
@@ -238,11 +238,11 @@ void OutdoorPvPTF::Update(uint32 diff)
             m_zoneWorldState = WORLD_STATE_TF_TOWERS_CONTROLLED;
             m_towersAlliance = 0;
             m_towersHorde = 0;
-            m_towerWorldState[0] = WORLD_STATE_TOWER_1_NEUTRAL;
-            m_towerWorldState[1] = WORLD_STATE_TOWER_2_NEUTRAL;
-            m_towerWorldState[2] = WORLD_STATE_TOWER_3_NEUTRAL;
-            m_towerWorldState[3] = WORLD_STATE_TOWER_4_NEUTRAL;
-            m_towerWorldState[4] = WORLD_STATE_TOWER_5_NEUTRAL;
+            m_towerWorldState[0] = WORLD_STATE_TF_WEST_TOWER_NEUTRAL;
+            m_towerWorldState[1] = WORLD_STATE_TF_NORTH_TOWER_NEUTRAL;
+            m_towerWorldState[2] = WORLD_STATE_TF_EAST_TOWER_NEUTRAL;
+            m_towerWorldState[3] = WORLD_STATE_TF_SOUTH_EAST_TOWER_NEUTRAL;
+            m_towerWorldState[4] = WORLD_STATE_TF_SOUTH_TOWER_NEUTRAL;
             UpdateWorldState(WORLD_STATE_ADD);
 
             // update tower count

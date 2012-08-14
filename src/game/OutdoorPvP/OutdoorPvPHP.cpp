@@ -28,9 +28,9 @@ OutdoorPvPHP::OutdoorPvPHP() : OutdoorPvP(),
     m_towersAlliance(0),
     m_towersHorde(0)
 {
-    m_towerWorldState[0] = WORLD_STATE_OVERLOOK_NEUTRAL;
-    m_towerWorldState[1] = WORLD_STATE_STADIUM_NEUTRAL;
-    m_towerWorldState[2] = WORLD_STATE_BROKEN_HILL_NEUTRAL;
+    m_towerWorldState[0] = WORLD_STATE_HP_OVERLOOK_NEUTRAL;
+    m_towerWorldState[1] = WORLD_STATE_HP_STADIUM_NEUTRAL;
+    m_towerWorldState[2] = WORLD_STATE_HP_BROKEN_HILL_NEUTRAL;
 
     for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
         m_towerOwner[i] = TEAM_NONE;
@@ -38,10 +38,10 @@ OutdoorPvPHP::OutdoorPvPHP() : OutdoorPvP(),
 
 void OutdoorPvPHP::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
-    FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_HP_ALLIANCE, m_towersAlliance);
-    FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_HP_HORDE, m_towersHorde);
-    FillInitialWorldState(data, count, WORLD_STATE_TOWER_DISPLAY_HP_A, WORLD_STATE_ADD);
-    FillInitialWorldState(data, count, WORLD_STATE_TOWER_DISPLAY_HP_H, WORLD_STATE_ADD);
+    FillInitialWorldState(data, count, WORLD_STATE_HP_TOWER_COUNT_ALLIANCE, m_towersAlliance);
+    FillInitialWorldState(data, count, WORLD_STATE_HP_TOWER_COUNT_HORDE, m_towersHorde);
+    FillInitialWorldState(data, count, WORLD_STATE_HP_TOWER_DISPLAY_A, WORLD_STATE_ADD);
+    FillInitialWorldState(data, count, WORLD_STATE_HP_TOWER_DISPLAY_H, WORLD_STATE_ADD);
 
     for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
         FillInitialWorldState(data, count, m_towerWorldState[i], WORLD_STATE_ADD);
@@ -49,8 +49,8 @@ void OutdoorPvPHP::FillInitialWorldStates(WorldPacket& data, uint32& count)
 
 void OutdoorPvPHP::SendRemoveWorldStates(Player* player)
 {
-    player->SendUpdateWorldState(WORLD_STATE_TOWER_DISPLAY_HP_A, WORLD_STATE_REMOVE);
-    player->SendUpdateWorldState(WORLD_STATE_TOWER_DISPLAY_HP_H, WORLD_STATE_REMOVE);
+    player->SendUpdateWorldState(WORLD_STATE_HP_TOWER_DISPLAY_A, WORLD_STATE_REMOVE);
+    player->SendUpdateWorldState(WORLD_STATE_HP_TOWER_DISPLAY_H, WORLD_STATE_REMOVE);
 
     for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
         player->SendUpdateWorldState(m_towerWorldState[i], WORLD_STATE_REMOVE);
@@ -59,8 +59,8 @@ void OutdoorPvPHP::SendRemoveWorldStates(Player* player)
 void OutdoorPvPHP::UpdateWorldState()
 {
     // update only tower count; tower states are sent in the process event
-    SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HP_ALLIANCE, m_towersAlliance);
-    SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HP_HORDE, m_towersHorde);
+    SendUpdateWorldState(WORLD_STATE_HP_TOWER_COUNT_ALLIANCE, m_towersAlliance);
+    SendUpdateWorldState(WORLD_STATE_HP_TOWER_COUNT_HORDE, m_towersHorde);
 }
 
 void OutdoorPvPHP::HandlePlayerEnterZone(Player* player, bool isMainZone)

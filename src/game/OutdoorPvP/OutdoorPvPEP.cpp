@@ -29,10 +29,10 @@ OutdoorPvPEP::OutdoorPvPEP() : OutdoorPvP(),
     m_towersAlliance(0),
     m_towersHorde(0)
 {
-    m_towerWorldState[0] = WORLD_STATE_NORTHPASS_NEUTRAL;
-    m_towerWorldState[1] = WORLD_STATE_CROWNGUARD_NEUTRAL;
-    m_towerWorldState[2] = WORLD_STATE_EASTWALL_NEUTRAL;
-    m_towerWorldState[3] = WORLD_STATE_PLAGUEWOOD_NEUTRAL;
+    m_towerWorldState[0] = WORLD_STATE_EP_NORTHPASS_NEUTRAL;
+    m_towerWorldState[1] = WORLD_STATE_EP_CROWNGUARD_NEUTRAL;
+    m_towerWorldState[2] = WORLD_STATE_EP_EASTWALL_NEUTRAL;
+    m_towerWorldState[3] = WORLD_STATE_EP_PLAGUEWOOD_NEUTRAL;
 
     for (uint8 i = 0; i < TOWER_COUNT; ++i)
         m_towerOwner[i] = TEAM_NONE;
@@ -40,8 +40,8 @@ OutdoorPvPEP::OutdoorPvPEP() : OutdoorPvP(),
 
 void OutdoorPvPEP::FillInitialWorldStates(WorldPacket& data, uint32& count)
 {
-    FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_ALLIANCE, m_towersAlliance);
-    FillInitialWorldState(data, count, WORLD_STATE_TOWER_COUNT_HORDE, m_towersHorde);
+    FillInitialWorldState(data, count, WORLD_STATE_EP_TOWER_COUNT_ALLIANCE, m_towersAlliance);
+    FillInitialWorldState(data, count, WORLD_STATE_EP_TOWER_COUNT_HORDE, m_towersHorde);
 
     for (uint8 i = 0; i < TOWER_COUNT; ++i)
         FillInitialWorldState(data, count, m_towerWorldState[i], WORLD_STATE_ADD);
@@ -49,8 +49,8 @@ void OutdoorPvPEP::FillInitialWorldStates(WorldPacket& data, uint32& count)
 
 void OutdoorPvPEP::SendRemoveWorldStates(Player* player)
 {
-    player->SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_ALLIANCE, WORLD_STATE_REMOVE);
-    player->SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HORDE, WORLD_STATE_REMOVE);
+    player->SendUpdateWorldState(WORLD_STATE_EP_TOWER_COUNT_ALLIANCE, WORLD_STATE_REMOVE);
+    player->SendUpdateWorldState(WORLD_STATE_EP_TOWER_COUNT_HORDE, WORLD_STATE_REMOVE);
 
     for (uint8 i = 0; i < TOWER_COUNT; ++i)
         player->SendUpdateWorldState(m_towerWorldState[i], WORLD_STATE_REMOVE);
@@ -59,8 +59,8 @@ void OutdoorPvPEP::SendRemoveWorldStates(Player* player)
 void OutdoorPvPEP::UpdateWorldState()
 {
     // update only tower count; tower states are sent in the process event
-    SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_ALLIANCE, m_towersAlliance);
-    SendUpdateWorldState(WORLD_STATE_TOWER_COUNT_HORDE, m_towersHorde);
+    SendUpdateWorldState(WORLD_STATE_EP_TOWER_COUNT_ALLIANCE, m_towersAlliance);
+    SendUpdateWorldState(WORLD_STATE_EP_TOWER_COUNT_HORDE, m_towersHorde);
 }
 
 void OutdoorPvPEP::HandlePlayerEnterZone(Player* player, bool isMainZone)

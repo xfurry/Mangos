@@ -130,14 +130,14 @@ void OutdoorPvPMgr::HandlePlayerEnterZone(Player* player, uint32 zoneId)
 }
 
 /**
-   Function that handles the players which leaves a specific zone
+   Function that handles the player who leaves a specific zone
 
    @param   player to be handled in the event
    @param   zone id used for the current outdoor pvp script
  */
 void OutdoorPvPMgr::HandlePlayerLeaveZone(Player* player, uint32 zoneId)
 {
-    // teleport: remove once in removefromworld, once in updatezone
+    // teleport: called once from Player::CleanupsBeforeDelete, once from Player::UpdateZone
     if (OutdoorPvP* script = GetScript(zoneId))
         script->HandlePlayerLeaveZone(player, true);
     else if (OutdoorPvP* script = GetScriptOfAffectedZone(zoneId))
