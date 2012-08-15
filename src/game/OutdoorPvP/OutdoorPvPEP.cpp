@@ -170,6 +170,7 @@ void OutdoorPvPEP::HandleEvent(uint32 eventId, GameObject* go)
             {
                 if (plaguelandsTowerEvents[i][j].eventEntry == eventId)
                 {
+                    // prevent processing if the owner did not change (happens if progress event is called after contest event)
                     if (plaguelandsTowerEvents[i][j].team != m_towerOwner[i])
                     {
                         if (plaguelandsTowerEvents[i][j].defenseMessage)
@@ -189,43 +190,62 @@ void OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 {
     if (team == ALLIANCE)
     {
+        // update banner
         for (GuidList::iterator itr = m_towerBanners[towerId].begin(); itr != m_towerBanners[towerId].end(); ++itr)
             SetBannerVisual(go, (*itr), CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
 
+        // update counter
         ++m_towersAlliance;
+        SendUpdateWorldState(WORLD_STATE_EP_TOWER_COUNT_ALLIANCE, m_towersAlliance);
+
+        // buff players
         BuffTeam(ALLIANCE, plaguelandsTowerBuffs[m_towersAlliance - 1].spellIdAlliance);
     }
     else if (team == HORDE)
     {
+        // update banner
         for (GuidList::iterator itr = m_towerBanners[towerId].begin(); itr != m_towerBanners[towerId].end(); ++itr)
             SetBannerVisual(go, (*itr), CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
 
+        // update counter
         ++m_towersHorde;
+        SendUpdateWorldState(WORLD_STATE_EP_TOWER_COUNT_HORDE, m_towersHorde);
+
+        // buff players
         BuffTeam(HORDE, plaguelandsTowerBuffs[m_towersHorde - 1].spellIdHorde);
     }
     else
     {
+        // update banner
         for (GuidList::iterator itr = m_towerBanners[towerId].begin(); itr != m_towerBanners[towerId].end(); ++itr)
             SetBannerVisual(go, (*itr), CAPTURE_ARTKIT_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
 
         if (m_towerOwner[towerId] == ALLIANCE)
         {
-            if (--m_towersAlliance == 0)
+            // update counter
+            --m_towersAlliance;
+            SendUpdateWorldState(WORLD_STATE_EP_TOWER_COUNT_ALLIANCE, m_towersAlliance);
+
+            if (m_towersAlliance == 0)
                 BuffTeam(ALLIANCE, plaguelandsTowerBuffs[0].spellIdAlliance, true);
         }
         else
         {
-            if (--m_towersHorde == 0)
+            // update counter
+            --m_towersHorde;
+            SendUpdateWorldState(WORLD_STATE_EP_TOWER_COUNT_HORDE, m_towersHorde);
+
+            if (m_towersHorde == 0)
                 BuffTeam(HORDE, plaguelandsTowerBuffs[0].spellIdHorde, true);
         }
     }
 
-    // handle rewards of each tower
     if (team != TEAM_NONE)
     {
         // update capture point owner
         m_towerOwner[towerId] = team;
 
+        // apply rewards of changed tower
         switch (towerId)
         {
             case TOWER_ID_NORTHPASS:
@@ -245,6 +265,7 @@ void OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
     }
     else
     {
+        // remove rewards of changed tower
         switch (towerId)
         {
             case TOWER_ID_NORTHPASS:
@@ -269,10 +290,6 @@ void OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
     SendUpdateWorldState(m_towerWorldState[towerId], WORLD_STATE_REMOVE);
     m_towerWorldState[towerId] = newWorldState;
     SendUpdateWorldState(m_towerWorldState[towerId], WORLD_STATE_ADD);
-
-    // update counter state
-    SendUpdateWorldState(WORLD_STATE_EP_TOWER_COUNT_ALLIANCE, m_towersAlliance);
-    SendUpdateWorldState(WORLD_STATE_EP_TOWER_COUNT_HORDE, m_towersHorde);
 }
 
 void OutdoorPvPEP::InitBanner(GameObject* go, uint32 towerId)

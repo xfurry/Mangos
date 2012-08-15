@@ -177,6 +177,9 @@ class OutdoorPvPTF : public OutdoorPvP
         // process capture events
         void ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState);
 
+        void LockZone(GameObject* go, uint32 towerId, Team team, uint32 newWorldState);
+        void UnlockZone();
+
         void LockTowers(const WorldObject* objRef);
         void ResetTowers(const WorldObject* objRef);
 

@@ -173,6 +173,7 @@ void OutdoorPvPZM::HandleEvent(uint32 eventId, GameObject* go)
             {
                 if (zangarmarshTowerEvents[i][j].eventEntry == eventId)
                 {
+                    // prevent processing if the owner did not change (happens if progress event is called after contest event)
                     if (zangarmarshTowerEvents[i][j].team != m_towerOwner[i])
                     {
                         if (zangarmarshTowerEvents[i][j].defenseMessage)

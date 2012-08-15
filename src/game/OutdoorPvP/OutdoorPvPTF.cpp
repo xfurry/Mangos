@@ -143,6 +143,7 @@ void OutdoorPvPTF::HandleEvent(uint32 eventId, GameObject* go)
             {
                 if (terokkarTowerEvents[i][j].eventEntry == eventId)
                 {
+                    // prevent processing if the owner did not change (happens if progress event is called after contest event)
                     if (terokkarTowerEvents[i][j].team != m_towerOwner[i])
                     {
                         sWorld.SendDefenseMessage(ZONE_ID_TEROKKAR_FOREST, terokkarTowerEvents[i][j].defenseMessage);
@@ -159,71 +160,132 @@ void OutdoorPvPTF::HandleEvent(uint32 eventId, GameObject* go)
 
 void OutdoorPvPTF::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState)
 {
-    if (team != TEAM_NONE)
+    if (team == ALLIANCE)
     {
-        if (team == ALLIANCE)
-        {
-            SetBannerVisual(go, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
-            ++m_towersAlliance;
-        }
-        else
-        {
-            SetBannerVisual(go, CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
-            ++m_towersHorde;
-        }
+        // update banner
+        SetBannerVisual(go, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
+
+        // update tower count
+        ++m_towersAlliance;
 
         // if all towers are captured then process event
-        if (m_towersAlliance == MAX_TF_TOWERS || m_towersHorde == MAX_TF_TOWERS)
+        if (m_towersAlliance == MAX_TF_TOWERS)
         {
-            SendUpdateWorldState(m_zoneWorldState, WORLD_STATE_REMOVE);
-            m_zoneWorldState = team == ALLIANCE ? WORLD_STATE_TF_LOCKED_ALLIANCE : WORLD_STATE_TF_LOCKED_HORDE;
-            SendUpdateWorldState(m_zoneWorldState, WORLD_STATE_ADD);
-
-            m_zoneLockTimer = TIMER_TF_LOCK_TIME;
-            UpdateTimerWorldState();
-
-            m_zoneOwner = team;
-            BuffTeam(team, SPELL_AUCHINDOUN_BLESSING);
-
-            // lock the towers
-            LockTowers(go);
-
-            sWorld.SendDefenseMessage(ZONE_ID_TEROKKAR_FOREST, team == ALLIANCE ? LANG_OPVP_TF_CAPTURE_ALL_TOWERS_A : LANG_OPVP_TF_CAPTURE_ALL_TOWERS_H);
+            LockZone(go, towerId, team, newWorldState);
+            return;
         }
+
+        // update tower count world state
+        SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_A, m_towersAlliance);
+    }
+    else if (team == HORDE)
+    {
+        // update banner
+        SetBannerVisual(go, CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
+
+        // update tower count
+        ++m_towersHorde;
+
+        // if all towers are captured then process event
+        if (m_towersHorde == MAX_TF_TOWERS)
+        {
+            LockZone(go, towerId, team, newWorldState);
+            return;
+        }
+
+        // update tower count world state
+        SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_H, m_towersHorde);
     }
     else
     {
+        // update banner
         SetBannerVisual(go, CAPTURE_ARTKIT_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
 
+        // update tower count
         if (m_towerOwner[towerId] == ALLIANCE)
+        {
             --m_towersAlliance;
+            SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_A, m_towersAlliance);
+        }
         else
+        {
             --m_towersHorde;
+            SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_H, m_towersHorde);
+        }
     }
 
-    if (m_zoneOwner != TEAM_NONE)
-    {
-        // remove tower states when zone has been captured and locked
-        for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
-            SendUpdateWorldState(m_towerWorldState[i], WORLD_STATE_REMOVE);
-
-        m_towerWorldState[towerId] = newWorldState;
-    }
-    else
-    {
-        // update tower state
-        SendUpdateWorldState(m_towerWorldState[towerId], WORLD_STATE_REMOVE);
-        m_towerWorldState[towerId] = newWorldState;
-        SendUpdateWorldState(m_towerWorldState[towerId], WORLD_STATE_ADD);
-    }
-
-    // update tower count
-    SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_A, m_towersAlliance);
-    SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_H, m_towersHorde);
+    // update tower state
+    SendUpdateWorldState(m_towerWorldState[towerId], WORLD_STATE_REMOVE);
+    m_towerWorldState[towerId] = newWorldState;
+    SendUpdateWorldState(m_towerWorldState[towerId], WORLD_STATE_ADD);
 
     // update capture point owner
     m_towerOwner[towerId] = team;
+}
 
+void OutdoorPvPTF::LockZone(GameObject* go, uint32 towerId, Team team, uint32 newWorldState)
+{
+    SendUpdateWorldState(m_zoneWorldState, WORLD_STATE_REMOVE);
+    m_zoneWorldState = team == ALLIANCE ? WORLD_STATE_TF_LOCKED_ALLIANCE : WORLD_STATE_TF_LOCKED_HORDE;
+    SendUpdateWorldState(m_zoneWorldState, WORLD_STATE_ADD);
+
+    m_zoneLockTimer = TIMER_TF_LOCK_TIME;
+    UpdateTimerWorldState();
+
+    m_zoneOwner = team;
+    BuffTeam(team, SPELL_AUCHINDOUN_BLESSING);
+
+    // lock the towers
+    LockTowers(go);
+
+    sWorld.SendDefenseMessage(ZONE_ID_TEROKKAR_FOREST, team == ALLIANCE ? LANG_OPVP_TF_CAPTURE_ALL_TOWERS_A : LANG_OPVP_TF_CAPTURE_ALL_TOWERS_H);
+
+    // remove tower states when zone has been captured and locked
+    for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
+        SendUpdateWorldState(m_towerWorldState[i], WORLD_STATE_REMOVE);
+
+    m_towerWorldState[towerId] = newWorldState;
+}
+
+void OutdoorPvPTF::UnlockZone()
+{
+    // remove buffs
+    BuffTeam(m_zoneOwner, SPELL_AUCHINDOUN_BLESSING, true);
+
+    m_zoneOwner = TEAM_NONE;
+
+    // reset world states and towers
+    SendUpdateWorldState(m_zoneWorldState, WORLD_STATE_REMOVE);
+    m_zoneWorldState = WORLD_STATE_TF_TOWERS_CONTROLLED;
+    SendUpdateWorldState(m_zoneWorldState, WORLD_STATE_ADD);
+
+    // reset tower states
+    m_towerWorldState[0] = WORLD_STATE_TF_WEST_TOWER_NEUTRAL;
+    m_towerWorldState[1] = WORLD_STATE_TF_NORTH_TOWER_NEUTRAL;
+    m_towerWorldState[2] = WORLD_STATE_TF_EAST_TOWER_NEUTRAL;
+    m_towerWorldState[3] = WORLD_STATE_TF_SOUTH_EAST_TOWER_NEUTRAL;
+    m_towerWorldState[4] = WORLD_STATE_TF_SOUTH_TOWER_NEUTRAL;
+    for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
+        SendUpdateWorldState(m_towerWorldState[i], WORLD_STATE_ADD);
+
+    // update tower count
+    m_towersAlliance = 0;
+    m_towersHorde = 0;
+    SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_A, m_towersAlliance);
+    SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_H, m_towersHorde);
+
+    for (GuidZoneMap::iterator itr = m_zonePlayers.begin(); itr != m_zonePlayers.end(); ++itr)
+    {
+        // Find player who is in main zone (Terokkar Forest) to get correct map reference
+        if (!itr->second)
+            continue;
+
+        if (Player* player = sObjectMgr.GetPlayer(itr->first))
+        {
+            ResetTowers(player);
+            break;
+        }
+    }
 }
 
 void OutdoorPvPTF::Update(uint32 diff)
@@ -232,53 +294,22 @@ void OutdoorPvPTF::Update(uint32 diff)
     {
         if (m_zoneLockTimer < diff)
         {
-            // remove buffs
-            BuffTeam(m_zoneOwner, SPELL_AUCHINDOUN_BLESSING, true);
-
-            // reset world states and towers
-            SendUpdateWorldState(m_zoneWorldState, WORLD_STATE_REMOVE);
-            m_zoneOwner = TEAM_NONE;
-            m_zoneWorldState = WORLD_STATE_TF_TOWERS_CONTROLLED;
-            m_towersAlliance = 0;
-            m_towersHorde = 0;
-            m_towerWorldState[0] = WORLD_STATE_TF_WEST_TOWER_NEUTRAL;
-            m_towerWorldState[1] = WORLD_STATE_TF_NORTH_TOWER_NEUTRAL;
-            m_towerWorldState[2] = WORLD_STATE_TF_EAST_TOWER_NEUTRAL;
-            m_towerWorldState[3] = WORLD_STATE_TF_SOUTH_EAST_TOWER_NEUTRAL;
-            m_towerWorldState[4] = WORLD_STATE_TF_SOUTH_TOWER_NEUTRAL;
-            SendUpdateWorldState(m_zoneWorldState, WORLD_STATE_ADD);
-            for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
-                SendUpdateWorldState(m_towerWorldState[i], WORLD_STATE_ADD);
-
-            // update tower count
-            SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_A, m_towersAlliance);
-            SendUpdateWorldState(WORLD_STATE_TF_TOWER_COUNT_H, m_towersHorde);
-
-            for (GuidZoneMap::iterator itr = m_zonePlayers.begin(); itr != m_zonePlayers.end(); ++itr)
-            {
-                // Find player who is in main zone (Terokkar Forest) to get correct map reference
-                if (!itr->second)
-                    continue;
-
-                if (Player* player = sObjectMgr.GetPlayer(itr->first))
-                {
-                    ResetTowers(player);
-                    break;
-                }
-            }
-
+            UnlockZone();
             m_zoneLockTimer = 0;
         }
         else
         {
-            //if (m_zoneUpdateTimer < diff)
-            //{
+            // update timer - if OutdoorPvPMgr update timer interval needs to be lowered replace this line with the outcommented ones below
+            UpdateTimerWorldState();
+
+            /*if (m_zoneUpdateTimer < diff)
+            {
                 // update timer
                 UpdateTimerWorldState();
-                //m_zoneUpdateTimer = TIMER_TF_UPDATE_TIME;
-            //}
-            //else
-                //m_zoneUpdateTimer -= diff;
+                m_zoneUpdateTimer = TIMER_TF_UPDATE_TIME;
+            }
+            else
+                m_zoneUpdateTimer -= diff;*/
 
             m_zoneLockTimer -= diff;
         }

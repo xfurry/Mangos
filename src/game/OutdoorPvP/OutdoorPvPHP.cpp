@@ -173,6 +173,7 @@ void OutdoorPvPHP::HandleEvent(uint32 eventId, GameObject* go)
             {
                 if (hellfireTowerEvents[i][j].eventEntry == eventId)
                 {
+                    // prevent processing if the owner did not change (happens if progress event is called after contest event)
                     if (hellfireTowerEvents[i][j].team != m_towerOwner[i])
                     {
                         if (hellfireTowerEvents[i][j].defenseMessage)
@@ -194,7 +195,10 @@ void OutdoorPvPHP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
     if (team == ALLIANCE)
     {
         SetBannerVisual(go, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
+
+        // update counter state
         ++m_towersAlliance;
+        SendUpdateWorldState(WORLD_STATE_HP_TOWER_COUNT_ALLIANCE, m_towersAlliance);
 
         if (m_towersAlliance == MAX_HP_TOWERS)
             BuffTeam(ALLIANCE, SPELL_HELLFIRE_SUPERIORITY_ALLIANCE);
@@ -202,7 +206,10 @@ void OutdoorPvPHP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
     else if (team == HORDE)
     {
         SetBannerVisual(go, CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
+
+        // update counter
         ++m_towersHorde;
+        SendUpdateWorldState(WORLD_STATE_HP_TOWER_COUNT_HORDE, m_towersAlliance);
 
         if (m_towersHorde == MAX_HP_TOWERS)
             BuffTeam(HORDE, SPELL_HELLFIRE_SUPERIORITY_HORDE);
@@ -216,14 +223,18 @@ void OutdoorPvPHP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
             if (m_towersAlliance == MAX_HP_TOWERS)
                 BuffTeam(ALLIANCE, SPELL_HELLFIRE_SUPERIORITY_ALLIANCE, true);
 
+            // update counter
             --m_towersAlliance;
+            SendUpdateWorldState(WORLD_STATE_HP_TOWER_COUNT_ALLIANCE, m_towersAlliance);
         }
         else
         {
             if (m_towersHorde == MAX_HP_TOWERS)
                 BuffTeam(HORDE, SPELL_HELLFIRE_SUPERIORITY_HORDE, true);
 
+            // update counter
             --m_towersHorde;
+            SendUpdateWorldState(WORLD_STATE_HP_TOWER_COUNT_HORDE, m_towersAlliance);
         }
     }
 
@@ -233,10 +244,6 @@ void OutdoorPvPHP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
     SendUpdateWorldState(m_towerWorldState[towerId], WORLD_STATE_REMOVE);
     m_towerWorldState[towerId] = newWorldState;
     SendUpdateWorldState(m_towerWorldState[towerId], WORLD_STATE_ADD);
-
-    // update counter state
-    SendUpdateWorldState(WORLD_STATE_HP_TOWER_COUNT_ALLIANCE, m_towersAlliance);
-    SendUpdateWorldState(WORLD_STATE_HP_TOWER_COUNT_HORDE, m_towersHorde);
 
     // update capture point owner
     m_towerOwner[towerId] = team;
