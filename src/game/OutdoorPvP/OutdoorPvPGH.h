@@ -24,6 +24,8 @@
 
 enum
 {
+    AREA_ID_VENTURE_BAY                     = 4242,
+
     // npcs
     // alliance
     NPC_WESTFALL_BRIGADE_DEFENDER           = 27758,

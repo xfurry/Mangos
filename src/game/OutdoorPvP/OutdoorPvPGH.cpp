@@ -37,13 +37,15 @@ void OutdoorPvPGH::HandleCreatureCreate(Creature* creature)
             if (m_zoneOwner == ALLIANCE)
                 return;
             break;
+        case NPC_HORSE:
+            // check the area id because the horses can be found in other areas too
+            if (creature->GetAreaId() != AREA_ID_VENTURE_BAY)
+                return;
+            // fall through
         case NPC_BLACKSMITH_JASON_RIGGINS:
         case NPC_STABLE_MASTER_TIM:
         case NPC_VENDOR_ADAMS:
-        case NPC_HORSE:
-            // check the zone id because the horses can be found in other areas too
-            if (creature->GetZoneId() == ZONE_ID_GRIZZLY_HILLS)
-                m_allianceVendors.push_back(creature->GetObjectGuid());
+            m_allianceVendors.push_back(creature->GetObjectGuid());
             if (m_zoneOwner == ALLIANCE)
                 return;
             break;
@@ -56,10 +58,8 @@ void OutdoorPvPGH::HandleCreatureCreate(Creature* creature)
         case NPC_BLACKSMITH_KOLOTH:
         case NPC_STABLE_MASTER_KOR:
         case NPC_VENDOR_PURKOM:
-        case NPC_RIDING_WOLF:
-            // check the zone id because the wolfs can be found in other areas too
-            if (creature->GetZoneId() == ZONE_ID_GRIZZLY_HILLS)
-                m_hordeVendors.push_back(creature->GetObjectGuid());
+        case NPC_RIDING_WOLF: // no need to check for area id because the wolfs are within grizzly hills only in venture bay
+            m_hordeVendors.push_back(creature->GetObjectGuid());
             if (m_zoneOwner == HORDE)
                 return;
             break;
