@@ -8,6 +8,15 @@ UPDATE gameobject SET animprogress = 255, spawntimesecs = 0 WHERE id IN (181899,
 -- Remove graveyard links - they are set in script
 DELETE FROM game_graveyard_zone WHERE id IN (969, 927, 993);
 
+
+-- Silithus fixes
+/* ################################# */
+-- Not sure if this is actually correct
+delete from spell_script_target where entry=29534;
+insert into spell_script_target values
+(29534,0,181597);
+/* ################################# */
+
 -- Venture bay fixes
 /* ################################# */
 -- creatures for world pvp - use guid from 300xxx
