@@ -163,7 +163,7 @@ void OutdoorPvPZM::HandlePlayerKillInsideArea(Player* player, Unit* victim)
 }
 
 // process the capture events
-void OutdoorPvPZM::HandleEvent(uint32 eventId, GameObject* go)
+bool OutdoorPvPZM::HandleEvent(uint32 eventId, GameObject* go)
 {
     for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
     {
@@ -181,12 +181,12 @@ void OutdoorPvPZM::HandleEvent(uint32 eventId, GameObject* go)
 
                         ProcessCaptureEvent(go, i, zangarmarshTowerEvents[i][j].team, zangarmarshTowerEvents[i][j].worldState, zangarmarshTowerEvents[i][j].mapState);
                     }
-                    return;
                 }
             }
-            return;
         }
     }
+
+    return true;
 }
 
 void OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 newMapState)

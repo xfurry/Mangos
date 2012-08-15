@@ -166,33 +166,14 @@ static const PlaguelandsTowerBuff plaguelandsTowerBuffs[MAX_EP_TOWERS] =
     {SPELL_ECHOES_OF_LORDAERON_ALLIANCE_4, SPELL_ECHOES_OF_LORDAERON_HORDE_4}
 };
 
-// used to define the various summons
-struct PlaguelandsSpawnLocation
-{
-    float x, y, z;
-};
-
-// summon position at the Eastwall tower - guesswork
-static const PlaguelandsSpawnLocation plaguelandsSoldierSpawnLocations[] =
-{
-    {2526.220f, -4758.520f, 101.056f},
-    {2532.452f, -4760.138f, 102.408f},
-    {2535.058f, -4757.152f, 102.219f},
-    {2526.297f, -4764.442f, 102.360f},
-    {2522.425f, -4767.049f, 102.552f}
-};
-
 // capture points coords to sort the banners
-static const PlaguelandsSpawnLocation plaguelandsTowerLocations[MAX_EP_TOWERS] =
+static const float plaguelandsTowerLocations[MAX_EP_TOWERS][2] =
 {
-    {3181.08f, -4379.36f, 174.123f},       // Northpass
-    {1860.85f, -3731.23f, 196.716f},       // Crownguard
-    {2574.51f, -4794.89f, 144.704f},       // Eastwall
-    {2962.71f, -3042.31f, 154.789f}        // Plaguewood
+    {3181.08f, -4379.36f},       // Northpass
+    {1860.85f, -3731.23f},       // Crownguard
+    {2574.51f, -4794.89f},       // Eastwall
+    {2962.71f, -3042.31f}        // Plaguewood
 };
-
-// summon coords for the flight master
-static const float plaguelandsFlightmasterSpawnLocation[4] = {2987.5f, -3049.11f, 120.126f, 5.75959f};
 
 struct PlaguelandsTowerEvent
 {
@@ -242,25 +223,22 @@ class OutdoorPvPEP : public OutdoorPvP
         void FillInitialWorldStates(WorldPacket& data, uint32& count) override;
         void SendRemoveWorldStates(Player* player) override;
 
-        void HandleEvent(uint32 eventId, GameObject* go) override;
+        bool HandleEvent(uint32 eventId, GameObject* go) override;
         void HandleObjectiveComplete(uint32 eventId, std::list<Player*> players, Team team) override;
 
+        void HandleCreatureCreate(Creature* creature) override;
         void HandleGameObjectCreate(GameObject* go) override;
 
     private:
         // process capture events
-        void ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState);
+        bool ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState);
 
         void InitBanner(GameObject* go, uint32 towerId);
 
         // Plaguewood bonus - flight master
-        void SummonFlightMaster(WorldObject* objRef);
         void UnsummonFlightMaster(const WorldObject* objRef);
-
         // Eastwall bonus - soldiers
-        void SummonSoldiers(WorldObject* objRef);
         void UnsummonSoldiers(const WorldObject* objRef);
-
         // Northpass bonus - shrine
         void UpdateShrine(const WorldObject* objRef, bool remove = false);
 

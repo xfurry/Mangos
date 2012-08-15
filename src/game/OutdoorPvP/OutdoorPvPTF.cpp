@@ -133,7 +133,7 @@ void OutdoorPvPTF::HandleObjectiveComplete(uint32 eventId, std::list<Player*> pl
 }
 
 // process the capture events
-void OutdoorPvPTF::HandleEvent(uint32 eventId, GameObject* go)
+bool OutdoorPvPTF::HandleEvent(uint32 eventId, GameObject* go)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
     {
@@ -150,12 +150,12 @@ void OutdoorPvPTF::HandleEvent(uint32 eventId, GameObject* go)
 
                         ProcessCaptureEvent(go, i, terokkarTowerEvents[i][j].team, terokkarTowerEvents[i][j].worldState);
                     }
-                    return;
                 }
             }
-            return;
         }
     }
+
+    return true;
 }
 
 void OutdoorPvPTF::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState)

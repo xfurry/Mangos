@@ -5,9 +5,6 @@ UPDATE gameobject_template SET flags = 32 WHERE entry = 182529;
 -- Fix animprogress, spawntimesecs of capture point gameobjects (animprogress was 100 which is TBC value, spawntimesecs was 900, 180, -300)
 UPDATE gameobject SET animprogress = 255, spawntimesecs = 0 WHERE id IN (181899, 182096, 182097, 182098, 182173, 182174, 182175, 182522, 182523, 182528, 182529, 183104, 183411, 183412, 183413, 183414, 182210);
 
--- Remove graveyard links - they are set in script
-DELETE FROM game_graveyard_zone WHERE id IN (969, 927, 993);
-
 
 -- Silithus fixes
 /* ################################# */
@@ -73,7 +70,26 @@ VALUES
 -- correct horde faction
 UPDATE `gameobject_template` SET `faction` = 1314 WHERE `entry` = 181955;
 
--- set soldiers movement
+-- Summon plaguewood flightmaster
+delete from event_scripts where id in (10701,10700);
+insert into event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) value
+(10701,10,17209,8,2987.5,-3049.11,120.126,5.75959,'Alliance Plaguewood Tower progress event - summon William Kielar'),
+(10700,10,17209,8,2987.5,-3049.11,120.126,5.75959,'Horde Plaguewood Tower progress event - summon William Kielar');
+-- Summon eastwall soldiers
+delete from event_scripts where id in (10691,10692);
+insert into event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) value
+(10691,10,17635,8,2526.220,-4758.520,101.056,0,'Alliance Eastwall Tower capture - summon Lordaeron Commander'),
+(10691,10,17647,8,2532.452,-4760.138,102.408,0,'Alliance Eastwall Tower capture - summon Lordaeron Soldier'),
+(10691,10,17647,8,2535.058,-4757.152,102.219,0,'Alliance Eastwall Tower capture - summon Lordaeron Soldier'),
+(10691,10,17647,8,2526.297,-4764.442,102.360,0,'Alliance Eastwall Tower capture - summon Lordaeron Soldier'),
+(10691,10,17647,8,2522.425,-4767.049,102.552,0,'Alliance Eastwall Tower capture - summon Lordaeron Soldier'),
+(10692,10,17995,8,2526.220,-4758.520,101.056,0,'Horde Eastwall Tower capture - summon Lordaeron Veteran'),
+(10692,10,17996,8,2532.452,-4760.138,102.408,0,'Horde Eastwall Tower capture - summon Lordaeron Fighter'),
+(10692,10,17996,8,2535.058,-4757.152,102.219,0,'Horde Eastwall Tower capture - summon Lordaeron Fighter'),
+(10692,10,17996,8,2526.297,-4764.442,102.360,0,'Horde Eastwall Tower capture - summon Lordaeron Fighter'),
+(10692,10,17996,8,2522.425,-4767.049,102.552,0,'Horde Eastwall Tower capture - summon Lordaeron Fighter');
+
+-- set soldiers movement - waypoints need testing
 UPDATE `creature_template` SET `MovementType` = 0 WHERE `entry` IN (17647,17996);
 UPDATE `creature_template` SET `MovementType` = 2 WHERE `entry` in (17635,17995);
 DELETE FROM `creature_movement_template` WHERE `entry` in (17635, 17995);
@@ -107,9 +123,9 @@ INSERT INTO `creature_movement_template` (`entry`, `point`, `position_x`, `posit
 (17995, 13, 3166.813, -4349.198, 137.569);
 
 -- creature linking for EP soldiers
-INSERT IGNORE INTO creature_linking_template VALUES
-(17647, 0, 17635, 515, 0),
-(17996, 0, 17995, 515, 0);
+-- INSERT IGNORE INTO creature_linking_template VALUES
+-- (17647, 0, 17635, 515, 0),
+-- (17996, 0, 17995, 515, 0);
 /* ################################# */
 
 -- Halaa fixes

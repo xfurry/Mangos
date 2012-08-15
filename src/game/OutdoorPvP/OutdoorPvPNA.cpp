@@ -291,11 +291,11 @@ void OutdoorPvPNA::UpdateWyvernsWorldState(uint32 value)
 }
 
 // process the capture events
-void OutdoorPvPNA::HandleEvent(uint32 eventId, GameObject* go)
+bool OutdoorPvPNA::HandleEvent(uint32 eventId, GameObject* go)
 {
     // If we are not using the Halaa banner return
     if (go->GetEntry() != GO_HALAA_BANNER)
-        return;
+        return false;
 
     switch (eventId)
     {
@@ -314,6 +314,8 @@ void OutdoorPvPNA::HandleEvent(uint32 eventId, GameObject* go)
             sWorld.SendDefenseMessage(ZONE_ID_NAGRAND, LANG_OPVP_NA_PROGRESS_H);
             break;
     }
+
+    return true;
 }
 
 void OutdoorPvPNA::ProcessCaptureEvent(GameObject* go, Team team)

@@ -67,7 +67,7 @@ class OutdoorPvP
         virtual void HandleCreatureRespawn(Creature* /*creature*/) {}
 
         // Process Capture event
-        virtual void HandleEvent(uint32 /*eventId*/, GameObject* /*go*/) {}
+        virtual bool HandleEvent(uint32 /*eventId*/, GameObject* /*go*/) { return false; }
 
         // called when a player triggers an areatrigger
         virtual bool HandleAreaTrigger(Player* /*player*/, uint32 /*triggerId*/) { return false; }

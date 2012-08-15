@@ -80,11 +80,11 @@ void OutdoorPvPGH::HandleGameObjectCreate(GameObject* go)
 }
 
 // process the capture events
-void OutdoorPvPGH::HandleEvent(uint32 eventId, GameObject* go)
+bool OutdoorPvPGH::HandleEvent(uint32 eventId, GameObject* go)
 {
     // If we are not using the lighthouse return
     if (go->GetEntry() != GO_VENTURE_BAY_LIGHTHOUSE)
-        return;
+        return false;
 
     switch (eventId)
     {
@@ -110,6 +110,8 @@ void OutdoorPvPGH::HandleEvent(uint32 eventId, GameObject* go)
             SetBannerVisual(go, CAPTURE_ARTKIT_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
             break;
     }
+
+    return true;
 }
 
 void OutdoorPvPGH::RespawnSoldiers(const WorldObject* objRef)

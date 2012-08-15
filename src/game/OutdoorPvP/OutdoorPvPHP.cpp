@@ -163,7 +163,7 @@ void OutdoorPvPHP::HandlePlayerKillInsideArea(Player* player, Unit* victim)
 }
 
 // process the capture events
-void OutdoorPvPHP::HandleEvent(uint32 eventId, GameObject* go)
+bool OutdoorPvPHP::HandleEvent(uint32 eventId, GameObject* go)
 {
     for (uint8 i = 0; i < MAX_HP_TOWERS; ++i)
     {
@@ -181,12 +181,12 @@ void OutdoorPvPHP::HandleEvent(uint32 eventId, GameObject* go)
 
                         ProcessCaptureEvent(go, i, hellfireTowerEvents[i][j].team, hellfireTowerEvents[i][j].worldState, hellfireTowerEvents[i][j].towerArtKit, hellfireTowerEvents[i][j].towerAnim);
                     }
-                    return;
                 }
             }
-            return;
         }
     }
+
+    return true;
 }
 
 void OutdoorPvPHP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 towerArtKit, uint32 towerAnim)
