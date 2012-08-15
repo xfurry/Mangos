@@ -192,7 +192,7 @@ bool OutdoorPvPEP::HandleEvent(uint32 eventId, GameObject* go)
                         if (plaguelandsTowerEvents[i][j].defenseMessage)
                             sWorld.SendDefenseMessage(ZONE_ID_EASTERN_PLAGUELANDS, plaguelandsTowerEvents[i][j].defenseMessage);
 
-                        return (ProcessCaptureEvent(go, i, plaguelandsTowerEvents[i][j].team, plaguelandsTowerEvents[i][j].worldState));
+                        return ProcessCaptureEvent(go, i, plaguelandsTowerEvents[i][j].team, plaguelandsTowerEvents[i][j].worldState);
                     }
                     // no need to iterate other towers
                     return false;

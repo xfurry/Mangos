@@ -148,7 +148,7 @@ bool OutdoorPvPTF::HandleEvent(uint32 eventId, GameObject* go)
                     {
                         sWorld.SendDefenseMessage(ZONE_ID_TEROKKAR_FOREST, terokkarTowerEvents[i][j].defenseMessage);
 
-                        return (ProcessCaptureEvent(go, i, terokkarTowerEvents[i][j].team, terokkarTowerEvents[i][j].worldState));
+                        return ProcessCaptureEvent(go, i, terokkarTowerEvents[i][j].team, terokkarTowerEvents[i][j].worldState);
                     }
                     // no need to iterate other towers
                     return false;
@@ -230,6 +230,7 @@ bool OutdoorPvPTF::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
     return true;
 }
 
+// Handle the zone lock when the timer is activated
 void OutdoorPvPTF::LockZone(GameObject* go, uint32 towerId, Team team, uint32 newWorldState)
 {
     SendUpdateWorldState(m_zoneWorldState, WORLD_STATE_REMOVE);
@@ -254,6 +255,7 @@ void OutdoorPvPTF::LockZone(GameObject* go, uint32 towerId, Team team, uint32 ne
     m_towerWorldState[towerId] = newWorldState;
 }
 
+// Handle the zone reset when the timer expires
 void OutdoorPvPTF::UnlockZone()
 {
     // remove buffs
@@ -336,6 +338,7 @@ void OutdoorPvPTF::UpdateTimerWorldState()
     SendUpdateWorldState(WORLD_STATE_TF_TIME_HOURS, hoursLeft);
 }
 
+// Handle the Terokkar towers lock during the update timer
 void OutdoorPvPTF::LockTowers(const WorldObject* objRef)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)
@@ -347,6 +350,7 @@ void OutdoorPvPTF::LockTowers(const WorldObject* objRef)
     }
 }
 
+// Handle towers reset when the timer expires
 void OutdoorPvPTF::ResetTowers(const WorldObject* objRef)
 {
     for (uint8 i = 0; i < MAX_TF_TOWERS; ++i)

@@ -16,28 +16,82 @@ insert into spell_script_target values
 
 -- Venture bay fixes
 /* ################################# */
--- creatures for world pvp - use guid from 300xxx
-DELETE FROM `creature` WHERE `id` IN (27730,27760);
-INSERT INTO `creature` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`modelid`,`equipment_id`,`position_x`,`position_y`,`position_z`,`orientation`,`spawntimesecs`,`spawndist`,`currentwaypoint`,`curhealth`,`curmana`,`DeathState`,`MovementType`) VALUES
-(300001, 27730, 571, 1, 1, 0, 0, 2489.92, -1821.4, 11.7098, 5.51804, 604800, 0, 0, 10282, 0, 0, 0),
-(300002, 27760, 571, 1, 1, 0, 0, 2483.68, -1836.49, 11.8173, 0.734973, 604800, 0, 0, 20564, 0, 0, 0);
+DELETE FROM creature_linking_template WHERE entry IN (27758,27748);
+INSERT IGNORE INTO creature_linking_template VALUES
+(27758,571,27759,1,0),
+(27748,571,27708,1,0);
+UPDATE creature_template SET MovementType=0 WHERE entry=385;
+-- Summon Venture bay npcs
+DELETE FROM creature WHERE id IN (27758,27759,29252,27760,29250,27748,27708,29253,27730,29251,385,5774) AND position_z < 20 and map=571;
+-- Alliance
+DELETE FROM event_scripts WHERE id IN (18035,18036);
+INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) VALUES
+-- Soldiers
+(18035,10,27758,8,2515.91, -1822.01, 10.9846,  5.48033,'Alliance Venture Bay capture - summon Westfall Brigade Defender'),
+(18035,10,27758,8,2494.39, -1933.88, 12.4038,  0.558505,'Alliance Venture Bay capture - summon Westfall Brigade Defender'),
+(18035,10,27758,8,2525.61, -1980.78,  8.35749, 5.34071,'Alliance Venture Bay capture - summon Westfall Brigade Defender'),
+(18035,10,27758,8,2539.51, -1972.8,   8.3314,  5.3058,'Alliance Venture Bay capture - summon Westfall Brigade Defender'),
+(18035,10,27758,8,2462.25, -1849.97,  5.59361, 6.08343,'Alliance Venture Bay capture - summon Westfall Brigade Defender'),
+(18035,10,27758,8,2496.55, -1890.7,   8.47805, 1.8787,'Alliance Venture Bay capture - summon Westfall Brigade Defender'),
+(18035,10,27758,8,2552.46, -1831.56, 10.5746,  2.25148,'Alliance Venture Bay capture - summon Westfall Brigade Defender'),
+(18035,10,27758,8,2574.73, -1795.42, 10.5438,  0.349066,'Alliance Venture Bay capture - summon Westfall Brigade Defender'),
+(18035,10,27758,8,2579.39, -1810.58, 10.4847,  0.296706,'Alliance Venture Bay capture - summon Westfall Brigade Defender'),
+(18035,10,27758,8,2481.61, -1875.83, 10.8375,  6.23082,'Alliance Venture Bay capture - summon Westfall Brigade Defender'),
+(18035,10,27758,8,2481.1,  -1903.97, 10.5534,  6.24828,'Alliance Venture Bay capture - summon Westfall Brigade Defender'),
+(18035,10,27758,8,2543.5,  -1915.32,  3.39682, 0.034907,'Alliance Venture Bay capture - summon Westfall Brigade Defender'),
+(18035,10,27758,8,2544.33, -1930.5,   3.86072, 0,'Alliance Venture Bay capture - summon Westfall Brigade Defender'),
+(18035,10,27759,8,2484.83, -1888.76,  9.76869, 0.05236,'Alliance Venture Bay capture - summon Commander Howser'),
+-- Vendors
+(18035,10,29252,8,2476.89, -1953.83, 10.9665, 1.44862,'Alliance Venture Bay capture - summon Jason Riggins'),
+(18035,10,27760,8,2492.09, -1839.39, 11.752,  5.58505,'Alliance Venture Bay capture - summon "Grizzly" D. Adams'),
+(18035,10,29250,8,2551.9,  -1836.04, 10.637,  2.11185,'Alliance Venture Bay capture - summon Tim Street'),
+-- Horses
+(18035,10,385,8,2552.79, -1840.45, 10.6082, 5.34071,'Alliance Venture Bay capture - summon Horse'),
+(18035,10,385,8,2560.17, -1834.67, 10.6368, 5.28835,'Alliance Venture Bay capture - summon Horse'),
+(18035,10,385,8,2556.78, -1846.09, 10.2806, 2.21657,'Alliance Venture Bay capture - summon Horse'),
+(18035,10,385,8,2563.99, -1840.05, 10.6088, 2.16421,'Alliance Venture Bay capture - summon Horse');
+-- Horde
+INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) VALUES
+(18036,10,27748,8,2538.89, -1922.25,  3.143,   0.123386,'Horde Venture Bay capture - summon Conquest Hold Defender'),
+(18036,10,27748,8,2570.12, -1805.95, 10.0925,  0.453786,'Horde Venture Bay capture - summon Conquest Hold Defender'),
+(18036,10,27748,8,2553.65, -1832.93, 10.6207,  2.25148,'Horde Venture Bay capture - summon Conquest Hold Defender'),
+(18036,10,27748,8,2409.69, -1825.34,  3.72895, 2.67035,'Horde Venture Bay capture - summon Conquest Hold Defender'),
+(18036,10,27748,8,2578.04, -1809.41, 10.3817,  0.314159,'Horde Venture Bay capture - summon Conquest Hold Defender'),
+(18036,10,27748,8,2574.45, -1797.03, 10.4851,  0.331613,'Horde Venture Bay capture - summon Conquest Hold Defender'),
+(18036,10,27748,8,2477.94, -1875.99, 10.5229,  0.034907,'Horde Venture Bay capture - summon Conquest Hold Defender'),
+(18036,10,27748,8,2500.57, -1835.32, 10.6343,  5.58505,'Horde Venture Bay capture - summon Conquest Hold Defender'),
+(18036,10,27748,8,2478.88, -1904.98, 10.4264,  0.436332,'Horde Venture Bay capture - summon Conquest Hold Defender'),
+(18036,10,27748,8,2489.79, -1847.66, 10.6083,  5.65487,'Horde Venture Bay capture - summon Conquest Hold Defender'),
+(18036,10,27748,8,2546.33, -1929.54,  3.42336, 0.034907,'Horde Venture Bay capture - summon Conquest Hold Defender'),
+(18036,10,27748,8,2546.15, -1914.97,  3.16499, 0, 'Horde Venture Bay capture - summon Conquest Hold Defender'),
+(18036,10,27748,8,2525.53, -1979.8,   8.35698, 5.25344, 'Horde Venture Bay capture - summon Conquest Hold Defender'),
+(18036,10,27748,8,2538.85, -1972.3,   8.29618, 5.3058, 'Horde Venture Bay capture - summon Conquest Hold Defender'),
+(18036,10,27708,8,2487.56, -1888.8,   9.71184, 0.017453, 'Horde Venture Bay capture - summon General Gorlok'),
+-- Vendors
+(18036,10,29253,8,2476.03, -1954, 10.9665, 1.29154,'Horde Venture Bay capture - summon Koloth'),
+(18036,10,27730,8,2489.92, -1821.4, 11.7098, 5.51804,'Horde Venture Bay capture - summon Purkom'),
+(18036,10,29251,8,2551.26, -1837.19, 10.6369, 2.1293,'Horde Venture Bay capture - summon Kor'),
+-- Mounts
+(18036,10,5774,8,2560.6, -1835.13, 10.6364, 5.32325,'Horde Venture Bay capture - summon Riding Wolf'),
+(18036,10,5774,8,2552.92,-1840.63, 10.604,  5.28835,'Horde Venture Bay capture - summon Riding Wolf'),
+(18036,10,5774,8,2556.9, -1845.99, 10.2894, 2.23402,'Horde Venture Bay capture - summon Riding Wolf'),
+(18036,10,5774,8,2563.97,-1840.5,  10.602,  2.14675,'Horde Venture Bay capture - summon Riding Wolf');
 /* ################################# */
 
 
 -- Zangarmarsh fixes
 /* ################################# */
-UPDATE `creature` SET `id` = 18757, `position_x` = 340.453, `position_y` = 6833.1, `position_z` = 61.798 WHERE `guid` = 67037;
-UPDATE `creature` SET `MovementType` = 0, `spawndist` = 0 WHERE `id` IN (18757,18759);
-DELETE FROM `creature_template_addon` WHERE `entry` IN (18757,18759);
+-- UPDATE `creature` SET `id` = 18757, `position_x` = 340.453, `position_y` = 6833.1, `position_z` = 61.798 WHERE `guid` = 67037;
+-- UPDATE `creature` SET `MovementType` = 0, `spawndist` = 0 WHERE `id` IN (18757,18759);
+-- PvP Beams
+DELETE FROM creature WHERE guid IN (67037,67038,67039,84756);
+DELETE FROM creature_template_addon WHERE entry IN (18759);
+UPDATE creature_template SET InhabitType=InhabitType|4 WHERE entry IN (18757,18759);
 /* ################################# */
 
 
 -- Zangarmarsh Field Scout gossips - TODO: conditions, horde gossip 1 text is guessed, horde text_id 2 is missing
 /* ################################# */
--- PvP Beams
-DELETE FROM creature WHERE guid IN (67037,67038,67039,84756);
-DELETE FROM creature_template_addon WHERE entry IN (18759);
-UPDATE creature_template SET InhabitType=InhabitType|4 WHERE entry IN (18757,18759);
 -- Alliance Field Scout
 UPDATE creature_template SET gossip_menu_id = 7724 WHERE entry = 18581;
 DELETE FROM gossip_menu WHERE entry = 7724;

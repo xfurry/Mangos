@@ -65,18 +65,21 @@ class OutdoorPvPGH : public OutdoorPvP
         bool HandleEvent(uint32 eventId, GameObject* go) override;
 
         void HandleCreatureCreate(Creature* creature) override;
+        void HandleCreatureDeath(Creature* creature) override;
         void HandleGameObjectCreate(GameObject* go) override;
 
     private:
-        // respawn team soldiers
-        void RespawnSoldiers(const WorldObject* objRef);
+        // despawn team vendors, if not killed already
+        void DespawnVendors(const WorldObject* objRef);
+
+        void LockLighthouse(const WorldObject* objRef);
+        void UnlockLighthouse(const WorldObject* objRef);
 
         Team m_zoneOwner;
 
-        GuidList m_allianceSoldiers;
-        GuidList m_hordeSoldiers;
-        GuidList m_allianceVendors;
-        GuidList m_hordeVendors;
+        GuidList m_teamVendors;
+
+        ObjectGuid m_capturePoint;
 };
 
 #endif

@@ -179,7 +179,7 @@ bool OutdoorPvPZM::HandleEvent(uint32 eventId, GameObject* go)
                         if (zangarmarshTowerEvents[i][j].defenseMessage)
                             sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, zangarmarshTowerEvents[i][j].defenseMessage);
 
-                        ProcessCaptureEvent(go, i, zangarmarshTowerEvents[i][j].team, zangarmarshTowerEvents[i][j].worldState, zangarmarshTowerEvents[i][j].mapState);
+                        return ProcessCaptureEvent(go, i, zangarmarshTowerEvents[i][j].team, zangarmarshTowerEvents[i][j].worldState, zangarmarshTowerEvents[i][j].mapState);
                     }
                     // no need to iterate other towers
                     return false;
@@ -257,6 +257,7 @@ bool OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
     return true;
 }
 
+// Handle scout activation, when both beacons are captured
 void OutdoorPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team team)
 {
     if (team == ALLIANCE)
@@ -285,6 +286,7 @@ void OutdoorPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team team)
     }
 }
 
+// Handle scout reset when a beacon is lost, or the graveyard is taken
 void OutdoorPvPZM::ResetScouts(const WorldObject* objRef, Team team)
 {
     if (team == ALLIANCE)
@@ -311,6 +313,7 @@ void OutdoorPvPZM::ResetScouts(const WorldObject* objRef, Team team)
     }
 }
 
+// Handle the graveyard banner use
 bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
 {
     Team team = player->GetTeam();
@@ -400,6 +403,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
     return true;
 }
 
+// Handle the graveyard banner spawn / despawn
 void OutdoorPvPZM::SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn)
 {
     if (GameObject* banner = objRef->GetMap()->GetGameObject(goGuid))
@@ -417,6 +421,7 @@ void OutdoorPvPZM::SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGu
     }
 }
 
+// Handle the ZM beacons - this is done by npcs which have certain auras
 void OutdoorPvPZM::SetBeaconArtKit(const WorldObject* objRef, ObjectGuid creatureGuid, uint32 auraId)
 {
     if (Creature* beam = objRef->GetMap()->GetCreature(creatureGuid))
