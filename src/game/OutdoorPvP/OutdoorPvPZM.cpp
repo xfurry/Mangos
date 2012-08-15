@@ -193,7 +193,7 @@ bool OutdoorPvPZM::HandleEvent(uint32 eventId, GameObject* go)
     return false;
 }
 
-void OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 newMapState)
+bool OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 newMapState)
 {
     if (team == ALLIANCE)
     {
@@ -252,12 +252,16 @@ void OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 
     // update capture point owner
     m_towerOwner[towerId] = team;
+
+    // the are no DB exceptions in this case
+    return true;
 }
 
 void OutdoorPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team team)
 {
     if (team == ALLIANCE)
     {
+        // ToDo: send the gossip, based on DB conditions
         if (Creature* scout = objRef->GetMap()->GetCreature(m_allianceScout))
             scout->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
@@ -269,6 +273,7 @@ void OutdoorPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team team)
     }
     else
     {
+        // ToDo: send the gossip, based on DB conditions
         if (Creature* scout = objRef->GetMap()->GetCreature(m_hordeScout))
             scout->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
@@ -284,6 +289,7 @@ void OutdoorPvPZM::ResetScouts(const WorldObject* objRef, Team team)
 {
     if (team == ALLIANCE)
     {
+        // ToDo: send the gossip, based on DB conditions
         if (Creature* scout = objRef->GetMap()->GetCreature(m_allianceScout))
             scout->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
@@ -294,6 +300,7 @@ void OutdoorPvPZM::ResetScouts(const WorldObject* objRef, Team team)
     }
     else
     {
+        // ToDo: send the gossip, based on DB conditions
         if (Creature* scout = objRef->GetMap()->GetCreature(m_hordeScout))
             scout->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
@@ -402,9 +409,11 @@ void OutdoorPvPZM::SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGu
             banner->SetRespawnTime(7 * DAY);
             banner->Refresh();
         }
-        // Note: this does not work fine, because the GO does not despawn by itself
         else if (banner->isSpawned())
+        {
+            banner->SetRespawnTime(7 * DAY);
             banner->SetLootState(GO_JUST_DEACTIVATED);
+        }
     }
 }
 

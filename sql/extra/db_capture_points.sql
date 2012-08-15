@@ -34,6 +34,10 @@ DELETE FROM `creature_template_addon` WHERE `entry` IN (18757,18759);
 
 -- Zangarmarsh Field Scout gossips - TODO: conditions, horde gossip 1 text is guessed, horde text_id 2 is missing
 /* ################################# */
+-- PvP Beams
+DELETE FROM creature WHERE guid IN (67037,67038,67039,84756);
+DELETE FROM creature_template_addon WHERE entry IN (18759);
+UPDATE creature_template SET InhabitType=InhabitType|4 WHERE entry IN (18757,18759);
 -- Alliance Field Scout
 UPDATE creature_template SET gossip_menu_id = 7724 WHERE entry = 18581;
 DELETE FROM gossip_menu WHERE entry = 7724;
@@ -71,13 +75,13 @@ VALUES
 UPDATE `gameobject_template` SET `faction` = 1314 WHERE `entry` = 181955;
 
 -- Summon plaguewood flightmaster
-delete from event_scripts where id in (10701,10700);
-insert into event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) value
+DELETE FROM event_scripts WHERE id IN (10701,10700);
+INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) VALUES
 (10701,10,17209,8,2987.5,-3049.11,120.126,5.75959,'Alliance Plaguewood Tower progress event - summon William Kielar'),
 (10700,10,17209,8,2987.5,-3049.11,120.126,5.75959,'Horde Plaguewood Tower progress event - summon William Kielar');
 -- Summon eastwall soldiers
-delete from event_scripts where id in (10691,10692);
-insert into event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) value
+DELETE FROM event_scripts WHERE id IN (10691,10692);
+INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) VALUES
 (10691,10,17635,8,2526.220,-4758.520,101.056,0,'Alliance Eastwall Tower capture - summon Lordaeron Commander'),
 (10691,10,17647,8,2532.452,-4760.138,102.408,0,'Alliance Eastwall Tower capture - summon Lordaeron Soldier'),
 (10691,10,17647,8,2535.058,-4757.152,102.219,0,'Alliance Eastwall Tower capture - summon Lordaeron Soldier'),

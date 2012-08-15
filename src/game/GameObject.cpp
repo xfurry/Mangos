@@ -420,8 +420,8 @@ void GameObject::Update(uint32 update_diff, uint32 p_time)
 
                         // Don't despawn objects with nodespawn flag
                         // Note: this needs better research or better Goober Handling
-                        if (HasFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN))
-                            return;
+                        //if (HasFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN))
+                        //    return;
                     }
 
                     SetGoState(GO_STATE_READY);

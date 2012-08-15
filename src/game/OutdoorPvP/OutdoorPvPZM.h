@@ -148,7 +148,7 @@ class OutdoorPvPZM : public OutdoorPvP
 
     private:
         // process capture events
-        void ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 newMapState);
+        bool ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 newMapState);
 
         // handles scout world states and gossip - ToDo: implement gossip based on condition
         void PrepareFactionScouts(const WorldObject* objRef, Team team);
