@@ -172,8 +172,8 @@ void OutdoorPvPEP::HandleEvent(uint32 eventId, GameObject* go)
                 {
                     if (plaguelandsTowerEvents[i][j].team != m_towerOwner[i])
                     {
-                        if (plaguelandsTowerEvents[i][j].zoneText)
-                            sWorld.SendDefenseMessage(ZONE_ID_EASTERN_PLAGUELANDS, plaguelandsTowerEvents[i][j].zoneText);
+                        if (plaguelandsTowerEvents[i][j].defenseMessage)
+                            sWorld.SendDefenseMessage(ZONE_ID_EASTERN_PLAGUELANDS, plaguelandsTowerEvents[i][j].defenseMessage);
 
                         ProcessCaptureEvent(go, i, plaguelandsTowerEvents[i][j].team, plaguelandsTowerEvents[i][j].worldState);
                     }

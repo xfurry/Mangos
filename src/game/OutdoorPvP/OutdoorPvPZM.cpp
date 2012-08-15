@@ -175,8 +175,8 @@ void OutdoorPvPZM::HandleEvent(uint32 eventId, GameObject* go)
                 {
                     if (zangarmarshTowerEvents[i][j].team != m_towerOwner[i])
                     {
-                        if (zangarmarshTowerEvents[i][j].zoneText)
-                            sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, zangarmarshTowerEvents[i][j].zoneText);
+                        if (zangarmarshTowerEvents[i][j].defenseMessage)
+                            sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, zangarmarshTowerEvents[i][j].defenseMessage);
 
                         ProcessCaptureEvent(go, i, zangarmarshTowerEvents[i][j].team, zangarmarshTowerEvents[i][j].worldState, zangarmarshTowerEvents[i][j].mapState);
                     }

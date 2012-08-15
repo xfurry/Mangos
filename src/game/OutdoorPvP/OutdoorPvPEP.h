@@ -198,7 +198,7 @@ struct PlaguelandsTowerEvent
 {
     uint32  eventEntry;
     Team    team;
-    uint32  zoneText;
+    uint32  defenseMessage;
     uint32  worldState;
 };
 

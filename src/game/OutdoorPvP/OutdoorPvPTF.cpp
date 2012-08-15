@@ -145,7 +145,7 @@ void OutdoorPvPTF::HandleEvent(uint32 eventId, GameObject* go)
                 {
                     if (terokkarTowerEvents[i][j].team != m_towerOwner[i])
                     {
-                        sWorld.SendDefenseMessage(ZONE_ID_TEROKKAR_FOREST, terokkarTowerEvents[i][j].zoneText);
+                        sWorld.SendDefenseMessage(ZONE_ID_TEROKKAR_FOREST, terokkarTowerEvents[i][j].defenseMessage);
 
                         ProcessCaptureEvent(go, i, terokkarTowerEvents[i][j].team, terokkarTowerEvents[i][j].worldState);
                     }
