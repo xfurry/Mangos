@@ -179,17 +179,21 @@ bool OutdoorPvPHP::HandleEvent(uint32 eventId, GameObject* go)
                         if (hellfireTowerEvents[i][j].defenseMessage)
                             sWorld.SendDefenseMessage(ZONE_ID_HELLFIRE_PENINSULA, hellfireTowerEvents[i][j].defenseMessage);
 
-                        ProcessCaptureEvent(go, i, hellfireTowerEvents[i][j].team, hellfireTowerEvents[i][j].worldState, hellfireTowerEvents[i][j].towerArtKit, hellfireTowerEvents[i][j].towerAnim);
+                        return (ProcessCaptureEvent(go, i, hellfireTowerEvents[i][j].team, hellfireTowerEvents[i][j].worldState, hellfireTowerEvents[i][j].towerArtKit, hellfireTowerEvents[i][j].towerAnim));
                     }
+                    // no need to iterate other towers
+                    return false;
                 }
             }
+            // no need to iterate other towers
+            return false;
         }
     }
 
-    return true;
+    return false;
 }
 
-void OutdoorPvPHP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 towerArtKit, uint32 towerAnim)
+bool OutdoorPvPHP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 towerArtKit, uint32 towerAnim)
 {
     // set artkits and process buffs
     if (team == ALLIANCE)
@@ -247,4 +251,7 @@ void OutdoorPvPHP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 
     // update capture point owner
     m_towerOwner[towerId] = team;
+
+    // the are no DB exceptions in this case
+    return true;
 }

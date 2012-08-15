@@ -148,17 +148,21 @@ bool OutdoorPvPTF::HandleEvent(uint32 eventId, GameObject* go)
                     {
                         sWorld.SendDefenseMessage(ZONE_ID_TEROKKAR_FOREST, terokkarTowerEvents[i][j].defenseMessage);
 
-                        ProcessCaptureEvent(go, i, terokkarTowerEvents[i][j].team, terokkarTowerEvents[i][j].worldState);
+                        return (ProcessCaptureEvent(go, i, terokkarTowerEvents[i][j].team, terokkarTowerEvents[i][j].worldState));
                     }
+                    // no need to iterate other towers
+                    return false;
                 }
             }
+            // no need to iterate other towers
+            return false;
         }
     }
 
-    return true;
+    return false;
 }
 
-void OutdoorPvPTF::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState)
+bool OutdoorPvPTF::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState)
 {
     if (team == ALLIANCE)
     {
@@ -172,7 +176,7 @@ void OutdoorPvPTF::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
         if (m_towersAlliance == MAX_TF_TOWERS)
         {
             LockZone(go, towerId, team, newWorldState);
-            return;
+            return true;
         }
 
         // update tower count world state
@@ -190,7 +194,7 @@ void OutdoorPvPTF::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
         if (m_towersHorde == MAX_TF_TOWERS)
         {
             LockZone(go, towerId, team, newWorldState);
-            return;
+            return true;
         }
 
         // update tower count world state
@@ -221,6 +225,9 @@ void OutdoorPvPTF::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 
     // update capture point owner
     m_towerOwner[towerId] = team;
+
+    // the are no DB exceptions in this case
+    return true;
 }
 
 void OutdoorPvPTF::LockZone(GameObject* go, uint32 towerId, Team team, uint32 newWorldState)

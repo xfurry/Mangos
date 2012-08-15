@@ -181,12 +181,16 @@ bool OutdoorPvPZM::HandleEvent(uint32 eventId, GameObject* go)
 
                         ProcessCaptureEvent(go, i, zangarmarshTowerEvents[i][j].team, zangarmarshTowerEvents[i][j].worldState, zangarmarshTowerEvents[i][j].mapState);
                     }
+                    // no need to iterate other towers
+                    return false;
                 }
             }
+            // no need to iterate other towers
+            return false;
         }
     }
 
-    return true;
+    return false;
 }
 
 void OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 newMapState)

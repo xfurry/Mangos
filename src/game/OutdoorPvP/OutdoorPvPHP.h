@@ -163,7 +163,7 @@ class OutdoorPvPHP : public OutdoorPvP
 
     private:
         // process capture events
-        void ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 towerArtKit, uint32 towerAnim);
+        bool ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 towerArtKit, uint32 towerAnim);
 
         Team m_towerOwner[MAX_HP_TOWERS];
         uint32 m_towerWorldState[MAX_HP_TOWERS];

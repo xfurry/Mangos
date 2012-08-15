@@ -194,12 +194,16 @@ bool OutdoorPvPEP::HandleEvent(uint32 eventId, GameObject* go)
 
                         return (ProcessCaptureEvent(go, i, plaguelandsTowerEvents[i][j].team, plaguelandsTowerEvents[i][j].worldState));
                     }
+                    // no need to iterate other towers
+                    return false;
                 }
             }
+            // no need to iterate other towers
+            return false;
         }
     }
 
-    return true;
+    return false;
 }
 
 bool OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState)
@@ -311,6 +315,7 @@ bool OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
     m_towerWorldState[towerId] = newWorldState;
     SendUpdateWorldState(m_towerWorldState[towerId], WORLD_STATE_ADD);
 
+    // there are some events which required further DB script
     return eventResult;
 }
 
