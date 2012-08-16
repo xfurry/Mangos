@@ -447,18 +447,9 @@ void OutdoorPvPNA::RespawnGO(const WorldObject* objRef, ObjectGuid goGuid, bool 
         {
             banner->SetRespawnTime(7 * DAY);
             banner->Refresh();
-
-            // Set no-despawn flag for the Roosts
-            //if (resetFlag)
-            //    banner->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
         }
         else if (banner->isSpawned())
-        {
-            //if (banner->HasFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN))
-            //    banner->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
-
             banner->SetLootState(GO_JUST_DEACTIVATED);
-        }
     }
 }
 
