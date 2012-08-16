@@ -45,9 +45,6 @@ void OutdoorPvPGH::HandleCreatureCreate(Creature* creature)
         case NPC_RIDING_WOLF:
             m_teamVendors.push_back(creature->GetObjectGuid());
             break;
-
-        default:
-            return;
     }
 }
 
@@ -67,7 +64,7 @@ void OutdoorPvPGH::HandleGameObjectCreate(GameObject* go)
     if (go->GetEntry() == GO_VENTURE_BAY_LIGHTHOUSE)
     {
         m_capturePoint = go->GetObjectGuid();
-        go->SetGoArtKit(GetBannerArtKit(m_zoneOwner, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+        go->SetGoArtKit(GetBannerArtKit(m_zoneOwner));
     }
 }
 

@@ -92,23 +92,23 @@ void OutdoorPvPTF::HandleGameObjectCreate(GameObject* go)
     {
         case GO_TOWER_BANNER_WEST:
             m_towerBanners[0] = go->GetObjectGuid();
-            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[0], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[0]));
             break;
         case GO_TOWER_BANNER_NORTH:
             m_towerBanners[1] = go->GetObjectGuid();
-            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[1], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[1]));
             break;
         case GO_TOWER_BANNER_EAST:
             m_towerBanners[2] = go->GetObjectGuid();
-            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[2], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[2]));
             break;
         case GO_TOWER_BANNER_SOUTH_EAST:
             m_towerBanners[3] = go->GetObjectGuid();
-            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[3], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[3]));
             break;
         case GO_TOWER_BANNER_SOUTH:
             m_towerBanners[4] = go->GetObjectGuid();
-            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[4], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[4]));
             break;
     }
 }
@@ -150,7 +150,7 @@ bool OutdoorPvPTF::HandleEvent(uint32 eventId, GameObject* go)
 
                         return ProcessCaptureEvent(go, i, terokkarTowerEvents[i][j].team, terokkarTowerEvents[i][j].worldState);
                     }
-                    // no need to iterate other towers
+                    // no need to iterate other events or towers
                     return false;
                 }
             }

@@ -194,7 +194,7 @@ bool OutdoorPvPEP::HandleEvent(uint32 eventId, GameObject* go)
 
                         return ProcessCaptureEvent(go, i, plaguelandsTowerEvents[i][j].team, plaguelandsTowerEvents[i][j].worldState);
                     }
-                    // no need to iterate other towers
+                    // no need to iterate other events or towers
                     return false;
                 }
             }
@@ -264,7 +264,7 @@ bool OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 
     if (team != TEAM_NONE)
     {
-        // update capture point owner
+        // update capture point owner before rewards are applied
         m_towerOwner[towerId] = team;
 
         // apply rewards of changed tower
@@ -306,7 +306,7 @@ bool OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
                 break;
         }
 
-        // update capture point owner
+        // update capture point owner after rewards have been removed
         m_towerOwner[towerId] = team;
     }
 
@@ -322,7 +322,7 @@ bool OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 void OutdoorPvPEP::InitBanner(GameObject* go, uint32 towerId)
 {
     m_towerBanners[towerId].push_back(go->GetObjectGuid());
-    go->SetGoArtKit(GetBannerArtKit(m_towerOwner[towerId], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+    go->SetGoArtKit(GetBannerArtKit(m_towerOwner[towerId]));
 }
 
 // Handle the unsummon of the spectral flightmaster when the plaguewood tower is lost

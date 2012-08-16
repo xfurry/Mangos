@@ -181,7 +181,7 @@ bool OutdoorPvPZM::HandleEvent(uint32 eventId, GameObject* go)
 
                         return ProcessCaptureEvent(go, i, zangarmarshTowerEvents[i][j].team, zangarmarshTowerEvents[i][j].worldState, zangarmarshTowerEvents[i][j].mapState);
                     }
-                    // no need to iterate other towers
+                    // no need to iterate other events or towers
                     return false;
                 }
             }
@@ -197,24 +197,32 @@ bool OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 {
     if (team == ALLIANCE)
     {
+        // update counter
         SetBeaconArtKit(go, m_beamTowerBlue[towerId], SPELL_BEAM_BLUE);
         ++m_towersAlliance;
 
         if (m_towersAlliance == MAX_ZM_TOWERS)
         {
+            //send this defense message before PrepareFactionScouts (which sends another)
             sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_BOTH_BEACONS_A);
+
+            // only add flag to scouts if team does not have captured graveyard already
             if (m_graveyardOwner != ALLIANCE)
                 PrepareFactionScouts(go, ALLIANCE);
         }
     }
     else if (team == HORDE)
     {
+        // update counter
         SetBeaconArtKit(go, m_beamTowerRed[towerId], SPELL_BEAM_RED);
         ++m_towersHorde;
 
         if (m_towersHorde == MAX_ZM_TOWERS)
         {
+            //send this defense message before PrepareFactionScouts (which sends another)
             sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_BOTH_BEACONS_H);
+
+            // only add flag to scouts if team does not already have captured graveyard
             if (m_graveyardOwner != HORDE)
                 PrepareFactionScouts(go, HORDE);
         }
@@ -225,18 +233,22 @@ bool OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
         {
             SetBeaconArtKit(go, m_beamTowerBlue[towerId], 0);
 
+            // only remove flag from scouts if team does not already have captured graveyard
             if (m_towersAlliance == MAX_ZM_TOWERS && m_graveyardOwner != ALLIANCE)
                 ResetScouts(go, ALLIANCE);
 
+            // update counter
             --m_towersAlliance;
         }
         else
         {
             SetBeaconArtKit(go, m_beamTowerRed[towerId], 0);
 
+            // only remove flag from scouts if team does not already have captured graveyard
             if (m_towersHorde == MAX_ZM_TOWERS && m_graveyardOwner != HORDE)
                 ResetScouts(go, HORDE);
 
+            // update counter
             --m_towersHorde;
         }
     }
@@ -323,19 +335,16 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
         case GO_ZANGA_BANNER_CENTER_NEUTRAL:
             break;
         case GO_ZANGA_BANNER_CENTER_ALLIANCE:
-            if (team == ALLIANCE)
+            if (team == ALLIANCE || !player->HasAura(SPELL_BATTLE_STANDARD_ALLIANCE))
                 return false;
             break;
         case GO_ZANGA_BANNER_CENTER_HORDE:
-            if (team == HORDE)
+            if (team == HORDE || !player->HasAura(SPELL_BATTLE_STANDARD_HORDE))
                 return false;
             break;
         default:
             return false;
     }
-
-    if (!player->HasAura(team == ALLIANCE ? SPELL_BATTLE_STANDARD_ALLIANCE : SPELL_BATTLE_STANDARD_HORDE))
-        return false;
 
     // disable old banners
     if (m_graveyardOwner == ALLIANCE)

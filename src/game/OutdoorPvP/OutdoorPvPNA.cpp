@@ -174,7 +174,7 @@ void OutdoorPvPNA::HandleGameObjectCreate(GameObject* go)
     {
         case GO_HALAA_BANNER:
             m_capturePoint = go->GetObjectGuid();
-            go->SetGoArtKit(GetBannerArtKit(m_zoneOwner, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            go->SetGoArtKit(GetBannerArtKit(m_zoneOwner));
             break;
 
         case GO_WYVERN_ROOST_ALLIANCE_SOUTH:

@@ -96,15 +96,15 @@ void OutdoorPvPHP::HandleGameObjectCreate(GameObject* go)
             break;
         case GO_HELLFIRE_BANNER_OVERLOOK:
             m_towers[0] = go->GetObjectGuid();
-            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[0], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[0]));
             break;
         case GO_HELLFIRE_BANNER_STADIUM:
             m_towers[1] = go->GetObjectGuid();
-            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[1], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[1]));
             break;
         case GO_HELLFIRE_BANNER_BROKEN_HILL:
             m_towers[2] = go->GetObjectGuid();
-            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[2], CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ARTKIT_HORDE, CAPTURE_ARTKIT_NEUTRAL));
+            go->SetGoArtKit(GetBannerArtKit(m_towerOwner[2]));
             break;
     }
 }
@@ -181,7 +181,7 @@ bool OutdoorPvPHP::HandleEvent(uint32 eventId, GameObject* go)
 
                         return ProcessCaptureEvent(go, i, hellfireTowerEvents[i][j].team, hellfireTowerEvents[i][j].worldState, hellfireTowerEvents[i][j].towerArtKit, hellfireTowerEvents[i][j].towerAnim);
                     }
-                    // no need to iterate other towers
+                    // no need to iterate other events or towers
                     return false;
                 }
             }
