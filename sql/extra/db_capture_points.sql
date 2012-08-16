@@ -212,10 +212,10 @@ INSERT INTO creature_linking_template VALUES
 -- Halaa fixes
 /* ################################# */
 -- fire bomb target
-UPDATE `creature_template` SET `AIName`='EventAI' WHERE `entry`=18225;
-DELETE FROM `creature_ai_scripts` WHERE `creature_id`=18225;
-INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES
-('1822501','18225','11','0','100','0','0','0','0','0','11','31961','0','0','20','0','0','0','21','0','0','0','Fire Bomb Target - Cast Fire Bomb on Spawn and set Combat Movement and Auto Attack to false');
+UPDATE creature_template SET AIName='EventAI' WHERE entry=18225;
+DELETE FROM creature_ai_scripts WHERE creature_id=18225;
+INSERT INTO creature_ai_scripts VALUES 
+('1822501','18225','11','0','100','0','0','0','0','0','11','31961','0','0','0','0','0','0','0','0','0','0','Fire Bomb Target - Cast Fire Bomb on Spawned');
 -- No random movement for this one - unit flags are guesswork
 UPDATE creature_template SET MovementType= 0, unit_flags=unit_flags|33554432 WHERE entry=18225;
 

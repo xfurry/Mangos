@@ -1156,6 +1156,15 @@ void GameObject::Use(Unit* user)
         }
         case GAMEOBJECT_TYPE_GOOBER:                        // 10
         {
+            // Handle OutdoorPvP use cases
+            // Note: this may be also handled by DB spell scripts in the future, when the world state manager is implemented
+            if (user->GetTypeId() == TYPEID_PLAYER)
+            {
+                Player* player = (Player*)user;
+                if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetScript(player->GetCachedZoneId()))
+                    outdoorPvP->HandleObjectUse(player, this);
+            }
+
             GameObjectInfo const* info = GetGOInfo();
 
             TriggerLinkedGameObject(user);
@@ -1595,15 +1604,6 @@ void GameObject::Use(Unit* user)
     SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellId);
     if (!spellInfo)
     {
-        // Handle OutdoorPvP use cases - some spells are missing from DBC
-        // Note: this may be also handled by DB spell scripts in the future
-        if (user->GetTypeId() == TYPEID_PLAYER)
-        {
-            Player* player = (Player*)user;
-            if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetScript(player->GetCachedZoneId()))
-                outdoorPvP->HandleObjectUse(player, this);
-        }
-
         sLog.outError("WORLD: unknown spell id %u at use action for gameobject (Entry: %u GoType: %u )", spellId, GetEntry(), GetGoType());
         return;
     }

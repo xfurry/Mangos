@@ -28,8 +28,8 @@ enum
     MAX_ZM_TOWERS                           = 2,
 
     // npcs
-    NPC_ALLIANCE_FIELD_SCOUT                = 18581,
-    NPC_HORDE_FIELD_SCOUT                   = 18564,
+    //NPC_ALLIANCE_FIELD_SCOUT              = 18581,
+    //NPC_HORDE_FIELD_SCOUT                 = 18564,
 
     // these 2 npcs act as an artkit
     NPC_PVP_BEAM_RED                        = 18757,
@@ -145,14 +145,14 @@ class OutdoorPvPZM : public OutdoorPvP
 
         void HandlePlayerKillInsideArea(Player* player, Unit* victim) override;
         bool HandleObjectUse(Player* player, GameObject* go) override;
+        bool HandleDropFlag(Player* player, uint32 spellId) override;
 
     private:
         // process capture events
         bool ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 newMapState);
 
-        // handles scout world states and gossip - ToDo: implement gossip based on condition
-        void PrepareFactionScouts(const WorldObject* objRef, Team team);
-        void ResetScouts(const WorldObject* objRef, Team team);
+        // handles scout world states
+        void HandleFactionScouts(const WorldObject* objRef, Team team, bool reset);
 
         // respawn npcs which act as an artkit visual
         void SetBeaconArtKit(const WorldObject* objRef, ObjectGuid creatureGuid, uint32 auraId);
@@ -174,8 +174,6 @@ class OutdoorPvPZM : public OutdoorPvP
         ObjectGuid m_graveyardBannerHorde;
         ObjectGuid m_graveyardBannerNeutral;
 
-        ObjectGuid m_allianceScout;
-        ObjectGuid m_hordeScout;
         ObjectGuid m_beamTowerBlue[MAX_ZM_TOWERS];
         ObjectGuid m_beamTowerRed[MAX_ZM_TOWERS];
         ObjectGuid m_beamGraveyardBlue;

@@ -78,6 +78,10 @@ enum
     GO_LORDAERON_SHRINE_HORDE                       = 181955,
     GO_TOWER_FLAG                                   = 182106,
 
+    // possible shrine auras - not used
+    //GO_ALLIANCE_BANNER_AURA                       = 180100,
+    //GO_HORDE_BANNER_AURA                          = 180101,
+
     // capture points
     GO_TOWER_BANNER_NORTHPASS                       = 181899,
     GO_TOWER_BANNER_CROWNGUARD                      = 182096,

@@ -94,12 +94,6 @@ void OutdoorPvPZM::HandleCreatureCreate(Creature* creature)
 {
     switch (creature->GetEntry())
     {
-        case NPC_ALLIANCE_FIELD_SCOUT:
-            m_allianceScout = creature->GetObjectGuid();
-            break;
-        case NPC_HORDE_FIELD_SCOUT:
-            m_hordeScout = creature->GetObjectGuid();
-            break;
         case NPC_PVP_BEAM_RED:
             if (creature->GetPositionY() < 7000.0f)                 // East Beam
                 m_beamTowerRed[0] = creature->GetObjectGuid();
@@ -208,7 +202,7 @@ bool OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 
             // only add flag to scouts if team does not have captured graveyard already
             if (m_graveyardOwner != ALLIANCE)
-                PrepareFactionScouts(go, ALLIANCE);
+                HandleFactionScouts(go, ALLIANCE, false);
         }
     }
     else if (team == HORDE)
@@ -224,7 +218,7 @@ bool OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 
             // only add flag to scouts if team does not already have captured graveyard
             if (m_graveyardOwner != HORDE)
-                PrepareFactionScouts(go, HORDE);
+                HandleFactionScouts(go, HORDE, false);
         }
     }
     else
@@ -235,7 +229,7 @@ bool OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 
             // only remove flag from scouts if team does not already have captured graveyard
             if (m_towersAlliance == MAX_ZM_TOWERS && m_graveyardOwner != ALLIANCE)
-                ResetScouts(go, ALLIANCE);
+                HandleFactionScouts(go, ALLIANCE, true);
 
             // update counter
             --m_towersAlliance;
@@ -246,7 +240,7 @@ bool OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 
             // only remove flag from scouts if team does not already have captured graveyard
             if (m_towersHorde == MAX_ZM_TOWERS && m_graveyardOwner != HORDE)
-                ResetScouts(go, HORDE);
+                HandleFactionScouts(go, HORDE, true);
 
             // update counter
             --m_towersHorde;
@@ -270,58 +264,25 @@ bool OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 }
 
 // Handle scout activation, when both beacons are captured
-void OutdoorPvPZM::PrepareFactionScouts(const WorldObject* objRef, Team team)
+void OutdoorPvPZM::HandleFactionScouts(const WorldObject* objRef, Team team, bool reset)
 {
     if (team == ALLIANCE)
     {
-        // ToDo: send the gossip, based on DB conditions
-        if (Creature* scout = objRef->GetMap()->GetCreature(m_allianceScout))
-            scout->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-
         SendUpdateWorldState(m_scoutWorldStateAlliance, WORLD_STATE_REMOVE);
-        m_scoutWorldStateAlliance = WORLD_STATE_ZM_FLAG_READY_ALLIANCE;
+        m_scoutWorldStateAlliance = reset ? WORLD_STATE_ZM_FLAG_NOT_READY_ALLIANCE : WORLD_STATE_ZM_FLAG_READY_ALLIANCE;
         SendUpdateWorldState(m_scoutWorldStateAlliance, WORLD_STATE_ADD);
 
-        sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_SPAWN_FIELD_SCOUT_A);
+        if (!reset)
+            sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_SPAWN_FIELD_SCOUT_A);
     }
     else
     {
-        // ToDo: send the gossip, based on DB conditions
-        if (Creature* scout = objRef->GetMap()->GetCreature(m_hordeScout))
-            scout->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-
         SendUpdateWorldState(m_scoutWorldStateHorde, WORLD_STATE_REMOVE);
-        m_scoutWorldStateHorde = WORLD_STATE_ZM_FLAG_READY_HORDE;
+        m_scoutWorldStateHorde = reset ? WORLD_STATE_ZM_FLAG_NOT_READY_HORDE : WORLD_STATE_ZM_FLAG_READY_HORDE;
         SendUpdateWorldState(m_scoutWorldStateHorde, WORLD_STATE_ADD);
 
-        sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_SPAWN_FIELD_SCOUT_H);
-    }
-}
-
-// Handle scout reset when a beacon is lost, or the graveyard is taken
-void OutdoorPvPZM::ResetScouts(const WorldObject* objRef, Team team)
-{
-    if (team == ALLIANCE)
-    {
-        // ToDo: send the gossip, based on DB conditions
-        if (Creature* scout = objRef->GetMap()->GetCreature(m_allianceScout))
-            scout->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-
-        // update world states
-        SendUpdateWorldState(m_scoutWorldStateAlliance, WORLD_STATE_REMOVE);
-        m_scoutWorldStateAlliance = WORLD_STATE_ZM_FLAG_NOT_READY_ALLIANCE;
-        SendUpdateWorldState(m_scoutWorldStateAlliance, WORLD_STATE_ADD);
-    }
-    else
-    {
-        // ToDo: send the gossip, based on DB conditions
-        if (Creature* scout = objRef->GetMap()->GetCreature(m_hordeScout))
-            scout->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-
-        // update world states
-        SendUpdateWorldState(m_scoutWorldStateHorde, WORLD_STATE_REMOVE);
-        m_scoutWorldStateHorde = WORLD_STATE_ZM_FLAG_NOT_READY_HORDE;
-        SendUpdateWorldState(m_scoutWorldStateHorde, WORLD_STATE_ADD);
+        if (!reset)
+            sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_SPAWN_FIELD_SCOUT_H);
     }
 }
 
@@ -335,26 +296,26 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
         case GO_ZANGA_BANNER_CENTER_NEUTRAL:
             break;
         case GO_ZANGA_BANNER_CENTER_ALLIANCE:
-            if (team == ALLIANCE || !player->HasAura(SPELL_BATTLE_STANDARD_ALLIANCE))
+            if (team == ALLIANCE || !player->HasAura(SPELL_BATTLE_STANDARD_HORDE))
                 return false;
             break;
         case GO_ZANGA_BANNER_CENTER_HORDE:
-            if (team == HORDE || !player->HasAura(SPELL_BATTLE_STANDARD_HORDE))
+            if (team == HORDE || !player->HasAura(SPELL_BATTLE_STANDARD_ALLIANCE))
                 return false;
             break;
         default:
             return false;
     }
 
-    // disable old banners
+    // disable old banners - note the alliance and horde banners can despawn by self
     if (m_graveyardOwner == ALLIANCE)
     {
-        RespawnGO(go, m_graveyardBannerAlliance, false);
+        //RespawnGO(go, m_graveyardBannerAlliance, false);
         SetBeaconArtKit(go, m_beamGraveyardBlue, 0);
     }
     else if (m_graveyardOwner == HORDE)
     {
-        RespawnGO(go, m_graveyardBannerHorde, false);
+        //RespawnGO(go, m_graveyardBannerHorde, false);
         SetBeaconArtKit(go, m_beamGraveyardRed, 0);
     }
     else
@@ -404,12 +365,27 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
     BuffTeam(team, SPELL_TWIN_SPIRE_BLESSING);
 
     // reset scout so that team cannot take flag
-    ResetScouts(go, team);
+    HandleFactionScouts(go, team, true);
 
     // update graveyard owner
     m_graveyardOwner = team;
 
-    return true;
+    return false;
+}
+
+// Handle the case when the player drops the flag
+bool OutdoorPvPZM::HandleDropFlag(Player* player, uint32 spellId)
+{
+    if (spellId == SPELL_BATTLE_STANDARD_HORDE || spellId == SPELL_BATTLE_STANDARD_ALLIANCE)
+    {
+        // ToDo: implement this when the scout DB conditions are implemented
+        // The scouts gossip options should check a DB condition if the scount world state for the current faction is active
+        // The idea is to remove the scout world state by DB gossip script on flag take - this will allow only one player to use the flag
+        // on flag drop the scout world state can be added back if necessary, so the players can retake the flag
+        return true;
+    }
+
+    return false;
 }
 
 // Handle the ZM beacons - this is done by npcs which have certain auras

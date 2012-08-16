@@ -393,6 +393,7 @@ bool OutdoorPvPNA::HandleObjectUse(Player* player, GameObject* go)
                 m_roostWorldState[i] = nagrandRoostStatesHordeNeutral[i];
                 UpdateWyvernsWorldState(WORLD_STATE_ADD);
 
+                // spawn the broken roost and despawn the other one
                 RespawnGO(go, m_hordeRoost[i], false);
                 RespawnGO(go, m_hordeBrokenRoost[i], true);
 
@@ -406,6 +407,7 @@ bool OutdoorPvPNA::HandleObjectUse(Player* player, GameObject* go)
                 m_roostWorldState[i] = nagrandRoostStatesAlliance[i];
                 UpdateWyvernsWorldState(WORLD_STATE_ADD);
 
+                // spawn the repaired one along with the explosive wagon - the broken one despawns by self
                 RespawnGO(go, m_hordeWagons[i], true);
                 RespawnGO(go, m_allianceRoost[i], true);
 
@@ -437,6 +439,7 @@ bool OutdoorPvPNA::HandleObjectUse(Player* player, GameObject* go)
                 m_roostWorldState[i] = nagrandRoostStatesAllianceNeutral[i];
                 UpdateWyvernsWorldState(WORLD_STATE_ADD);
 
+                // spawn the broken roost and despawn the other one
                 RespawnGO(go, m_allianceRoost[i], false);
                 RespawnGO(go, m_allianceBrokenRoost[i], true);
 
@@ -450,6 +453,7 @@ bool OutdoorPvPNA::HandleObjectUse(Player* player, GameObject* go)
                 m_roostWorldState[i] = nagrandRoostStatesHorde[i];
                 UpdateWyvernsWorldState(WORLD_STATE_ADD);
 
+                // spawn the repaired one along with the explosive wagon - the broken one despawns by self
                 RespawnGO(go, m_allianceWagons[i], true);
                 RespawnGO(go, m_hordeRoost[i], true);
 
