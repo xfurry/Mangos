@@ -74,7 +74,7 @@ void OutdoorPvPTF::HandlePlayerEnterZone(Player* player, bool isMainZone)
     player->RemoveAurasDueToSpell(SPELL_AUCHINDOUN_BLESSING);
 
     // Handle the buffs
-    if (m_zoneOwner == player->GetTeam())
+    if (player->GetTeam() == m_zoneOwner)
         player->CastSpell(player, SPELL_AUCHINDOUN_BLESSING, true);
 }
 

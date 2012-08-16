@@ -78,7 +78,7 @@ void OutdoorPvPZM::HandlePlayerEnterZone(Player* player, bool isMainZone)
     player->RemoveAurasDueToSpell(SPELL_TWIN_SPIRE_BLESSING);
 
     // cast buff the the player which enters the zone
-    if ((player->GetTeam() == ALLIANCE ? m_towersAlliance : m_towersHorde) == MAX_ZM_TOWERS)
+    if (player->GetTeam() == m_graveyardOwner)
         player->CastSpell(player, SPELL_TWIN_SPIRE_BLESSING, true);
 }
 
