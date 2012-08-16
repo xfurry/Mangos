@@ -52,6 +52,7 @@ INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, commen
 (18035,10,385,8,2563.99, -1840.05, 10.6088, 2.16421,'Alliance Venture Bay capture - summon Horse');
 -- Horde
 INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) VALUES
+-- Soldiers
 (18036,10,27748,8,2538.89, -1922.25,  3.143,   0.123386,'Horde Venture Bay capture - summon Conquest Hold Defender'),
 (18036,10,27748,8,2570.12, -1805.95, 10.0925,  0.453786,'Horde Venture Bay capture - summon Conquest Hold Defender'),
 (18036,10,27748,8,2553.65, -1832.93, 10.6207,  2.25148,'Horde Venture Bay capture - summon Conquest Hold Defender'),
@@ -71,7 +72,7 @@ INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, commen
 (18036,10,29253,8,2476.03, -1954, 10.9665, 1.29154,'Horde Venture Bay capture - summon Koloth'),
 (18036,10,27730,8,2489.92, -1821.4, 11.7098, 5.51804,'Horde Venture Bay capture - summon Purkom'),
 (18036,10,29251,8,2551.26, -1837.19, 10.6369, 2.1293,'Horde Venture Bay capture - summon Kor'),
--- Mounts
+-- Wolfs
 (18036,10,5774,8,2560.6, -1835.13, 10.6364, 5.32325,'Horde Venture Bay capture - summon Riding Wolf'),
 (18036,10,5774,8,2552.92,-1840.63, 10.604,  5.28835,'Horde Venture Bay capture - summon Riding Wolf'),
 (18036,10,5774,8,2556.9, -1845.99, 10.2894, 2.23402,'Horde Venture Bay capture - summon Riding Wolf'),
@@ -100,7 +101,7 @@ INSERT INTO gossip_menu (entry, text_id) VALUES
 (7724, 9432);
 DELETE FROM gossip_menu_option WHERE menu_id = 7724;
 INSERT INTO gossip_menu_option (menu_id, id, option_icon, option_text, box_coded, box_money, box_text, option_id, npc_option_npcflag, action_script_id) VALUES
-(7224, 0, 0, 'Give me a battle standard. I will take control of Twin Spire Ruins.', 0, 0, '', 1, 1, 7724),
+(7724, 0, 0, 'Give me a battle standard. I will take control of Twin Spire Ruins.', 0, 0, '', 1, 1, 7724),
 (7724, 1, 1, 'I have marks to redeem!', 0, 0, '', 3, 128, 0);
 DELETE FROM gossip_scripts WHERE id = 7724;
 INSERT INTO gossip_scripts (id, delay, command, datalong, datalong2, comments)
@@ -129,11 +130,13 @@ VALUES
 UPDATE `gameobject_template` SET `faction` = 1314 WHERE `entry` = 181955;
 
 -- Summon plaguewood flightmaster
+DELETE FROM creature WHERE id = 17209;
 DELETE FROM event_scripts WHERE id IN (10701,10700);
 INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) VALUES
 (10701,10,17209,8,2987.5,-3049.11,120.126,5.75959,'Alliance Plaguewood Tower progress event - summon William Kielar'),
 (10700,10,17209,8,2987.5,-3049.11,120.126,5.75959,'Horde Plaguewood Tower progress event - summon William Kielar');
 -- Summon eastwall soldiers
+DELETE FROM creature WHERE id IN (17635,17995);
 DELETE FROM event_scripts WHERE id IN (10691,10692);
 INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) VALUES
 -- alliance
@@ -208,6 +211,7 @@ UPDATE creature_template SET MovementType= 0, unit_flags=unit_flags|33554432 WHE
 UPDATE creature_template SET MovementType= 0 WHERE entry IN (18817,18822,21485,21487,21488,18256);
 UPDATE creature_template SET MovementType= 0 WHERE entry IN (18816,18821,21474,21484,21483,18192);
 -- summon npcs by script
+DELETE FROM creature WHERE id IN (18817,18822,21485,21487,21488,18256,18816,18821,21474,21484,21483,18192);
 DELETE FROM event_scripts WHERE id IN (11504,11503);
 INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) VALUES
 -- alliance vendors
