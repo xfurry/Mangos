@@ -271,7 +271,7 @@ bool OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
         switch (towerId)
         {
             case TOWER_ID_NORTHPASS:
-                UpdateShrine(go);
+                RespawnGO(go, team == ALLIANCE ? m_lordaeronShrineAlliance : m_lordaeronShrineHorde, true);
                 break;
             case TOWER_ID_CROWNGUARD:
                 sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_EASTERN_PLAGUE, GRAVEYARD_ZONE_EASTERN_PLAGUE, team);
@@ -293,7 +293,7 @@ bool OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
         switch (towerId)
         {
             case TOWER_ID_NORTHPASS:
-                UpdateShrine(go, true);
+                RespawnGO(go, m_towerOwner[TOWER_ID_NORTHPASS] == ALLIANCE ? m_lordaeronShrineAlliance : m_lordaeronShrineHorde, false);
                 break;
             case TOWER_ID_CROWNGUARD:
                 sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_EASTERN_PLAGUE, GRAVEYARD_ZONE_EASTERN_PLAGUE, TEAM_INVALID);
@@ -319,6 +319,15 @@ bool OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
     return eventResult;
 }
 
+bool OutdoorPvPEP::HandleObjectUse(Player* player, GameObject* go)
+{
+    // prevent despawning after go use
+    if (go->GetEntry() == GO_LORDAERON_SHRINE_ALLIANCE || go->GetEntry() == GO_LORDAERON_SHRINE_HORDE)
+        go->SetRespawnTime(0);
+
+    return false;
+}
+
 void OutdoorPvPEP::InitBanner(GameObject* go, uint32 towerId)
 {
     m_towerBanners[towerId].push_back(go->GetObjectGuid());
@@ -342,20 +351,4 @@ void OutdoorPvPEP::UnsummonSoldiers(const WorldObject* objRef)
     }
 
     m_soldiers.clear();
-}
-
-// Handle the shrine gameobject spawn/despawn depending on the northpass tower
-void OutdoorPvPEP::UpdateShrine(const WorldObject* objRef, bool remove)
-{
-    ObjectGuid shrineGuid = m_towerOwner[TOWER_ID_NORTHPASS] == ALLIANCE ? m_lordaeronShrineAlliance : m_lordaeronShrineHorde;
-    if (GameObject* shrine = objRef->GetMap()->GetGameObject(shrineGuid))
-    {
-        if (!remove)
-        {
-            shrine->SetRespawnTime(7 * DAY);
-            shrine->Refresh();
-        }
-        else if (shrine->isSpawned())
-            shrine->SetLootState(GO_JUST_DEACTIVATED);
-    }
 }

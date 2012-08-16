@@ -349,21 +349,21 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
     // disable old banners
     if (m_graveyardOwner == ALLIANCE)
     {
-        SetGraveyardArtKit(go, m_graveyardBannerAlliance, false);
+        RespawnGO(go, m_graveyardBannerAlliance, false);
         SetBeaconArtKit(go, m_beamGraveyardBlue, 0);
     }
     else if (m_graveyardOwner == HORDE)
     {
-        SetGraveyardArtKit(go, m_graveyardBannerHorde, false);
+        RespawnGO(go, m_graveyardBannerHorde, false);
         SetBeaconArtKit(go, m_beamGraveyardRed, 0);
     }
     else
-        SetGraveyardArtKit(go, m_graveyardBannerNeutral, false);
+        RespawnGO(go, m_graveyardBannerNeutral, false);
 
     if (team == ALLIANCE)
     {
         // change banners
-        SetGraveyardArtKit(go, m_graveyardBannerAlliance, true);
+        RespawnGO(go, m_graveyardBannerAlliance, true);
         SetBeaconArtKit(go, m_beamGraveyardBlue, SPELL_BEAM_BLUE);
 
         // update world state
@@ -380,7 +380,7 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
     else
     {
         // change banners
-        SetGraveyardArtKit(go, m_graveyardBannerHorde, true);
+        RespawnGO(go, m_graveyardBannerHorde, true);
         SetBeaconArtKit(go, m_beamGraveyardRed, SPELL_BEAM_RED);
 
         // update world state
@@ -410,24 +410,6 @@ bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
     m_graveyardOwner = team;
 
     return true;
-}
-
-// Handle the graveyard banner spawn / despawn
-void OutdoorPvPZM::SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn)
-{
-    if (GameObject* banner = objRef->GetMap()->GetGameObject(goGuid))
-    {
-        if (respawn)
-        {
-            banner->SetRespawnTime(7 * DAY);
-            banner->Refresh();
-        }
-        else if (banner->isSpawned())
-        {
-            banner->SetRespawnTime(7 * DAY);
-            banner->SetLootState(GO_JUST_DEACTIVATED);
-        }
-    }
 }
 
 // Handle the ZM beacons - this is done by npcs which have certain auras

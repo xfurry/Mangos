@@ -382,29 +382,47 @@ void OutdoorPvPNA::DespawnVendors(const WorldObject* objRef)
 
 bool OutdoorPvPNA::HandleObjectUse(Player* player, GameObject* go)
 {
-    UpdateWyvernsWorldState(WORLD_STATE_REMOVE);
-
     if (player->GetTeam() == ALLIANCE)
     {
         for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
         {
             if (go->GetEntry() == nagrandWagonsAlliance[i])
             {
+                // update roost states
+                UpdateWyvernsWorldState(WORLD_STATE_REMOVE);
                 m_roostWorldState[i] = nagrandRoostStatesHordeNeutral[i];
+                UpdateWyvernsWorldState(WORLD_STATE_ADD);
+
                 RespawnGO(go, m_hordeRoost[i], false);
                 RespawnGO(go, m_hordeBrokenRoost[i], true);
+
+                // no need to iterate the other roosts
+                return false;
             }
             else if (go->GetEntry() == nagrandRoostsBrokenAlliance[i])
             {
+                // update roost states
+                UpdateWyvernsWorldState(WORLD_STATE_REMOVE);
                 m_roostWorldState[i] = nagrandRoostStatesAlliance[i];
+                UpdateWyvernsWorldState(WORLD_STATE_ADD);
+
                 RespawnGO(go, m_hordeWagons[i], true);
-                RespawnGO(go, m_allianceRoost[i], true, true);
+                RespawnGO(go, m_allianceRoost[i], true);
+
+                // no need to iterate the other roosts
+                return false;
             }
             else if (go->GetEntry() == nagrandRoostsAlliance[i])
             {
                 // mark player as pvp
                 player->UpdatePvP(true, true);
                 player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP);
+
+                // prevent despawning after go use
+                go->SetRespawnTime(0);
+
+                // no need to iterate the other roosts
+                return false;
             }
         }
     }
@@ -414,43 +432,46 @@ bool OutdoorPvPNA::HandleObjectUse(Player* player, GameObject* go)
         {
             if (go->GetEntry() == nagrandWagonsHorde[i])
             {
+                // update roost states
+                UpdateWyvernsWorldState(WORLD_STATE_REMOVE);
                 m_roostWorldState[i] = nagrandRoostStatesAllianceNeutral[i];
+                UpdateWyvernsWorldState(WORLD_STATE_ADD);
+
                 RespawnGO(go, m_allianceRoost[i], false);
                 RespawnGO(go, m_allianceBrokenRoost[i], true);
+
+                // no need to iterate the other roosts
+                return false;
             }
             else if (go->GetEntry() == nagrandRoostsBrokenHorde[i])
             {
+                // update roost states
+                UpdateWyvernsWorldState(WORLD_STATE_REMOVE);
                 m_roostWorldState[i] = nagrandRoostStatesHorde[i];
+                UpdateWyvernsWorldState(WORLD_STATE_ADD);
+
                 RespawnGO(go, m_allianceWagons[i], true);
-                RespawnGO(go, m_hordeRoost[i], true, true);
+                RespawnGO(go, m_hordeRoost[i], true);
+
+                // no need to iterate the other roosts
+                return false;
             }
             else if (go->GetEntry() == nagrandRoostsHorde[i])
             {
                 // mark player as pvp
                 player->UpdatePvP(true, true);
                 player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP);
+
+                // prevent despawning after go use
+                go->SetRespawnTime(0);
+
+                // no need to iterate the other roosts
+                return false;
             }
         }
     }
 
-    UpdateWyvernsWorldState(WORLD_STATE_ADD);
-
     return false;
-}
-
-// Handle gameobject spawn / despawn
-void OutdoorPvPNA::RespawnGO(const WorldObject* objRef, ObjectGuid goGuid, bool respawn, bool resetFlag)
-{
-    if (GameObject* banner = objRef->GetMap()->GetGameObject(goGuid))
-    {
-        if (respawn)
-        {
-            banner->SetRespawnTime(7 * DAY);
-            banner->Refresh();
-        }
-        else if (banner->isSpawned())
-            banner->SetLootState(GO_JUST_DEACTIVATED);
-    }
 }
 
 // Handle Halaa lock when captured

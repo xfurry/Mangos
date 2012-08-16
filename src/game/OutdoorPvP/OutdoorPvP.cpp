@@ -148,3 +148,16 @@ void OutdoorPvP::SetBannerVisual(GameObject* go, uint32 artKit, uint32 animId)
     go->SetGoArtKit(artKit);
     go->Refresh();
 }
+
+void OutdoorPvP::RespawnGO(const WorldObject* objRef, ObjectGuid goGuid, bool respawn)
+{
+    if (GameObject* go = objRef->GetMap()->GetGameObject(goGuid))
+    {
+        go->SetRespawnTime(7 * DAY);
+
+        if (respawn)
+            go->Refresh();
+        else if (go->isSpawned())
+            go->SetLootState(GO_JUST_DEACTIVATED);
+    }
+}

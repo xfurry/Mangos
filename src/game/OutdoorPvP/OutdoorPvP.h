@@ -111,6 +111,9 @@ class OutdoorPvP
         void SetBannerVisual(const WorldObject* objRef, ObjectGuid goGuid, uint32 artKit, uint32 animId);
         void SetBannerVisual(GameObject* go, uint32 artKit, uint32 animId);
 
+        // Handle gameobject spawn / despawn
+        void RespawnGO(const WorldObject* objRef, ObjectGuid goGuid, bool respawn);
+
         // store the players inside the area
         GuidZoneMap m_zonePlayers;
 };

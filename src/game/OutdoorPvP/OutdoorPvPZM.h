@@ -154,9 +154,6 @@ class OutdoorPvPZM : public OutdoorPvP
         void PrepareFactionScouts(const WorldObject* objRef, Team team);
         void ResetScouts(const WorldObject* objRef, Team team);
 
-        // handle graveyard team banners
-        void SetGraveyardArtKit(const WorldObject* objRef, ObjectGuid goGuid, bool respawn);
-
         // respawn npcs which act as an artkit visual
         void SetBeaconArtKit(const WorldObject* objRef, ObjectGuid creatureGuid, uint32 auraId);
 

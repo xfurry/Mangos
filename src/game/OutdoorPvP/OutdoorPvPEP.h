@@ -228,6 +228,7 @@ class OutdoorPvPEP : public OutdoorPvP
 
         void HandleCreatureCreate(Creature* creature) override;
         void HandleGameObjectCreate(GameObject* go) override;
+        bool HandleObjectUse(Player* player, GameObject* go) override;
 
     private:
         // process capture events
@@ -239,8 +240,6 @@ class OutdoorPvPEP : public OutdoorPvP
         void UnsummonFlightMaster(const WorldObject* objRef);
         // Eastwall bonus - soldiers
         void UnsummonSoldiers(const WorldObject* objRef);
-        // Northpass bonus - shrine
-        void UpdateShrine(const WorldObject* objRef, bool remove = false);
 
         Team m_towerOwner[MAX_EP_TOWERS];
         uint32 m_towerWorldState[MAX_EP_TOWERS];
