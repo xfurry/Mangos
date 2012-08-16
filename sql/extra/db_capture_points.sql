@@ -136,54 +136,63 @@ INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, commen
 -- Summon eastwall soldiers
 DELETE FROM event_scripts WHERE id IN (10691,10692);
 INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) VALUES
-(10691,10,17635,8,2526.220,-4758.520,101.056,0,'Alliance Eastwall Tower capture - summon Lordaeron Commander'),
-(10691,10,17647,8,2532.452,-4760.138,102.408,0,'Alliance Eastwall Tower capture - summon Lordaeron Soldier'),
-(10691,10,17647,8,2535.058,-4757.152,102.219,0,'Alliance Eastwall Tower capture - summon Lordaeron Soldier'),
-(10691,10,17647,8,2526.297,-4764.442,102.360,0,'Alliance Eastwall Tower capture - summon Lordaeron Soldier'),
-(10691,10,17647,8,2522.425,-4767.049,102.552,0,'Alliance Eastwall Tower capture - summon Lordaeron Soldier'),
-(10692,10,17995,8,2526.220,-4758.520,101.056,0,'Horde Eastwall Tower capture - summon Lordaeron Veteran'),
-(10692,10,17996,8,2532.452,-4760.138,102.408,0,'Horde Eastwall Tower capture - summon Lordaeron Fighter'),
-(10692,10,17996,8,2535.058,-4757.152,102.219,0,'Horde Eastwall Tower capture - summon Lordaeron Fighter'),
-(10692,10,17996,8,2526.297,-4764.442,102.360,0,'Horde Eastwall Tower capture - summon Lordaeron Fighter'),
-(10692,10,17996,8,2522.425,-4767.049,102.552,0,'Horde Eastwall Tower capture - summon Lordaeron Fighter');
+-- alliance
+(10691,10,17635,8,2526.220,-4758.520,101.056,2.17,'Alliance Eastwall Tower capture - summon Lordaeron Commander'),
+(10691,10,17647,8,2532.452,-4760.138,102.408,2.17,'Alliance Eastwall Tower capture - summon Lordaeron Soldier'),
+(10691,10,17647,8,2535.058,-4757.152,102.219,2.17,'Alliance Eastwall Tower capture - summon Lordaeron Soldier'),
+(10691,10,17647,8,2526.297,-4764.442,102.360,2.17,'Alliance Eastwall Tower capture - summon Lordaeron Soldier'),
+(10691,10,17647,8,2522.425,-4767.049,102.552,2.17,'Alliance Eastwall Tower capture - summon Lordaeron Soldier'),
+-- horde
+(10692,10,17995,8,2526.220,-4758.520,101.056,2.17,'Horde Eastwall Tower capture - summon Lordaeron Veteran'),
+(10692,10,17996,8,2532.452,-4760.138,102.408,2.17,'Horde Eastwall Tower capture - summon Lordaeron Fighter'),
+(10692,10,17996,8,2535.058,-4757.152,102.219,2.17,'Horde Eastwall Tower capture - summon Lordaeron Fighter'),
+(10692,10,17996,8,2526.297,-4764.442,102.360,2.17,'Horde Eastwall Tower capture - summon Lordaeron Fighter'),
+(10692,10,17996,8,2522.425,-4767.049,102.552,2.17,'Horde Eastwall Tower capture - summon Lordaeron Fighter');
 
--- set soldiers movement - waypoints need testing
-UPDATE `creature_template` SET `MovementType` = 0 WHERE `entry` IN (17647,17996);
-UPDATE `creature_template` SET `MovementType` = 2 WHERE `entry` in (17635,17995);
-DELETE FROM `creature_movement_template` WHERE `entry` in (17635, 17995);
-INSERT INTO `creature_movement_template` (`entry`, `point`, `position_x`, `position_y`, `position_z`) VALUES
-(17635, 1, 2501.349, -4725.994, 90.974),
-(17635, 2, 2491.211, -4693.162, 82.363),
-(17635, 3, 2493.059, -4655.492, 75.194),
-(17635, 4, 2562.227, -4646.404, 79.003),
-(17635, 5, 2699.748, -4567.377, 87.460),
-(17635, 6, 2757.274, -4527.591, 89.080),
-(17635, 7, 2850.868, -4417.565, 89.421),
-(17635, 8, 2888.340, -4328.486, 90.562),
-(17635, 9, 2913.271, -4167.140, 93.919),
-(17635, 10, 3035.656, -4260.176, 96.141),
-(17635, 11, 3088.544, -4250.208, 97.769),
-(17635, 12, 3147.302, -4318.796, 130.410),
-(17635, 13, 3166.813, -4349.198, 137.569),
+-- set soldiers movement - needs more adjustments
+UPDATE creature_template SET MovementType=0 WHERE entry IN (17647,17996);
+UPDATE creature_template SET MovementType=2 WHERE entry in (17635,17995);
+DELETE FROM creature_movement_template WHERE entry in (17635, 17995);
+INSERT INTO creature_movement_template (entry, point, position_x, position_y, position_z, script_id) VALUES
+-- alliance
+(17635, 1, 2501.349, -4725.994, 90.974, 0),
+(17635, 2, 2491.211, -4693.162, 82.363, 0),
+(17635, 3, 2493.059, -4655.492, 75.194, 0),
+(17635, 4, 2562.227, -4646.404, 79.003, 0),
+(17635, 5, 2699.748, -4567.377, 87.460, 0),
+(17635, 6, 2757.274, -4527.591, 89.080, 0),
+(17635, 7, 2850.868, -4417.565, 89.421, 0),
+(17635, 8, 2888.340, -4328.486, 90.562, 0),
+(17635, 9, 2913.271, -4167.140, 93.919, 0),
+(17635, 10, 3035.656, -4260.176, 96.141, 0),
+(17635, 11, 3088.544, -4250.208, 97.769, 0),
+(17635, 12, 3147.302, -4318.796, 130.410, 0),
+(17635, 13, 3166.813, -4349.198, 137.569, 1763501),
+-- horde
+(17995, 1, 2501.349, -4725.994, 90.974, 0),
+(17995, 2, 2491.211, -4693.162, 82.363, 0),
+(17995, 3, 2493.059, -4655.492, 75.194, 0),
+(17995, 4, 2562.227, -4646.404, 79.003, 0),
+(17995, 5, 2699.748, -4567.377, 87.460, 0),
+(17995, 6, 2757.274, -4527.591, 89.080, 0),
+(17995, 7, 2850.868, -4417.565, 89.421, 0),
+(17995, 8, 2888.340, -4328.486, 90.562, 0),
+(17995, 9, 2913.271, -4167.140, 93.919, 0),
+(17995, 10, 3035.656, -4260.176, 96.141, 0),
+(17995, 11, 3088.544, -4250.208, 97.769, 0),
+(17995, 12, 3147.302, -4318.796, 130.410, 0),
+(17995, 13, 3166.813, -4349.198, 137.569, 1799501);
 
-(17995, 1, 2501.349, -4725.994, 90.974),
-(17995, 2, 2491.211, -4693.162, 82.363),
-(17995, 3, 2493.059, -4655.492, 75.194),
-(17995, 4, 2562.227, -4646.404, 79.003),
-(17995, 5, 2699.748, -4567.377, 87.460),
-(17995, 6, 2757.274, -4527.591, 89.080),
-(17995, 7, 2850.868, -4417.565, 89.421),
-(17995, 8, 2888.340, -4328.486, 90.562),
-(17995, 9, 2913.271, -4167.140, 93.919),
-(17995, 10, 3035.656, -4260.176, 96.141),
-(17995, 11, 3088.544, -4250.208, 97.769),
-(17995, 12, 3147.302, -4318.796, 130.410),
-(17995, 13, 3166.813, -4349.198, 137.569);
+DELETE FROM creature_movement_scripts WHERE id IN (1763501,1799501);
+INSERT INTO creature_movement_scripts (id, command, datalong, comments) VALUES
+(1763501,20,0,'Lordaeron Commander - set movement to idle'),
+(1799501,20,0,'Lordaeron Veteran - set movement to idle');
 
 -- creature linking for EP soldiers
--- INSERT IGNORE INTO creature_linking_template VALUES
--- (17647, 0, 17635, 515, 0),
--- (17996, 0, 17995, 515, 0);
+DELETE FROM creature_linking_template WHERE entry IN (17647,17996);
+INSERT INTO creature_linking_template VALUES
+(17647, 0, 17635, 515, 0),
+(17996, 0, 17995, 515, 0);
 /* ################################# */
 
 -- Halaa fixes
