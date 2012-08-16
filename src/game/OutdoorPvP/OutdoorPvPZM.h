@@ -152,7 +152,7 @@ class OutdoorPvPZM : public OutdoorPvP
         bool ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team, uint32 newWorldState, uint32 newMapState);
 
         // handles scout world states
-        void HandleFactionScouts(const WorldObject* objRef, Team team, bool reset);
+        void UpdateScoutState(Team team, bool spawned);
 
         // respawn npcs which act as an artkit visual
         void SetBeaconArtKit(const WorldObject* objRef, ObjectGuid creatureGuid, uint32 auraId);

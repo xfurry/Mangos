@@ -129,8 +129,9 @@ VALUES
 /* ################################# */
 -- correct horde gameobject faction
 UPDATE gameobject_template SET faction=1314 WHERE entry=181955;
--- spectral flight master gossip scripts
+-- spectral flight master aura removed as it depends on faction and is done by opvp script
 DELETE FROM creature_template_addon WHERE entry=17209;
+-- spectral flight master gossip scripts
 UPDATE gossip_menu_option SET action_script_id=737901 WHERE menu_id=7379 and id=0;
 UPDATE gossip_menu_option SET action_script_id=737902 WHERE menu_id=7379 and id=1;
 UPDATE gossip_menu_option SET action_script_id=737903 WHERE menu_id=7379 and id=2;
@@ -140,7 +141,7 @@ INSERT INTO gossip_scripts (id,command,datalong,comments) VALUES
 (737902,30,495,'William Kielar - Send Eastwall Tower taxi'),
 (737903,30,496,'William Kielar - Send Crown Guard Tower taxi');
 
--- Summon plaguewood flightmaster
+-- Summon plaguewood flight master
 DELETE FROM creature WHERE id = 17209;
 DELETE FROM event_scripts WHERE id IN (10701,10700);
 INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) VALUES
@@ -216,7 +217,7 @@ UPDATE creature_template SET AIName='EventAI' WHERE entry=18225;
 DELETE FROM creature_ai_scripts WHERE creature_id=18225;
 INSERT INTO creature_ai_scripts VALUES 
 ('1822501','18225','11','0','100','0','0','0','0','0','11','31961','0','0','0','0','0','0','0','0','0','0','Fire Bomb Target - Cast Fire Bomb on Spawned');
--- No random movement for this one - unit flags are guesswork
+-- No random movement for the fire bomb target - unit flags are guesswork
 UPDATE creature_template SET MovementType= 0, unit_flags=unit_flags|33554432 WHERE entry=18225;
 
 UPDATE creature_template SET MovementType= 0 WHERE entry IN (18817,18822,21485,21487,21488,18256);

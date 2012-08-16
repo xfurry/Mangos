@@ -75,23 +75,23 @@ bool OutdoorPvPGH::HandleEvent(uint32 eventId, GameObject* go)
     if (go->GetEntry() != GO_VENTURE_BAY_LIGHTHOUSE)
         return false;
 
-    bool eventResult = true;
+    bool eventHandled = true;
 
     switch (eventId)
     {
         case EVENT_LIGHTHOUSE_WIN_ALLIANCE:
             // Spawn the npcs only when the tower is fully controlled. Also allow the event to handle summons in DB.
             m_zoneOwner = ALLIANCE;
-            eventResult = false;
             LockLighthouse(go);
             DespawnVendors(go);
+            eventHandled = false;
             break;
         case EVENT_LIGHTHOUSE_WIN_HORDE:
             // Spawn the npcs only when the tower is fully controlled. Also allow the event to handle summons in DB.
             m_zoneOwner = HORDE;
-            eventResult = false;
             LockLighthouse(go);
             DespawnVendors(go);
+            eventHandled = false;
             break;
         case EVENT_LIGHTHOUSE_PROGRESS_ALLIANCE:
             SetBannerVisual(go, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
@@ -107,7 +107,7 @@ bool OutdoorPvPGH::HandleEvent(uint32 eventId, GameObject* go)
     }
 
     // there are some events which required further DB script
-    return eventResult;
+    return eventHandled;
 }
 
 // Despawn the vendors when the lighthouse is won by the opposite faction

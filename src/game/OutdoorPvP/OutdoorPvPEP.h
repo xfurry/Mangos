@@ -50,11 +50,11 @@ enum
     HONOR_REWARD_PLAGUELANDS                        = 18,
 
     // npcs
-    NPC_SPECTRAL_FLIGHTMASTER                       = 17209,
+    NPC_SPECTRAL_FLIGHT_MASTER                      = 17209,
 
-    // flightmaster factions
-    FACTION_FLIGHTMASTER_ALLIANCE                   = 774,
-    FACTION_FLIGHTMASTER_HORDE                      = 775,
+    // flight master factions
+    FACTION_FLIGHT_MASTER_ALLIANCE                  = 774,
+    FACTION_FLIGHT_MASTER_HORDE                     = 775,
 
     SPELL_SPIRIT_PARTICLES_BLUE                     = 17327,
     SPELL_SPIRIT_PARTICLES_RED                      = 31309,

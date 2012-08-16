@@ -197,12 +197,12 @@ bool OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 
         if (m_towersAlliance == MAX_ZM_TOWERS)
         {
-            //send this defense message before PrepareFactionScouts (which sends another)
+            // Send this defense message before PrepareFactionScouts (which sends another)
             sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_BOTH_BEACONS_A);
 
             // only add flag to scouts if team does not have captured graveyard already
             if (m_graveyardOwner != ALLIANCE)
-                HandleFactionScouts(go, ALLIANCE, false);
+                UpdateScoutState(ALLIANCE, true);
         }
     }
     else if (team == HORDE)
@@ -213,12 +213,12 @@ bool OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 
         if (m_towersHorde == MAX_ZM_TOWERS)
         {
-            //send this defense message before PrepareFactionScouts (which sends another)
+            // Send this defense message before PrepareFactionScouts (which sends another)
             sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_BOTH_BEACONS_H);
 
             // only add flag to scouts if team does not already have captured graveyard
             if (m_graveyardOwner != HORDE)
-                HandleFactionScouts(go, HORDE, false);
+                UpdateScoutState(HORDE, true);
         }
     }
     else
@@ -229,7 +229,7 @@ bool OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 
             // only remove flag from scouts if team does not already have captured graveyard
             if (m_towersAlliance == MAX_ZM_TOWERS && m_graveyardOwner != ALLIANCE)
-                HandleFactionScouts(go, ALLIANCE, true);
+                UpdateScoutState(ALLIANCE, false);
 
             // update counter
             --m_towersAlliance;
@@ -240,7 +240,7 @@ bool OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 
             // only remove flag from scouts if team does not already have captured graveyard
             if (m_towersHorde == MAX_ZM_TOWERS && m_graveyardOwner != HORDE)
-                HandleFactionScouts(go, HORDE, true);
+                UpdateScoutState(HORDE, false);
 
             // update counter
             --m_towersHorde;
@@ -264,24 +264,24 @@ bool OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 }
 
 // Handle scout activation, when both beacons are captured
-void OutdoorPvPZM::HandleFactionScouts(const WorldObject* objRef, Team team, bool reset)
+void OutdoorPvPZM::UpdateScoutState(Team team, bool spawned)
 {
     if (team == ALLIANCE)
     {
         SendUpdateWorldState(m_scoutWorldStateAlliance, WORLD_STATE_REMOVE);
-        m_scoutWorldStateAlliance = reset ? WORLD_STATE_ZM_FLAG_NOT_READY_ALLIANCE : WORLD_STATE_ZM_FLAG_READY_ALLIANCE;
+        m_scoutWorldStateAlliance = spawned ? WORLD_STATE_ZM_FLAG_READY_ALLIANCE : WORLD_STATE_ZM_FLAG_NOT_READY_ALLIANCE;
         SendUpdateWorldState(m_scoutWorldStateAlliance, WORLD_STATE_ADD);
 
-        if (!reset)
+        if (spawned)
             sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_SPAWN_FIELD_SCOUT_A);
     }
     else
     {
         SendUpdateWorldState(m_scoutWorldStateHorde, WORLD_STATE_REMOVE);
-        m_scoutWorldStateHorde = reset ? WORLD_STATE_ZM_FLAG_NOT_READY_HORDE : WORLD_STATE_ZM_FLAG_READY_HORDE;
+        m_scoutWorldStateHorde = spawned ? WORLD_STATE_ZM_FLAG_READY_HORDE : WORLD_STATE_ZM_FLAG_NOT_READY_HORDE;
         SendUpdateWorldState(m_scoutWorldStateHorde, WORLD_STATE_ADD);
 
-        if (!reset)
+        if (spawned)
             sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_SPAWN_FIELD_SCOUT_H);
     }
 }
@@ -365,7 +365,7 @@ bool OutdoorPvPZM::HandleGameObjectUse(Player* player, GameObject* go)
     BuffTeam(team, SPELL_TWIN_SPIRE_BLESSING);
 
     // reset scout so that team cannot take flag
-    HandleFactionScouts(go, team, true);
+    UpdateScoutState(team, false);
 
     // update graveyard owner
     m_graveyardOwner = team;
