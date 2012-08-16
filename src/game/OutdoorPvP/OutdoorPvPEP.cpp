@@ -353,13 +353,9 @@ void OutdoorPvPEP::UpdateShrine(const WorldObject* objRef, bool remove)
         if (!remove)
         {
             shrine->SetRespawnTime(7 * DAY);
-            shrine->SetActiveObjectState(true);
             shrine->Refresh();
         }
         else if (shrine->isSpawned())
-        {
-            shrine->SetActiveObjectState(false);
             shrine->SetLootState(GO_JUST_DEACTIVATED);
-        }
     }
 }
