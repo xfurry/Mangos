@@ -196,55 +196,56 @@ INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_invers
 -- No random movement for this one - unit flags are guesswork
 UPDATE creature_template SET MovementType= 0, unit_flags=unit_flags|33554432 WHERE entry=18225;
 
--- spawn npcs and gameobjects on the map
-DELETE FROM `creature` WHERE `id` IN (18817,18822,21485,21487,21488,18256);
-INSERT INTO `creature` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`modelid`,`equipment_id`,`position_x`,`position_y`,`position_z`,`orientation`,`spawntimesecs`,`spawndist`,`currentwaypoint`,`curhealth`,`curmana`,`DeathState`,`MovementType`) VALUES
--- alliance
-(300009, 18817, 530, 1, 1, 0, 0, -1591.18, 8020.39, -22.2042, 4.59022, 600, 0, 0, 59115, 0, 0, 0),
-(300010, 18822, 530, 1, 1, 0, 0, -1588.12, 8019.44, -22.2042, 4.06662, 600, 0, 0, 88710, 0, 0, 0),
-(300011, 21485, 530, 1, 1, 0, 0, -1521.93, 7927.37, -20.2299, 3.24631, 600, 0, 0, 104790, 0, 0, 0),
-(300012, 21487, 530, 1, 1, 0, 0, -1540.33, 7971.95, -20.7186, 3.07178, 600, 0, 0, 104790, 0, 0, 0),
-(300013, 21488, 530, 1, 1, 0, 0, -1570.01, 7993.8, -22.4505, 5.02655, 600, 0, 0, 104790, 0, 0, 0),
+UPDATE creature_template SET MovementType= 0 WHERE entry IN (18817,18822,21485,21487,21488,18256);
+UPDATE creature_template SET MovementType= 0 WHERE entry IN (18816,18821,21474,21484,21483,18192);
+-- summon npcs by script
+DELETE FROM event_scripts WHERE id IN (11504,11503);
+INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) VALUES
+-- alliance vendors
+(11504,10,18817,8, -1591.18, 8020.39, -22.2042, 4.59022,'Alliance Halaa capture - summon Chief Researcher Kartos'),
+(11504,10,18822,8, -1588.12, 8019.44, -22.2042, 4.06662,'Alliance Halaa capture - summon Quartermaster Davian Vaclav'),
+(11504,10,21485,8, -1521.93, 7927.37, -20.2299, 3.24631,'Alliance Halaa capture - summon Aldraan'),
+(11504,10,21487,8, -1540.33, 7971.95, -20.7186, 3.07178,'Alliance Halaa capture - summon Cendrii'),
+(11504,10,21488,8, -1570.01, 7993.8, -22.4505, 5.02655,'Alliance Halaa capture - summon Banro'),
 -- soldiers
-(300014, 18256, 530, 1, 1, 0, 0, -1654.06, 8000.46, -26.59, 3.37, 600, 0, 0, 1182800, 0, 0, 0),
-(300015, 18256, 530, 1, 1, 0, 0, -1487.18, 7899.1, -19.53, 0.954, 600, 0, 0, 1182800, 0, 0, 0),
-(300016, 18256, 530, 1, 1, 0, 0, -1480.88, 7908.79, -19.19, 4.485, 600, 0, 0, 1182800, 0, 0, 0),
-(300017, 18256, 530, 1, 1, 0, 0, -1540.56, 7995.44, -20.45, 0.947, 600, 0, 0, 1182800, 0, 0, 0),
-(300018, 18256, 530, 1, 1, 0, 0, -1546.95, 8000.85, -20.72, 6.035, 600, 0, 0, 1182800, 0, 0, 0),
-(300019, 18256, 530, 1, 1, 0, 0, -1595.31, 7860.53, -21.51, 3.747, 600, 0, 0, 1182800, 0, 0, 0),
-(300020, 18256, 530, 1, 1, 0, 0, -1642.31, 7995.59, -25.8, 3.317, 600, 0, 0, 1182800, 0, 0, 0),
-(300021, 18256, 530, 1, 1, 0, 0, -1545.46, 7995.35, -20.63, 1.094, 600, 0, 0, 1182800, 0, 0, 0),
-(300022, 18256, 530, 1, 1, 0, 0, -1487.58, 7907.99, -19.27, 5.567, 600, 0, 0, 1182800, 0, 0, 0),
-(300023, 18256, 530, 1, 1, 0, 0, -1651.54, 7988.56, -26.52, 2.984, 600, 0, 0, 1182800, 0, 0, 0),
-(300024, 18256, 530, 1, 1, 0, 0, -1602.46, 7866.43, -22.11, 4.747, 600, 0, 0, 1182800, 0, 0, 0),
-(300025, 18256, 530, 1, 1, 0, 0, -1591.22, 7875.29, -22.35, 4.345, 600, 0, 0, 1182800, 0, 0, 0),
-(300026, 18256, 530, 1, 1, 0, 0, -1603.75, 8000.36, -24.18, 4.516, 600, 0, 0, 1182800, 0, 0, 0),
-(300027, 18256, 530, 1, 1, 0, 0, -1585.73, 7994.68, -23.29, 4.439, 600, 0, 0, 1182800, 0, 0, 0),
-(300028, 18256, 530, 1, 1, 0, 0, -1595.5, 7991.27, -23.53, 4.738, 600, 0, 0, 1182800, 0, 0, 0);
-DELETE FROM `creature` WHERE `id` IN (18816,18821,21474,21484,21483,18192);
-INSERT INTO `creature` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`modelid`,`equipment_id`,`position_x`,`position_y`,`position_z`,`orientation`,`spawntimesecs`,`spawndist`,`currentwaypoint`,`curhealth`,`curmana`,`DeathState`,`MovementType`) VALUES
--- horde
-(300029, 18816, 530, 1, 1, 0, 0, -1523.92, 7951.76, -17.6942, 3.51172, 600, 0, 0, 59115, 0, 0, 0),
-(300030, 18821, 530, 1, 1, 0, 0, -1527.75, 7952.46, -17.6948, 3.99317, 600, 0, 0, 88710, 0, 0, 0),
-(300031, 21474, 530, 1, 1, 0, 0, -1520.14, 7927.11, -20.2527, 3.39389, 600, 0, 0, 104790, 0, 0, 0),
-(300032, 21484, 530, 1, 1, 0, 0, -1524.84, 7930.34, -20.182, 3.6405, 600, 0, 0, 104790, 0, 0, 0),
-(300033, 21483, 530, 1, 1, 0, 0, -1570.01, 7993.8, -22.4505, 5.02655, 600, 0, 0, 104790, 0, 0, 0),
+(11504,10,18256,8, -1654.06, 8000.46, -26.59, 3.37, 'Alliance Halaa capture - summon Alliance Halaani Guard'),
+(11504,10,18256,8, -1487.18, 7899.1, -19.53, 0.954, 'Alliance Halaa capture - summon Alliance Halaani Guard'),
+(11504,10,18256,8, -1480.88, 7908.79, -19.19, 4.485, 'Alliance Halaa capture - summon Alliance Halaani Guard'),
+(11504,10,18256,8, -1540.56, 7995.44, -20.45, 0.947, 'Alliance Halaa capture - summon Alliance Halaani Guard'),
+(11504,10,18256,8, -1546.95, 8000.85, -20.72, 6.035, 'Alliance Halaa capture - summon Alliance Halaani Guard'),
+(11504,10,18256,8, -1595.31, 7860.53, -21.51, 3.747, 'Alliance Halaa capture - summon Alliance Halaani Guard'),
+(11504,10,18256,8, -1642.31, 7995.59, -25.8, 3.317, 'Alliance Halaa capture - summon Alliance Halaani Guard'),
+(11504,10,18256,8, -1545.46, 7995.35, -20.63, 1.094, 'Alliance Halaa capture - summon Alliance Halaani Guard'),
+(11504,10,18256,8, -1487.58, 7907.99, -19.27, 5.567, 'Alliance Halaa capture - summon Alliance Halaani Guard'),
+(11504,10,18256,8, -1651.54, 7988.56, -26.52, 2.984, 'Alliance Halaa capture - summon Alliance Halaani Guard'),
+(11504,10,18256,8, -1602.46, 7866.43, -22.11, 4.747, 'Alliance Halaa capture - summon Alliance Halaani Guard'),
+(11504,10,18256,8, -1591.22, 7875.29, -22.35, 4.345, 'Alliance Halaa capture - summon Alliance Halaani Guard'),
+(11504,10,18256,8, -1603.75, 8000.36, -24.18, 4.516, 'Alliance Halaa capture - summon Alliance Halaani Guard'),
+(11504,10,18256,8, -1585.73, 7994.68, -23.29, 4.439, 'Alliance Halaa capture - summon Alliance Halaani Guard'),
+(11504,10,18256,8, -1595.5, 7991.27, -23.53, 4.738, 'Alliance Halaa capture - summon Alliance Halaani Guard');
+INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) VALUES
+-- horde vendors
+(11503,10,18816,8, -1523.92, 7951.76, -17.6942, 3.51172, 'Horde Halaa capture - summon Chief Researcher Amereldine'),
+(11503,10,18821,8, -1527.75, 7952.46, -17.6948, 3.99317, 'Horde Halaa capture - summon Quartermaster Jaffrey Noreliqe'),
+(11503,10,21474,8, -1520.14, 7927.11, -20.2527, 3.39389, 'Horde Halaa capture - summon Coreiel'),
+(11503,10,21484,8, -1524.84, 7930.34, -20.182, 3.6405, 'Horde Halaa capture - summon Embelar'),
+(11503,10,21483,8, -1570.01, 7993.8, -22.4505, 5.02655, 'Horde Halaa capture - summon Tasaldan'),
 -- soldiers
-(300034, 18192, 530, 1, 1, 0, 0, -1654.06, 8000.46, -26.59, 3.37, 600, 0, 0, 1182800, 0, 0, 0),
-(300035, 18192, 530, 1, 1, 0, 0, -1487.18, 7899.1, -19.53, 0.954, 600, 0, 0, 1182800, 0, 0, 0),
-(300036, 18192, 530, 1, 1, 0, 0, -1480.88, 7908.79, -19.19, 4.485, 600, 0, 0, 1182800, 0, 0, 0),
-(300037, 18192, 530, 1, 1, 0, 0, -1540.56, 7995.44, -20.45, 0.947, 600, 0, 0, 1182800, 0, 0, 0),
-(300038, 18192, 530, 1, 1, 0, 0, -1546.95, 8000.85, -20.72, 6.035, 600, 0, 0, 1182800, 0, 0, 0),
-(300039, 18192, 530, 1, 1, 0, 0, -1595.31, 7860.53, -21.51, 3.747, 600, 0, 0, 1182800, 0, 0, 0),
-(300040, 18192, 530, 1, 1, 0, 0, -1642.31, 7995.59, -25.8, 3.317, 600, 0, 0, 1182800, 0, 0, 0),
-(300041, 18192, 530, 1, 1, 0, 0, -1545.46, 7995.35, -20.63, 1.094, 600, 0, 0, 1182800, 0, 0, 0),
-(300042, 18192, 530, 1, 1, 0, 0, -1487.58, 7907.99, -19.27, 5.567, 600, 0, 0, 1182800, 0, 0, 0),
-(300043, 18192, 530, 1, 1, 0, 0, -1651.54, 7988.56, -26.52, 2.984, 600, 0, 0, 1182800, 0, 0, 0),
-(300044, 18192, 530, 1, 1, 0, 0, -1602.46, 7866.43, -22.11, 4.747, 600, 0, 0, 1182800, 0, 0, 0),
-(300045, 18192, 530, 1, 1, 0, 0, -1591.22, 7875.29, -22.35, 4.345, 600, 0, 0, 1182800, 0, 0, 0),
-(300046, 18192, 530, 1, 1, 0, 0, -1550.6, 7944.45, -21.63, 3.559, 600, 0, 0, 1182800, 0, 0, 0),
-(300047, 18192, 530, 1, 1, 0, 0, -1545.57, 7935.83, -21.13, 3.448, 600, 0, 0, 1182800, 0, 0, 0),
-(300048, 18192, 530, 1, 1, 0, 0, -1550.86, 7937.56, -21.7, 3.801, 600, 0, 0, 1182800, 0, 0, 0);
+(11503,10,18192,8, -1654.06, 8000.46, -26.59, 3.37, 'Horde Halaa capture - summon Horde Halaani Guard'),
+(11503,10,18192,8, -1487.18, 7899.1, -19.53, 0.954, 'Horde Halaa capture - summon Horde Halaani Guard'),
+(11503,10,18192,8, -1480.88, 7908.79, -19.19, 4.485, 'Horde Halaa capture - summon Horde Halaani Guard'),
+(11503,10,18192,8, -1540.56, 7995.44, -20.45, 0.947, 'Horde Halaa capture - summon Horde Halaani Guard'),
+(11503,10,18192,8, -1546.95, 8000.85, -20.72, 6.035, 'Horde Halaa capture - summon Horde Halaani Guard'),
+(11503,10,18192,8, -1595.31, 7860.53, -21.51, 3.747, 'Horde Halaa capture - summon Horde Halaani Guard'),
+(11503,10,18192,8, -1642.31, 7995.59, -25.8, 3.317, 'Horde Halaa capture - summon Horde Halaani Guard'),
+(11503,10,18192,8, -1545.46, 7995.35, -20.63, 1.094, 'Horde Halaa capture - summon Horde Halaani Guard'),
+(11503,10,18192,8, -1487.58, 7907.99, -19.27, 5.567, 'Horde Halaa capture - summon Horde Halaani Guard'),
+(11503,10,18192,8, -1651.54, 7988.56, -26.52, 2.984, 'Horde Halaa capture - summon Horde Halaani Guard'),
+(11503,10,18192,8, -1602.46, 7866.43, -22.11, 4.747, 'Horde Halaa capture - summon Horde Halaani Guard'),
+(11503,10,18192,8, -1591.22, 7875.29, -22.35, 4.345, 'Horde Halaa capture - summon Horde Halaani Guard'),
+(11503,10,18192,8, -1550.6, 7944.45, -21.63, 3.559, 'Horde Halaa capture - summon Horde Halaani Guard'),
+(11503,10,18192,8, -1545.57, 7935.83, -21.13, 3.448, 'Horde Halaa capture - summon Horde Halaani Guard'),
+(11503,10,18192,8, -1550.86, 7937.56, -21.7, 3.801, 'Horde Halaa capture - summon Horde Halaani Guard');
 
 -- Gameobject scripts
 -- South (ally & horde)

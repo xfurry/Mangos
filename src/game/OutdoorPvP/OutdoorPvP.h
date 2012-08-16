@@ -62,9 +62,8 @@ class OutdoorPvP
         virtual void HandleCreatureCreate(Creature* /*creature*/) {}
         virtual void HandleGameObjectCreate(GameObject* /*go*/) {}
 
-        // Called on creature death or respawn
+        // Called on creature death
         virtual void HandleCreatureDeath(Creature* /*creature*/) {}
-        virtual void HandleCreatureRespawn(Creature* /*creature*/) {}
 
         // Process Capture event
         virtual bool HandleEvent(uint32 /*eventId*/, GameObject* /*go*/) { return false; }

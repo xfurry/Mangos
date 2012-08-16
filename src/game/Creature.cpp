@@ -508,10 +508,6 @@ void Creature::Update(uint32 update_diff, uint32 diff)
                 if (AI())
                     AI()->JustRespawned();
 
-                // Notify the outdoor pvp script
-                if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetScript(GetZoneId()))
-                    outdoorPvP->HandleCreatureRespawn(this);
-
                 if (m_isCreatureLinkingTrigger)
                     GetMap()->GetCreatureLinkingHolder()->DoCreatureLinkingEvent(LINKING_EVENT_RESPAWN, this);
 

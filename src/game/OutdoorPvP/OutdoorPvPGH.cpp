@@ -109,6 +109,7 @@ bool OutdoorPvPGH::HandleEvent(uint32 eventId, GameObject* go)
             break;
     }
 
+    // there are some events which required further DB script
     return eventResult;
 }
 

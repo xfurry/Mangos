@@ -165,7 +165,6 @@ class OutdoorPvPNA : public OutdoorPvP
         void HandleCreatureCreate(Creature* creature) override;
         void HandleGameObjectCreate(GameObject* go) override;
         void HandleCreatureDeath(Creature* creature) override;
-        void HandleCreatureRespawn(Creature* creature) override;
 
         void HandlePlayerKillInsideArea(Player* player, Unit* victim) override;
         bool HandleObjectUse(Player* player, GameObject* go) override;
@@ -178,8 +177,8 @@ class OutdoorPvPNA : public OutdoorPvP
         // process capture events
         void ProcessCaptureEvent(GameObject* go, Team team);
 
-        // set specific team soldiers and objects after capture
-        void RespawnSoldiers(const WorldObject* objRef);
+        // set specific team vendors and objects after capture
+        void DespawnVendors(const WorldObject* objRef);
         void HandleFactionObjects(const WorldObject* objRef);
 
         // handle a specific game objects
@@ -201,8 +200,7 @@ class OutdoorPvPNA : public OutdoorPvP
         ObjectGuid m_allianceWagons[MAX_NA_ROOSTS];
         ObjectGuid m_hordeWagons[MAX_NA_ROOSTS];
 
-        GuidList m_allianceSoldiers;
-        GuidList m_hordeSoldiers;
+        GuidList m_teamVendors;
 };
 
 #endif

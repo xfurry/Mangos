@@ -112,34 +112,38 @@ void OutdoorPvPNA::HandleCreatureCreate(Creature* creature)
 {
     switch (creature->GetEntry())
     {
-        case NPC_ALLIANCE_HANAANI_GUARD:
         case NPC_RESEARCHER_KARTOS:
         case NPC_QUARTERMASTER_DAVIAN:
         case NPC_MERCHANT_ALDRAAN:
         case NPC_VENDOR_CENDRII:
         case NPC_AMMUNITIONER_BANRO:
-            m_allianceSoldiers.push_back(creature->GetObjectGuid());
-            if (m_zoneOwner == ALLIANCE)
-                return;
-            break;
-        case NPC_HORDE_HALAANI_GUARD:
         case NPC_RESEARCHER_AMERELDINE:
         case NPC_QUARTERMASTER_NORELIQE:
         case NPC_MERCHANT_COREIEL:
         case NPC_VENDOR_EMBELAR:
         case NPC_AMMUNITIONER_TASALDAN:
-            m_hordeSoldiers.push_back(creature->GetObjectGuid());
-            if (m_zoneOwner == HORDE)
-                return;
+            m_teamVendors.push_back(creature->GetObjectGuid());
             break;
+        case NPC_HORDE_HALAANI_GUARD:
+        case NPC_ALLIANCE_HANAANI_GUARD:
+            // prevent updating guard counter on owner take over
+            if (m_guardsLeft == MAX_NA_GUARDS)
+                return;
 
-        default:
-            return;
+            if (m_guardsLeft == 0)
+            {
+                LockHalaa(creature);
+
+                // update world state
+                SendUpdateWorldState(m_zoneMapState, WORLD_STATE_REMOVE);
+                m_zoneMapState = m_zoneOwner == ALLIANCE ? WORLD_STATE_NA_HALAA_ALLIANCE : WORLD_STATE_NA_HALAA_HORDE;
+                SendUpdateWorldState(m_zoneMapState, WORLD_STATE_ADD);
+            }
+
+            ++m_guardsLeft;
+            SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT, m_guardsLeft);
+            break;
     }
-
-    // Despawn creatures on create - will be spawned later in script
-    creature->SetRespawnDelay(7 * DAY);
-    creature->ForcedDespawn();
 }
 
 void OutdoorPvPNA::HandleCreatureDeath(Creature* creature)
@@ -162,29 +166,6 @@ void OutdoorPvPNA::HandleCreatureDeath(Creature* creature)
 
         sWorld.SendDefenseMessage(ZONE_ID_NAGRAND, LANG_OPVP_NA_DEFENSELESS);
     }
-}
-
-void OutdoorPvPNA::HandleCreatureRespawn(Creature* creature)
-{
-    if (creature->GetEntry() != NPC_HORDE_HALAANI_GUARD && creature->GetEntry() != NPC_ALLIANCE_HANAANI_GUARD)
-        return;
-
-    // prevent updating guard counter on owner take over
-    if (m_guardsLeft == MAX_NA_GUARDS)
-        return;
-
-    if (m_guardsLeft == 0)
-    {
-        LockHalaa(creature);
-
-        // update world state
-        SendUpdateWorldState(m_zoneMapState, WORLD_STATE_REMOVE);
-        m_zoneMapState = m_zoneOwner == ALLIANCE ? WORLD_STATE_NA_HALAA_ALLIANCE : WORLD_STATE_NA_HALAA_HORDE;
-        SendUpdateWorldState(m_zoneMapState, WORLD_STATE_ADD);
-    }
-
-    ++m_guardsLeft;
-    SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT, m_guardsLeft);
 }
 
 void OutdoorPvPNA::HandleGameObjectCreate(GameObject* go)
@@ -297,13 +278,17 @@ bool OutdoorPvPNA::HandleEvent(uint32 eventId, GameObject* go)
     if (go->GetEntry() != GO_HALAA_BANNER)
         return false;
 
+    bool eventResult = true;
+
     switch (eventId)
     {
         case EVENT_HALAA_BANNER_WIN_ALLIANCE:
             ProcessCaptureEvent(go, ALLIANCE);
+            eventResult = false;
             break;
         case EVENT_HALAA_BANNER_WIN_HORDE:
             ProcessCaptureEvent(go, HORDE);
+            eventResult = false;
             break;
         case EVENT_HALAA_BANNER_PROGRESS_ALLIANCE:
             SetBannerVisual(go, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
@@ -315,7 +300,8 @@ bool OutdoorPvPNA::HandleEvent(uint32 eventId, GameObject* go)
             break;
     }
 
-    return true;
+    // there are some events which required further DB script
+    return eventResult;
 }
 
 void OutdoorPvPNA::ProcessCaptureEvent(GameObject* go, Team team)
@@ -325,12 +311,11 @@ void OutdoorPvPNA::ProcessCaptureEvent(GameObject* go, Team team)
     // update capture point owner
     m_zoneOwner = team;
 
-    // don't rely on OnCreatureRespawn to set guard counter / lock halaa as that would send a world state for each spawned guard
     LockHalaa(go);
     m_guardsLeft = MAX_NA_GUARDS;
 
     UpdateWorldState(WORLD_STATE_REMOVE);
-    RespawnSoldiers(go);
+    DespawnVendors(go);
     sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_HALAA, GRAVEYARD_ZONE_ID_HALAA, m_zoneOwner);
 
     if (m_zoneOwner == ALLIANCE)
@@ -353,6 +338,7 @@ void OutdoorPvPNA::ProcessCaptureEvent(GameObject* go, Team team)
     sWorld.SendDefenseMessage(ZONE_ID_NAGRAND, m_zoneOwner == ALLIANCE ? LANG_OPVP_NA_CAPTURE_A: LANG_OPVP_NA_CAPTURE_H);
 }
 
+// Handle the gameobjects spawn/despawn depending on the controller faction
 void OutdoorPvPNA::HandleFactionObjects(const WorldObject* objRef)
 {
     if (m_zoneOwner == ALLIANCE)
@@ -383,56 +369,15 @@ void OutdoorPvPNA::HandleFactionObjects(const WorldObject* objRef)
     }
 }
 
-void OutdoorPvPNA::RespawnSoldiers(const WorldObject* objRef)
+void OutdoorPvPNA::DespawnVendors(const WorldObject* objRef)
 {
-    if (m_zoneOwner == ALLIANCE)
+    // despawn all team vendors
+    for (GuidList::const_iterator itr = m_teamVendors.begin(); itr != m_teamVendors.end(); ++itr)
     {
-        // despawn all horde vendors
-        for (GuidList::const_iterator itr = m_hordeSoldiers.begin(); itr != m_hordeSoldiers.end(); ++itr)
-        {
-            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
-            {
-                // reset respawn time
-                soldier->SetRespawnDelay(7 * DAY);
-                soldier->ForcedDespawn();
-            }
-        }
-
-        // spawn all alliance soldiers and vendors
-        for (GuidList::const_iterator itr = m_allianceSoldiers.begin(); itr != m_allianceSoldiers.end(); ++itr)
-        {
-            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
-            {
-                // lower respawn time
-                soldier->SetRespawnDelay(HOUR);
-                soldier->Respawn();
-            }
-        }
+        if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
+            soldier->ForcedDespawn();
     }
-    else
-    {
-        // despawn all alliance vendors
-        for (GuidList::const_iterator itr = m_allianceSoldiers.begin(); itr != m_allianceSoldiers.end(); ++itr)
-        {
-            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
-            {
-                // reset respawn time
-                soldier->SetRespawnDelay(7 * DAY);
-                soldier->ForcedDespawn();
-            }
-        }
-
-        // spawn all horde soldiers and vendors
-        for (GuidList::const_iterator itr = m_hordeSoldiers.begin(); itr != m_hordeSoldiers.end(); ++itr)
-        {
-            if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
-            {
-                // lower respawn time
-                soldier->SetRespawnDelay(HOUR);
-                soldier->Respawn();
-            }
-        }
-    }
+    m_teamVendors.clear();
 }
 
 bool OutdoorPvPNA::HandleObjectUse(Player* player, GameObject* go)
@@ -493,6 +438,7 @@ bool OutdoorPvPNA::HandleObjectUse(Player* player, GameObject* go)
     return false;
 }
 
+// Handle gameobject spawn / despawn
 void OutdoorPvPNA::RespawnGO(const WorldObject* objRef, ObjectGuid goGuid, bool respawn, bool resetFlag)
 {
     if (GameObject* banner = objRef->GetMap()->GetGameObject(goGuid))
@@ -503,19 +449,20 @@ void OutdoorPvPNA::RespawnGO(const WorldObject* objRef, ObjectGuid goGuid, bool 
             banner->Refresh();
 
             // Set no-despawn flag for the Roosts
-            if (resetFlag)
-                banner->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
+            //if (resetFlag)
+            //    banner->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
         }
         else if (banner->isSpawned())
         {
-            if (banner->HasFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN))
-                banner->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
+            //if (banner->HasFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN))
+            //    banner->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN);
 
             banner->SetLootState(GO_JUST_DEACTIVATED);
         }
     }
 }
 
+// Handle Halaa lock when captured
 void OutdoorPvPNA::LockHalaa(const WorldObject* objRef)
 {
     if (GameObject* go = objRef->GetMap()->GetGameObject(m_capturePoint))
@@ -524,6 +471,7 @@ void OutdoorPvPNA::LockHalaa(const WorldObject* objRef)
     sOutdoorPvPMgr.SetCapturePointSlider(m_capturePoint, m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
 }
 
+// Handle Halaa unlock when all the soldiers are killed
 void OutdoorPvPNA::UnlockHalaa(const WorldObject* objRef)
 {
     if (GameObject* go = objRef->GetMap()->GetGameObject(m_capturePoint))
