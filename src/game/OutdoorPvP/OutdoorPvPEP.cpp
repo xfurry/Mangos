@@ -93,6 +93,8 @@ void OutdoorPvPEP::HandleCreatureCreate(Creature* creature)
     {
         case NPC_SPECTRAL_FLIGHTMASTER:
             m_flightMaster = creature->GetObjectGuid();
+            creature->setFaction(m_towerOwner[TOWER_ID_PLAGUEWOOD] == ALLIANCE ? FACTION_FLIGHTMASTER_ALLIANCE : FACTION_FLIGHTMASTER_HORDE);
+            creature->CastSpell(creature, m_towerOwner[TOWER_ID_PLAGUEWOOD] == ALLIANCE ? SPELL_SPIRIT_PARTICLES_BLUE : SPELL_SPIRIT_PARTICLES_RED, true);
             break;
         case NPC_LORDAERON_COMMANDER:
         case NPC_LORDAERON_SOLDIER:

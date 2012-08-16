@@ -93,6 +93,7 @@ UPDATE creature_template SET InhabitType=InhabitType|4 WHERE entry IN (18757,187
 
 -- Zangarmarsh Field Scout gossips - TODO: conditions, horde gossip 1 text is guessed, horde text_id 2 is missing
 /* ################################# */
+UPDATE creature_template SET npcFlag=npcFlag|1 WHERE entry IN (18581,18564);
 -- Alliance Field Scout
 UPDATE creature_template SET gossip_menu_id = 7724 WHERE entry = 18581;
 DELETE FROM gossip_menu WHERE entry = 7724;
@@ -126,8 +127,18 @@ VALUES
 
 -- Eastern Plaguelands fixes
 /* ################################# */
--- correct horde faction
-UPDATE `gameobject_template` SET `faction` = 1314 WHERE `entry` = 181955;
+-- correct horde gameobject faction
+UPDATE gameobject_template SET faction=1314 WHERE entry=181955;
+-- spectral flight master gossip scripts
+DELETE FROM creature_template_addon WHERE entry=17209;
+UPDATE gossip_menu_option SET action_script_id=737901 WHERE menu_id=7379 and id=0;
+UPDATE gossip_menu_option SET action_script_id=737902 WHERE menu_id=7379 and id=1;
+UPDATE gossip_menu_option SET action_script_id=737903 WHERE menu_id=7379 and id=2;
+DELETE FROM gossip_scripts WHERE id IN (737901,737902,737903);
+INSERT INTO gossip_scripts (id,command,datalong,comments) VALUES
+(737901,30,494,'William Kielar - Send Northpass Tower taxi'),
+(737902,30,495,'William Kielar - Send Eastwall Tower taxi'),
+(737903,30,496,'William Kielar - Send Crown Guard Tower taxi');
 
 -- Summon plaguewood flightmaster
 DELETE FROM creature WHERE id = 17209;
@@ -152,7 +163,7 @@ INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, commen
 (10692,10,17996,8,2526.297,-4764.442,102.360,2.17,'Horde Eastwall Tower capture - summon Lordaeron Fighter'),
 (10692,10,17996,8,2522.425,-4767.049,102.552,2.17,'Horde Eastwall Tower capture - summon Lordaeron Fighter');
 
--- set soldiers movement - needs more adjustments
+-- set soldiers movement - TODO: needs more adjustments and testing
 UPDATE creature_template SET MovementType=0 WHERE entry IN (17647,17996);
 UPDATE creature_template SET MovementType=2 WHERE entry in (17635,17995);
 DELETE FROM creature_movement_template WHERE entry in (17635, 17995);
