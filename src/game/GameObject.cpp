@@ -1162,7 +1162,7 @@ void GameObject::Use(Unit* user)
             {
                 Player* player = (Player*)user;
                 if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetScript(player->GetCachedZoneId()))
-                    outdoorPvP->HandleObjectUse(player, this);
+                    outdoorPvP->HandleGameObjectUse(player, this);
             }
 
             GameObjectInfo const* info = GetGOInfo();
