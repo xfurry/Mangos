@@ -228,7 +228,7 @@ class OutdoorPvPEP : public OutdoorPvP
 
         void HandleCreatureCreate(Creature* creature) override;
         void HandleGameObjectCreate(GameObject* go) override;
-        bool HandleObjectUse(Player* player, GameObject* go) override;
+        bool HandleGameObjectUse(Player* player, GameObject* go) override;
 
     private:
         // process capture events

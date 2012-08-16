@@ -49,9 +49,6 @@ void OutdoorPvPEP::FillInitialWorldStates(WorldPacket& data, uint32& count)
 
 void OutdoorPvPEP::SendRemoveWorldStates(Player* player)
 {
-    player->SendUpdateWorldState(WORLD_STATE_EP_TOWER_COUNT_ALLIANCE, WORLD_STATE_REMOVE);
-    player->SendUpdateWorldState(WORLD_STATE_EP_TOWER_COUNT_HORDE, WORLD_STATE_REMOVE);
-
     for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
         player->SendUpdateWorldState(m_towerWorldState[i], WORLD_STATE_REMOVE);
 }
@@ -319,7 +316,7 @@ bool OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
     return eventResult;
 }
 
-bool OutdoorPvPEP::HandleObjectUse(Player* player, GameObject* go)
+bool OutdoorPvPEP::HandleGameObjectUse(Player* player, GameObject* go)
 {
     // prevent despawning after go use
     if (go->GetEntry() == GO_LORDAERON_SHRINE_ALLIANCE || go->GetEntry() == GO_LORDAERON_SHRINE_HORDE)

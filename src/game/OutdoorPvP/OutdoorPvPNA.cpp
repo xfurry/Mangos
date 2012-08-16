@@ -380,7 +380,7 @@ void OutdoorPvPNA::DespawnVendors(const WorldObject* objRef)
     m_teamVendors.clear();
 }
 
-bool OutdoorPvPNA::HandleObjectUse(Player* player, GameObject* go)
+bool OutdoorPvPNA::HandleGameObjectUse(Player* player, GameObject* go)
 {
     if (player->GetTeam() == ALLIANCE)
     {

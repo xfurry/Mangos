@@ -1601,7 +1601,7 @@ void GameObject::Use(Unit* user)
         {
             Player* player = (Player*)user;
             if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetScript(player->GetCachedZoneId()))
-                outdoorPvP->HandleObjectUse(player, this);
+                outdoorPvP->HandleGameObjectUse(player, this);
         }
 
         sLog.outError("WORLD: unknown spell id %u at use action for gameobject (Entry: %u GoType: %u )", spellId, GetEntry(), GetGoType());

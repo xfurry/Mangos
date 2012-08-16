@@ -40,14 +40,6 @@ void OutdoorPvPSI::FillInitialWorldStates(WorldPacket& data, uint32& count)
     FillInitialWorldState(data, count, WORLD_STATE_SI_SILITHYST_MAX, MAX_SILITHYST);
 }
 
-// Remove world states
-void OutdoorPvPSI::SendRemoveWorldStates(Player* player)
-{
-    player->SendUpdateWorldState(WORLD_STATE_SI_GATHERED_A, WORLD_STATE_REMOVE);
-    player->SendUpdateWorldState(WORLD_STATE_SI_GATHERED_H, WORLD_STATE_REMOVE);
-    player->SendUpdateWorldState(WORLD_STATE_SI_SILITHYST_MAX, WORLD_STATE_REMOVE);
-}
-
 // Handle buffs when player enters the zone
 void OutdoorPvPSI::HandlePlayerEnterZone(Player* player, bool isMainZone)
 {
@@ -180,7 +172,7 @@ bool OutdoorPvPSI::HandleDropFlag(Player* player, uint32 spellId)
 
 // Handle the case when player picks a silithyst mound or geyser
 // This needs to be done because the spells used by these objects are missing
-bool OutdoorPvPSI::HandleObjectUse(Player* player, GameObject* go)
+bool OutdoorPvPSI::HandleGameObjectUse(Player* player, GameObject* go)
 {
     if (go->GetEntry() == GO_SILITHYST_MOUND || go->GetEntry() == GO_SILITHYST_GEYSER)
     {

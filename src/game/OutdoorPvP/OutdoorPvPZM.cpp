@@ -326,7 +326,7 @@ void OutdoorPvPZM::ResetScouts(const WorldObject* objRef, Team team)
 }
 
 // Handle the graveyard banner use
-bool OutdoorPvPZM::HandleObjectUse(Player* player, GameObject* go)
+bool OutdoorPvPZM::HandleGameObjectUse(Player* player, GameObject* go)
 {
     Team team = player->GetTeam();
 
