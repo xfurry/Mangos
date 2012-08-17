@@ -92,7 +92,7 @@ bool OutdoorPvPSI::HandleAreaTrigger(Player* player, uint32 triggerId)
                 // apply buff to owner team
                 BuffTeam(ALLIANCE, SPELL_CENARION_FAVOR);
 
-                //send defense message
+                // Send defense message
                 sWorld.SendDefenseMessage(ZONE_ID_SILITHUS, LANG_OPVP_SI_CAPTURE_A);
             }
 
@@ -122,7 +122,7 @@ bool OutdoorPvPSI::HandleAreaTrigger(Player* player, uint32 triggerId)
                 // apply buff to owner team
                 BuffTeam(HORDE, SPELL_CENARION_FAVOR);
 
-                //send defense message
+                // Send defense message
                 sWorld.SendDefenseMessage(ZONE_ID_SILITHUS, LANG_OPVP_SI_CAPTURE_H);
             }
 

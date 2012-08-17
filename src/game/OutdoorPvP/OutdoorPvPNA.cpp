@@ -295,17 +295,17 @@ bool OutdoorPvPNA::HandleEvent(uint32 eventId, GameObject* go)
     if (go->GetEntry() != GO_HALAA_BANNER)
         return false;
 
-    bool eventResult = true;
+    bool eventHandled = true;
 
     switch (eventId)
     {
         case EVENT_HALAA_BANNER_WIN_ALLIANCE:
             ProcessCaptureEvent(go, ALLIANCE);
-            eventResult = false;
+            eventHandled = false;
             break;
         case EVENT_HALAA_BANNER_WIN_HORDE:
             ProcessCaptureEvent(go, HORDE);
-            eventResult = false;
+            eventHandled = false;
             break;
         case EVENT_HALAA_BANNER_PROGRESS_ALLIANCE:
             SetBannerVisual(go, CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
@@ -318,7 +318,7 @@ bool OutdoorPvPNA::HandleEvent(uint32 eventId, GameObject* go)
     }
 
     // there are some events which required further DB script
-    return eventResult;
+    return eventHandled;
 }
 
 void OutdoorPvPNA::ProcessCaptureEvent(GameObject* go, Team team)

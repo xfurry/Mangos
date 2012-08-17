@@ -213,7 +213,7 @@ bool OutdoorPvPHP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 
         // update counter
         ++m_towersHorde;
-        SendUpdateWorldState(WORLD_STATE_HP_TOWER_COUNT_HORDE, m_towersAlliance);
+        SendUpdateWorldState(WORLD_STATE_HP_TOWER_COUNT_HORDE, m_towersHorde);
 
         if (m_towersHorde == MAX_HP_TOWERS)
             BuffTeam(HORDE, SPELL_HELLFIRE_SUPERIORITY_HORDE);
@@ -238,7 +238,7 @@ bool OutdoorPvPHP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 
             // update counter
             --m_towersHorde;
-            SendUpdateWorldState(WORLD_STATE_HP_TOWER_COUNT_HORDE, m_towersAlliance);
+            SendUpdateWorldState(WORLD_STATE_HP_TOWER_COUNT_HORDE, m_towersHorde);
         }
     }
 

@@ -88,9 +88,9 @@ void OutdoorPvPEP::HandleCreatureCreate(Creature* creature)
 {
     switch (creature->GetEntry())
     {
-        case NPC_SPECTRAL_FLIGHTMASTER:
+        case NPC_SPECTRAL_FLIGHT_MASTER:
             m_flightMaster = creature->GetObjectGuid();
-            creature->setFaction(m_towerOwner[TOWER_ID_PLAGUEWOOD] == ALLIANCE ? FACTION_FLIGHTMASTER_ALLIANCE : FACTION_FLIGHTMASTER_HORDE);
+            creature->setFaction(m_towerOwner[TOWER_ID_PLAGUEWOOD] == ALLIANCE ? FACTION_FLIGHT_MASTER_ALLIANCE : FACTION_FLIGHT_MASTER_HORDE);
             creature->CastSpell(creature, m_towerOwner[TOWER_ID_PLAGUEWOOD] == ALLIANCE ? SPELL_SPIRIT_PARTICLES_BLUE : SPELL_SPIRIT_PARTICLES_RED, true);
             break;
         case NPC_LORDAERON_COMMANDER:
@@ -259,7 +259,7 @@ bool OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
         }
     }
 
-    bool eventResult = true;
+    bool eventHandled = true;
 
     if (team != TEAM_NONE)
     {
@@ -278,11 +278,11 @@ bool OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
             case TOWER_ID_EASTWALL:
                 // Return false - allow the DB to handle summons
                 if (m_towerOwner[TOWER_ID_NORTHPASS] != team)
-                    eventResult = false;
+                    eventHandled = false;
                 break;
             case TOWER_ID_PLAGUEWOOD:
                 // Return false - allow the DB to handle summons
-                eventResult = false;
+                eventHandled = false;
                 break;
         }
     }
@@ -315,7 +315,7 @@ bool OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
     SendUpdateWorldState(m_towerWorldState[towerId], WORLD_STATE_ADD);
 
     // there are some events which required further DB script
-    return eventResult;
+    return eventHandled;
 }
 
 bool OutdoorPvPEP::HandleGameObjectUse(Player* player, GameObject* go)
@@ -333,7 +333,7 @@ void OutdoorPvPEP::InitBanner(GameObject* go, uint32 towerId)
     go->SetGoArtKit(GetBannerArtKit(m_towerOwner[towerId]));
 }
 
-// Handle the unsummon of the spectral flightmaster when the plaguewood tower is lost
+// Handle the unsummon of the spectral flight master when the plaguewood tower is lost
 void OutdoorPvPEP::UnsummonFlightMaster(const WorldObject* objRef)
 {
     if (Creature* flightMaster = objRef->GetMap()->GetCreature(m_flightMaster))
