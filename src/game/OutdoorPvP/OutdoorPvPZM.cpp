@@ -379,9 +379,9 @@ bool OutdoorPvPZM::HandleDropFlag(Player* player, uint32 spellId)
     if (spellId == SPELL_BATTLE_STANDARD_HORDE || spellId == SPELL_BATTLE_STANDARD_ALLIANCE)
     {
         // ToDo: implement this when the scout DB conditions are implemented
-        // The scouts gossip options should check a DB condition if the scount world state for the current faction is active
-        // The idea is to remove the scout world state by DB gossip script on flag take - this will allow only one player to use the flag
-        // on flag drop the scout world state can be added back if necessary, so the players can retake the flag
+        // The scouts gossip options should check a DB condition if the gossip is pvp available
+        // The idea is to set the outdoorPvP condition to false on flag take - this will allow only one player to use the flag
+        // on flag drop the condition can be set back to true if necessary, so the players can retake the flag
         return true;
     }
 
