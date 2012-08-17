@@ -137,6 +137,11 @@ enum
     WORLD_STATE_NA_HALAA_ALLIANCE           = 2673,
 };
 
+struct HalaaSoldiersSpawns
+{
+    float x, y, z, o;
+};
+
 static const uint32 nagrandRoostsAlliance[MAX_NA_ROOSTS]                = {GO_WYVERN_ROOST_ALLIANCE_SOUTH,          GO_WYVERN_ROOST_ALLIANCE_NORTH,         GO_WYVERN_ROOST_ALLIANCE_EAST,          GO_WYVERN_ROOST_ALLIANCE_WEST};
 static const uint32 nagrandRoostsHorde[MAX_NA_ROOSTS]                   = {GO_WYVERN_ROOST_HORDE_SOUTH,             GO_WYVERN_ROOST_HORDE_NORTH,            GO_WYVERN_ROOST_HORDE_EAST,             GO_WYVERN_ROOST_HORDE_WEST};
 static const uint32 nagrandRoostsBrokenAlliance[MAX_NA_ROOSTS]          = {GO_DESTROYED_ROOST_ALLIANCE_SOUTH,       GO_DESTROYED_ROOST_ALLIANCE_NORTH,      GO_DESTROYED_ROOST_ALLIANCE_EAST,       GO_DESTROYED_ROOST_ALLIANCE_WEST};
@@ -168,6 +173,7 @@ class OutdoorPvPNA : public OutdoorPvP
 
         void HandlePlayerKillInsideArea(Player* player, Unit* victim) override;
         bool HandleGameObjectUse(Player* player, GameObject* go) override;
+        void Update(uint32 diff) override;
 
     private:
         // world states handling
@@ -185,11 +191,17 @@ class OutdoorPvPNA : public OutdoorPvP
         void LockHalaa(const WorldObject* objRef);
         void UnlockHalaa(const WorldObject* objRef);
 
+        // handle soldier respawn on timer
+        void HandleSoldierRespawn();
+
         Team m_zoneOwner;
+        uint32 m_soldiersRespawnTimer;
         uint32 m_zoneWorldState;
         uint32 m_zoneMapState;
         uint32 m_roostWorldState[MAX_NA_ROOSTS];
         uint8 m_guardsLeft;
+
+        bool m_isUnderSiege;
 
         ObjectGuid m_capturePoint;
         ObjectGuid m_allianceRoost[MAX_NA_ROOSTS];
@@ -200,6 +212,8 @@ class OutdoorPvPNA : public OutdoorPvP
         ObjectGuid m_hordeWagons[MAX_NA_ROOSTS];
 
         GuidList m_teamVendors;
+
+        std::deque<HalaaSoldiersSpawns> m_deadSoldiers;
 };
 
 #endif

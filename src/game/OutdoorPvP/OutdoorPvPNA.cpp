@@ -27,9 +27,11 @@
 
 OutdoorPvPNA::OutdoorPvPNA() : OutdoorPvP(),
     m_zoneMapState(WORLD_STATE_NA_HALAA_NEUTRAL),
+    m_soldiersRespawnTimer(0),
     m_zoneWorldState(0),
     m_zoneOwner(TEAM_NONE),
-    m_guardsLeft(0)
+    m_guardsLeft(0),
+    m_isUnderSiege(false)
 {
 }
 
@@ -151,11 +153,26 @@ void OutdoorPvPNA::HandleCreatureDeath(Creature* creature)
     if (creature->GetEntry() != NPC_HORDE_HALAANI_GUARD && creature->GetEntry() != NPC_ALLIANCE_HANAANI_GUARD)
         return;
 
+    // get the location of the dead guard for future respawn
+    float x, y, z, o;
+    creature->GetRespawnCoord(x, y, z, &o);
+    HalaaSoldiersSpawns location = {x, y, z, o};
+    m_deadSoldiers.push_back(HalaaSoldiersSpawns(location));
+
+    // set the respawn timer after the last guard died - 5 min for the first time, or 1 hour if the city is under siege
+    if (!m_soldiersRespawnTimer)
+        m_soldiersRespawnTimer = m_isUnderSiege ? 1*HOUR*IN_MILLISECONDS : 5*MINUTE*IN_MILLISECONDS;
+
+    // decrease the counter
     --m_guardsLeft;
     SendUpdateWorldState(WORLD_STATE_NA_GUARDS_LEFT, m_guardsLeft);
 
     if (m_guardsLeft == 0)
     {
+        // set the zone under siege and increase the respawn timer
+        m_isUnderSiege = true;
+        m_soldiersRespawnTimer = 1*HOUR*IN_MILLISECONDS;
+
         // make capturable
         UnlockHalaa(creature);
 
@@ -314,6 +331,9 @@ void OutdoorPvPNA::ProcessCaptureEvent(GameObject* go, Team team)
     LockHalaa(go);
     m_guardsLeft = MAX_NA_GUARDS;
 
+    m_isUnderSiege = false;
+    m_soldiersRespawnTimer = 0;
+
     UpdateWorldState(WORLD_STATE_REMOVE);
     DespawnVendors(go);
     sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_HALAA, GRAVEYARD_ZONE_ID_HALAA, m_zoneOwner);
@@ -369,6 +389,7 @@ void OutdoorPvPNA::HandleFactionObjects(const WorldObject* objRef)
     }
 }
 
+// Handle vendors despawn when the city is captured by the other faction
 void OutdoorPvPNA::DespawnVendors(const WorldObject* objRef)
 {
     // despawn all team vendors
@@ -476,6 +497,44 @@ bool OutdoorPvPNA::HandleGameObjectUse(Player* player, GameObject* go)
     }
 
     return false;
+}
+
+void OutdoorPvPNA::Update(uint32 diff)
+{
+    if (m_soldiersRespawnTimer)
+    {
+        if (m_soldiersRespawnTimer < diff)
+        {
+            HandleSoldierRespawn();
+
+            // if all the guards are respawned, stop the timer, else resume the timer depending on the siege state
+            if (m_guardsLeft == MAX_NA_GUARDS)
+                m_soldiersRespawnTimer = 0;
+            else
+                m_soldiersRespawnTimer = m_isUnderSiege ? 1*HOUR*IN_MILLISECONDS : 5*MINUTE*IN_MILLISECONDS;
+        }
+        else
+            m_soldiersRespawnTimer -= diff;
+    }
+}
+
+// Handle soldiers respawn on timer - this will summon a replacement for the dead soldier
+void OutdoorPvPNA::HandleSoldierRespawn()
+{
+    for (GuidZoneMap::iterator itr = m_zonePlayers.begin(); itr != m_zonePlayers.end(); ++itr)
+    {
+        // Find player who is in main zone (Nagrand) to get correct map reference
+        if (!itr->second)
+            continue;
+
+        if (Player* player = sObjectMgr.GetPlayer(itr->first))
+        {
+            // summon a soldier replacement in the order they were set in the deque. delete the element after summon
+            player->SummonCreature(m_zoneOwner == ALLIANCE ? NPC_ALLIANCE_HANAANI_GUARD : NPC_HORDE_HALAANI_GUARD, m_deadSoldiers.front().x, m_deadSoldiers.front().y, m_deadSoldiers.front().z, m_deadSoldiers.front().o, TEMPSUMMON_DEAD_DESPAWN, 0, true);
+            m_deadSoldiers.pop_front();
+            break;
+        }
+    }
 }
 
 // Handle Halaa lock when captured
