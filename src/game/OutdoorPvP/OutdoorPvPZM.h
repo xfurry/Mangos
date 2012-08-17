@@ -145,7 +145,7 @@ class OutdoorPvPZM : public OutdoorPvP
 
         void HandlePlayerKillInsideArea(Player* player, Unit* victim) override;
         bool HandleGameObjectUse(Player* player, GameObject* go) override;
-        bool HandleDropFlag(Player* player, uint32 spellId) override;
+        //bool HandleDropFlag(Player* player, uint32 spellId) override;
 
     private:
         // process capture events

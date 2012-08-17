@@ -373,20 +373,20 @@ bool OutdoorPvPZM::HandleGameObjectUse(Player* player, GameObject* go)
     return false;
 }
 
-// Handle the case when the player drops the flag
-bool OutdoorPvPZM::HandleDropFlag(Player* player, uint32 spellId)
-{
-    if (spellId == SPELL_BATTLE_STANDARD_HORDE || spellId == SPELL_BATTLE_STANDARD_ALLIANCE)
-    {
-        // ToDo: implement this when the scout DB conditions are implemented
-        // The scouts gossip options should check a DB condition if the gossip is pvp available
-        // The idea is to set the outdoorPvP condition to false on flag take - this will allow only one player to use the flag
-        // on flag drop the condition can be set back to true if necessary, so the players can retake the flag
-        return true;
-    }
-
-    return false;
-}
+// ToDo: Handle the case when the player drops the flag
+//bool OutdoorPvPZM::HandleDropFlag(Player* player, uint32 spellId)
+//{
+//    if (spellId == SPELL_BATTLE_STANDARD_HORDE || spellId == SPELL_BATTLE_STANDARD_ALLIANCE)
+//    {
+//        // ToDo: implement this when the scout DB conditions are implemented
+//        // The scouts gossip options should check a DB condition if the gossip is pvp available
+//        // The idea is to set the outdoorPvP condition to false on flag take - this will allow only one player to use the flag
+//        // on flag drop the condition can be set back to true if necessary, so the players can retake the flag
+//        return true;
+//    }
+//
+//    return false;
+//}
 
 // Handle the ZM beacons - this is done by npcs which have certain auras
 void OutdoorPvPZM::SetBeaconArtKit(const WorldObject* objRef, ObjectGuid creatureGuid, uint32 auraId)
