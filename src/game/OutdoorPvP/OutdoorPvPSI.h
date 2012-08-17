@@ -60,18 +60,6 @@ enum
     WORLD_STATE_SI_SILITHYST_MAX        = 2317
 };
 
-struct SilithusSpawnLocation
-{
-    float x, y, z;
-};
-
-// Area trigger location - workaround to check the flag drop handling
-static SilithusSpawnLocation silithusFlagDropLocations[2] =
-{
-    {-7142.04f, 1397.92f, 4.327f},      // alliance
-    {-7588.48f, 756.806f, -16.425f}     // horde
-};
-
 class OutdoorPvPSI : public OutdoorPvP
 {
     public:

@@ -288,9 +288,6 @@
     <ClCompile Include="..\..\src\game\OutdoorPvP\OutdoorPvPZM.cpp">
       <Filter>OutdoorPvP</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\game\WorldStateMgr.cpp">
-      <Filter>World/Handlers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\game\ConfusedMovementGenerator.cpp">
       <Filter>Motion generators</Filter>
     </ClCompile>
@@ -731,9 +728,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\game\OutdoorPvP\OutdoorPvPZM.h">
       <Filter>OutdoorPvP</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\game\WorldStateMgr.h">
-      <Filter>World/Handlers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\game\ConfusedMovementGenerator.h">
       <Filter>Motion generators</Filter>

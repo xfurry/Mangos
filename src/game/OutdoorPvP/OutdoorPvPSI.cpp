@@ -146,6 +146,18 @@ bool OutdoorPvPSI::HandleAreaTrigger(Player* player, uint32 triggerId)
 }
 
 // Handle case when player drops flag
+// TODO - fix this workaround!
+struct SilithusSpawnLocation
+{
+    float x, y, z;
+};
+// Area trigger location - workaround to check the flag drop handling
+static SilithusSpawnLocation silithusFlagDropLocations[2] =
+{
+    {-7142.04f, 1397.92f, 4.327f},      // alliance
+    {-7588.48f, 756.806f, -16.425f}     // horde
+};
+
 bool OutdoorPvPSI::HandleDropFlag(Player* player, uint32 spellId)
 {
     if (spellId != SPELL_SILITHYST)
@@ -162,6 +174,8 @@ bool OutdoorPvPSI::HandleDropFlag(Player* player, uint32 spellId)
         case HORDE:
             if (player->IsWithinDist3d(silithusFlagDropLocations[1].x, silithusFlagDropLocations[1].y, silithusFlagDropLocations[1].z, 5.0f))
                 return false;
+            break;
+        default:
             break;
     }
 

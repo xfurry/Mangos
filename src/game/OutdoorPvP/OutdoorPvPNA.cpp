@@ -26,13 +26,15 @@
 #include "../Player.h"
 
 OutdoorPvPNA::OutdoorPvPNA() : OutdoorPvP(),
-    m_zoneMapState(WORLD_STATE_NA_HALAA_NEUTRAL),
+    m_zoneOwner(TEAM_NONE),
     m_soldiersRespawnTimer(0),
     m_zoneWorldState(0),
-    m_zoneOwner(TEAM_NONE),
+    m_zoneMapState(WORLD_STATE_NA_HALAA_NEUTRAL),
     m_guardsLeft(0),
     m_isUnderSiege(false)
 {
+    // initially set graveyard owner to neither faction
+    sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_HALAA, GRAVEYARD_ZONE_ID_HALAA, TEAM_INVALID);
 }
 
 void OutdoorPvPNA::FillInitialWorldStates(WorldPacket& data, uint32& count)
@@ -93,7 +95,7 @@ void OutdoorPvPNA::HandleObjectiveComplete(uint32 eventId, std::list<Player*> pl
 }
 
 // Cast player spell on opponent kill
-void OutdoorPvPNA::HandlePlayerKillInsideArea(Player* player, Unit* victim)
+void OutdoorPvPNA::HandlePlayerKillInsideArea(Player* player, Unit* /*victim*/)
 {
     if (GameObject* capturePoint = player->GetMap()->GetGameObject(m_capturePoint))
     {

@@ -35,6 +35,7 @@ INSTANTIATE_SINGLETON_1(OutdoorPvPMgr);
 OutdoorPvPMgr::OutdoorPvPMgr()
 {
     m_updateTimer.SetInterval(TIMER_OPVP_MGR_UPDATE);
+    memset(&m_scripts, 0, sizeof(m_scripts));
 }
 
 OutdoorPvPMgr::~OutdoorPvPMgr()

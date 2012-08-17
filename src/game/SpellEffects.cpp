@@ -46,7 +46,6 @@
 #include "BattleGround.h"
 #include "BattleGroundEY.h"
 #include "BattleGroundWS.h"
-#include "OutdoorPvP/OutdoorPvP.h"
 #include "Language.h"
 #include "SocialMgr.h"
 #include "VMapFactory.h"
@@ -4644,7 +4643,6 @@ void Spell::EffectOpenLock(SpellEffectIndex eff_idx)
                 return;
             }
         }
-
         lockId = goInfo->GetLockId();
         guid = gameObjTarget->GetObjectGuid();
     }

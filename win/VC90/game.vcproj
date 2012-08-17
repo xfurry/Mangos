@@ -1054,14 +1054,6 @@
 				RelativePath="..\..\src\game\World.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\game\WorldStateMgr.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\game\WorldStateMgr.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Motion generators"

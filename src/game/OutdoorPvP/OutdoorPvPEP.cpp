@@ -36,6 +36,9 @@ OutdoorPvPEP::OutdoorPvPEP() : OutdoorPvP(),
 
     for (uint8 i = 0; i < MAX_EP_TOWERS; ++i)
         m_towerOwner[i] = TEAM_NONE;
+
+    // initially set graveyard owner to neither faction
+    sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_EASTERN_PLAGUE, GRAVEYARD_ZONE_EASTERN_PLAGUE, TEAM_INVALID);
 }
 
 void OutdoorPvPEP::FillInitialWorldStates(WorldPacket& data, uint32& count)
@@ -71,6 +74,8 @@ void OutdoorPvPEP::HandlePlayerEnterZone(Player* player, bool isMainZone)
         case HORDE:
             if (m_towersHorde > 0)
                 player->CastSpell(player, plaguelandsTowerBuffs[m_towersHorde - 1].spellIdHorde, true);
+            break;
+        default:
             break;
     }
 }
@@ -318,7 +323,7 @@ bool OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
     return eventHandled;
 }
 
-bool OutdoorPvPEP::HandleGameObjectUse(Player* player, GameObject* go)
+bool OutdoorPvPEP::HandleGameObjectUse(Player* /*player*/, GameObject* go)
 {
     // prevent despawning after go use
     if (go->GetEntry() == GO_LORDAERON_SHRINE_ALLIANCE || go->GetEntry() == GO_LORDAERON_SHRINE_HORDE)

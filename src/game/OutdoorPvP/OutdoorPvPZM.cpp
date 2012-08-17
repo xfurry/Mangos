@@ -26,11 +26,10 @@
 #include "../Player.h"
 
 OutdoorPvPZM::OutdoorPvPZM() : OutdoorPvP(),
+    m_graveyardOwner(TEAM_NONE),
     m_graveyardWorldState(WORLD_STATE_ZM_GRAVEYARD_NEUTRAL),
     m_scoutWorldStateAlliance(WORLD_STATE_ZM_FLAG_NOT_READY_ALLIANCE),
     m_scoutWorldStateHorde(WORLD_STATE_ZM_FLAG_NOT_READY_HORDE),
-
-    m_graveyardOwner(TEAM_NONE),
     m_towersAlliance(0),
     m_towersHorde(0)
 {
@@ -42,6 +41,9 @@ OutdoorPvPZM::OutdoorPvPZM() : OutdoorPvP(),
 
     for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
         m_towerOwner[i] = TEAM_NONE;
+
+    // initially set graveyard owner to neither faction
+    sObjectMgr.SetGraveYardLinkTeam(GRAVEYARD_ID_TWIN_SPIRE, GRAVEYARD_ZONE_TWIN_SPIRE, TEAM_INVALID);
 }
 
 void OutdoorPvPZM::FillInitialWorldStates(WorldPacket& data, uint32& count)
@@ -136,7 +138,7 @@ void OutdoorPvPZM::HandleGameObjectCreate(GameObject* go)
 }
 
 // Cast player spell on opponent kill
-void OutdoorPvPZM::HandlePlayerKillInsideArea(Player* player, Unit* victim)
+void OutdoorPvPZM::HandlePlayerKillInsideArea(Player* player, Unit* /*victim*/)
 {
     for (uint8 i = 0; i < MAX_ZM_TOWERS; ++i)
     {
