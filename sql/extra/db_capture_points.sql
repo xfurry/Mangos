@@ -8,7 +8,7 @@ UPDATE gameobject SET animprogress = 255, spawntimesecs = 0 WHERE id IN (181899,
 
 -- Silithus fixes
 /* ################################# */
--- Not sure if this is actually correct
+-- Value from YTDB
 DELETE FROM spell_script_target WHERE entry=29534;
 INSERT INTO spell_script_target VALUES
 (29534,0,181597);
@@ -16,12 +16,9 @@ INSERT INTO spell_script_target VALUES
 
 -- Venture bay fixes
 /* ################################# */
-DELETE FROM creature_linking_template WHERE entry IN (27758,27748);
-INSERT IGNORE INTO creature_linking_template VALUES
-(27758,571,27759,1,0),
-(27748,571,27708,1,0);
 UPDATE creature_template SET MovementType=0 WHERE entry=385;
 -- Summon Venture bay npcs
+-- ToDo: the positions may need to be re-checked - there are differences between UDB and YTDB. not sure which is right
 DELETE FROM creature WHERE id IN (27758,27759,29252,27760,29250,27748,27708,29253,27730,29251,385,5774) AND position_z < 20 AND map=571;
 -- Alliance
 DELETE FROM event_scripts WHERE id IN (18035,18036);
@@ -82,14 +79,14 @@ INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, commen
 
 -- Zangarmarsh fixes
 /* ################################# */
--- UPDATE `creature` SET `id` = 18757, `position_x` = 340.453, `position_y` = 6833.1, `position_z` = 61.798 WHERE `guid` = 67037;
--- UPDATE `creature` SET `MovementType` = 0, `spawndist` = 0 WHERE `id` IN (18757,18759);
--- PvP Beams
+-- UDB ONLY!!! Delete UDB wrong spawns
 DELETE FROM creature WHERE guid IN (67037,67038,67039,84756);
-DELETE FROM creature_template_addon WHERE entry IN (18759);
+-- delete auras - handled in script
+DELETE FROM creature_template_addon WHERE entry IN (18759,18757);
+-- beams should have inhabity type 4
 UPDATE creature_template SET InhabitType=InhabitType|4 WHERE entry IN (18757,18759);
--- despawn horde graveyard flag by default
-UPDATE gameobject SET spawnTimeSecs = -300 WHERE id = 182528;
+-- despawn graveyard flags - if not already despawned
+UPDATE gameobject SET spawnTimeSecs = -300 WHERE id IN (182528,182527);
 
 -- Zangarmarsh Field Scout gossips - TODO: conditions, horde gossip 1 text is guessed, horde text_id 2 is missing
 UPDATE creature_template SET npcFlag=npcFlag|1 WHERE entry IN (18581,18564);
@@ -104,8 +101,7 @@ INSERT INTO gossip_menu_option (menu_id, id, option_icon, option_text, box_coded
 (7724, 0, 0, 'Give me a battle standard. I will take control of Twin Spire Ruins.', 0, 0, '', 1, 1, 7724),
 (7724, 1, 1, 'I have marks to redeem!', 0, 0, '', 3, 128, 0);
 DELETE FROM gossip_scripts WHERE id = 7724;
-INSERT INTO gossip_scripts (id, delay, command, datalong, datalong2, comments)
-VALUES
+INSERT INTO gossip_scripts (id, delay, command, datalong, datalong2, comments) VALUES
 (7724, 0, 15, 32430, 0, 'Cast Battle Standard - Alliance');
 -- Horde Field Scout
 UPDATE creature_template SET gossip_menu_id = 7722 WHERE entry = 18564;
@@ -118,15 +114,14 @@ INSERT INTO gossip_menu_option (menu_id, id, option_icon, option_text, box_coded
 (7722, 0, 0, 'Give me a battle standard. I will take control of Twin Spire Ruins.', 0, 0, '', 1, 1, 7722), -- << text guessed
 (7722, 1, 1, 'I have marks to redeem!', 0, 0, '', 3, 128, 0);
 DELETE FROM gossip_scripts WHERE id = 7722;
-INSERT INTO gossip_scripts (id, delay, command, datalong, datalong2, comments)
-VALUES
+INSERT INTO gossip_scripts (id, delay, command, datalong, datalong2, comments) VALUES
 (7722, 0, 15, 32431, 0, 'Cast Battle Standard - Horde');
 /* ################################# */
 
 
 -- Eastern Plaguelands fixes
 /* ################################# */
--- correct horde gameobject faction
+-- correct horde gameobject faction - from YTDB
 UPDATE gameobject_template SET faction=1314 WHERE entry=181955;
 -- spectral flight master aura removed as it depends on faction and is done by opvp script
 DELETE FROM creature_template_addon WHERE entry=17209;
@@ -146,7 +141,7 @@ DELETE FROM event_scripts WHERE id IN (10701,10700);
 INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) VALUES
 (10701,10,17209,8,2987.5,-3049.11,120.126,5.75959,'Alliance Plaguewood Tower progress event - summon William Kielar'),
 (10700,10,17209,8,2987.5,-3049.11,120.126,5.75959,'Horde Plaguewood Tower progress event - summon William Kielar');
--- Summon eastwall soldiers
+-- Summon eastwall soldiers - ToDo: coords are guesswork. Some help is needed here
 DELETE FROM creature WHERE id IN (17635,17995);
 DELETE FROM event_scripts WHERE id IN (10691,10692);
 INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) VALUES
@@ -163,7 +158,7 @@ INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, commen
 (10692,10,17996,8,2526.297,-4764.442,102.360,2.17,'Horde Eastwall Tower capture - summon Lordaeron Fighter'),
 (10692,10,17996,8,2522.425,-4767.049,102.552,2.17,'Horde Eastwall Tower capture - summon Lordaeron Fighter');
 
--- set soldiers movement - TODO: needs more adjustments and testing
+-- set soldiers movement - TODO: guesswork - needs more adjustments and testing
 UPDATE creature_template SET MovementType=0 WHERE entry IN (17647,17996);
 UPDATE creature_template SET MovementType=2 WHERE entry in (17635,17995);
 DELETE FROM creature_movement_template WHERE entry in (17635, 17995);
@@ -211,12 +206,7 @@ INSERT INTO creature_linking_template VALUES
 
 -- Halaa fixes
 /* ################################# */
--- fire bomb target
-UPDATE creature_template SET AIName='EventAI' WHERE entry=18225;
-DELETE FROM creature_ai_scripts WHERE creature_id=18225;
-INSERT INTO creature_ai_scripts VALUES 
-('1822501','18225','11','0','100','0','0','0','0','0','11','31961','0','0','0','0','0','0','0','0','0','0','Fire Bomb Target - Cast Fire Bomb on Spawned');
--- No random movement for the fire bomb target - unit flags are guesswork
+-- No random movement for the fire bomb target - unit flags from YTDB
 UPDATE creature_template SET MovementType= 0, unit_flags=unit_flags|33554432 WHERE entry=18225;
 
 UPDATE creature_template SET MovementType= 0 WHERE entry IN (18817,18822,21485,21487,21488,18256);
