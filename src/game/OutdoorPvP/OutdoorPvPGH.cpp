@@ -52,6 +52,8 @@ void OutdoorPvPGH::HandleCreatureDeath(Creature* creature)
 {
     switch (creature->GetEntry())
     {
+        // Note: even if some soldiers or vendors are killed, they don't respawn on timer.
+        // The only way to respawn them is to capture the zone from the other faction.
         case NPC_COMMANDER_HOWSER:
         case NPC_GENERAL_GORLOK:
             UnlockLighthouse(creature);
@@ -80,6 +82,10 @@ bool OutdoorPvPGH::HandleEvent(uint32 eventId, GameObject* go)
     switch (eventId)
     {
         case EVENT_LIGHTHOUSE_WIN_ALLIANCE:
+            // Ignore the event if the zone is already in alliace control
+            if (m_zoneOwner == ALLIANCE)
+                return true;
+
             // Spawn the npcs only when the tower is fully controlled. Also allow the event to handle summons in DB.
             m_zoneOwner = ALLIANCE;
             LockLighthouse(go);
@@ -87,6 +93,10 @@ bool OutdoorPvPGH::HandleEvent(uint32 eventId, GameObject* go)
             eventHandled = false;
             break;
         case EVENT_LIGHTHOUSE_WIN_HORDE:
+            // Ignore the event if the zone is already in horde control
+            if (m_zoneOwner == HORDE)
+                return true;
+
             // Spawn the npcs only when the tower is fully controlled. Also allow the event to handle summons in DB.
             m_zoneOwner = HORDE;
             LockLighthouse(go);
