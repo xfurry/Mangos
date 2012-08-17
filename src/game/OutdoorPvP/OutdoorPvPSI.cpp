@@ -152,7 +152,7 @@ bool OutdoorPvPSI::HandleDropFlag(Player* player, uint32 spellId)
         return false;
 
     // don't drop flag at area trigger
-    // we are checking distance from the AT hardcoded coords because it's much faster than checking the area trigger store
+    // we are checking distance from the AT hard-coded coordinates because it's much faster than checking the area trigger store
     switch (player->GetTeam())
     {
         case ALLIANCE:

@@ -192,7 +192,7 @@ class OutdoorPvPNA : public OutdoorPvP
         void UnlockHalaa(const WorldObject* objRef);
 
         // handle soldier respawn on timer
-        void HandleSoldierRespawn();
+        void RespawnSoldier();
 
         Team m_zoneOwner;
         uint32 m_soldiersRespawnTimer;
@@ -204,16 +204,16 @@ class OutdoorPvPNA : public OutdoorPvP
         bool m_isUnderSiege;
 
         ObjectGuid m_capturePoint;
-        ObjectGuid m_allianceRoost[MAX_NA_ROOSTS];
-        ObjectGuid m_hordeRoost[MAX_NA_ROOSTS];
-        ObjectGuid m_allianceBrokenRoost[MAX_NA_ROOSTS];
-        ObjectGuid m_hordeBrokenRoost[MAX_NA_ROOSTS];
-        ObjectGuid m_allianceWagons[MAX_NA_ROOSTS];
-        ObjectGuid m_hordeWagons[MAX_NA_ROOSTS];
+        ObjectGuid m_roostsAlliance[MAX_NA_ROOSTS];
+        ObjectGuid m_roostsHorde[MAX_NA_ROOSTS];
+        ObjectGuid m_roostsBrokenAlliance[MAX_NA_ROOSTS];
+        ObjectGuid m_roostsBrokenHorde[MAX_NA_ROOSTS];
+        ObjectGuid m_wagonsAlliance[MAX_NA_ROOSTS];
+        ObjectGuid m_wagonsHorde[MAX_NA_ROOSTS];
 
         GuidList m_teamVendors;
 
-        std::deque<HalaaSoldiersSpawns> m_deadSoldiers;
+        std::queue<HalaaSoldiersSpawns> m_deadSoldiers;
 };
 
 #endif

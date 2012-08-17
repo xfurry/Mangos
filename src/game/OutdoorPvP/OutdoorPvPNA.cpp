@@ -157,11 +157,11 @@ void OutdoorPvPNA::HandleCreatureDeath(Creature* creature)
     float x, y, z, o;
     creature->GetRespawnCoord(x, y, z, &o);
     HalaaSoldiersSpawns location = {x, y, z, o};
-    m_deadSoldiers.push_back(HalaaSoldiersSpawns(location));
+    m_deadSoldiers.push(location);
 
     // set the respawn timer after the last guard died - 5 min for the first time, or 1 hour if the city is under siege
     if (!m_soldiersRespawnTimer)
-        m_soldiersRespawnTimer = m_isUnderSiege ? 1*HOUR*IN_MILLISECONDS : 5*MINUTE*IN_MILLISECONDS;
+        m_soldiersRespawnTimer = m_isUnderSiege ? HOUR * IN_MILLISECONDS : 5 * MINUTE * IN_MILLISECONDS;
 
     // decrease the counter
     --m_guardsLeft;
@@ -171,7 +171,7 @@ void OutdoorPvPNA::HandleCreatureDeath(Creature* creature)
     {
         // set the zone under siege and increase the respawn timer
         m_isUnderSiege = true;
-        m_soldiersRespawnTimer = 1*HOUR*IN_MILLISECONDS;
+        m_soldiersRespawnTimer = HOUR * IN_MILLISECONDS;
 
         // make capturable
         UnlockHalaa(creature);
@@ -195,81 +195,81 @@ void OutdoorPvPNA::HandleGameObjectCreate(GameObject* go)
             break;
 
         case GO_WYVERN_ROOST_ALLIANCE_SOUTH:
-            m_allianceRoost[0] = go->GetObjectGuid();
+            m_roostsAlliance[0] = go->GetObjectGuid();
             break;
         case GO_WYVERN_ROOST_ALLIANCE_NORTH:
-            m_allianceRoost[1] = go->GetObjectGuid();
+            m_roostsAlliance[1] = go->GetObjectGuid();
             break;
         case GO_WYVERN_ROOST_ALLIANCE_EAST:
-            m_allianceRoost[2] = go->GetObjectGuid();
+            m_roostsAlliance[2] = go->GetObjectGuid();
             break;
         case GO_WYVERN_ROOST_ALLIANCE_WEST:
-            m_allianceRoost[3] = go->GetObjectGuid();
+            m_roostsAlliance[3] = go->GetObjectGuid();
             break;
 
         case GO_BOMB_WAGON_HORDE_SOUTH:
-            m_hordeWagons[0] = go->GetObjectGuid();
+            m_wagonsHorde[0] = go->GetObjectGuid();
             break;
         case GO_BOMB_WAGON_HORDE_NORTH:
-            m_hordeWagons[1] = go->GetObjectGuid();
+            m_wagonsHorde[1] = go->GetObjectGuid();
             break;
         case GO_BOMB_WAGON_HORDE_EAST:
-            m_hordeWagons[2] = go->GetObjectGuid();
+            m_wagonsHorde[2] = go->GetObjectGuid();
             break;
         case GO_BOMB_WAGON_HORDE_WEST:
-            m_hordeWagons[3] = go->GetObjectGuid();
+            m_wagonsHorde[3] = go->GetObjectGuid();
             break;
 
         case GO_DESTROYED_ROOST_ALLIANCE_SOUTH:
-            m_allianceBrokenRoost[0] = go->GetObjectGuid();
+            m_roostsBrokenAlliance[0] = go->GetObjectGuid();
             break;
         case GO_DESTROYED_ROOST_ALLIANCE_NORTH:
-            m_allianceBrokenRoost[1] = go->GetObjectGuid();
+            m_roostsBrokenAlliance[1] = go->GetObjectGuid();
             break;
         case GO_DESTROYED_ROOST_ALLIANCE_EAST:
-            m_allianceBrokenRoost[2] = go->GetObjectGuid();
+            m_roostsBrokenAlliance[2] = go->GetObjectGuid();
             break;
         case GO_DESTROYED_ROOST_ALLIANCE_WEST:
-            m_allianceBrokenRoost[3] = go->GetObjectGuid();
+            m_roostsBrokenAlliance[3] = go->GetObjectGuid();
             break;
 
         case GO_WYVERN_ROOST_HORDE_SOUTH:
-            m_hordeRoost[0] = go->GetObjectGuid();
+            m_roostsHorde[0] = go->GetObjectGuid();
             break;
         case GO_WYVERN_ROOST_HORDE_NORTH:
-            m_hordeRoost[1] = go->GetObjectGuid();
+            m_roostsHorde[1] = go->GetObjectGuid();
             break;
         case GO_WYVERN_ROOST_HORDE_EAST:
-            m_hordeRoost[2] = go->GetObjectGuid();
+            m_roostsHorde[2] = go->GetObjectGuid();
             break;
         case GO_WYVERN_ROOST_HORDE_WEST:
-            m_hordeRoost[3] = go->GetObjectGuid();
+            m_roostsHorde[3] = go->GetObjectGuid();
             break;
 
         case GO_BOMB_WAGON_ALLIANCE_SOUTH:
-            m_allianceWagons[0] = go->GetObjectGuid();
+            m_wagonsAlliance[0] = go->GetObjectGuid();
             break;
         case GO_BOMB_WAGON_ALLIANCE_NORTH:
-            m_allianceWagons[1] = go->GetObjectGuid();
+            m_wagonsAlliance[1] = go->GetObjectGuid();
             break;
         case GO_BOMB_WAGON_ALLIANCE_EAST:
-            m_allianceWagons[2] = go->GetObjectGuid();
+            m_wagonsAlliance[2] = go->GetObjectGuid();
             break;
         case GO_BOMB_WAGON_ALLIANCE_WEST:
-            m_allianceWagons[3] = go->GetObjectGuid();
+            m_wagonsAlliance[3] = go->GetObjectGuid();
             break;
 
         case GO_DESTROYED_ROOST_HORDE_SOUTH:
-            m_hordeBrokenRoost[0] = go->GetObjectGuid();
+            m_roostsBrokenHorde[0] = go->GetObjectGuid();
             break;
         case GO_DESTROYED_ROOST_HORDE_NORTH:
-            m_hordeBrokenRoost[1] = go->GetObjectGuid();
+            m_roostsBrokenHorde[1] = go->GetObjectGuid();
             break;
         case GO_DESTROYED_ROOST_HORDE_EAST:
-            m_hordeBrokenRoost[2] = go->GetObjectGuid();
+            m_roostsBrokenHorde[2] = go->GetObjectGuid();
             break;
         case GO_DESTROYED_ROOST_HORDE_WEST:
-            m_hordeBrokenRoost[3] = go->GetObjectGuid();
+            m_roostsBrokenHorde[3] = go->GetObjectGuid();
             break;
     }
 }
@@ -365,11 +365,11 @@ void OutdoorPvPNA::HandleFactionObjects(const WorldObject* objRef)
     {
         for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
         {
-            RespawnGO(objRef, m_hordeWagons[i], false);
-            RespawnGO(objRef, m_allianceBrokenRoost[i], false);
-            RespawnGO(objRef, m_allianceRoost[i], false);
-            RespawnGO(objRef, m_allianceWagons[i], false);
-            RespawnGO(objRef, m_hordeBrokenRoost[i], true);
+            RespawnGO(objRef, m_wagonsHorde[i], false);
+            RespawnGO(objRef, m_roostsBrokenAlliance[i], false);
+            RespawnGO(objRef, m_roostsAlliance[i], false);
+            RespawnGO(objRef, m_wagonsAlliance[i], false);
+            RespawnGO(objRef, m_roostsBrokenHorde[i], true);
 
             m_roostWorldState[i] = nagrandRoostStatesHordeNeutral[i];
         }
@@ -378,11 +378,11 @@ void OutdoorPvPNA::HandleFactionObjects(const WorldObject* objRef)
     {
         for (uint8 i = 0; i < MAX_NA_ROOSTS; ++i)
         {
-            RespawnGO(objRef, m_allianceWagons[i], false);
-            RespawnGO(objRef, m_hordeBrokenRoost[i], false);
-            RespawnGO(objRef, m_hordeRoost[i], false);
-            RespawnGO(objRef, m_hordeWagons[i], false);
-            RespawnGO(objRef, m_allianceBrokenRoost[i], true);
+            RespawnGO(objRef, m_wagonsAlliance[i], false);
+            RespawnGO(objRef, m_roostsBrokenHorde[i], false);
+            RespawnGO(objRef, m_roostsHorde[i], false);
+            RespawnGO(objRef, m_wagonsHorde[i], false);
+            RespawnGO(objRef, m_roostsBrokenAlliance[i], true);
 
             m_roostWorldState[i] = nagrandRoostStatesAllianceNeutral[i];
         }
@@ -415,8 +415,8 @@ bool OutdoorPvPNA::HandleGameObjectUse(Player* player, GameObject* go)
                 UpdateWyvernsWorldState(WORLD_STATE_ADD);
 
                 // spawn the broken roost and despawn the other one
-                RespawnGO(go, m_hordeRoost[i], false);
-                RespawnGO(go, m_hordeBrokenRoost[i], true);
+                RespawnGO(go, m_roostsHorde[i], false);
+                RespawnGO(go, m_roostsBrokenHorde[i], true);
 
                 // no need to iterate the other roosts
                 return false;
@@ -429,8 +429,8 @@ bool OutdoorPvPNA::HandleGameObjectUse(Player* player, GameObject* go)
                 UpdateWyvernsWorldState(WORLD_STATE_ADD);
 
                 // spawn the repaired one along with the explosive wagon - the broken one despawns by self
-                RespawnGO(go, m_hordeWagons[i], true);
-                RespawnGO(go, m_allianceRoost[i], true);
+                RespawnGO(go, m_wagonsHorde[i], true);
+                RespawnGO(go, m_roostsAlliance[i], true);
 
                 // no need to iterate the other roosts
                 return false;
@@ -461,8 +461,8 @@ bool OutdoorPvPNA::HandleGameObjectUse(Player* player, GameObject* go)
                 UpdateWyvernsWorldState(WORLD_STATE_ADD);
 
                 // spawn the broken roost and despawn the other one
-                RespawnGO(go, m_allianceRoost[i], false);
-                RespawnGO(go, m_allianceBrokenRoost[i], true);
+                RespawnGO(go, m_roostsAlliance[i], false);
+                RespawnGO(go, m_roostsBrokenAlliance[i], true);
 
                 // no need to iterate the other roosts
                 return false;
@@ -475,8 +475,8 @@ bool OutdoorPvPNA::HandleGameObjectUse(Player* player, GameObject* go)
                 UpdateWyvernsWorldState(WORLD_STATE_ADD);
 
                 // spawn the repaired one along with the explosive wagon - the broken one despawns by self
-                RespawnGO(go, m_allianceWagons[i], true);
-                RespawnGO(go, m_hordeRoost[i], true);
+                RespawnGO(go, m_wagonsAlliance[i], true);
+                RespawnGO(go, m_roostsHorde[i], true);
 
                 // no need to iterate the other roosts
                 return false;
@@ -505,13 +505,13 @@ void OutdoorPvPNA::Update(uint32 diff)
     {
         if (m_soldiersRespawnTimer < diff)
         {
-            HandleSoldierRespawn();
+            RespawnSoldier();
 
             // if all the guards are respawned, stop the timer, else resume the timer depending on the siege state
             if (m_guardsLeft == MAX_NA_GUARDS)
                 m_soldiersRespawnTimer = 0;
             else
-                m_soldiersRespawnTimer = m_isUnderSiege ? 1*HOUR*IN_MILLISECONDS : 5*MINUTE*IN_MILLISECONDS;
+                m_soldiersRespawnTimer = m_isUnderSiege ? HOUR * IN_MILLISECONDS : 5 * MINUTE * IN_MILLISECONDS;
         }
         else
             m_soldiersRespawnTimer -= diff;
@@ -519,7 +519,7 @@ void OutdoorPvPNA::Update(uint32 diff)
 }
 
 // Handle soldiers respawn on timer - this will summon a replacement for the dead soldier
-void OutdoorPvPNA::HandleSoldierRespawn()
+void OutdoorPvPNA::RespawnSoldier()
 {
     for (GuidZoneMap::iterator itr = m_zonePlayers.begin(); itr != m_zonePlayers.end(); ++itr)
     {
@@ -531,13 +531,13 @@ void OutdoorPvPNA::HandleSoldierRespawn()
         {
             // summon a soldier replacement in the order they were set in the deque. delete the element after summon
             player->SummonCreature(m_zoneOwner == ALLIANCE ? NPC_ALLIANCE_HANAANI_GUARD : NPC_HORDE_HALAANI_GUARD, m_deadSoldiers.front().x, m_deadSoldiers.front().y, m_deadSoldiers.front().z, m_deadSoldiers.front().o, TEMPSUMMON_DEAD_DESPAWN, 0, true);
-            m_deadSoldiers.pop_front();
+            m_deadSoldiers.pop();
             break;
         }
     }
 }
 
-// Handle Halaa lock when captured
+// Lock Halaa when captured
 void OutdoorPvPNA::LockHalaa(const WorldObject* objRef)
 {
     if (GameObject* go = objRef->GetMap()->GetGameObject(m_capturePoint))
@@ -546,7 +546,7 @@ void OutdoorPvPNA::LockHalaa(const WorldObject* objRef)
     sOutdoorPvPMgr.SetCapturePointSlider(m_capturePoint, m_zoneOwner == ALLIANCE ? CAPTURE_SLIDER_ALLIANCE_LOCKED : CAPTURE_SLIDER_HORDE_LOCKED);
 }
 
-// Handle Halaa unlock when all the soldiers are killed
+// Unlock Halaa when all the soldiers are killed
 void OutdoorPvPNA::UnlockHalaa(const WorldObject* objRef)
 {
     if (GameObject* go = objRef->GetMap()->GetGameObject(m_capturePoint))

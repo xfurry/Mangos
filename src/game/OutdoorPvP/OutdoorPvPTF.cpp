@@ -308,7 +308,7 @@ void OutdoorPvPTF::Update(uint32 diff)
         }
         else
         {
-            // update timer - if OutdoorPvPMgr update timer interval needs to be lowered replace this line with the outcommented ones below
+            // update timer - if OutdoorPvPMgr update timer interval needs to be lowered replace this line with the commented-out ones below
             UpdateTimerWorldState();
 
             /*if (m_zoneUpdateTimer < diff)

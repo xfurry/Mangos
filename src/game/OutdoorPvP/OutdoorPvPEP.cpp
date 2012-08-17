@@ -210,7 +210,7 @@ bool OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
     if (team == ALLIANCE)
     {
         // update banner
-        for (GuidList::iterator itr = m_towerBanners[towerId].begin(); itr != m_towerBanners[towerId].end(); ++itr)
+        for (GuidList::const_iterator itr = m_towerBanners[towerId].begin(); itr != m_towerBanners[towerId].end(); ++itr)
             SetBannerVisual(go, (*itr), CAPTURE_ARTKIT_ALLIANCE, CAPTURE_ANIM_ALLIANCE);
 
         // update counter
@@ -223,7 +223,7 @@ bool OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
     else if (team == HORDE)
     {
         // update banner
-        for (GuidList::iterator itr = m_towerBanners[towerId].begin(); itr != m_towerBanners[towerId].end(); ++itr)
+        for (GuidList::const_iterator itr = m_towerBanners[towerId].begin(); itr != m_towerBanners[towerId].end(); ++itr)
             SetBannerVisual(go, (*itr), CAPTURE_ARTKIT_HORDE, CAPTURE_ANIM_HORDE);
 
         // update counter
@@ -236,7 +236,7 @@ bool OutdoorPvPEP::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
     else
     {
         // update banner
-        for (GuidList::iterator itr = m_towerBanners[towerId].begin(); itr != m_towerBanners[towerId].end(); ++itr)
+        for (GuidList::const_iterator itr = m_towerBanners[towerId].begin(); itr != m_towerBanners[towerId].end(); ++itr)
             SetBannerVisual(go, (*itr), CAPTURE_ARTKIT_NEUTRAL, CAPTURE_ANIM_NEUTRAL);
 
         if (m_towerOwner[towerId] == ALLIANCE)
@@ -333,17 +333,17 @@ void OutdoorPvPEP::InitBanner(GameObject* go, uint32 towerId)
     go->SetGoArtKit(GetBannerArtKit(m_towerOwner[towerId]));
 }
 
-// Handle the unsummon of the spectral flight master when the plaguewood tower is lost
+// Handle the unsummon of the spectral flight master when the Plaguewood tower is lost
 void OutdoorPvPEP::UnsummonFlightMaster(const WorldObject* objRef)
 {
     if (Creature* flightMaster = objRef->GetMap()->GetCreature(m_flightMaster))
         flightMaster->ForcedDespawn();
 }
 
-// Handle the unsummon of the soldiers when the eastwall tower is lost
+// Handle the unsummon of the soldiers when the Eastwall tower is lost
 void OutdoorPvPEP::UnsummonSoldiers(const WorldObject* objRef)
 {
-    for (GuidList::iterator itr = m_soldiers.begin(); itr != m_soldiers.end(); ++itr)
+    for (GuidList::const_iterator itr = m_soldiers.begin(); itr != m_soldiers.end(); ++itr)
     {
         if (Creature* soldier = objRef->GetMap()->GetCreature(*itr))
             soldier->ForcedDespawn();

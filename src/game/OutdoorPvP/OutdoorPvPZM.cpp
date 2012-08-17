@@ -97,7 +97,7 @@ void OutdoorPvPZM::HandleCreatureCreate(Creature* creature)
         case NPC_PVP_BEAM_RED:
             if (creature->GetPositionY() < 7000.0f)                 // East Beam
                 m_beamTowerRed[0] = creature->GetObjectGuid();
-            else if (creature ->GetPositionY() < 7300.0f)           // Center Beam
+            else if (creature->GetPositionY() < 7300.0f)            // Center Beam
                 m_beamGraveyardRed = creature->GetObjectGuid();
             else                                                    // West Beam
                 m_beamTowerRed[1] = creature->GetObjectGuid();
@@ -105,7 +105,7 @@ void OutdoorPvPZM::HandleCreatureCreate(Creature* creature)
         case NPC_PVP_BEAM_BLUE:
             if (creature->GetPositionY() < 7000.0f)                 // East Beam
                 m_beamTowerBlue[0] = creature->GetObjectGuid();
-            else if (creature ->GetPositionY() < 7300.0f)           // Center Beam
+            else if (creature->GetPositionY() < 7300.0f)            // Center Beam
                 m_beamGraveyardBlue = creature->GetObjectGuid();
             else                                                    // West Beam
                 m_beamTowerBlue[1] = creature->GetObjectGuid();
@@ -197,7 +197,7 @@ bool OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 
         if (m_towersAlliance == MAX_ZM_TOWERS)
         {
-            // Send this defense message before PrepareFactionScouts (which sends another)
+            // Send this defense message before updating scout state as this sends another
             sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_BOTH_BEACONS_A);
 
             // only add flag to scouts if team does not have captured graveyard already
@@ -213,7 +213,7 @@ bool OutdoorPvPZM::ProcessCaptureEvent(GameObject* go, uint32 towerId, Team team
 
         if (m_towersHorde == MAX_ZM_TOWERS)
         {
-            // Send this defense message before PrepareFactionScouts (which sends another)
+            // Send this defense message before updating scout state as this sends another
             sWorld.SendDefenseMessage(ZONE_ID_ZANGARMARSH, LANG_OPVP_ZM_CAPTURE_BOTH_BEACONS_H);
 
             // only add flag to scouts if team does not already have captured graveyard
@@ -380,7 +380,7 @@ bool OutdoorPvPZM::HandleGameObjectUse(Player* player, GameObject* go)
 //    {
 //        // ToDo: implement this when the scout DB conditions are implemented
 //        // The scouts gossip options should check a DB condition if the gossip is pvp available
-//        // The idea is to set the outdoorPvP condition to false on flag take - this will allow only one player to use the flag
+//        // The idea is to set the Outdoor PvP condition to false on flag take - this will allow only one player to use the flag
 //        // on flag drop the condition can be set back to true if necessary, so the players can retake the flag
 //        return true;
 //    }

@@ -82,7 +82,7 @@ bool OutdoorPvPGH::HandleEvent(uint32 eventId, GameObject* go)
     switch (eventId)
     {
         case EVENT_LIGHTHOUSE_WIN_ALLIANCE:
-            // Ignore the event if the zone is already in alliace control
+            // Ignore the event if the zone is already in alliance control
             if (m_zoneOwner == ALLIANCE)
                 return true;
 

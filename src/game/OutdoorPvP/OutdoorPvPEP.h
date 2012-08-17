@@ -177,7 +177,7 @@ static const PlaguelandsTowerBuff plaguelandsTowerBuffs[MAX_EP_TOWERS] =
     {SPELL_ECHOES_OF_LORDAERON_ALLIANCE_4, SPELL_ECHOES_OF_LORDAERON_HORDE_4}
 };
 
-// capture points coords to sort the banners
+// capture points coordinates to sort the banners
 static const float plaguelandsTowerLocations[MAX_EP_TOWERS][2] =
 {
     {3181.08f, -4379.36f},       // Northpass

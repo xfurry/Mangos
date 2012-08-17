@@ -163,9 +163,9 @@ void OutdoorPvPMgr::Update(uint32 diff)
  */
 int8 OutdoorPvPMgr::GetCapturePointSliderValue(uint32 entry)
 {
-    std::map<uint32, int8>::iterator itr = m_CapturePointSlider.find(entry);
+    std::map<uint32, int8>::iterator itr = m_capturePointSlider.find(entry);
 
-    if (itr != m_CapturePointSlider.end())
+    if (itr != m_capturePointSlider.end())
         return itr->second;
 
     // return default value if we can't find any

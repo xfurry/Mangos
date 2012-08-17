@@ -9,8 +9,8 @@ UPDATE gameobject SET animprogress = 255, spawntimesecs = 0 WHERE id IN (181899,
 -- Silithus fixes
 /* ################################# */
 -- Not sure if this is actually correct
-delete from spell_script_target where entry=29534;
-insert into spell_script_target values
+DELETE FROM spell_script_target WHERE entry=29534;
+INSERT INTO spell_script_target VALUES
 (29534,0,181597);
 /* ################################# */
 
@@ -22,7 +22,7 @@ INSERT IGNORE INTO creature_linking_template VALUES
 (27748,571,27708,1,0);
 UPDATE creature_template SET MovementType=0 WHERE entry=385;
 -- Summon Venture bay npcs
-DELETE FROM creature WHERE id IN (27758,27759,29252,27760,29250,27748,27708,29253,27730,29251,385,5774) AND position_z < 20 and map=571;
+DELETE FROM creature WHERE id IN (27758,27759,29252,27760,29250,27748,27708,29253,27730,29251,385,5774) AND position_z < 20 AND map=571;
 -- Alliance
 DELETE FROM event_scripts WHERE id IN (18035,18036);
 INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, comments) VALUES
@@ -88,11 +88,10 @@ INSERT INTO event_scripts (id, command, datalong, data_flags, x, y, z, o, commen
 DELETE FROM creature WHERE guid IN (67037,67038,67039,84756);
 DELETE FROM creature_template_addon WHERE entry IN (18759);
 UPDATE creature_template SET InhabitType=InhabitType|4 WHERE entry IN (18757,18759);
-/* ################################# */
-
+-- despawn horde graveyard flag by default
+UPDATE gameobject SET spawnTimeSecs = -300 WHERE id = 182528;
 
 -- Zangarmarsh Field Scout gossips - TODO: conditions, horde gossip 1 text is guessed, horde text_id 2 is missing
-/* ################################# */
 UPDATE creature_template SET npcFlag=npcFlag|1 WHERE entry IN (18581,18564);
 -- Alliance Field Scout
 UPDATE creature_template SET gossip_menu_id = 7724 WHERE entry = 18581;
@@ -132,9 +131,9 @@ UPDATE gameobject_template SET faction=1314 WHERE entry=181955;
 -- spectral flight master aura removed as it depends on faction and is done by opvp script
 DELETE FROM creature_template_addon WHERE entry=17209;
 -- spectral flight master gossip scripts
-UPDATE gossip_menu_option SET action_script_id=737901 WHERE menu_id=7379 and id=0;
-UPDATE gossip_menu_option SET action_script_id=737902 WHERE menu_id=7379 and id=1;
-UPDATE gossip_menu_option SET action_script_id=737903 WHERE menu_id=7379 and id=2;
+UPDATE gossip_menu_option SET action_script_id=737901 WHERE menu_id=7379 AND id=0;
+UPDATE gossip_menu_option SET action_script_id=737902 WHERE menu_id=7379 AND id=1;
+UPDATE gossip_menu_option SET action_script_id=737903 WHERE menu_id=7379 AND id=2;
 DELETE FROM gossip_scripts WHERE id IN (737901,737902,737903);
 INSERT INTO gossip_scripts (id,command,datalong,comments) VALUES
 (737901,30,494,'William Kielar - Send Northpass Tower taxi'),
