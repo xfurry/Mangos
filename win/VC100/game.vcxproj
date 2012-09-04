@@ -508,6 +508,7 @@
     <ClCompile Include="..\..\src\game\WaypointMovementGenerator.cpp" />
     <ClCompile Include="..\..\src\game\Weather.cpp" />
     <ClCompile Include="..\..\src\game\World.cpp" />
+    <ClCompile Include="..\..\src\game\WorldStateMgr.cpp" />
     <ClCompile Include="..\..\src\game\OutdoorPvP\OutdoorPvP.cpp" />
     <ClCompile Include="..\..\src\game\OutdoorPvP\OutdoorPvPEP.cpp" />
     <ClCompile Include="..\..\src\game\OutdoorPvP\OutdoorPvPGH.cpp" />
@@ -673,6 +674,7 @@
     <ClInclude Include="..\..\src\game\WaypointMovementGenerator.h" />
     <ClInclude Include="..\..\src\game\Weather.h" />
     <ClInclude Include="..\..\src\game\World.h" />
+    <ClInclude Include="..\..\src\game\WorldStateMgr.h" />
     <ClInclude Include="..\..\src\game\OutdoorPvP\OutdoorPvP.h" />
     <ClInclude Include="..\..\src\game\OutdoorPvP\OutdoorPvPEP.h" />
     <ClInclude Include="..\..\src\game\OutdoorPvP\OutdoorPvPGH.h" />
