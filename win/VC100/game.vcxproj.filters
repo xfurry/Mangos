@@ -37,6 +37,9 @@
     <Filter Include="BattleGround">
       <UniqueIdentifier>{0af4d063-6d01-4546-a429-59bd828ab270}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BattleField">
+      <UniqueIdentifier>{e4b8a5dd-952f-4bb0-b599-5480fba1cc34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\game\AccountMgr.cpp">
@@ -550,6 +553,18 @@
     <ClCompile Include="..\..\src\game\BattleGround\BattleGroundWS.cpp">
       <Filter>BattleGround</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\game\BattleField\BattleField.cpp">
+      <Filter>BattleField</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\BattleField\BattleFieldHandler.cpp">
+      <Filter>BattleField</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\BattleField\BattleFieldMgr.cpp">
+      <Filter>BattleField</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\BattleField\BattleFieldWG.cpp">
+      <Filter>BattleField</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\game\AccountMgr.h">
@@ -1038,6 +1053,15 @@
     </ClInclude>
     <ClInclude Include="..\..\src\game\BattleGround\BattleGroundSA.h">
       <Filter>BattleGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\BattleField\BattleField.h">
+      <Filter>BattleField</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\BattleField\BattleFieldMgr.h">
+      <Filter>BattleField</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\BattleField\BattleFieldWG.h">
+      <Filter>BattleField</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

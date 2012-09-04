@@ -1760,6 +1760,38 @@
 			</File>
 		</Filter>
 		<Filter
+			Name="BattleField"
+			>
+			<File
+				RelativePath="..\..\src\game\BattleField\BattleField.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\BattleField\BattleField.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\BattleField\BattleFieldHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\BattleField\BattleFieldMgr.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\BattleField\BattleFieldMgr.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\BattleField\BattleFieldWG.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\game\BattleField\BattleFieldWG.h"
+				>
+			</File>
+		</Filter>
+		<Filter
 			Name="BattleGround"
 			>
 			<File

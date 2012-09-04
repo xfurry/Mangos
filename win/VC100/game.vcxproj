@@ -352,6 +352,10 @@
     <ClCompile Include="..\..\src\game\AuctionHouseHandler.cpp" />
     <ClCompile Include="..\..\src\game\AuctionHouseMgr.cpp" />
     <ClCompile Include="..\..\src\game\Bag.cpp" />
+    <ClCompile Include="..\..\src\game\BattleField\BattleField.cpp" />
+    <ClCompile Include="..\..\src\game\BattleField\BattleFieldHandler.cpp" />
+    <ClCompile Include="..\..\src\game\BattleField\BattleFieldMgr.cpp" />
+    <ClCompile Include="..\..\src\game\BattleField\BattleFieldWG.cpp" />
     <ClCompile Include="..\..\src\game\BattleGround\BattleGround.cpp" />
     <ClCompile Include="..\..\src\game\BattleGround\BattleGroundAA.cpp" />
     <ClCompile Include="..\..\src\game\BattleGround\BattleGroundAB.cpp" />
@@ -532,6 +536,9 @@
     <ClInclude Include="..\..\src\game\AuctionHouseBot\AuctionHouseBot.h" />
     <ClInclude Include="..\..\src\game\AuctionHouseMgr.h" />
     <ClInclude Include="..\..\src\game\Bag.h" />
+    <ClInclude Include="..\..\src\game\BattleField\BattleField.h" />
+    <ClInclude Include="..\..\src\game\BattleField\BattleFieldMgr.h" />
+    <ClInclude Include="..\..\src\game\BattleField\BattleFieldWG.h" />
     <ClInclude Include="..\..\src\game\BattleGround\BattleGround.h" />
     <ClInclude Include="..\..\src\game\BattleGround\BattleGroundAA.h" />
     <ClInclude Include="..\..\src\game\BattleGround\BattleGroundAB.h" />
