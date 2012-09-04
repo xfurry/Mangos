@@ -15,3 +15,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
+
+#ifndef __BATTLEFIELD_WG_H
+#define __BATTLEFIELD_WG_H
+
+#include "Battlefield.h"
+
+enum eSpells
+{
+    SPELL_ALLIANCE_CONTROLLS = 55774,
+    SPELL_ALLIANCE_CONTROLLS_FACTORIES = 56617,
+    SPELL_HORDE_CONTROLLS = 55773,
+    SPELL_HORDE_CONTROLLS_FACTORIES = 56618
+};
+
+class BattlefieldWG : public Battlefield
+{
+    public:
+        BattlefieldWG();
+
+        void OnUpdate(uint32 uiDiff);
+        void BeforeBattleStarted();
+        void AfterBattleEnded();
+        void OnPlayerEnter(Player * player);
+        void OnPlayerExit(Player* player);
+};
+
+#endif

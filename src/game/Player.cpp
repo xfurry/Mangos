@@ -64,6 +64,7 @@
 #include "SpellAuras.h"
 #include "DBCStores.h"
 #include "SQLStorages.h"
+#include "BattleField/BattlefieldMgr.h"
 
 #include <cmath>
 
@@ -8683,6 +8684,9 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
     FillInitialWorldState(data, count, 0xED9, 1);           // 3801 9  0 - Battle for Wintergrasp in progress, 1 - otherwise
     // 4354 10 Time when next Battle for Wintergrasp starts
     FillInitialWorldState(data, count, 0x1102, uint32(time(NULL) + 9000));
+    Battlefield * WG = sBattlefieldMgr.FindBattlefield(BATTLEFIELD_WG);
+    FillInitialWorldState(data, count, 0xED9, !WG->IsBattleInProgress()); // 3801 9 0 - Battle for Wintergrasp in progress, 1 - otherwise
+    FillInitialWorldState(data, count, 0x1102, uint32(time(NULL) + (WG->GetTimeToNextBattle()/1000))); // 4354 10 Time when next Battle for Wintergrasp starts
 
     if (mapid == 530)                                       // Outland
     {
@@ -8703,6 +8707,28 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
         case 1537:                                          // Ironforge
         case 2257:                                          // Deeprun Tram
         case 3703:                                          // Shattrath City
+            break;
+        case 4197: // Wintergrasp
+            if(WG->IsBattleInProgress())
+            {
+                FillInitialWorldState(data,count,0xe7e,true);
+                FillInitialWorldState(data,count,0xec5,uint32(time(NULL) + (WG->GetTimeTIllEndOfWar()/1000)));
+                FillInitialWorldState(data,count,0xda2,1);
+                FillInitialWorldState(data,count,0xda1,10);
+                FillInitialWorldState(data,count,0xe60,1);
+                FillInitialWorldState(data,count,0xe61,10);
+            }
+            else
+            {
+                if(WG->GetControllerTeam() == ALLIANCE)
+                {
+                    FillInitialWorldState(data,count,0xeda,true);
+                }
+                else
+                {
+                    FillInitialWorldState(data,count,0xedb,true);
+                }
+            }
             break;
         case 139:                                           // Eastern Plaguelands
             if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetScript(zoneid))
